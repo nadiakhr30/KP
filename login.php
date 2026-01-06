@@ -1,3 +1,17 @@
+<?php
+session_start();
+if (isset($_SESSION["pegawai"])) {
+  header("Location: index.php");
+}
+
+include_once("functions.php");
+
+$errors = [];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  checkLogin($_POST, $errors);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
