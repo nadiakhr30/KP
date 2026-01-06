@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Mega Able bootstrap admin template by codedthemes </title>
+    <title>Log In</title>
     <!-- HTML5 Shim and Respond.js IE10 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 10]>
@@ -13,9 +13,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <meta name="description" content="Mega Able Bootstrap admin template made using Bootstrap 4 and it has huge amount of ready made feature, UI components, pages which completely fulfills any dashboard needs." />
-      <meta name="keywords" content="bootstrap, bootstrap admin template, admin theme, admin dashboard, dashboard template, admin template, responsive" />
-      <meta name="author" content="codedthemes" />
+      <meta name="author" content="Kamila - Nadia" />
       <!-- Favicon icon -->
 
       <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
