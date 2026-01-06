@@ -16,21 +16,21 @@
       <meta name="author" content="Kamila - Nadia" />
       <!-- Favicon icon -->
 
-      <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+      <link rel="icon" href="admin/assets/images/logo_bps.ico" type="image/x-icon">
       <!-- Google font-->     
       <link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet">
       <!-- Required Fremwork -->
-      <link rel="stylesheet" type="text/css" href="assets/css/bootstrap/css/bootstrap.min.css">
+      <link rel="stylesheet" type="text/css" href="admin/assets/css/bootstrap/css/bootstrap.min.css">
       <!-- waves.css -->
-      <link rel="stylesheet" href="assets/pages/waves/css/waves.min.css" type="text/css" media="all">
+      <link rel="stylesheet" href="admin/assets/pages/waves/css/waves.min.css" type="text/css" media="all">
       <!-- themify-icons line icon -->
-      <link rel="stylesheet" type="text/css" href="assets/icon/themify-icons/themify-icons.css">
+      <link rel="stylesheet" type="text/css" href="admin/assets/icon/themify-icons/themify-icons.css">
       <!-- ico font -->
-      <link rel="stylesheet" type="text/css" href="assets/icon/icofont/css/icofont.css">
+      <link rel="stylesheet" type="text/css" href="admin/assets/icon/icofont/css/icofont.css">
       <!-- Font Awesome -->
-      <link rel="stylesheet" type="text/css" href="assets/icon/font-awesome/css/font-awesome.min.css">
+      <link rel="stylesheet" type="text/css" href="admin/assets/icon/font-awesome/css/font-awesome.min.css">
       <!-- Style.css -->
-      <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+      <link rel="stylesheet" type="text/css" href="admin/assets/css/style.css">
   </head>
 
   <body themebg-pattern="theme1">
@@ -98,7 +98,7 @@
                     
                         <form class="md-float-material form-material">
                             <div class="text-center">
-                                <img src="assets/images/logo.png" alt="logo.png">
+                                <img src="admin/assets/images/logo.png" alt="logo.png">
                             </div>
                             <div class="auth-box card">
                                 <div class="card-block">
@@ -143,7 +143,7 @@
                                             <p class="text-inverse text-left"><a href="index.html"><b>Back to website</b></a></p>
                                         </div>
                                         <div class="col-md-2">
-                                            <img src="assets/images/auth/Logo-small-bottom.png" alt="small-logo.png">
+                                            <img src="admin/assets/images/auth/Logo-small-bottom.png" alt="small-logo.png">
                                         </div>
                                     </div>
                                 </div>
@@ -202,19 +202,19 @@
 <![endif]-->
 <!-- Warning Section Ends -->
 <!-- Required Jquery -->
-    <script type="text/javascript" src="assets/js/jquery/jquery.min.js"></script>     <script type="text/javascript" src="assets/js/jquery-ui/jquery-ui.min.js "></script>     <script type="text/javascript" src="assets/js/popper.js/popper.min.js"></script>     <script type="text/javascript" src="assets/js/bootstrap/js/bootstrap.min.js "></script>
+    <script type="text/javascript" src="admin/assets/js/jquery/jquery.min.js"></script>     <script type="text/javascript" src="admin/assets/js/jquery-ui/jquery-ui.min.js "></script>     <script type="text/javascript" src="admin/assets/js/popper.js/popper.min.js"></script>     <script type="text/javascript" src="admin/assets/js/bootstrap/js/bootstrap.min.js "></script>
 <!-- waves js -->
-<script src="assets/pages/waves/js/waves.min.js"></script>
+<script src="admin/assets/pages/waves/js/waves.min.js"></script>
 <!-- jquery slimscroll js -->
-<script type="text/javascript" src="assets/js/jquery-slimscroll/jquery.slimscroll.js "></script>
+<script type="text/javascript" src="admin/assets/js/jquery-slimscroll/jquery.slimscroll.js "></script>
 <!-- modernizr js -->
-    <script type="text/javascript" src="assets/js/SmoothScroll.js"></script>     <script src="assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
+    <script type="text/javascript" src="admin/assets/js/SmoothScroll.js"></script>     <script src="admin/assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
 <!-- i18next.min.js -->
 <script type="text/javascript" src="bower_components/i18next/js/i18next.min.js"></script>
 <script type="text/javascript" src="bower_components/i18next-xhr-backend/js/i18nextXHRBackend.min.js"></script>
 <script type="text/javascript" src="bower_components/i18next-browser-languagedetector/js/i18nextBrowserLanguageDetector.min.js"></script>
 <script type="text/javascript" src="bower_components/jquery-i18next/js/jquery-i18next.min.js"></script>
-<script type="text/javascript" src="assets/js/common-pages.js"></script>
+<script type="text/javascript" src="admin/assets/js/common-pages.js"></script>
 </body>
 
 </html>
