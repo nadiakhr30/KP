@@ -98,7 +98,7 @@
                     
                         <form class="md-float-material form-material">
                             <div class="text-center">
-                                <img src="admin/assets/images/logo.png" alt="logo.png">
+                                <img src="admin/assets/images/logo_bps.ico" alt="logo.png" style="width:150px;">
                             </div>
                             <div class="auth-box card">
                                 <div class="card-block">
@@ -143,7 +143,7 @@
                                             <p class="text-inverse text-left"><a href="index.html"><b>Back to website</b></a></p>
                                         </div>
                                         <div class="col-md-2">
-                                            <img src="admin/assets/images/auth/Logo-small-bottom.png" alt="small-logo.png">
+                                            <img src="admin/assets/images/logo_bps.ico" alt="small-logo.png" style="width:30px;">
                                         </div>
                                     </div>
                                 </div>
