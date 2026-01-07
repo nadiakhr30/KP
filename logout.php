@@ -100,7 +100,7 @@ $(document).ready(function() {
         className: "swal-button--confirm"
       }
     }).then(() => {
-      window.location.href = 'login.php';
+      window.location.href = 'index.php';
     });
   <?php endif; ?>
 });
