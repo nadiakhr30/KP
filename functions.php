@@ -10,7 +10,7 @@ function checkLogin($data, &$errors)
         session_start();
     }
 
-    $email = $data["email"];
+    $email = htmlspecialchars(trim($data["email"]));
     $password = $data["password"];
 
     if (empty($email)) {
