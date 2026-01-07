@@ -111,13 +111,13 @@ function renderLayout($content, $script) {
       <div class="row gy-4">
         <div class="col-lg-4 col-md-6 footer-about">
           <a href="index.html" class="d-flex align-items-center">
-            <span class="sitename">Arsha</span>
+            <span class="sitename">Humas BPS Bangkalan</span>
           </a>
           <div class="footer-contact pt-3">
-            <p>A108 Adam Street</p>
-            <p>New York, NY 535022</p>
-            <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-            <p><strong>Email:</strong> <span>info@example.com</span></p>
+            <p>Jl. Halim Perdana Kusuma No.5, Area Sawah, Mlajah</p>
+            <p>Kec. Bangkalan, Kabupaten Bangkalan, Jawa Timur 69116</p>
+            <p class="mt-3"><strong>Phone:</strong> <span>0313095622</span></p>
+            <p><strong>Email:</strong> <span>bps35260@gmail.com</span></p>
           </div>
         </div>
 
