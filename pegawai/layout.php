@@ -81,7 +81,20 @@ function renderLayout($content, $script) {
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-getstarted" href="../logout.php">Logout</a>
+        <div class="ms-3">
+          <div class="dropdown">
+            <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="assets/img/person/person-m-7.webp" alt="User" width="36" height="36" class="rounded-circle me-2">
+              <i class="bi bi-chevron-down"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="#!"><i class="bi bi-gear-fill me-2"></i>Settings</a></li>
+              <li><a class="dropdown-item" href="user-profile.html"><i class="bi bi-person-fill me-2"></i>Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="../logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+            </ul>
+          </div>
+        </div>
 
     </div>
   </header>

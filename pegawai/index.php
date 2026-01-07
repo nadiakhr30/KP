@@ -18,7 +18,7 @@ if (!isset($_SESSION['user']) && $_SESSION['role']=="Pegawai") {
       <div class="container">
         <div class="row gy-4">
           <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="zoom-out">
-            <h1>Data Statistik Resmi Kabupaten Bangkalan</h1>
+            <h1>Sistem Kehumasan Badan Pusat Statistik Kabupaten Bangkalan</h1>
             <p>Menyajikan data akurat untuk mendukung perencanaan pembangunan daerah.</p>
             <div class="d-flex">
               <a href="https://youtu.be/0DGiy6TEdS0?si=NJWU-PYx0wBA2xEf" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Watch Video</span></a>
