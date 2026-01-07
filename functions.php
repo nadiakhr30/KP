@@ -10,7 +10,7 @@ function checkLogin($data, &$errors)
         session_start();
     }
 
-    $email = htmlspecialchars(trim($data["email"]));
+    $email = $data["email"];
     $password = $data["password"];
 
     if (empty($email)) {
@@ -36,12 +36,9 @@ function checkLogin($data, &$errors)
                     $_SESSION["role"] = "Admin";
                     header("Location: admin/index.php");
                     exit;
-                } elseif ($user["role"] == '2') {
+                } else {
                     $_SESSION["role"] = "Pegawai";
                     header("Location: pegawai/index.php");
-                    exit;
-                } else {
-                    header("Location: index.php");
                     exit;
                 }
             } else {

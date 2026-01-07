@@ -155,7 +155,7 @@ function renderLayout($content, $script, $nama_halaman) {
                                       </a>
                                   </li>
                                   <li class="waves-effect waves-light">
-                                      <a href="auth-normal-sign-in.html">
+                                      <a href="../logout.php">
                                           <i class="ti-layout-sidebar-left"></i> Logout
                                       </a>
                                   </li>

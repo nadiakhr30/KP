@@ -1,9 +1,9 @@
 <?php
 session_start();
 if (isset($_SESSION["user"])) {
-    if (isset($_SESSION["role"]) && $_SESSION["role"] === "Admin") {
+    if ($_SESSION["role"] === "Admin") {
         header("Location: admin/index.php");
-    } else {
+    } elseif ($_SESSION["role"] === "Pegawai") {
         header("Location: pegawai/index.php");
     }
     exit;
@@ -137,6 +137,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <span class="form-bar"></span>
                                         <label class="float-label">Password</label>
                                     </div>
+                                    <?php
+                                    if (!empty($errors)) {
+                                        echo '<div class="alert alert-danger mt-4" role="alert">';
+                                        foreach ($errors as $error) {
+                                            echo $error . '<br>';
+                                        }
+                                        echo '</div>';
+                                    }
+                                    ?>
                                     <div class="row m-t-25 text-left">
                                         <div class="col-12">
                                             <div class="checkbox-fade fade-in-primary d-">
