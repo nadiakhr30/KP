@@ -2,7 +2,7 @@
 function renderLayout($content, $script) {
     
   // Determine avatar HTML: prefer user's uploaded foto_profil, else Font Awesome icon, else default asset
-  $avatar_html = '<img src="assets/img/person/person-m-7.webp" alt="User" class="avatar-img me-2">';
+  $avatar_html = '<i class="fa-solid fa-user avatar-icon me-2"></i>';
   if (session_status() !== PHP_SESSION_ACTIVE) {
     @session_start();
   }

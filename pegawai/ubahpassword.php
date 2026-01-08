@@ -2,25 +2,52 @@
 session_start();
 require_once __DIR__ . '/../koneksi.php';
 
-if (!isset($_SESSION['user'])) {
-    header("Location: ../login.php");
-    exit;
+/* =====================
+   CEK TOKEN
+===================== */
+$token = $_GET['token'] ?? '';
+
+if ($token == '') {
+    die('Token tidak valid');
 }
 
-$id_user = $_SESSION['user']['id_user'];
+$q = mysqli_query($koneksi, "
+    SELECT id_user 
+    FROM user 
+    WHERE reset_token='$token' 
+      AND reset_expired > NOW()
+");
+
+$user = mysqli_fetch_assoc($q);
+
+if (!$user) {
+    die('Token sudah kadaluarsa atau salah');
+}
+
+$id_user = $user['id_user'];
 $showAlert = '';
 
+/* =====================
+   PROSES SIMPAN
+===================== */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $password_new = trim($_POST['password_new'] ?? '');
-    $password_confirm = trim($_POST['password_confirm'] ?? '');
+    $password_new     = trim($_POST['password_new']);
+    $password_confirm = trim($_POST['password_confirm']);
 
-    if ($password_new === '' || $password_confirm === '' || $password_new !== $password_confirm) {
+    if ($password_new === '' || $password_new !== $password_confirm) {
         $showAlert = 'mismatch';
     } else {
-        $update = "UPDATE user 
-                   SET password='" . mysqli_real_escape_string($koneksi, $password_new) . "' 
-                   WHERE id_user='" . mysqli_real_escape_string($koneksi, $id_user) . "'";
-        $showAlert = mysqli_query($koneksi, $update) ? 'success' : 'error_db';
+        $password_new = mysqli_real_escape_string($koneksi, $password_new);
+
+        $update = mysqli_query($koneksi, "
+            UPDATE user SET 
+                password='$password_new',
+                reset_token=NULL,
+                reset_expired=NULL
+            WHERE id_user='$id_user'
+        ");
+
+        $showAlert = $update ? 'success' : 'error';
     }
 }
 ?>
@@ -37,133 +64,81 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 body{
     font-family:'Poppins',sans-serif;
     background:#f4f7fb;
-    margin:0;
     padding:40px;
 }
-
-/* CARD */
-.form-container{
+.form-box{
+    max-width:420px;
+    margin:auto;
     background:#fff;
     padding:30px;
     border-radius:14px;
-    box-shadow:0 12px 30px rgba(0,0,0,.08);
-    max-width:520px;
-    margin:auto;
+    box-shadow:0 15px 30px rgba(0,0,0,.1);
 }
-
-h2{
-    margin-bottom:25px;
-    font-size:22px;
-    text-align:center;
-    color:#1f3c88;
-}
-
-/* FORM */
-label{
-    display:block;
-    margin-bottom:6px;
-    font-weight:600;
-}
-
-/* PASSWORD FIELD */
-.password-wrapper{
+.password-wrap{
     position:relative;
-    margin-bottom:18px;
+    margin-bottom:16px;
 }
-.password-wrapper input{
+.password-wrap input{
     width:100%;
-    padding:12px 42px 12px 12px;
+    padding:12px 40px 12px 12px;
     border-radius:8px;
-    border:1px solid #e6e6e6;
-    box-sizing:border-box;
+    border:1px solid #ddd;
 }
-
-/* ICON MATA */
-.password-wrapper i{
+.password-wrap i{
     position:absolute;
     top:50%;
-    right:14px;
+    right:12px;
     transform:translateY(-50%);
     cursor:pointer;
-    color:#888;
-    display:none; /* 👈 default disembunyikan */
+    display:none;
 }
-.password-wrapper i:hover{
-    color:#1e6cff;
-}
-
-/* BUTTON */
-.button-group{
-    display:flex;
-    gap:12px;
-}
-button,
-.back-button{
-    flex:1;
+button{
+    width:100%;
     padding:12px;
+    background:#1e6cff;
+    color:#fff;
     border:none;
     border-radius:8px;
     font-weight:600;
-    cursor:pointer;
-    text-align:center;
-    text-decoration:none;
-    color:#fff;
 }
-button{ background:#1e6cff; }
-button:hover{ background:#1557d6; }
-.back-button{ background:#9e9e9e; }
-.back-button:hover{ background:#7e7e7e; }
 </style>
 </head>
 
 <body>
 
-<div class="form-container">
-    <h2>Ubah Password</h2>
+<div class="form-box">
+<h2>Ubah Password</h2>
 
-    <form method="POST">
+<form method="POST">
+    <label>Password Baru</label>
+    <div class="password-wrap">
+        <input type="password" name="password_new" oninput="eye(this)" required>
+        <i class="fa-solid fa-eye-slash" onclick="toggle(this)"></i>
+    </div>
 
-        <label>Password Baru</label>
-        <div class="password-wrapper">
-            <input type="password" id="password_new" name="password_new" oninput="handleEye(this)" required>
-            <i class="fa-solid fa-eye-slash" onclick="togglePassword('password_new', this)"></i>
-        </div>
+    <label>Konfirmasi Password</label>
+    <div class="password-wrap">
+        <input type="password" name="password_confirm" oninput="eye(this)" required>
+        <i class="fa-solid fa-eye-slash" onclick="toggle(this)"></i>
+    </div>
 
-        <label>Konfirmasi Password Baru</label>
-        <div class="password-wrapper">
-            <input type="password" id="password_confirm" name="password_confirm" oninput="handleEye(this)" required>
-            <i class="fa-solid fa-eye-slash" onclick="togglePassword('password_confirm', this)"></i>
-        </div>
-
-        <div class="button-group">
-            <button type="submit">Ubah</button>
-            <a href="profile.php" class="back-button">Kembali</a>
-        </div>
-    </form>
+    <button type="submit">Simpan Password</button>
+</form>
 </div>
 
 <script>
-/* MUNCULKAN / SEMBUNYIKAN ICON BERDASARKAN ISI INPUT */
-function handleEye(input){
+function eye(input){
     const icon = input.nextElementSibling;
-    if(input.value.length > 0){
-        icon.style.display = "block";
-    }else{
-        icon.style.display = "none";
-        input.type = "password";
-        icon.className = "fa-solid fa-eye-slash";
-    }
+    icon.style.display = input.value ? 'block' : 'none';
 }
-
-/* TOGGLE PASSWORD */
-function togglePassword(id, icon){
-    const input = document.getElementById(id);
-    if(input.type === "password"){
-        input.type = "text";
-        icon.className = "fa-solid fa-eye";
+function toggle(icon){
+    const input = icon.previousElementSibling;
+    if(input.type === 'password'){
+        input.type = 'text';
+        icon.className = 'fa-solid fa-eye';
     }else{
-        input.type = "password";
-        icon.className = "fa-solid fa-eye-slash";
+        input.type = 'password';
+        icon.className = 'fa-solid fa-eye-slash';
     }
 }
 </script>
@@ -171,18 +146,14 @@ function togglePassword(id, icon){
 <script>
 <?php if ($showAlert === 'success'): ?>
 Swal.fire({
-    title: "Berhasil!",
-    text: "Password berhasil diubah.",
-    icon: "success",
-    showConfirmButton: false,
-    timer: 2000
-}).then(() => {
-    window.location.href = "profile.php";
-});
+    icon:'success',
+    title:'Berhasil',
+    text:'Password berhasil diubah'
+}).then(()=>window.location.href='../index.php');
 <?php elseif ($showAlert === 'mismatch'): ?>
-Swal.fire({ icon:"error", title:"Gagal", text:"Password baru dan konfirmasi tidak sama!" });
-<?php elseif ($showAlert === 'error_db'): ?>
-Swal.fire({ icon:"error", title:"Error", text:"Gagal menyimpan password." });
+Swal.fire({icon:'error',text:'Password tidak sama'});
+<?php elseif ($showAlert === 'error'): ?>
+Swal.fire({icon:'error',text:'Gagal menyimpan password'});
 <?php endif; ?>
 </script>
 
