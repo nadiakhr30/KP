@@ -1,6 +1,84 @@
 <?php
 function renderLayout($content, $script) {
-    ?>
+    
+  // Determine avatar HTML: prefer user's uploaded foto_profil, else Font Awesome icon, else default asset
+  $avatar_html = '<img src="assets/img/person/person-m-7.webp" alt="User" class="avatar-img me-2">';
+  if (session_status() !== PHP_SESSION_ACTIVE) {
+    @session_start();
+  }
+  if (!empty($_SESSION['user'])) {
+    // Attempt to fetch foto_profil from database
+    $userId = $_SESSION['user']['id_user'] ?? null;
+    $userEmail = $_SESSION['user']['email'] ?? null;
+    if ($userId || $userEmail) {
+      $koneksiPath = __DIR__ . '/../koneksi.php';
+      if (file_exists($koneksiPath)) {
+        require_once $koneksiPath;
+        $foto = '';
+                if ($userId) {
+          // Use existing $koneksi if available, otherwise try a temporary connection
+          $dbConn = (isset($koneksi) && $koneksi) ? $koneksi : null;
+          $tmpConn = null;
+          if (!$dbConn) {
+            // fallback: try to open a temporary connection (credentials from project koneksi.php)
+            $tmpConn = @mysqli_connect('localhost','root','123','sistem_kehumasan');
+            if ($tmpConn) $dbConn = $tmpConn;
+          }
+
+          if ($dbConn) {
+            $id_esc = mysqli_real_escape_string($dbConn, $userId);
+            $q = "SELECT foto_profil FROM user WHERE id_user='" . $id_esc . "' LIMIT 1";
+            $r = mysqli_query($dbConn, $q);
+            if ($r && mysqli_num_rows($r) > 0) {
+              $row = mysqli_fetch_assoc($r);
+              $foto = $row['foto_profil'] ?? '';
+            }
+          } else {
+            // as last resort, escape with addslashes
+            $id_esc = addslashes($userId);
+            $q = "SELECT foto_profil FROM user WHERE id_user='" . $id_esc . "' LIMIT 1";
+            // cannot run query without DB connection
+          }
+
+          if (!empty($tmpConn)) {
+            mysqli_close($tmpConn);
+          }
+        }
+        if (empty($foto) && $userEmail) {
+          // Use existing $koneksi if available, otherwise try a temporary connection
+          $dbConn2 = (isset($koneksi) && $koneksi) ? $koneksi : null;
+          $tmpConn2 = null;
+          if (!$dbConn2) {
+            $tmpConn2 = @mysqli_connect('localhost','root','123','sistem_kehumasan');
+            if ($tmpConn2) $dbConn2 = $tmpConn2;
+          }
+
+          if ($dbConn2) {
+            $email_esc = mysqli_real_escape_string($dbConn2, $userEmail);
+            $q = "SELECT foto_profil FROM user WHERE email='" . $email_esc . "' LIMIT 1";
+            $r = mysqli_query($dbConn2, $q);
+            if ($r && mysqli_num_rows($r) > 0) {
+              $row = mysqli_fetch_assoc($r);
+              $foto = $row['foto_profil'] ?? '';
+            }
+          }
+
+          if (!empty($tmpConn2)) {
+            mysqli_close($tmpConn2);
+          }
+        }
+        if (!empty($foto)) {
+          $uploadsPath = __DIR__ . '/../uploads/' . $foto;
+          if (file_exists($uploadsPath)) {
+                        $avatar_url = '../uploads/' . rawurlencode($foto);
+                        $avatar_html = '<img src="' . htmlspecialchars($avatar_url) . '" alt="User" class="avatar-img me-2">';
+          } 
+        }
+      }
+    }
+  }
+
+  ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,6 +107,19 @@ function renderLayout($content, $script) {
 
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    /* Avatar: fixed size, rounded and crop to fill without distortion */
+    .avatar-img{width:44px;height:44px;object-fit:cover;border-radius:50%;display:inline-block}
+    /* extra gap between nav and user avatar (increased) */
+    .user-area{margin-left:6rem}
+    @media (max-width:1199px){.user-area{margin-left:4rem}}
+    @media (max-width:991px){.user-area{margin-left:1rem}}
+    /* increase right padding for nav to prevent crowding */
+    .navmenu{padding-right:3rem}
+  </style>
 
   <!-- =======================================================
   * Template Name: Arsha
@@ -83,13 +174,11 @@ function renderLayout($content, $script) {
 
         <div class="ms-3">
           <div class="dropdown">
-            <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="assets/img/person/person-m-7.webp" alt="User" width="36" height="36" class="rounded-circle me-2">
-              <i class="bi bi-chevron-down"></i>
+            <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color:#fff">
+              <?= $avatar_html ?>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-              <li><a class="dropdown-item" href="#!"><i class="bi bi-gear-fill me-2"></i>Settings</a></li>
-              <li><a class="dropdown-item" href="user-profile.html"><i class="bi bi-person-fill me-2"></i>Profile</a></li>
+              <li><a class="dropdown-item" href="profile.php"><i class="bi bi-person-fill me-2"></i>View Profile</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="../logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
             </ul>
