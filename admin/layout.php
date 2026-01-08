@@ -233,7 +233,7 @@ function renderLayout($content, $script, $nama_halaman) {
                               </li>
                               <li>
                                   <a href="#" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-layers"></i><b>FC</b></span>
+                                      <span class="pcoded-micon"><i class="ti-harddrives"></i><b>FC</b></span>
                                       <span class="pcoded-mtext" data-i18n="???">Brankas Humas</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
@@ -265,22 +265,22 @@ function renderLayout($content, $script, $nama_halaman) {
                           <div class="pcoded-navigation-label" data-i18n="nav.category.forms">RUANG HUMAS</div>
                           <ul class="pcoded-item pcoded-left-item">
                               <li class=" ">
-                                  <a href="index.php" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-home"></i><b>D</b></span>
+                                  <a href="#" class="waves-effect waves-dark">
+                                      <span class="pcoded-micon"><i class="ti-layers-alt"></i><b>D</b></span>
                                       <span class="pcoded-mtext" data-i18n="???">Struktur Humas</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                               </li>
                               <li class=" ">
                                   <a href="#" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-layers"></i><b>FC</b></span>
+                                      <span class="pcoded-micon"><i class="ti-calendar"></i><b>FC</b></span>
                                       <span class="pcoded-mtext" data-i18n="???">Jadwal Konten Humas</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                               </li>
                               <li class="pcoded-hasmenu">
                                   <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i></span>
+                                      <span class="pcoded-micon"><i class="ti-briefcase"></i></span>
                                       <span class="pcoded-mtext"  data-i18n="???">Aset Humas</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
@@ -314,7 +314,7 @@ function renderLayout($content, $script, $nama_halaman) {
                           <ul class="pcoded-item pcoded-left-item">
                               <li class="pcoded-hasmenu">
                                   <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i></span>
+                                      <span class="pcoded-micon"><i class="ti-instagram"></i></span>
                                       <span class="pcoded-mtext"  data-i18n="???">Template Medsos</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
@@ -351,7 +351,7 @@ function renderLayout($content, $script, $nama_halaman) {
                               </li>
                               <li class="pcoded-hasmenu">
                                   <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i></span>
+                                      <span class="pcoded-micon"><i class="ti-folder"></i></span>
                                       <span class="pcoded-mtext"  data-i18n="???">Dokumentasi</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
@@ -374,7 +374,7 @@ function renderLayout($content, $script, $nama_halaman) {
                               </li>
                               <li class="pcoded-hasmenu">
                                   <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i></span>
+                                      <span class="pcoded-micon"><i class="ti-camera"></i></span>
                                       <span class="pcoded-mtext"  data-i18n="???">Galeri Foto</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
@@ -418,7 +418,7 @@ function renderLayout($content, $script, $nama_halaman) {
                               </li>
                               <li class="pcoded-hasmenu">
                                   <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i></span>
+                                      <span class="pcoded-micon"><i class="ti-video-camera"></i></span>
                                       <span class="pcoded-mtext"  data-i18n="???">Galeri Video</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
@@ -448,7 +448,7 @@ function renderLayout($content, $script, $nama_halaman) {
                               </li>
                               <li class="pcoded-hasmenu">
                                   <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i></span>
+                                      <span class="pcoded-micon"><i class="ti-files"></i></span>
                                       <span class="pcoded-mtext"  data-i18n="???">Laporan</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
@@ -488,14 +488,14 @@ function renderLayout($content, $script, $nama_halaman) {
                           <ul class="pcoded-item pcoded-left-item">
                               <li class=" ">
                                   <a href="#" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-home"></i><b>D</b></span>
+                                      <span class="pcoded-micon"><i class="ti-video-clapper"></i><b>D</b></span>
                                       <span class="pcoded-mtext" data-i18n="???">Video Operator</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                               </li>
                               <li class=" ">
                                   <a href="#" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-layers"></i><b>FC</b></span>
+                                      <span class="pcoded-micon"><i class="ti-blackboard"></i><b>FC</b></span>
                                       <span class="pcoded-mtext" data-i18n="???">Template OBS Rilis</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
@@ -505,7 +505,7 @@ function renderLayout($content, $script, $nama_halaman) {
                           <ul class="pcoded-item pcoded-left-item">
                               <li class=" ">
                                   <a href="#" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-home"></i><b>D</b></span>
+                                      <span class="pcoded-micon"><i class="ti-microphone"></i><b>D</b></span>
                                       <span class="pcoded-mtext" data-i18n="???">Pembinaan Kehumasan</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
