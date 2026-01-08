@@ -1,5 +1,7 @@
 <?php
 function renderLayout($content, $script, $nama_halaman) {
+
+    global $user;
     ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -139,26 +141,37 @@ function renderLayout($content, $script, $nama_halaman) {
                       <ul class="nav-right">
                           <li class="user-profile header-notification">
                               <a href="#!" class="waves-effect waves-light">
-                                  <img src="assets/images/avatar-4.jpg" class="img-radius" alt="User-Profile-Image">
-                                  <span>John Doe</span>
+                                <?php if ($_SESSION['user']['foto_profil'] == ""): ?>
+                                  <img src="../images/noimages.jpg" class="img-radius" alt="No Images">
                                   <i class="ti-angle-down"></i>
+                                <?php else: ?>
+                                  <img src="../images/<?= $_SESSION['user']['foto_profil'];?>" class="img-radius" alt="<?= $_SESSION['user']['foto_profil'];?>">;
+                                  <i class="ti-angle-down"></i>
+                                <?php endif; ?>
                               </a>
                               <ul class="show-notification profile-notification">
-                                  <li class="waves-effect waves-light">
-                                      <a href="#!">
-                                          <i class="ti-settings"></i> Settings
-                                      </a>
-                                  </li>
-                                  <li class="waves-effect waves-light">
-                                      <a href="user-profile.html">
-                                          <i class="ti-user"></i> Profile
-                                      </a>
-                                  </li>
-                                  <li class="waves-effect waves-light">
-                                      <a href="../logout.php">
-                                          <i class="ti-layout-sidebar-left"></i> Logout
-                                      </a>
-                                  </li>
+                                <div class="card">
+                                    <div class="card-header">
+                                        <li class="waves-effect waves-light">
+                                            <h4><?= $_SESSION['user']['nama'];?></h4>
+                                            <span style="font-weight: bold"><?= $_SESSION['role'];?></span>
+                                            <br>
+                                            <span><?= $_SESSION['user']['email'];?></span>
+                                        </li>
+                                    </div>
+                                    <div class="card-block">
+                                        <li class="waves-effect waves-light">
+                                            <a href="user-profile.html">
+                                                <i class="ti-user"></i> View Profile
+                                            </a>
+                                        </li>
+                                        <li class="waves-effect waves-light">
+                                            <a href="../logout.php">
+                                                <i class="ti-layout-sidebar-left"></i> Logout
+                                            </a>
+                                        </li>
+                                    </div>
+                                  </div>
                               </ul>
                           </li>
                       </ul>
@@ -441,7 +454,7 @@ function renderLayout($content, $script, $nama_halaman) {
     <script type="text/javascript" src="assets/pages/dashboard/custom-dashboard.js"></script>
     <script type="text/javascript" src="assets/js/script.js "></script>
     <!-- Javascript -->
-    <?= $script ?>
+    <?= $script; ?>
 </body>
 
 </html>

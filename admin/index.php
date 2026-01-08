@@ -1,6 +1,12 @@
 <?php
 ob_start();
 session_start();
+include_once("../koneksi.php");
+
+if (!isset($_SESSION['user']) && $_SESSION['role'] == "Admin") {
+    header('Location: ../index.php');
+    exit();
+}
 ?>
                         <div class="pcoded-inner-content">
                             <!-- Main-body start -->
@@ -313,7 +319,7 @@ session_start();
                                                 </div>
                                             </div>
                                             <div class="col-xl-4 col-md-12">
-                                                <div class="card ">
+                                                <div class="card">
                                                     <div class="card-header">
                                                         <h5>Team Members</h5>
                                                         <div class="card-header-right">
