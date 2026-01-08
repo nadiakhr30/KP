@@ -228,8 +228,8 @@ function toggleFullScreen() {
 
 $('body').append('' +
     '<div class="fixed-button">' +
-        '<a href="#" class="btn btn-md btn-primary">' +
-            '<i class="fa fa-arrow-up" aria-hidden="true"></i> Back to Top' +
+        '<a href="#" class="btn waves-effect waves-light btn-primary">' +
+            '<i class="fa fa-arrow-up" aria-hidden="true"></i>' +
         '</a> ' +
     '</div>' +
 '');
