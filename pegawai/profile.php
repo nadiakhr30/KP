@@ -235,7 +235,7 @@ td{
     <div class="btn-group">
       <a href="index.php" class="btn btn-back">Kembali</a>
       <a href="editprofil.php" class="btn btn-edit">Edit Profil</a>
-      <a href="ubahpassword.php" class="btn btn-password">Ubah Password</a>
+      <a href="../ubahpassword.php" class="btn btn-password">Ubah Password</a>
     </div>
 
   </div>

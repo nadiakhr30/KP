@@ -19,7 +19,7 @@ mysqli_query($koneksi, "
     WHERE email='$email'
 ");
 
-$link = "http://localhost/KP/pegawai/ubahpassword.php?token=$token";
+$link = "http://localhost/KP/ubahpassword.php?token=$token";
 
 $subject = "Reset Password";
 $message = "

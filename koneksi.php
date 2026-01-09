@@ -1,7 +1,7 @@
 <?php
 $host = 'localhost';
 $username = 'root';
-$password = '';
+$password = '123';
 $database = 'sistem_kehumasan';
 
 $koneksi = mysqli_connect($host, $username, $password, $database);
