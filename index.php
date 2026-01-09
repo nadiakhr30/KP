@@ -146,20 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         echo '</div>';
                                     }
                                     ?>
-                                    <div class="row m-t-25 text-left">
-                                        <div class="col-12">
-                                            <div class="checkbox-fade fade-in-primary d-">
-                                                <label>
-                                                    <input type="checkbox" value="">
-                                                    <span class="cr"><i class="cr-icon icofont icofont-ui-check txt-primary"></i></span>
-                                                    <span class="text-inverse">Remember me</span>
-                                                </label>
-                                            </div>
-                                            <div class="forgot-phone text-right f-right">
-                                                <a href="forgot_password.php" class="text-right f-w-600"> Forgot Password?</a>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                     <div class="row m-t-30">
                                         <div class="col-md-12">
                                             <button type="submit" class="btn btn-primary btn-md btn-block waves-effect waves-light text-center m-b-20">Sign in</button>

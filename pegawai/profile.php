@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/../koneksi.php';
 
 if (!isset($_SESSION['user'])) {
-    header('Location: ../login.php');
+    header('Location: ../index.php');
     exit;
 }
 
@@ -41,6 +41,7 @@ if (!$data) {
 <title>Profil Pengguna</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
 body{
@@ -233,9 +234,15 @@ td{
     </div>
 
     <div class="btn-group">
-      <a href="index.php" class="btn btn-back">Kembali</a>
-      <a href="editprofil.php" class="btn btn-edit">Edit Profil</a>
-      <a href="../ubahpassword.php" class="btn btn-password">Ubah Password</a>
+    <!-- Tombol Kembali -->
+    <a href="index.php" class="btn btn-back">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+
+    <!-- Tombol Edit Profil -->
+    <a href="editprofil.php" class="btn btn-edit">
+        <i class="fas fa-user-edit"></i> Edit Profil
+    </a>
     </div>
 
   </div>

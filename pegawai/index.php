@@ -239,12 +239,12 @@ if (!isset($_SESSION['user']) && $_SESSION['role']=="Pegawai") {
 
     </section><!-- /Skills Section -->
 
-    <!-- Services Section -->
+    <!-- Manajemen Link -->
     <section id="services" class="services section light-background">
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <h2>Services</h2>
+        <h2>Manajemen Link</h2>
         <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
       </div><!-- End Section Title -->
 
@@ -295,8 +295,8 @@ if (!isset($_SESSION['user']) && $_SESSION['role']=="Pegawai") {
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <h2>Work Process</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+        <h2>Manajemen Link</h2>
+        <p>Temukan semua tautan resmi BPS dengan mudah dalam satu tempat untuk referensi dan data cepat.</p>
       </div><!-- End Section Title -->
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -306,51 +306,60 @@ if (!isset($_SESSION['user']) && $_SESSION['role']=="Pegawai") {
           <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
             <div class="steps-item">
               <div class="steps-image">
-                <img src="assets/img/steps/steps-1.webp" alt="Step 1" class="img-fluid" loading="lazy">
+                <img src="assets/img/steps/bkl.png" alt="BPS Bangkalan" class="img-fluid" loading="lazy">
               </div>
               <div class="steps-content">
                 <div class="steps-number">01</div>
-                <h3>Research &amp; Analysis</h3>
-                <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione.</p>
+                <h3><a href="https://bangkalankab.bps.go.id/id" target="_blank">BPS Bangkalan</a></h3>
+                <p>Menyajikan data akurat dan terpercaya untuk mendukung kebijakan, penelitian, dan masyarakat secara umum.</p>
                 <div class="steps-features">
                   <div class="feature-item">
                     <i class="bi bi-check-circle"></i>
-                    <span>Market Research</span>
+                    <span>Statistik Penduduk & Demografi</span>
                   </div>
                   <div class="feature-item">
                     <i class="bi bi-check-circle"></i>
-                    <span>Data Analysis</span>
+                    <span>Data Ekonomi & Perdagangan</span>
                   </div>
                   <div class="feature-item">
                     <i class="bi bi-check-circle"></i>
-                    <span>User Feedback</span>
+                    <span>Laporan & Publikasi</span>
+                  </div>
+                  <div class="feature-item">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Inovasi Digital & Open Data</span>
                   </div>
                 </div>
               </div>
             </div><!-- End Steps Item -->
           </div>
 
+
           <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
             <div class="steps-item">
               <div class="steps-image">
-                <img src="assets/img/steps/steps-2.webp" alt="Step 2" class="img-fluid" loading="lazy">
+                <img src="assets/img/steps/sby.png" alt="Step 2" class="img-fluid" loading="lazy">
               </div>
               <div class="steps-content">
                 <div class="steps-number">02</div>
-                <h3>Design &amp; Planning</h3>
-                <p>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.</p>
+                <h3><a href="https://surabayakota.bps.go.id/id" target="_blank">BPS Surabaya</a></h3>
+                <p>Menyajikan data akurat dan terpercaya untuk mendukung kebijakan, penelitian, dan masyarakat secara umum.</p>
                 <div class="steps-features">
                   <div class="feature-item">
                     <i class="bi bi-check-circle"></i>
-                    <span>Wireframing</span>
+                    <span>Statistik Penduduk & Demografi</span>
                   </div>
                   <div class="feature-item">
                     <i class="bi bi-check-circle"></i>
-                    <span>UI/UX Design</span>
+                    <span>Data Ekonomi & Perdagangan</span>
                   </div>
                   <div class="feature-item">
                     <i class="bi bi-check-circle"></i>
-                    <span>Prototyping</span>
+                    <span>Laporan & Publikasi</span>
+                  </div>
+                  <div class="feature-item">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Inovasi Digital & Open Data</span>
                   </div>
                 </div>
               </div>
@@ -360,24 +369,28 @@ if (!isset($_SESSION['user']) && $_SESSION['role']=="Pegawai") {
           <div class="col-lg-4" data-aos="fade-up" data-aos-delay="400">
             <div class="steps-item">
               <div class="steps-image">
-                <img src="assets/img/steps/steps-3.webp" alt="Step 3" class="img-fluid" loading="lazy">
+                <img src="assets/img/steps/sidoarjo.png" alt="Step 3" class="img-fluid" loading="lazy">
               </div>
               <div class="steps-content">
                 <div class="steps-number">03</div>
-                <h3>Development &amp; Launch</h3>
-                <p>Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil.</p>
+                <h3><a href="https://sidoarjokab.bps.go.id/id" target="_blank">BPS Sidoarjo</a></h3>
+                <p>Menyajikan data akurat dan terpercaya untuk mendukung kebijakan, penelitian, dan masyarakat secara umum.</p>
                 <div class="steps-features">
                   <div class="feature-item">
                     <i class="bi bi-check-circle"></i>
-                    <span>Development</span>
+                    <span>Statistik Penduduk & Demografi</span>
                   </div>
                   <div class="feature-item">
                     <i class="bi bi-check-circle"></i>
-                    <span>Testing</span>
+                    <span>Data Ekonomi & Perdagangan</span>
                   </div>
                   <div class="feature-item">
                     <i class="bi bi-check-circle"></i>
-                    <span>Deployment</span>
+                    <span>Laporan & Publikasi</span>
+                  </div>
+                  <div class="feature-item">
+                    <i class="bi bi-check-circle"></i>
+                    <span>Inovasi Digital & Open Data</span>
                   </div>
                 </div>
               </div>
@@ -388,7 +401,7 @@ if (!isset($_SESSION['user']) && $_SESSION['role']=="Pegawai") {
 
       </div>
 
-    </section><!-- /Work Process Section -->
+    </section><!-- Manajemen Link-->
 
     <!-- Call To Action Section -->
     <section id="call-to-action" class="call-to-action section dark-background">
