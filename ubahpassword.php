@@ -6,21 +6,25 @@ require_once __DIR__ . '/../koneksi.php';
    CEK TOKEN
 ===================== */
 $token = $_GET['token'] ?? '';
+$email = $_GET['email'] ?? '';
 
-if ($token == '') {
+if ($token === '' || $email === '') {
     die('Token tidak valid');
 }
 
-$q = mysqli_query($koneksi, "
-    SELECT id_user 
+$stmt = $koneksi->prepare("
+    SELECT id_user, reset_token 
     FROM user 
-    WHERE reset_token='$token' 
+    WHERE email=? 
+      AND reset_token IS NOT NULL
       AND reset_expired > NOW()
 ");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
 
-$user = mysqli_fetch_assoc($q);
-
-if (!$user) {
+if (!$user || !password_verify($token, $user['reset_token'])) {
     die('Token sudah kadaluarsa atau salah');
 }
 
@@ -37,17 +41,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password_new === '' || $password_new !== $password_confirm) {
         $showAlert = 'mismatch';
     } else {
-        $password_new = password_hash($password_new, PASSWORD_DEFAULT);
+        $hash = password_hash($password_new, PASSWORD_DEFAULT);
 
-        $update = mysqli_query($koneksi, "
+        // ⛔ TOKEN DIHAPUS SETELAH PASSWORD BERHASIL DIUBAH
+        $stmt = $koneksi->prepare("
             UPDATE user SET 
-                password='$password_new',
+                password=?,
                 reset_token=NULL,
                 reset_expired=NULL
-            WHERE id_user='$id_user'
+            WHERE id_user=?
         ");
+        $stmt->bind_param("si", $hash, $id_user);
 
-        $showAlert = $update ? 'success' : 'error';
+        $showAlert = $stmt->execute() ? 'success' : 'error';
     }
 }
 ?>
@@ -149,11 +155,13 @@ Swal.fire({
     icon:'success',
     title:'Berhasil',
     text:'Password berhasil diubah'
-}).then(()=>window.location.href='../index.php');
+}).then(() => {
+    window.location.href = 'index.php'; // halaman login
+});
 <?php elseif ($showAlert === 'mismatch'): ?>
-Swal.fire({icon:'error',text:'Password tidak sama'});
+Swal.fire({ icon:'error', text:'Password tidak sama' });
 <?php elseif ($showAlert === 'error'): ?>
-Swal.fire({icon:'error',text:'Gagal menyimpan password'});
+Swal.fire({ icon:'error', text:'Gagal menyimpan password' });
 <?php endif; ?>
 </script>
 
