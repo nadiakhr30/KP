@@ -1,8 +1,8 @@
 <?php
-function renderLayout($content, $script, $nama_halaman) {
+function renderLayout($content, $script) {
 
-    global $user;
-    ?>
+global $user;
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,6 +32,9 @@ function renderLayout($content, $script, $nama_halaman) {
         <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
       <!-- Style.css -->
       <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+      <!-- Full Calendar -->
+      <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 <style>
 
 /* ======================
@@ -541,7 +544,7 @@ function renderLayout($content, $script, $nama_halaman) {
     <script type="text/javascript" src="assets/js/SmoothScroll.js"></script>
     <script src="assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
     <!-- Chart js -->
-    <script type="text/javascript" src="assets/js/chart.js/Chart.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- amchart js -->
     <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
     <script src="assets/pages/widget/amchart/gauge.js"></script>

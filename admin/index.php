@@ -7,6 +7,56 @@ if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
     header('Location: ../index.php');
     exit();
 }
+
+// TOTAL HIRED EMPLOYEE (user aktif)
+$qUser = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM user WHERE status = 1");
+$totalUser = mysqli_fetch_assoc($qUser)['total'];
+
+// TOTAL TIM
+$qTim = mysqli_query($koneksi, "SELECT COUNT(DISTINCT tim) AS total FROM jadwal WHERE tim IS NOT NULL");
+$totalTim = mysqli_fetch_assoc($qTim)['total'];
+
+// TOTAL ASET
+$qAset = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM aset");
+$totalAset = mysqli_fetch_assoc($qAset)['total'];
+
+// TOTAL TENGGAT (jadwal yang belum selesai)
+$qDeadline = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM jadwal WHERE status != 2");
+$totalDeadline = mysqli_fetch_assoc($qDeadline)['total'];
+
+// SKILL DATA FOR CHART
+$qSkill = mysqli_query($koneksi, "
+SELECT
+  SUM(skill_data_contributor) AS data_contributor,
+  SUM(skill_content_creator) AS content_creator,
+  SUM(skill_editor_photo_layout) AS editor_photo_layout,
+  SUM(skill_editor_video) AS editor_video,
+  SUM(skill_photo_videographer) AS photo_videographer,
+  SUM(skill_talent) AS talent,
+  SUM(skill_project_manager) AS project_manager,
+  SUM(skill_copywriting) AS copywriting,
+  SUM(skill_protokol) AS protokol,
+  SUM(skill_mc) AS mc,
+  SUM(skill_operator) AS operator
+FROM user
+");
+$skill = mysqli_fetch_assoc($qSkill);
+
+// STATUS JADWAL FOR CHART
+$qStatus = mysqli_query($koneksi, "SELECT status, COUNT(*) AS total FROM jadwal GROUP BY status");
+$statusData = [];
+while($s = mysqli_fetch_assoc($qStatus)){
+  $statusData[] = $s;
+}
+
+// MEDIA CHART
+$qMedia = mysqli_query($koneksi, "SELECT j.nama_jenis, COUNT(m.id_media) AS total FROM media m JOIN sub_jenis sj ON m.id_sub_jenis = sj.id_sub_jenis JOIN jenis j ON sj.id_jenis = j.id_jenis GROUP BY j.nama_jenis");
+$labels = [];
+$data = [];
+while($m = mysqli_fetch_assoc($qMedia)){
+  $labels[] = $m['nama_jenis'];
+  $data[] = $m['total'];
+}
 ?>
                   <div class="pcoded-content">
                       <!-- Page-header start -->
@@ -42,49 +92,13 @@ if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
                                             <div class="col-xl-3 col-md-6">
                                                 <div class="card">
                                                     <div class="card-block">
-                                                        <div class="row align-items-center">
-                                                            <div class="col-8">
-                                                                <h4 class="text-c-purple">$30200</h4>
-                                                                <h6 class="text-muted m-b-0">All Earnings</h6>
+                                                        <div class="row align-items-center m-l-0">
+                                                            <div class="col-auto">
+                                                                <i class="fa fa-user f-30 text-c-purple"></i>
                                                             </div>
-                                                            <div class="col-4 text-right">
-                                                                <i class="fa fa-bar-chart f-28"></i>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-footer bg-c-purple">
-                                                        <div class="row align-items-center">
-                                                            <div class="col-9">
-                                                                <p class="text-white m-b-0">% change</p>
-                                                            </div>
-                                                            <div class="col-3 text-right">
-                                                                <i class="fa fa-line-chart text-white f-16"></i>
-                                                            </div>
-                                                        </div>
-            
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-md-6">
-                                                <div class="card">
-                                                    <div class="card-block">
-                                                        <div class="row align-items-center">
-                                                            <div class="col-8">
-                                                                <h4 class="text-c-green">290+</h4>
-                                                                <h6 class="text-muted m-b-0">Page Views</h6>
-                                                            </div>
-                                                            <div class="col-4 text-right">
-                                                                <i class="fa fa-file-text-o f-28"></i>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-footer bg-c-green">
-                                                        <div class="row align-items-center">
-                                                            <div class="col-9">
-                                                                <p class="text-white m-b-0">% change</p>
-                                                            </div>
-                                                            <div class="col-3 text-right">
-                                                                <i class="fa fa-line-chart text-white f-16"></i>
+                                                            <div class="col-auto">
+                                                                <h6 class="text-muted m-b-10">Total Karyawan</h6>
+                                                                <h2 class="m-b-0"><?= $totalUser; ?></h2>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -93,23 +107,13 @@ if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
                                             <div class="col-xl-3 col-md-6">
                                                 <div class="card">
                                                     <div class="card-block">
-                                                        <div class="row align-items-center">
-                                                            <div class="col-8">
-                                                                <h4 class="text-c-red">145</h4>
-                                                                <h6 class="text-muted m-b-0">Task Completed</h6>
+                                                        <div class="row align-items-center m-l-0">
+                                                            <div class="col-auto">
+                                                                <i class="fa fa-group f-30 text-c-purple"></i>
                                                             </div>
-                                                            <div class="col-4 text-right">
-                                                                <i class="fa fa-calendar-check-o f-28"></i>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-footer bg-c-red">
-                                                        <div class="row align-items-center">
-                                                            <div class="col-9">
-                                                                <p class="text-white m-b-0">% change</p>
-                                                            </div>
-                                                            <div class="col-3 text-right">
-                                                                <i class="fa fa-line-chart text-white f-16"></i>
+                                                            <div class="col-auto">
+                                                                <h6 class="text-muted m-b-10">Total Tim</h6>
+                                                                <h2 class="m-b-0"><?= $totalTim; ?></h2>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -118,36 +122,55 @@ if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
                                             <div class="col-xl-3 col-md-6">
                                                 <div class="card">
                                                     <div class="card-block">
-                                                        <div class="row align-items-center">
-                                                            <div class="col-8">
-                                                                <h4 class="text-c-blue">500</h4>
-                                                                <h6 class="text-muted m-b-0">Downloads</h6>
+                                                        <div class="row align-items-center m-l-0">
+                                                            <div class="col-auto">
+                                                                <i class="fa fa-archive f-30 text-c-purple"></i>
                                                             </div>
-                                                            <div class="col-4 text-right">
-                                                                <i class="fa fa-hand-o-down f-28"></i>
+                                                            <div class="col-auto">
+                                                                <h6 class="text-muted m-b-10">Total Aset</h6>
+                                                                <h2 class="m-b-0"><?= $totalAset; ?></h2>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="card-footer bg-c-blue">
-                                                        <div class="row align-items-center">
-                                                            <div class="col-9">
-                                                                <p class="text-white m-b-0">% change</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-3 col-md-6">
+                                                <div class="card">
+                                                    <div class="card-block">
+                                                        <div class="row align-items-center m-l-0">
+                                                            <div class="col-auto">
+                                                                <i class="fa fa-clock-o f-30 text-c-purple"></i>
                                                             </div>
-                                                            <div class="col-3 text-right">
-                                                                <i class="fa fa-line-chart text-white f-16"></i>
+                                                            <div class="col-auto">
+                                                                <h6 class="text-muted m-b-10">Total Tenggat</h6>
+                                                                <h2 class="m-b-0"><?= $totalDeadline; ?></h2>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <!-- task, page, download counter  end -->
-    
-                                            <!--  sale analytics start -->
+                                            <div class="col-xl-4 col-md-6">
+                                                <div class="card ">
+                                                    <div class="card-header">
+                                                        <h5>Peta Bangkalan</h5>
+                                                        <div class="card-header-right">
+                                                            <ul class="list-unstyled card-option">
+                                                                <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                                                                <li><i class="fa fa-window-maximize full-card"></i></li>
+                                                                <li><i class="fa fa-minus minimize-card"></i></li>
+                                                                <li><i class="fa fa-refresh reload-card"></i></li>
+                                                                <li><i class="fa fa-trash close-card"></i></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-block"></div>
+                                                </div>
+                                            </div>
                                             <div class="col-xl-8 col-md-12">
-                                                <div class="card">
+                                                <div class="card ">
                                                     <div class="card-header">
-                                                        <h5>Sales Analytics</h5>
-                                                        <span class="text-muted">Get 15% Off on <a href="https://www.amcharts.com/" target="_blank">amCharts</a> licences. Use code "codedthemes" and get the discount.</span>
+                                                        <h5>Kalender & Jadwal</h5>
                                                         <div class="card-header-right">
                                                             <ul class="list-unstyled card-option">
                                                                 <li><i class="fa fa fa-wrench open-card-option"></i></li>
@@ -158,51 +181,13 @@ if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                    <div class="card-block">
-                                                        <div id="sales-analytics" style="height: 400px;"></div>
-                                                    </div>
+                                                    <div class="card-block"><div id="calendar"></div></div>
                                                 </div>
                                             </div>
-                                            <div class="col-xl-4 col-md-12">
-                                                <div class="card">
-                                                    <div class="card-block">
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <h4>$256.23</h4>
-                                                                <p class="text-muted">This Month</p>
-                                                            </div>
-                                                            <div class="col-auto">
-                                                                <label class="label label-success">+20%</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-sm-8">
-                                                                <canvas id="this-month" style="height: 150px;"></canvas>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="card quater-card">
-                                                    <div class="card-block">
-                                                        <h6 class="text-muted m-b-15">This Quarter</h6>
-                                                        <h4>$3,9452.50</h4>
-                                                        <p class="text-muted">$3,9452.50</p>
-                                                        <h5>87</h5>
-                                                        <p class="text-muted">Online Revenue<span class="f-right">80%</span></p>
-                                                        <div class="progress"><div class="progress-bar bg-c-blue" style="width: 80%"></div></div>
-                                                        <h5 class="m-t-15">68</h5>
-                                                        <p class="text-muted">Offline Revenue<span class="f-right">50%</span></p>
-                                                        <div class="progress"><div class="progress-bar bg-c-green" style="width: 50%"></div></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!--  sale analytics end -->
-    
-                                            <!--  project and team member start -->
-                                            <div class="col-xl-8 col-md-12">
-                                                <div class="card table-card">
+                                            <div class="col-xl-3 col-md-6">
+                                                <div class="card ">
                                                     <div class="card-header">
-                                                        <h5>Projects</h5>
+                                                        <h5>Status Jadwal Kegiatan</h5>
                                                         <div class="card-header-right">
                                                             <ul class="list-unstyled card-option">
                                                                 <li><i class="fa fa fa-wrench open-card-option"></i></li>
@@ -213,138 +198,13 @@ if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                    <div class="card-block">
-                                                        <div class="table-responsive">
-                                                            <table class="table table-hover">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th>
-                                                                        <div class="chk-option">
-                                                                            <div class="checkbox-fade fade-in-primary">
-                                                                                <label class="check-task">
-                                                                                    <input type="checkbox" value="">
-                                                                                    <span class="cr">
-                                                                                            <i class="cr-icon fa fa-check txt-default"></i>
-                                                                                        </span>
-                                                                                </label>
-                                                                            </div>
-                                                                        </div>
-                                                                        Assigned</th>
-                                                                    <th>Name</th>
-                                                                    <th>Due Date</th>
-                                                                    <th class="text-right">Priority</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="chk-option">
-                                                                            <div class="checkbox-fade fade-in-primary">
-                                                                                <label class="check-task">
-                                                                                    <input type="checkbox" value="">
-                                                                                    <span class="cr">
-                                                                                                <i class="cr-icon fa fa-check txt-default"></i>
-                                                                                            </span>
-                                                                                </label>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="d-inline-block align-middle">
-                                                                            <img src="assets/images/avatar-4.jpg" alt="user image" class="img-radius img-40 align-top m-r-15">
-                                                                            <div class="d-inline-block">
-                                                                                <h6>John Deo</h6>
-                                                                                <p class="text-muted m-b-0">Graphics Designer</p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>Able Pro</td>
-                                                                    <td>Jun, 26</td>
-                                                                    <td class="text-right"><label class="label label-danger">Low</label></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="chk-option">
-                                                                            <div class="checkbox-fade fade-in-primary">
-                                                                                <label class="check-task">
-                                                                                    <input type="checkbox" value="">
-                                                                                    <span class="cr">
-                                                                                                <i class="cr-icon fa fa-check txt-default"></i>
-                                                                                            </span>
-                                                                                </label>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="d-inline-block align-middle">
-                                                                            <img src="assets/images/avatar-5.jpg" alt="user image" class="img-radius img-40 align-top m-r-15">
-                                                                            <div class="d-inline-block">
-                                                                                <h6>Jenifer Vintage</h6>
-                                                                                <p class="text-muted m-b-0">Web Designer</p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>Mashable</td>
-                                                                    <td>March, 31</td>
-                                                                    <td class="text-right"><label class="label label-primary">high</label></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="chk-option">
-                                                                            <div class="checkbox-fade fade-in-primary">
-                                                                                <label class="check-task">
-                                                                                    <input type="checkbox" value="">
-                                                                                    <span class="cr">
-                                                                                                <i class="cr-icon fa fa-check txt-default"></i>
-                                                                                            </span>
-                                                                                </label>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="d-inline-block align-middle">
-                                                                            <img src="assets/images/avatar-3.jpg" alt="user image" class="img-radius img-40 align-top m-r-15">
-                                                                            <div class="d-inline-block">
-                                                                                <h6>William Jem</h6>
-                                                                                <p class="text-muted m-b-0">Developer</p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>Flatable</td>
-                                                                    <td>Aug, 02</td>
-                                                                    <td class="text-right"><label class="label label-success">medium</label></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="chk-option">
-                                                                            <div class="checkbox-fade fade-in-primary">
-                                                                                <label class="check-task">
-                                                                                    <input type="checkbox" value="">
-                                                                                    <span class="cr">
-                                                                                                <i class="cr-icon fa fa-check txt-default"></i>
-                                                                                            </span>
-                                                                                </label>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="d-inline-block align-middle">
-                                                                            <img src="assets/images/avatar-2.jpg" alt="user image" class="img-radius img-40 align-top m-r-15">
-                                                                            <div class="d-inline-block">
-                                                                                <h6>David Jones</h6>
-                                                                                <p class="text-muted m-b-0">Developer</p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>Guruable</td>
-                                                                    <td>Sep, 22</td>
-                                                                    <td class="text-right"><label class="label label-primary">high</label></td>
-                                                                </tr>
-                                                                </tbody>
-                                                            </table>
-                                                            <div class="text-right m-r-20">
-                                                                <a href="#!" class=" b-b-primary text-primary">View all Projects</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                    <div class="card-block"><canvas id="statusChart"></canvas></div>
                                                 </div>
                                             </div>
-                                            <div class="col-xl-4 col-md-12">
-                                                <div class="card">
+                                            <div class="col-xl-3 col-md-6">
+                                                <div class="card ">
                                                     <div class="card-header">
-                                                        <h5>Team Members</h5>
+                                                        <h5>Media Chart</h5>
                                                         <div class="card-header-right">
                                                             <ul class="list-unstyled card-option">
                                                                 <li><i class="fa fa fa-wrench open-card-option"></i></li>
@@ -355,49 +215,26 @@ if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                    <div class="card-block">
-                                                        <div class="align-middle m-b-30">
-                                                            <img src="assets/images/avatar-2.jpg" alt="user image" class="img-radius img-40 align-top m-r-15">
-                                                            <div class="d-inline-block">
-                                                                <h6>David Jones</h6>
-                                                                <p class="text-muted m-b-0">Developer</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="align-middle m-b-30">
-                                                            <img src="assets/images/avatar-1.jpg" alt="user image" class="img-radius img-40 align-top m-r-15">
-                                                            <div class="d-inline-block">
-                                                                <h6>David Jones</h6>
-                                                                <p class="text-muted m-b-0">Developer</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="align-middle m-b-30">
-                                                            <img src="assets/images/avatar-3.jpg" alt="user image" class="img-radius img-40 align-top m-r-15">
-                                                            <div class="d-inline-block">
-                                                                <h6>David Jones</h6>
-                                                                <p class="text-muted m-b-0">Developer</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="align-middle m-b-30">
-                                                            <img src="assets/images/avatar-4.jpg" alt="user image" class="img-radius img-40 align-top m-r-15">
-                                                            <div class="d-inline-block">
-                                                                <h6>David Jones</h6>
-                                                                <p class="text-muted m-b-0">Developer</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="align-middle m-b-10">
-                                                            <img src="assets/images/avatar-5.jpg" alt="user image" class="img-radius img-40 align-top m-r-15">
-                                                            <div class="d-inline-block">
-                                                                <h6>David Jones</h6>
-                                                                <p class="text-muted m-b-0">Developer</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="text-center">
-                                                            <a href="#!" class="b-b-primary text-primary">View all Projects</a>
-                                                        </div>
-                                                    </div>
+                                                    <div class="card-block"><canvas id="mediaChart"></canvas></div>
                                                 </div>
                                             </div>
-                                            <!--  project and team member end -->
+                                            <div class="col-xl-6 col-md-12">
+                                                <div class="card ">
+                                                    <div class="card-header">
+                                                        <h5>Skill Chart</h5>
+                                                        <div class="card-header-right">
+                                                            <ul class="list-unstyled card-option">
+                                                                <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                                                                <li><i class="fa fa-window-maximize full-card"></i></li>
+                                                                <li><i class="fa fa-minus minimize-card"></i></li>
+                                                                <li><i class="fa fa-refresh reload-card"></i></li>
+                                                                <li><i class="fa fa-trash close-card"></i></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-block"><canvas id="skillChart"></canvas></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <!-- Page-body end -->
@@ -406,6 +243,39 @@ if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
                             </div>
                         </div>
                       </div>
+<div class="modal fade" id="jadwalModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalJudul"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <table class="table table-sm">
+          <tr>
+            <th width="150">Tanggal</th>
+            <td id="modalTanggal"></td>
+          </tr>
+          <tr>
+            <th>Tim</th>
+            <td id="modalTim"></td>
+          </tr>
+          <tr>
+            <th>Status</th>
+            <td id="modalStatus"></td>
+          </tr>
+          <tr>
+            <th>Keterangan</th>
+            <td id="modalKeterangan"></td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
                         <!-- Page-header end -->
                         <!-- Page-header end -->
                         <!-- Page-header end -->
@@ -413,9 +283,107 @@ if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
 $content = ob_get_clean();
 ob_start();
 ?>
-<script></script>
+<script>
+new Chart(document.getElementById('skillChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Data Contributor', 'Content Creator', 'Editor Photo Layout', 'Editor Video', 'Photo Videographer', 'Talent', 'Project Manager', 'Copywriting', 'Protokol', 'MC', 'Operator'],
+    datasets: [{
+      data: [
+        <?= $skill['data_contributor'] ?>,
+        <?= $skill['content_creator'] ?>,
+        <?= $skill['editor_photo_layout'] ?>,
+        <?= $skill['editor_video'] ?>,
+        <?= $skill['photo_videographer'] ?>,
+        <?= $skill['talent'] ?>,
+        <?= $skill['project_manager'] ?>,
+        <?= $skill['copywriting'] ?>,
+        <?= $skill['protokol'] ?>,
+        <?= $skill['mc'] ?>,
+        <?= $skill['operator'] ?>
+      ]
+    }]
+  }
+});
+new Chart(document.getElementById('statusChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Selesai', 'Belum', 'Proses'],
+    datasets: [{
+      data: [
+        <?= $statusData[2]['total'] ?? 0 ?>,
+        <?= $statusData[0]['total'] ?? 0 ?>,
+        <?= $statusData[1]['total'] ?? 0 ?>
+      ]
+    }]
+  }
+});
+new Chart(document.getElementById('mediaChart'), {
+  type: 'pie',
+  data: {
+    labels: <?= json_encode($labels) ?>,
+    datasets: [{
+      data: <?= json_encode($data) ?>
+    }]
+  }
+});
+document.addEventListener('DOMContentLoaded', function () {
+
+  var calendar = new FullCalendar.Calendar(
+    document.getElementById('calendar'),
+    {
+      initialView: 'dayGridMonth',
+      height: 520,
+      locale: 'id',
+      events: 'kalender_jadwal.php',
+
+      eventClick: function(info) {
+
+        // Judul
+        document.getElementById('modalJudul').innerText =
+          info.event.title;
+
+        // Tanggal
+        document.getElementById('modalTanggal').innerText =
+          info.event.start.toLocaleDateString('id-ID');
+
+        // Tim
+        document.getElementById('modalTim').innerText =
+          info.event.extendedProps.tim ?? '-';
+
+        // Status (ubah ke teks)
+        let statusText = '-';
+        switch (info.event.extendedProps.status) {
+          case 0: statusText = 'Belum Dikerjakan'; break;
+          case 1: statusText = 'Proses'; break;
+          case 2: statusText = 'Selesai'; break;
+        }
+        document.getElementById('modalStatus').innerText = statusText;
+
+        // Keterangan
+        document.getElementById('modalKeterangan').innerHTML =
+          info.event.extendedProps.keterangan ?? '-';
+
+        // PIC
+        document.getElementById('modalPIC').innerHTML = `
+          <b>Desain:</b> ${info.event.extendedProps.pic_desain ?? '-'}<br>
+          <b>Medsos:</b> ${info.event.extendedProps.pic_medsos ?? '-'}<br>
+          <b>Narasi:</b> ${info.event.extendedProps.pic_narasi ?? '-'}
+        `;
+
+        // Show modal
+        new bootstrap.Modal(
+          document.getElementById('jadwalModal')
+        ).show();
+      }
+    }
+  );
+
+  calendar.render();
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <?php
 $script = ob_get_clean();
 include 'layout.php';
-$nama_halaman = 'Dashboard';
-renderLayout($content, $script, $nama_halaman);
+renderLayout($content, $script);
