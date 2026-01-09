@@ -10,16 +10,23 @@ if (mysqli_num_rows($cek) == 0) {
     exit;
 }
 
-$token = bin2hex(random_bytes(32));
-$expired = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+$token = bin2hex(random_bytes(32)); // token asli (dikirim ke email)
+$token_hash = password_hash($token, PASSWORD_DEFAULT);
+$expired = date("Y-m-d H:i:s", time() + 900);
 
-mysqli_query($koneksi, "
-    UPDATE user 
-    SET reset_token='$token', reset_expired='$expired' 
-    WHERE email='$email'
+$stmt = $koneksi->prepare("
+  UPDATE user 
+  SET reset_token=?, reset_expired=?
+  WHERE email=?
 ");
+$stmt->bind_param("sss", $token_hash, $expired, $email);
+$stmt->execute();
 
+<<<<<<< HEAD
 $link = "http://localhost/KP/ubahpassword.php?token=$token";
+=======
+$link = "http://localhost/KP/pegawai/ubahpassword.php?email=$email&token=$token";
+>>>>>>> 32cc8d926e6c372e68328c4a305aee5acbcf2a14
 
 $subject = "Reset Password";
 $message = "
