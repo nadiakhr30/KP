@@ -5,12 +5,11 @@ function checkLogin($data, &$errors)
 {
     global $koneksi;
 
-    // Cek apakah session sudah aktif
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
 
-    $email = htmlspecialchars(trim($data["email"]));
+    $email    = trim($data["email"]);
     $password = $data["password"];
 
     if (empty($email)) {
@@ -22,16 +21,22 @@ function checkLogin($data, &$errors)
     }
 
     if (count($errors) === 0) {
-        // Ambil data user berdasarkan email
-        $result = mysqli_query($koneksi, "SELECT * FROM user WHERE email = '$email'");
-        if ($result && mysqli_num_rows($result) > 0) {
+
+        // AMBIL USER
+        $result = mysqli_query(
+            $koneksi,
+            "SELECT * FROM user WHERE email = '" . mysqli_real_escape_string($koneksi, $email) . "' LIMIT 1"
+        );
+
+        if ($result && mysqli_num_rows($result) === 1) {
             $user = mysqli_fetch_assoc($result);
 
-            // Verifikasi password
-            if ($password == $user["password"]) {
+            // VERIFIKASI PASSWORD (INI KUNCI UTAMA)
+            if (password_verify($password, $user["password"])) {
+
+                // Login sukses
                 $_SESSION["user"] = $user;
 
-                // Set role session and redirect to role-specific dashboard
                 if ($user["role"] == '1') {
                     $_SESSION["role"] = "Admin";
                     header("Location: admin/index.php");
@@ -41,14 +46,13 @@ function checkLogin($data, &$errors)
                     header("Location: pegawai/index.php");
                     exit;
                 }
+
             } else {
                 $errors[] = "Password salah.";
             }
+
         } else {
             $errors[] = "Email tidak ditemukan.";
         }
     }
 }
-
-
-

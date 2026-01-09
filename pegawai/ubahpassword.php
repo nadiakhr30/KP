@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password_new === '' || $password_new !== $password_confirm) {
         $showAlert = 'mismatch';
     } else {
-        $password_new = mysqli_real_escape_string($koneksi, $password_new);
+        $password_new = password_hash($password_new, PASSWORD_DEFAULT);
 
         $update = mysqli_query($koneksi, "
             UPDATE user SET 
