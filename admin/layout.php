@@ -35,14 +35,32 @@ global $user;
       <!-- Full Calendar -->
       <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
       <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+      <!-- jVector Map -->
+      <link rel="stylesheet" type="text/css" href="assets/geo/jquery-jvectormap-2.0.2.css">
 <style>
-    .modal-body th {
+.modal-body th {
   color: #6c757d;
   font-weight: 500;
 }
-
 .modal-body td {
   color: #212529;
+}
+.jvm-region {
+  transition: all 0.15s ease;
+}
+#map-wrapper {
+  position: relative;
+}
+
+#map-kecamatan,
+#map-kelurahan {
+  position: absolute;
+  inset: 0;
+}
+
+/* kelurahan di atas */
+#map-kelurahan {
+  pointer-events: auto;
 }
 /* ======================
    PC
@@ -565,6 +583,11 @@ global $user;
     <!-- custom js -->
     <script type="text/javascript" src="assets/pages/dashboard/custom-dashboard.js"></script>
     <script type="text/javascript" src="assets/js/script.js "></script>
+    <!-- jVectorMap core -->
+    <script type="text/javascript" src="assets/geo/jquery-jvectormap-2.0.2.min.js"></script>
+    <!-- MAP Bangkalan -->
+    <script type="text/javascript" src="assets/geo/kecamatan.js"></script>
+    <script type="text/javascript" src="assets/geo/kelurahan.js"></script>
     <!-- Javascript -->
     <?= $script; ?>
 </body>

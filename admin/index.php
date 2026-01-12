@@ -204,7 +204,7 @@ while($m = mysqli_fetch_assoc($qMedia)){
                                                 </div>
                                             </div>
                                             <!-- task, page, download counter  end -->
-                                            <div class="col-xl-4 col-md-6">
+                                            <div class="col-xl-4 col-md-12">
                                                 <div class="card ">
                                                     <div class="card-header">
                                                         <h5>Peta Bangkalan</h5>
@@ -218,7 +218,12 @@ while($m = mysqli_fetch_assoc($qMedia)){
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                    <div class="card-block"></div>
+                                                    <div class="card-block">
+                                                        <div id="map-wrapper" style="position: relative; height: 480px;">
+                                                          <div id="map-kecamatan" style="position:absolute; inset:0;"></div>
+                                                          <div id="map-kelurahan" style="position:absolute; inset:0;"></div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-xl-8 col-md-12">
@@ -483,6 +488,87 @@ if (links.length > 0) {
     }
   );
   calendar.render();
+});
+
+// MAPS
+$(function () {
+let mapKecamatan = $('#map-kecamatan').vectorMap({
+  map: 'kecamatan',
+  backgroundColor: 'transparent',
+  zoomOnScroll: true,
+  panOnDrag: true,
+
+  regionStyle: {
+    initial: {
+      stroke: 'none'
+    },
+    hover: {
+      fill: null
+    }
+  },
+
+  series: {
+    regions: [{
+      values: {
+        '3526010': '#baecb3',
+        '3526020': '#e1b12c',
+        '3526030': '#c23616',
+        '3526040': '#8c7ae6',
+        '3526050': '#00a8ff',
+        '3526060': '#9c88ff',
+        '3526070': '#fbc531',
+        '3526080': '#e84118',
+        '3526090': '#7f8fa6',
+        '3526100': '#487eb0',
+        '3526110': '#192a56',
+        '3526120': '#40739e',
+        '3526130': '#0097e6',
+        '3526140': '#44bd32',
+        '3526150': '#e1b12c',
+        '3526160': '#c23616',
+        '3526170': '#8c7ae6',
+        '3526180': '#273c75'
+      },
+      attribute: 'fill'
+    }]
+  }
+}).vectorMap('get', 'mapObject');
+let mapKelurahan = $('#map-kelurahan').vectorMap({
+  map: 'kelurahan',
+  backgroundColor: 'transparent',
+
+  zoomOnScroll: false,
+  panOnDrag: false,
+
+  regionStyle: {
+    initial: {
+      fill: 'rgba(0,0,0,0)',
+      stroke: '#636e72',
+      'stroke-width': 0.4
+    },
+    hover: {
+      stroke: '#000',
+      'stroke-width': 0.8,
+      cursor: 'pointer'
+    }
+  },
+
+  onRegionTipShow: function (e, el) {
+    el.html(`
+      <strong>Kelurahan</strong><br>
+      ${el.text()}
+    `);
+  }
+}).vectorMap('get', 'mapObject');
+mapKecamatan.container.on('zoom.jvectormap', function (e, scale) {
+  mapKelurahan.setScale(scale);
+});
+
+mapKecamatan.container.on('pan.jvectormap', function () {
+  mapKelurahan.transX = mapKecamatan.transX;
+  mapKelurahan.transY = mapKecamatan.transY;
+  mapKelurahan.applyTransform();
+});
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
