@@ -9,7 +9,10 @@ if (!isset($_SESSION['user']) && $_SESSION['role']=="Pegawai") {
     header("Location: ../index.php");
     exit;
 } 
+
 ?>
+
+
   <main class="main">
 
     <!-- Hero Section -->
@@ -298,129 +301,83 @@ if (!isset($_SESSION['user']) && $_SESSION['role']=="Pegawai") {
         <h2>Manajemen Link</h2>
         <p>Temukan semua tautan resmi BPS dengan mudah dalam satu tempat untuk referensi dan data cepat.</p>
       </div><!-- End Section Title -->
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="steps-wrapper overflow-hidden">
+        <div class="steps-track d-flex" id="stepsTrack">
 
-        <div class="row gy-5">
+          <?php
+          $query = mysqli_query($koneksi, "SELECT * FROM link ORDER BY id_link ASC");
+          while ($row = mysqli_fetch_assoc($query)) {
+          ?>
+            <!-- Card -->
+            <div class="col-lg-4 col-md-6 col-12 px-3 steps-slide">
+              <a href="<?= $row['link'] ?>" target="_blank" class="steps-link">
 
-          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
-            <div class="steps-item">
-              <div class="steps-image">
-                <img src="assets/img/steps/bkl.png" alt="BPS Bangkalan" class="img-fluid" loading="lazy">
-              </div>
-              <div class="steps-content">
-                <div class="steps-number">01</div>
-                <h3><a href="https://bangkalankab.bps.go.id/id" target="_blank">BPS Bangkalan</a></h3>
-                <p>Menyajikan data akurat dan terpercaya untuk mendukung kebijakan, penelitian, dan masyarakat secara umum.</p>
-                <div class="steps-features">
-                  <div class="feature-item">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Statistik Penduduk & Demografi</span>
+                <div class="steps-item">
+
+                  <!-- IMAGE / ICON -->
+                  <div class="steps-image">
+                    <?php if (!empty($row['gambar'])) { ?>
+                      <img src="assets/img/steps/<?= $row['gambar'] ?>"
+                          alt="<?= $row['nama_link'] ?>"
+                          class="img-fluid">
+                    <?php } else { ?>
+                      <div class="icon-placeholder text-center">
+                        <img src="assets/img/noimage.png" 
+                            alt="No Image"
+                            class="img-fluid noimage">
+                      </div>
+                    <?php } ?>
                   </div>
-                  <div class="feature-item">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Data Ekonomi & Perdagangan</span>
+
+                  <!-- CONTENT -->
+                  <div class="steps-content">
+                    <div class="steps-number">
+                      <?= str_pad($row['id_link'], 2, '0', STR_PAD_LEFT) ?>
+                    </div>
+
+                    <h3><?= $row['nama_link'] ?></h3>
+
+                    <p>
+                      Menyajikan data dan informasi resmi yang dapat diakses langsung
+                      melalui website terkait.
+                    </p>
+
+                    <div class="steps-features">
+                      <div class="feature-item">
+                        <i class="bi bi-check-circle"></i>
+                        <span>Data Resmi & Terverifikasi</span>
+                      </div>
+                      <div class="feature-item">
+                        <i class="bi bi-check-circle"></i>
+                        <span>Akses Publik Online</span>
+                      </div>
+                    </div>
                   </div>
-                  <div class="feature-item">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Laporan & Publikasi</span>
-                  </div>
-                  <div class="feature-item">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Inovasi Digital & Open Data</span>
-                  </div>
+
                 </div>
-              </div>
-            </div><!-- End Steps Item -->
-          </div>
-
-
-          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
-            <div class="steps-item">
-              <div class="steps-image">
-                <img src="assets/img/steps/sby.png" alt="Step 2" class="img-fluid" loading="lazy">
-              </div>
-              <div class="steps-content">
-                <div class="steps-number">02</div>
-                <h3><a href="https://surabayakota.bps.go.id/id" target="_blank">BPS Surabaya</a></h3>
-                <p>Menyajikan data akurat dan terpercaya untuk mendukung kebijakan, penelitian, dan masyarakat secara umum.</p>
-                <div class="steps-features">
-                  <div class="feature-item">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Statistik Penduduk & Demografi</span>
-                  </div>
-                  <div class="feature-item">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Data Ekonomi & Perdagangan</span>
-                  </div>
-                  <div class="feature-item">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Laporan & Publikasi</span>
-                  </div>
-                  <div class="feature-item">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Inovasi Digital & Open Data</span>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Steps Item -->
-          </div>
-
-          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="400">
-            <div class="steps-item">
-              <div class="steps-image">
-                <img src="assets/img/steps/sidoarjo.png" alt="Step 3" class="img-fluid" loading="lazy">
-              </div>
-              <div class="steps-content">
-                <div class="steps-number">03</div>
-                <h3><a href="https://sidoarjokab.bps.go.id/id" target="_blank">BPS Sidoarjo</a></h3>
-                <p>Menyajikan data akurat dan terpercaya untuk mendukung kebijakan, penelitian, dan masyarakat secara umum.</p>
-                <div class="steps-features">
-                  <div class="feature-item">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Statistik Penduduk & Demografi</span>
-                  </div>
-                  <div class="feature-item">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Data Ekonomi & Perdagangan</span>
-                  </div>
-                  <div class="feature-item">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Laporan & Publikasi</span>
-                  </div>
-                  <div class="feature-item">
-                    <i class="bi bi-check-circle"></i>
-                    <span>Inovasi Digital & Open Data</span>
-                  </div>
-                </div>
-              </div>
-            </div><!-- End Steps Item -->
-          </div>
+              </a>
+            </div>
+          <?php } ?>
 
         </div>
-
       </div>
 
-    </section><!-- Manajemen Link-->
-
-    <!-- Call To Action Section -->
-    <section id="call-to-action" class="call-to-action section dark-background">
-
-      <img src="assets/img/bg/bg-8.webp" alt="">
-
-      <div class="container">
-
-        <div class="row" data-aos="zoom-in" data-aos-delay="100">
-          <div class="col-xl-9 text-center text-xl-start">
-            <h3>Call To Action</h3>
-            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-          </div>
-          <div class="col-xl-3 cta-btn-container text-center">
-            <a class="cta-btn align-middle" href="#">Call To Action</a>
-          </div>
-        </div>
-
+      <!-- NAVIGATION -->
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button id="prevSlide" class="btn btn-outline-primary">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button id="nextSlide" class="btn btn-outline-primary">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
       </div>
+
+    </div>
+
+
+
 
     </section><!-- /Call To Action Section -->
 
@@ -1115,7 +1072,51 @@ if (!isset($_SESSION['user']) && $_SESSION['role']=="Pegawai") {
   $content = ob_get_clean();
   ob_start();
   ?>
-<?php
-$script = ob_get_clean();
-include 'layout.php';
-renderLayout($content, $script);
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const track = document.getElementById("stepsTrack");
+        const slides = document.querySelectorAll(".steps-slide");
+        const nextBtn = document.getElementById("nextSlide");
+        const prevBtn = document.getElementById("prevSlide");
+
+        let index = 0;
+
+        function slidesPerView() {
+          const w = window.innerWidth;
+          if (w < 768) return 1;
+          if (w < 992) return 2;
+          return 3;
+        }
+
+        function slideWidth() {
+          return slides[0].getBoundingClientRect().width;
+        }
+
+        function updateSlide() {
+          track.style.transform = `translateX(-${index * slideWidth()}px)`;
+        }
+
+        nextBtn.addEventListener("click", () => {
+          const maxIndex = slides.length - slidesPerView();
+          if (index < maxIndex) {
+            index++;
+            updateSlide();
+          }
+        });
+
+        prevBtn.addEventListener("click", () => {
+          if (index > 0) {
+            index--;
+            updateSlide();
+          }
+        });
+
+        window.addEventListener("resize", updateSlide);
+      });
+    </script>
+
+
+  <?php
+  $script = ob_get_clean();
+  include 'layout.php';
+  renderLayout($content, $script);
