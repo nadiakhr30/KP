@@ -24,6 +24,60 @@ $totalAset = mysqli_fetch_assoc($qAset)['total'];
 $qDeadline = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM jadwal WHERE status != 2");
 $totalDeadline = mysqli_fetch_assoc($qDeadline)['total'];
 
+// Kalender
+$jadwalkalender = [];
+$qKalender = mysqli_query($koneksi, "
+  SELECT 
+    j.id_jadwal,
+    j.topik,
+    j.judul_kegiatan,
+    j.tanggal_penugasan,
+    j.target_rilis,
+    j.tim,
+    j.keterangan,
+    j.status,
+    j.dokumentasi,
+    j.link_instagram,
+    j.link_facebook,
+    j.link_youtube,
+    j.link_website,
+    u1.nama AS pic_desain_nama,
+    u2.nama AS pic_narasi_nama,
+    u3.nama AS pic_medsos_nama
+  FROM jadwal j
+  LEFT JOIN user u1 ON j.pic_desain = u1.id_user
+  LEFT JOIN user u2 ON j.pic_narasi = u2.id_user
+  LEFT JOIN user u3 ON j.pic_medsos = u3.id_user
+  WHERE j.target_rilis IS NOT NULL
+");
+while ($row = mysqli_fetch_assoc($qKalender)) {
+  if ($row['status'] == 0) $color = '#e84118';
+  else if ($row['status'] == 1) $color = '#fbc531';
+  else if ($row['status'] == 2) $color = '#44bd32';
+  else $color = '#718093';
+  $jadwalkalender[] = [
+    'id'    => $row['id_jadwal'],
+    'title' => $row['judul_kegiatan'],
+    'start' => $row['target_rilis'],
+    'color' => $color,
+    'extendedProps' => [
+      'topik' => $row['topik'],
+      'tanggal_penugasan' => $row['tanggal_penugasan'],
+      'tim' => $row['tim'],
+      'status' => (int)$row['status'],
+      'keterangan' => $row['keterangan'],
+      'pic_desain' => $row['pic_desain_nama'] ?? '-',
+      'pic_narasi' => $row['pic_narasi_nama'] ?? '-',
+      'pic_medsos' => $row['pic_medsos_nama'] ?? '-',
+      'dokumentasi' => $row['dokumentasi'],
+      'link_instagram' => $row['link_instagram'],
+      'link_facebook' => $row['link_facebook'],
+      'link_youtube' => $row['link_youtube'],
+      'link_website' => $row['link_website']
+    ]
+  ];
+}
+
 // SKILL DATA FOR CHART
 $qSkill = mysqli_query($koneksi, "
 SELECT
@@ -184,6 +238,57 @@ while($m = mysqli_fetch_assoc($qMedia)){
                                                     <div class="card-block"><div id="calendar"></div></div>
                                                 </div>
                                             </div>
+<div class="modal fade" id="jadwalModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h5 class="text-muted" id="modalTopik"></h5>
+          <h3 class="modal-title mb-0" id="modalJudul"></h3>
+        </div>
+        <button class="btn waves-effect waves-dark btn-danger btn-outline-danger btn-icon" aria-label="Close" data-bs-dismiss="modal"><i class="ti-close"></i></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-sm table-borderless">
+          <tr>
+            <th width="180">Tanggal Penugasan</th>
+            <td id="modalTanggalPenugasan"></td>
+          </tr>
+          <tr>
+            <th>Target Rilis</th>
+            <td id="modalTargetRilis"></td>
+          </tr>
+          <tr>
+            <th>Tim</th>
+            <td id="modalTim"></td>
+          </tr>
+          <tr>
+            <th>Status</th>
+            <td id="modalStatus"></td>
+          </tr>
+          <tr>
+            <th>PIC</th>
+            <td id="modalPIC"></td>
+          </tr>
+          <tr>
+            <th>Keterangan</th>
+            <td id="modalKeterangan"></td>
+          </tr>
+          <tr id="rowDokumentasi" style="display:none">
+            <th>Dokumentasi</th>
+            <td>
+              <a href="#" target="_blank" id="modalDokumentasi">Lihat dokumentasi</a>
+            </td>
+          </tr>
+          <tr id="rowLink" style="display:none">
+            <th>Link Publikasi</th>
+            <td id="modalLinks"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
                                             <div class="col-xl-3 col-md-6">
                                                 <div class="card ">
                                                     <div class="card-header">
@@ -243,39 +348,6 @@ while($m = mysqli_fetch_assoc($qMedia)){
                             </div>
                         </div>
                       </div>
-<div class="modal fade" id="jadwalModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalJudul"></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <div class="modal-body">
-        <table class="table table-sm">
-          <tr>
-            <th width="150">Tanggal</th>
-            <td id="modalTanggal"></td>
-          </tr>
-          <tr>
-            <th>Tim</th>
-            <td id="modalTim"></td>
-          </tr>
-          <tr>
-            <th>Status</th>
-            <td id="modalStatus"></td>
-          </tr>
-          <tr>
-            <th>Keterangan</th>
-            <td id="modalKeterangan"></td>
-          </tr>
-        </table>
-      </div>
-
-    </div>
-  </div>
-</div>
                         <!-- Page-header end -->
                         <!-- Page-header end -->
                         <!-- Page-header end -->
@@ -327,8 +399,9 @@ new Chart(document.getElementById('mediaChart'), {
     }]
   }
 });
-document.addEventListener('DOMContentLoaded', function () {
 
+// Kalender
+document.addEventListener('DOMContentLoaded', function () {
   var calendar = new FullCalendar.Calendar(
     document.getElementById('calendar'),
     {
@@ -336,49 +409,79 @@ document.addEventListener('DOMContentLoaded', function () {
       height: 520,
       locale: 'id',
       events: 'kalender_jadwal.php',
-
       eventClick: function(info) {
-
-        // Judul
-        document.getElementById('modalJudul').innerText =
-          info.event.title;
-
-        // Tanggal
-        document.getElementById('modalTanggal').innerText =
-          info.event.start.toLocaleDateString('id-ID');
-
-        // Tim
-        document.getElementById('modalTim').innerText =
-          info.event.extendedProps.tim ?? '-';
-
-        // Status (ubah ke teks)
-        let statusText = '-';
-        switch (info.event.extendedProps.status) {
-          case 0: statusText = 'Belum Dikerjakan'; break;
-          case 1: statusText = 'Proses'; break;
-          case 2: statusText = 'Selesai'; break;
-        }
-        document.getElementById('modalStatus').innerText = statusText;
-
-        // Keterangan
-        document.getElementById('modalKeterangan').innerHTML =
-          info.event.extendedProps.keterangan ?? '-';
-
-        // PIC
-        document.getElementById('modalPIC').innerHTML = `
-          <b>Desain:</b> ${info.event.extendedProps.pic_desain ?? '-'}<br>
-          <b>Medsos:</b> ${info.event.extendedProps.pic_medsos ?? '-'}<br>
-          <b>Narasi:</b> ${info.event.extendedProps.pic_narasi ?? '-'}
-        `;
-
-        // Show modal
-        new bootstrap.Modal(
-          document.getElementById('jadwalModal')
-        ).show();
-      }
+  info.jsEvent.preventDefault();
+  const p = info.event.extendedProps;
+  document.getElementById('modalTopik').innerText = p.topik ?? '-';
+  document.getElementById('modalJudul').innerText = info.event.title;
+  document.getElementById('modalTanggalPenugasan').innerText =
+    p.tanggal_penugasan
+      ? new Date(p.tanggal_penugasan).toLocaleDateString('id-ID')
+      : '-';
+  document.getElementById('modalTargetRilis').innerText =
+    info.event.start.toLocaleDateString('id-ID');
+  document.getElementById('modalTim').innerText = p.tim ?? '-';
+let statusText = '-';
+let statusClass = 'secondary';
+switch (String(p.status)) {
+  case '0':
+    statusText = 'Belum Dikerjakan';
+    statusClass = 'danger';
+    break;
+  case '1':
+    statusText = 'Sedang Dikerjakan';
+    statusClass = 'warning';
+    break;
+  case '2':
+    statusText = 'Selesai';
+    statusClass = 'success';
+    break;
+}
+document.getElementById('modalStatus').innerHTML =
+  `<span class="badge bg-${statusClass}">${statusText}</span>`;
+  document.getElementById('modalPIC').innerHTML = `
+    <b>Desain:</b> ${p.pic_desain}<br>
+    <b>Narasi:</b> ${p.pic_narasi}<br>
+    <b>Medsos:</b> ${p.pic_medsos}
+  `;
+  document.getElementById('modalKeterangan').innerHTML =
+    p.keterangan ?? '-';
+  // Dokumentasi
+  if (p.dokumentasi) {
+    document.getElementById('rowDokumentasi').style.display = '';
+    document.getElementById('modalDokumentasi').href = p.dokumentasi;
+  } else {
+    document.getElementById('rowDokumentasi').style.display = 'none';
+  }
+  // Link publikasi
+let links = [];
+function renderLink(label, url) {
+  // NULL / undefined / empty → tidak ditampilkan
+  if (!url) return;
+  // Isinya "-" → tampil tapi tidak bisa diklik
+  if (url === '-') {
+    links.push(`<span class="text-muted">${label}</span>`);
+    return;
+  }
+  // Selain "-" → tampil & bisa diklik
+  links.push(
+    `<a href="${url}" target="_blank" class="link-primary">${label}</a>`
+  );
+}
+renderLink('Instagram', p.link_instagram);
+renderLink('Facebook', p.link_facebook);
+renderLink('YouTube', p.link_youtube);
+renderLink('Website', p.link_website);
+if (links.length > 0) {
+  document.getElementById('rowLink').style.display = '';
+  document.getElementById('modalLinks').innerHTML = links.join(' | ');
+} else {
+  document.getElementById('rowLink').style.display = 'none';
+}
+  new bootstrap.Modal(document.getElementById('jadwalModal')).show();
+}
     }
   );
-
   calendar.render();
 });
 </script>

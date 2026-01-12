@@ -36,7 +36,14 @@ global $user;
       <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
       <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 <style>
+    .modal-body th {
+  color: #6c757d;
+  font-weight: 500;
+}
 
+.modal-body td {
+  color: #212529;
+}
 /* ======================
    PC
    ====================== */
