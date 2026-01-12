@@ -1,16 +1,67 @@
 <?php
-ob_start();
 session_start();
+require '../koneksi.php';
 
-include_once("../koneksi.php");
-
-
-if (!isset($_SESSION['user']) && $_SESSION['role']=="Pegawai") {
+if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
     header("Location: ../index.php");
     exit;
-} 
+}
 
+// Kalender
+$jadwalkalender = [];
+$qKalender = mysqli_query($koneksi, "
+  SELECT 
+    j.id_jadwal,
+    j.topik,
+    j.judul_kegiatan,
+    j.tanggal_penugasan,
+    j.target_rilis,
+    j.tim,
+    j.keterangan,
+    j.status,
+    j.dokumentasi,
+    j.link_instagram,
+    j.link_facebook,
+    j.link_youtube,
+    j.link_website,
+    u1.nama AS pic_desain_nama,
+    u2.nama AS pic_narasi_nama,
+    u3.nama AS pic_medsos_nama
+  FROM jadwal j
+  LEFT JOIN user u1 ON j.pic_desain = u1.id_user
+  LEFT JOIN user u2 ON j.pic_narasi = u2.id_user
+  LEFT JOIN user u3 ON j.pic_medsos = u3.id_user
+  WHERE j.target_rilis IS NOT NULL
+");
+while ($row = mysqli_fetch_assoc($qKalender)) {
+  if ($row['status'] == 0) $color = '#e84118';
+  else if ($row['status'] == 1) $color = '#fbc531';
+  else if ($row['status'] == 2) $color = '#44bd32';
+  else $color = '#718093';
+  $jadwalkalender[] = [
+    'id'    => $row['id_jadwal'],
+    'title' => $row['judul_kegiatan'],
+    'start' => $row['target_rilis'],
+    'color' => $color,
+    'extendedProps' => [
+      'topik' => $row['topik'],
+      'tanggal_penugasan' => $row['tanggal_penugasan'],
+      'tim' => $row['tim'],
+      'status' => (int)$row['status'],
+      'keterangan' => $row['keterangan'],
+      'pic_desain' => $row['pic_desain_nama'] ?? '-',
+      'pic_narasi' => $row['pic_narasi_nama'] ?? '-',
+      'pic_medsos' => $row['pic_medsos_nama'] ?? '-',
+      'dokumentasi' => $row['dokumentasi'],
+      'link_instagram' => $row['link_instagram'],
+      'link_facebook' => $row['link_facebook'],
+      'link_youtube' => $row['link_youtube'],
+      'link_website' => $row['link_website']
+    ]
+  ];
+}
 ?>
+
 
 
   <main class="main">
@@ -94,40 +145,76 @@ if (!isset($_SESSION['user']) && $_SESSION['role']=="Pegawai") {
 
     </section><!-- /Clients Section -->
 
-    <!-- About Section -->
+ <!-- About Section -->
     <section id="about" class="about section">
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <h2>About Us</h2>
+        <h2>Kalender & Jadwal</h2>
       </div><!-- End Section Title -->
 
-      <div class="container">
-
-        <div class="row gy-4">
-
-          <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-              magna aliqua.
-            </p>
-            <ul>
-              <li><i class="bi bi-check2-circle"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></li>
-              <li><i class="bi bi-check2-circle"></i> <span>Duis aute irure dolor in reprehenderit in voluptate velit.</span></li>
-              <li><i class="bi bi-check2-circle"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo</span></li>
-            </ul>
-          </div>
-
-          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-            <p>Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>
-            <a href="#" class="read-more"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
-          </div>
-
+      <div class="col-xl-8 col-md-12">
+                                                <div class="card ">
+                                                    
+                                                    <div class="card-block"><div id="calendar"></div></div>
+                                                </div>
+                                            </div>
+<div class="modal fade" id="jadwalModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h5 class="text-muted" id="modalTopik"></h5>
+          <h3 class="modal-title mb-0" id="modalJudul"></h3>
         </div>
-
+        <button class="btn waves-effect waves-dark btn-danger btn-outline-danger btn-icon" aria-label="Close" data-bs-dismiss="modal"><i class="ti-close"></i></button>
       </div>
+      <div class="modal-body">
+        <table class="table table-sm table-borderless">
+          <tr>
+            <th width="180">Tanggal Penugasan</th>
+            <td id="modalTanggalPenugasan"></td>
+          </tr>
+          <tr>
+            <th>Target Rilis</th>
+            <td id="modalTargetRilis"></td>
+          </tr>
+          <tr>
+            <th>Tim</th>
+            <td id="modalTim"></td>
+          </tr>
+          <tr>
+            <th>Status</th>
+            <td id="modalStatus"></td>
+          </tr>
+          <tr>
+            <th>PIC</th>
+            <td id="modalPIC"></td>
+          </tr>
+          <tr>
+            <th>Keterangan</th>
+            <td id="modalKeterangan"></td>
+          </tr>
+          <tr id="rowDokumentasi" style="display:none">
+            <th>Dokumentasi</th>
+            <td>
+              <a href="#" target="_blank" id="modalDokumentasi">Lihat dokumentasi</a>
+            </td>
+          </tr>
+          <tr id="rowLink" style="display:none">
+            <th>Link Publikasi</th>
+            <td id="modalLinks"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+        
 
     </section><!-- /About Section -->
+
+
 
     <!-- Why Us Section -->
     <section id="why-us" class="section why-us light-background" data-builder="section">
@@ -1113,9 +1200,94 @@ if (!isset($_SESSION['user']) && $_SESSION['role']=="Pegawai") {
 
         window.addEventListener("resize", updateSlide);
       });
+
+      // Kalender
+      document.addEventListener('DOMContentLoaded', function () {
+        var calendar = new FullCalendar.Calendar(
+          document.getElementById('calendar'),
+          {
+            initialView: 'dayGridMonth',
+            height: 520,
+            locale: 'id',
+            events: 'kalender_jadwal.php',
+            eventClick: function(info) {
+        info.jsEvent.preventDefault();
+        const p = info.event.extendedProps;
+        document.getElementById('modalTopik').innerText = p.topik ?? '-';
+        document.getElementById('modalJudul').innerText = info.event.title;
+        document.getElementById('modalTanggalPenugasan').innerText =
+          p.tanggal_penugasan
+            ? new Date(p.tanggal_penugasan).toLocaleDateString('id-ID')
+            : '-';
+        document.getElementById('modalTargetRilis').innerText =
+          info.event.start.toLocaleDateString('id-ID');
+        document.getElementById('modalTim').innerText = p.tim ?? '-';
+      let statusText = '-';
+      let statusClass = 'secondary';
+      switch (String(p.status)) {
+        case '0':
+          statusText = 'Belum Dikerjakan';
+          statusClass = 'danger';
+          break;
+        case '1':
+          statusText = 'Sedang Dikerjakan';
+          statusClass = 'warning';
+          break;
+        case '2':
+          statusText = 'Selesai';
+          statusClass = 'success';
+          break;
+      }
+      document.getElementById('modalStatus').innerHTML =
+        `<span class="badge bg-${statusClass}">${statusText}</span>`;
+        document.getElementById('modalPIC').innerHTML = `
+          <b>Desain:</b> ${p.pic_desain}<br>
+          <b>Narasi:</b> ${p.pic_narasi}<br>
+          <b>Medsos:</b> ${p.pic_medsos}
+        `;
+        document.getElementById('modalKeterangan').innerHTML =
+          p.keterangan ?? '-';
+        // Dokumentasi
+        if (p.dokumentasi) {
+          document.getElementById('rowDokumentasi').style.display = '';
+          document.getElementById('modalDokumentasi').href = p.dokumentasi;
+        } else {
+          document.getElementById('rowDokumentasi').style.display = 'none';
+        }
+        // Link publikasi
+      let links = [];
+      function renderLink(label, url) {
+        // NULL / undefined / empty → tidak ditampilkan
+        if (!url) return;
+        // Isinya "-" → tampil tapi tidak bisa diklik
+        if (url === '-') {
+          links.push(`<span class="text-muted">${label}</span>`);
+          return;
+        }
+        // Selain "-" → tampil & bisa diklik
+        links.push(
+          `<a href="${url}" target="_blank" class="link-primary">${label}</a>`
+        );
+      }
+      renderLink('Instagram', p.link_instagram);
+      renderLink('Facebook', p.link_facebook);
+      renderLink('YouTube', p.link_youtube);
+      renderLink('Website', p.link_website);
+      if (links.length > 0) {
+        document.getElementById('rowLink').style.display = '';
+        document.getElementById('modalLinks').innerHTML = links.join(' | ');
+      } else {
+        document.getElementById('rowLink').style.display = 'none';
+      }
+        new bootstrap.Modal(document.getElementById('jadwalModal')).show();
+      }
+          }
+        );
+        calendar.render();
+      });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </script>
-
-
   <?php
   $script = ob_get_clean();
   include 'layout.php';
