@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jan 12, 2026 at 02:13 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Host: localhost:3306
+-- Waktu pembuatan: 12 Jan 2026 pada 05.00
+-- Versi server: 8.0.30
+-- Versi PHP: 8.1.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,26 +18,26 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `sistem_kehumasan`
+-- Basis data: `sistem_kehumasan`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `aset`
+-- Struktur dari tabel `aset`
 --
 
 CREATE TABLE `aset` (
-  `id_aset` int(11) NOT NULL,
-  `nama` varchar(255) DEFAULT NULL,
-  `link` varchar(255) DEFAULT NULL,
-  `keterangan` text DEFAULT NULL,
-  `jenis` int(11) DEFAULT NULL,
-  `pemegang` int(11) DEFAULT NULL
+  `id_aset` int NOT NULL,
+  `nama` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `link` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `keterangan` text COLLATE utf8mb4_general_ci,
+  `jenis` int DEFAULT NULL,
+  `pemegang` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `aset`
+-- Dumping data untuk tabel `aset`
 --
 
 INSERT INTO `aset` (`id_aset`, `nama`, `link`, `keterangan`, `jenis`, `pemegang`) VALUES
@@ -50,30 +50,30 @@ INSERT INTO `aset` (`id_aset`, `nama`, `link`, `keterangan`, `jenis`, `pemegang`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jadwal`
+-- Struktur dari tabel `jadwal`
 --
 
 CREATE TABLE `jadwal` (
-  `id_jadwal` int(11) NOT NULL,
-  `tim` varchar(255) DEFAULT NULL,
-  `topik` varchar(255) DEFAULT NULL,
-  `judul_kegiatan` varchar(255) DEFAULT NULL,
+  `id_jadwal` int NOT NULL,
+  `tim` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `topik` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `judul_kegiatan` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tanggal_penugasan` date DEFAULT NULL,
   `target_rilis` date DEFAULT NULL,
-  `keterangan` text DEFAULT NULL,
-  `pic_desain` int(11) DEFAULT NULL,
-  `pic_narasi` int(11) DEFAULT NULL,
-  `pic_medsos` int(11) DEFAULT NULL,
-  `status` int(11) DEFAULT NULL,
-  `dokumentasi` varchar(255) DEFAULT NULL,
-  `link_instagram` varchar(255) DEFAULT NULL,
-  `link_facebook` varchar(255) DEFAULT NULL,
-  `link_youtube` varchar(255) DEFAULT NULL,
-  `link_website` varchar(255) DEFAULT NULL
+  `keterangan` text COLLATE utf8mb4_general_ci,
+  `pic_desain` int DEFAULT NULL,
+  `pic_narasi` int DEFAULT NULL,
+  `pic_medsos` int DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `dokumentasi` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `link_instagram` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `link_facebook` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `link_youtube` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `link_website` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `jadwal`
+-- Dumping data untuk tabel `jadwal`
 --
 
 INSERT INTO `jadwal` (`id_jadwal`, `tim`, `topik`, `judul_kegiatan`, `tanggal_penugasan`, `target_rilis`, `keterangan`, `pic_desain`, `pic_narasi`, `pic_medsos`, `status`, `dokumentasi`, `link_instagram`, `link_facebook`, `link_youtube`, `link_website`) VALUES
@@ -86,16 +86,16 @@ INSERT INTO `jadwal` (`id_jadwal`, `tim`, `topik`, `judul_kegiatan`, `tanggal_pe
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jenis`
+-- Struktur dari tabel `jenis`
 --
 
 CREATE TABLE `jenis` (
-  `id_jenis` int(11) NOT NULL,
-  `nama_jenis` varchar(255) DEFAULT NULL
+  `id_jenis` int NOT NULL,
+  `nama_jenis` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `jenis`
+-- Dumping data untuk tabel `jenis`
 --
 
 INSERT INTO `jenis` (`id_jenis`, `nama_jenis`) VALUES
@@ -109,34 +109,72 @@ INSERT INTO `jenis` (`id_jenis`, `nama_jenis`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `link`
+-- Struktur dari tabel `link`
 --
 
 CREATE TABLE `link` (
-  `id_link` int(11) NOT NULL,
-  `nama_link` varchar(255) NOT NULL,
-  `gambar` varchar(255) NOT NULL,
-  `link` varchar(255) NOT NULL
+  `id_link` int NOT NULL,
+  `nama_link` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `gambar` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `link` varchar(255) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `link`
+--
+
+INSERT INTO `link` (`id_link`, `nama_link`, `gambar`, `link`) VALUES
+(1, 'BPS Bangkalan', '6964773793d2e.png', 'https://bangkalankab.bps.go.id/id'),
+(2, 'BPS Surabaya', '696477cb1b8bb.png', 'https://surabayakota.bps.go.id/id'),
+(3, 'BPS Sidoarjo', '696477edabfc8.png', 'https://sidoarjokab.bps.go.id/id'),
+(4, 'BPS Pacitan', '', 'https://pacitankab.bps.go.id/id'),
+(5, 'BPS Ponorogo', '', 'https://ponorogokab.bps.go.id/id'),
+(6, 'BPS Trenggalek', '', 'https://trenggalekkab.bps.go.id/id'),
+(7, 'BPS Tulung Agung', '', 'https://tulungagungkab.bps.go.id/id'),
+(8, 'BPS Blitar', '', 'https://blitarkab.bps.go.id/id'),
+(9, 'BPS Blitar', '', 'https://blitarkab.bps.go.id/id'),
+(10, 'BPS Kediri', '', 'https://kedirikab.bps.go.id/id'),
+(11, 'BPS Malang', '', 'https://malangkota.bps.go.id/id'),
+(12, 'BPS Lumajang', '', 'https://lumajangkab.bps.go.id/id'),
+(13, 'BPS Jember', '', 'https://jemberkab.bps.go.id/id'),
+(14, 'BPS Banyuwangi', '', 'https://banyuwangikab.bps.go.id/id'),
+(15, 'BPS Bondowoso', '', 'https://bondowosokab.bps.go.id/id'),
+(16, 'BPS Situbondo', '', 'https://situbondokab.bps.go.id/id'),
+(17, 'BPS Probolinggo', '', 'https://probolinggokab.bps.go.id/id'),
+(18, 'BPS Pasuruan', '', 'https://pasuruankab.bps.go.id/id'),
+(19, 'BPS Mojokerto', '', 'https://mojokertokab.bps.go.id/id'),
+(20, 'BPS Jombang', '', 'https://jombangkab.bps.go.id/id'),
+(21, 'BPS Nganjuk', '', 'https://nganjukkab.bps.go.id/id'),
+(30, 'BPS Madiun', '', 'https://madiunkota.bps.go.id/id'),
+(31, 'BPS Magetan', '', 'https://magetankab.bps.go.id/id'),
+(32, 'BPS Ngawi', '', 'https://ngawikab.bps.go.id/id'),
+(33, 'BPS Bojonegoro', '', 'https://bojonegorokab.bps.go.id/id'),
+(34, 'BPS Tuban', '', 'https://tubankab.bps.go.id/id'),
+(35, 'BPS Lamongan', '', 'https://lamongankab.bps.go.id/id'),
+(36, 'BPS Gresik', '', 'https://gresikkab.bps.go.id/id'),
+(37, 'BPS Sampang', '', 'https://sampangkab.bps.go.id/id'),
+(38, 'BPS Pamekasan', '', 'https://pamekasankab.bps.go.id/id'),
+(39, 'BPS Sumenep', '', 'https://sumenepkab.bps.go.id/id'),
+(40, 'BPS Kota Batu', '', 'https://batukota.bps.go.id/id');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `media`
+-- Struktur dari tabel `media`
 --
 
 CREATE TABLE `media` (
-  `id_media` int(11) NOT NULL,
-  `judul` varchar(255) DEFAULT NULL,
-  `topik` varchar(255) DEFAULT NULL,
-  `deskripsi` text DEFAULT NULL,
-  `link` varchar(255) DEFAULT NULL,
-  `id_sub_jenis` int(11) DEFAULT NULL,
+  `id_media` int NOT NULL,
+  `judul` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `topik` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `deskripsi` text COLLATE utf8mb4_general_ci,
+  `link` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `id_sub_jenis` int DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `media`
+-- Dumping data untuk tabel `media`
 --
 
 INSERT INTO `media` (`id_media`, `judul`, `topik`, `deskripsi`, `link`, `id_sub_jenis`, `created_at`) VALUES
@@ -149,17 +187,17 @@ INSERT INTO `media` (`id_media`, `judul`, `topik`, `deskripsi`, `link`, `id_sub_
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sub_jenis`
+-- Struktur dari tabel `sub_jenis`
 --
 
 CREATE TABLE `sub_jenis` (
-  `id_sub_jenis` int(11) NOT NULL,
-  `id_jenis` int(11) DEFAULT NULL,
-  `nama_sub_jenis` varchar(255) DEFAULT NULL
+  `id_sub_jenis` int NOT NULL,
+  `id_jenis` int DEFAULT NULL,
+  `nama_sub_jenis` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `sub_jenis`
+-- Dumping data untuk tabel `sub_jenis`
 --
 
 INSERT INTO `sub_jenis` (`id_sub_jenis`, `id_jenis`, `nama_sub_jenis`) VALUES
@@ -186,36 +224,36 @@ INSERT INTO `sub_jenis` (`id_sub_jenis`, `id_jenis`, `nama_sub_jenis`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- Struktur dari tabel `user`
 --
 
 CREATE TABLE `user` (
-  `id_user` int(11) NOT NULL,
-  `nama` varchar(255) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `role` int(11) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `foto_profil` varchar(255) DEFAULT NULL,
-  `status` int(11) DEFAULT NULL,
-  `nip` bigint(20) DEFAULT NULL,
-  `role_humas` varchar(255) DEFAULT NULL,
-  `jabatan` varchar(255) DEFAULT NULL,
-  `nomor_telepon` bigint(20) DEFAULT NULL,
-  `skill_data_contributor` int(11) DEFAULT NULL,
-  `skill_content_creator` int(11) DEFAULT NULL,
-  `skill_editor_photo_layout` int(11) DEFAULT NULL,
-  `skill_editor_video` int(11) DEFAULT NULL,
-  `skill_photo_videographer` int(11) DEFAULT NULL,
-  `skill_talent` int(11) DEFAULT NULL,
-  `skill_project_manager` int(11) DEFAULT NULL,
-  `skill_copywriting` int(11) DEFAULT NULL,
-  `skill_protokol` int(11) DEFAULT NULL,
-  `skill_mc` int(11) DEFAULT NULL,
-  `skill_operator` int(11) DEFAULT NULL
+  `id_user` int NOT NULL,
+  `nama` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `role` int DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `foto_profil` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  `nip` bigint DEFAULT NULL,
+  `role_humas` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `jabatan` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `nomor_telepon` bigint DEFAULT NULL,
+  `skill_data_contributor` int DEFAULT NULL,
+  `skill_content_creator` int DEFAULT NULL,
+  `skill_editor_photo_layout` int DEFAULT NULL,
+  `skill_editor_video` int DEFAULT NULL,
+  `skill_photo_videographer` int DEFAULT NULL,
+  `skill_talent` int DEFAULT NULL,
+  `skill_project_manager` int DEFAULT NULL,
+  `skill_copywriting` int DEFAULT NULL,
+  `skill_protokol` int DEFAULT NULL,
+  `skill_mc` int DEFAULT NULL,
+  `skill_operator` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `user`
+-- Dumping data untuk tabel `user`
 --
 
 INSERT INTO `user` (`id_user`, `nama`, `password`, `role`, `email`, `foto_profil`, `status`, `nip`, `role_humas`, `jabatan`, `nomor_telepon`, `skill_data_contributor`, `skill_content_creator`, `skill_editor_photo_layout`, `skill_editor_video`, `skill_photo_videographer`, `skill_talent`, `skill_project_manager`, `skill_copywriting`, `skill_protokol`, `skill_mc`, `skill_operator`) VALUES
@@ -254,18 +292,18 @@ INSERT INTO `user` (`id_user`, `nama`, `password`, `role`, `email`, `foto_profil
 (33, 'Kamila Mulya Fadila', '$2y$10$4dvN3vuovwq.PLt/lZO0cuhqrgd/ZmewlEyf9p40EffcyEsOqWgBe', 1, 'fadilakamila21@gmail.com', NULL, 1, 230411100156, NULL, NULL, 87722539067, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 --
--- Indexes for dumped tables
+-- Indeks untuk tabel yang dibuang
 --
 
 --
--- Indexes for table `aset`
+-- Indeks untuk tabel `aset`
 --
 ALTER TABLE `aset`
   ADD PRIMARY KEY (`id_aset`),
   ADD KEY `pemegang` (`pemegang`);
 
 --
--- Indexes for table `jadwal`
+-- Indeks untuk tabel `jadwal`
 --
 ALTER TABLE `jadwal`
   ADD PRIMARY KEY (`id_jadwal`),
@@ -274,95 +312,95 @@ ALTER TABLE `jadwal`
   ADD KEY `pic_medsos` (`pic_medsos`);
 
 --
--- Indexes for table `jenis`
+-- Indeks untuk tabel `jenis`
 --
 ALTER TABLE `jenis`
   ADD PRIMARY KEY (`id_jenis`);
 
 --
--- Indexes for table `link`
+-- Indeks untuk tabel `link`
 --
 ALTER TABLE `link`
   ADD PRIMARY KEY (`id_link`);
 
 --
--- Indexes for table `media`
+-- Indeks untuk tabel `media`
 --
 ALTER TABLE `media`
   ADD PRIMARY KEY (`id_media`),
   ADD KEY `id_sub_jenis` (`id_sub_jenis`);
 
 --
--- Indexes for table `sub_jenis`
+-- Indeks untuk tabel `sub_jenis`
 --
 ALTER TABLE `sub_jenis`
   ADD PRIMARY KEY (`id_sub_jenis`),
   ADD KEY `id_jenis` (`id_jenis`);
 
 --
--- Indexes for table `user`
+-- Indeks untuk tabel `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id_user`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT for table `aset`
+-- AUTO_INCREMENT untuk tabel `aset`
 --
 ALTER TABLE `aset`
-  MODIFY `id_aset` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_aset` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `jadwal`
+-- AUTO_INCREMENT untuk tabel `jadwal`
 --
 ALTER TABLE `jadwal`
-  MODIFY `id_jadwal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_jadwal` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `jenis`
+-- AUTO_INCREMENT untuk tabel `jenis`
 --
 ALTER TABLE `jenis`
-  MODIFY `id_jenis` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_jenis` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `link`
+-- AUTO_INCREMENT untuk tabel `link`
 --
 ALTER TABLE `link`
-  MODIFY `id_link` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_link` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
--- AUTO_INCREMENT for table `media`
+-- AUTO_INCREMENT untuk tabel `media`
 --
 ALTER TABLE `media`
-  MODIFY `id_media` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_media` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `sub_jenis`
+-- AUTO_INCREMENT untuk tabel `sub_jenis`
 --
 ALTER TABLE `sub_jenis`
-  MODIFY `id_sub_jenis` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_sub_jenis` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
--- AUTO_INCREMENT for table `user`
+-- AUTO_INCREMENT untuk tabel `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
--- Constraints for dumped tables
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
 
 --
--- Constraints for table `aset`
+-- Ketidakleluasaan untuk tabel `aset`
 --
 ALTER TABLE `aset`
   ADD CONSTRAINT `aset_ibfk_1` FOREIGN KEY (`pemegang`) REFERENCES `user` (`id_user`);
 
 --
--- Constraints for table `jadwal`
+-- Ketidakleluasaan untuk tabel `jadwal`
 --
 ALTER TABLE `jadwal`
   ADD CONSTRAINT `jadwal_ibfk_1` FOREIGN KEY (`pic_desain`) REFERENCES `user` (`id_user`),
@@ -370,13 +408,13 @@ ALTER TABLE `jadwal`
   ADD CONSTRAINT `jadwal_ibfk_3` FOREIGN KEY (`pic_medsos`) REFERENCES `user` (`id_user`);
 
 --
--- Constraints for table `media`
+-- Ketidakleluasaan untuk tabel `media`
 --
 ALTER TABLE `media`
   ADD CONSTRAINT `media_ibfk_1` FOREIGN KEY (`id_sub_jenis`) REFERENCES `sub_jenis` (`id_sub_jenis`);
 
 --
--- Constraints for table `sub_jenis`
+-- Ketidakleluasaan untuk tabel `sub_jenis`
 --
 ALTER TABLE `sub_jenis`
   ADD CONSTRAINT `sub_jenis_ibfk_1` FOREIGN KEY (`id_jenis`) REFERENCES `jenis` (`id_jenis`);
