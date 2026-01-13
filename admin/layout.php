@@ -45,22 +45,25 @@ global $user;
 .modal-body td {
   color: #212529;
 }
-.jvm-region {
-  transition: all 0.15s ease;
+.jvm-tooltip {
+  background: rgba(30, 30, 30, 0.9);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
 }
 #map-wrapper {
   position: relative;
+  width: 100%;
+  height: 480px; /* atau 500px, sesuaikan dashboard */
+  overflow: hidden;
 }
-
-#map-kecamatan,
-#map-kelurahan {
+#map-bangkalan svg {
   position: absolute;
   inset: 0;
-}
-
-/* kelurahan di atas */
-#map-kelurahan {
   pointer-events: auto;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.12));
 }
 /* ======================
    PC
@@ -586,8 +589,7 @@ global $user;
     <!-- jVectorMap core -->
     <script type="text/javascript" src="assets/geo/jquery-jvectormap-2.0.2.min.js"></script>
     <!-- MAP Bangkalan -->
-    <script type="text/javascript" src="assets/geo/kecamatan.js"></script>
-    <script type="text/javascript" src="assets/geo/kelurahan.js"></script>
+    <script type="text/javascript" src="assets/geo/bangkalan.js"></script>
     <!-- Javascript -->
     <?= $script; ?>
 </body>

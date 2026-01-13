@@ -219,10 +219,9 @@ while($m = mysqli_fetch_assoc($qMedia)){
                                                         </div>
                                                     </div>
                                                     <div class="card-block">
-                                                        <div id="map-wrapper" style="position: relative; height: 480px;">
-                                                          <div id="map-kecamatan" style="position:absolute; inset:0;"></div>
-                                                          <div id="map-kelurahan" style="position:absolute; inset:0;"></div>
-                                                        </div>
+                                                      <div id="map-wrapper">
+                                                        <div id="map-bangkalan" style="position:absolute; inset:0; pointer-events:auto;"></div>
+                                                      </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -492,82 +491,85 @@ if (links.length > 0) {
 
 // MAPS
 $(function () {
-let mapKecamatan = $('#map-kecamatan').vectorMap({
-  map: 'kecamatan',
+const warnaKecamatan = {
+  '3526010': '#baecb3', // Kamal
+  '3526020': '#e1b12c', // Labang
+  '3526030': '#c23616', // Kwanyar
+  '3526040': '#8c7ae6',
+  '3526050': '#00a8ff',
+  '3526060': '#9c88ff',
+  '3526070': '#fbc531',
+  '3526080': '#e84118',
+  '3526090': '#7f8fa6',
+  '3526100': '#487eb0',
+  '3526110': '#192a56', // Bangkalan
+  '3526120': '#40739e', // Burneh
+  '3526130': '#0097e6', // Arosbaya
+  '3526140': '#44bd32',
+  '3526150': '#e1b12c',
+  '3526160': '#c23616',
+  '3526170': '#8c7ae6', // Sepulu
+  '3526180': '#273c75'  // Klampis
+};
+const namaKecamatan = {
+  '3526010': 'Kamal',
+  '3526020': 'Labang',
+  '3526030': 'Kwanyar',
+  '3526040': 'Modung',
+  '3526050': 'Blega',
+  '3526060': 'Konang',
+  '3526070': 'Galis',
+  '3526080': 'Tanah Merah',
+  '3526090': 'Tragah',
+  '3526100': 'Socah',
+  '3526110': 'Bangkalan',
+  '3526120': 'Burneh',
+  '3526130': 'Arosbaya',
+  '3526140': 'Geger',
+  '3526150': 'Kokop',
+  '3526160': 'Tanjung Bumi',
+  '3526170': 'Sepulu',
+  '3526180': 'Klampis'
+};
+let regionColors = {};
+for (let regionCode in jvm.Map.maps['bangkalan'].paths) {
+  let kecamatanId = regionCode.substring(0, 7);
+  regionColors[regionCode] = warnaKecamatan[kecamatanId] || '#dcdde1';
+}
+$('#map-bangkalan').vectorMap({
+  map: 'bangkalan',
   backgroundColor: 'transparent',
   zoomOnScroll: true,
   panOnDrag: true,
 
   regionStyle: {
     initial: {
-      stroke: 'none'
+      stroke: '#ffffff',
+      'stroke-width': 0.4
     },
     hover: {
-      fill: null
+      'fill-opacity': 0.1,
+      cursor: 'pointer'
     }
   },
 
   series: {
     regions: [{
-      values: {
-        '3526010': '#baecb3',
-        '3526020': '#e1b12c',
-        '3526030': '#c23616',
-        '3526040': '#8c7ae6',
-        '3526050': '#00a8ff',
-        '3526060': '#9c88ff',
-        '3526070': '#fbc531',
-        '3526080': '#e84118',
-        '3526090': '#7f8fa6',
-        '3526100': '#487eb0',
-        '3526110': '#192a56',
-        '3526120': '#40739e',
-        '3526130': '#0097e6',
-        '3526140': '#44bd32',
-        '3526150': '#e1b12c',
-        '3526160': '#c23616',
-        '3526170': '#8c7ae6',
-        '3526180': '#273c75'
-      },
+      values: regionColors,
       attribute: 'fill'
     }]
-  }
-}).vectorMap('get', 'mapObject');
-let mapKelurahan = $('#map-kelurahan').vectorMap({
-  map: 'kelurahan',
-  backgroundColor: 'transparent',
-
-  zoomOnScroll: false,
-  panOnDrag: false,
-
-  regionStyle: {
-    initial: {
-      fill: 'rgba(0,0,0,0)',
-      stroke: '#636e72',
-      'stroke-width': 0.4
-    },
-    hover: {
-      stroke: '#000',
-      'stroke-width': 0.8,
-      cursor: 'pointer'
-    }
   },
 
-  onRegionTipShow: function (e, el) {
-    el.html(`
-      <strong>Kelurahan</strong><br>
-      ${el.text()}
-    `);
-  }
-}).vectorMap('get', 'mapObject');
-mapKecamatan.container.on('zoom.jvectormap', function (e, scale) {
-  mapKelurahan.setScale(scale);
-});
+onRegionTipShow: function (e, el, code) {
+  let kecId = code.substring(0, 7);
+  let kecNama = namaKecamatan[kecId] || kecId;
 
-mapKecamatan.container.on('pan.jvectormap', function () {
-  mapKelurahan.transX = mapKecamatan.transX;
-  mapKelurahan.transY = mapKecamatan.transY;
-  mapKelurahan.applyTransform();
+  el.html(`
+    <strong>Kelurahan</strong><br>
+    ${el.text()}<br>
+    <small>Kec. ${kecNama}</small>
+  `);
+}
 });
 });
 </script>
