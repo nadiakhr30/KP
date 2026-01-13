@@ -20,9 +20,22 @@ $totalTim = mysqli_fetch_assoc($qTim)['total'];
 $qAset = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM aset");
 $totalAset = mysqli_fetch_assoc($qAset)['total'];
 
-// TOTAL TENGGAT (jadwal yang belum selesai)
-$qDeadline = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM jadwal WHERE status != 2");
-$totalDeadline = mysqli_fetch_assoc($qDeadline)['total'];
+// Total konten bulan ini
+$qBulan = mysqli_query($koneksi, "
+  SELECT COUNT(*) AS total 
+  FROM media 
+  WHERE MONTH(created_at) = MONTH(CURRENT_DATE())
+    AND YEAR(created_at) = YEAR(CURRENT_DATE())
+");
+$totalBulan = mysqli_fetch_assoc($qBulan)['total'];
+
+// Total konten tahun ini
+$qTahun = mysqli_query($koneksi, "
+  SELECT COUNT(*) AS total 
+  FROM media 
+  WHERE YEAR(created_at) = YEAR(CURRENT_DATE())
+");
+$totalTahun = mysqli_fetch_assoc($qTahun)['total'];
 
 // Kalender
 $jadwalkalender = [];
@@ -188,21 +201,49 @@ while($m = mysqli_fetch_assoc($qMedia)){
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-xl-3 col-md-6">
-                                                <div class="card">
-                                                    <div class="card-block">
-                                                        <div class="row align-items-center m-l-0">
-                                                            <div class="col-auto">
-                                                                <i class="fa fa-clock-o f-30 text-c-purple"></i>
-                                                            </div>
-                                                            <div class="col-auto">
-                                                                <h6 class="text-muted m-b-10">Total Tenggat</h6>
-                                                                <h2 class="m-b-0"><?= $totalDeadline; ?></h2>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+<div class="col-xl-3 col-md-6">
+  <div class="card">
+    <div class="card-block">
+      <div class="row align-items-center">
+          <div class="col-auto">
+              <i class="fa fa-file-text-o f-30 text-c-purple"></i>
+          </div>
+          <div class="col-auto">
+            <h6 class="text-muted mb-2">Total Konten</h6>
+            <!-- Angka -->
+            <div class="d-flex align-items-start">
+              <div class="tab-content me-4">
+                <div class="tab-pane fade show active" id="konten-bulan">
+                  <h2 class="m-b-0"><?= $totalBulan; ?></h2>
+                </div>
+                <div class="tab-pane fade" id="konten-tahun">
+                  <h2 class="m-b-0"><?= $totalTahun; ?></h2>
+                </div>
+              </div>
+
+              <!-- Tabs vertikal -->
+              <ul class="nav nav-pills flex-column ms-auto small text-end" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active py-1 px-1"
+                     data-bs-toggle="tab"
+                     href="#konten-bulan">
+                    Bulan
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link py-1 px-1"
+                     data-bs-toggle="tab"
+                     href="#konten-tahun">
+                    Tahun
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
                                             <!-- task, page, download counter  end -->
                                             <div class="col-xl-4 col-md-12">
                                                 <div class="card ">
@@ -281,7 +322,7 @@ while($m = mysqli_fetch_assoc($qMedia)){
           <tr id="rowDokumentasi" style="display:none">
             <th>Dokumentasi</th>
             <td>
-              <a href="#" target="_blank" id="modalDokumentasi">Lihat dokumentasi</a>
+              <a href="#" target="_blank" id="modalDokumentasi"><i class="ti-eye"></i> Lihat</a>
             </td>
           </tr>
           <tr id="rowLink" style="display:none">
@@ -472,10 +513,10 @@ function renderLink(label, url) {
     `<a href="${url}" target="_blank" class="link-primary">${label}</a>`
   );
 }
-renderLink('Instagram', p.link_instagram);
-renderLink('Facebook', p.link_facebook);
-renderLink('YouTube', p.link_youtube);
-renderLink('Website', p.link_website);
+renderLink('<i class="ti-instagram"></i>', p.link_instagram);
+renderLink('<i class="ti-facebook"></i>', p.link_facebook);
+renderLink('<i class="ti-youtube"></i>', p.link_youtube);
+renderLink('<i class="ti-world"></i>', p.link_website);
 if (links.length > 0) {
   document.getElementById('rowLink').style.display = '';
   document.getElementById('modalLinks').innerHTML = links.join(' | ');

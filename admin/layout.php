@@ -45,6 +45,23 @@ global $user;
 .modal-body td {
   color: #212529;
 }
+#modalLinks i, #modalDokumentasi i {
+  font-size: 20px;        /* atur sesuai selera: 18–22px */
+  vertical-align: middle;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+#modalLinks a,
+#modalLinks span, #modalDokumentasi a, #modalDokumentasi span {
+  margin-right: 6px;
+}
+.nav-pills .nav-link {
+  background: #f1f2f6;
+  color: #555;
+}
+.nav-pills .nav-link.active {
+  background: #6f42c1;
+  color: #fff;
+}
 .jvm-tooltip {
   background: rgba(30, 30, 30, 0.9);
   color: #fff;
