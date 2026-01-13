@@ -85,7 +85,7 @@ function renderLayout($content, $script) {
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - Arsha Bootstrap Template</title>
+  <title>Dashboard Pegawai</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -108,20 +108,94 @@ function renderLayout($content, $script) {
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- themify icon -->
+  <link rel="stylesheet" type="text/css" href="assets/icon/themify-icons/themify-icons.css">
+
+  <!-- Font Awesome -->
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
 
   <!-- Full Calendar -->
       <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
       <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 
   <style>
-        .modal-body th {
-  color: #6c757d;
-  font-weight: 500;
-}
-.modal-body td {
-  color: #212529;
-}
+      .hero {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-waves {
+        display: block;
+        width: 100%;
+        height: 80px;
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+      }
+      .wave1 use {
+        animation: move-wave 10s linear infinite;
+      }
+      .wave2 use {
+        animation: move-wave 8s linear infinite;
+      }
+      .wave3 use {
+        animation: move-wave 6s linear infinite;
+      }
+
+      @keyframes move-wave {
+        from { transform: translateX(0); }
+        to { transform: translateX(-160px); }
+      }
+
+      .modal-body th {
+        color: #6c757d;
+        font-weight: 500;
+        font-family: 'Poppins', sans-serif;
+      }
+      .modal-body td {
+        color: #212529;
+        font-family: 'Poppins', sans-serif;
+      }
+      .btn-close-circle {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn-close-circle i {
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .icon-link {
+        font-size: 1.2rem;
+        color: #0d6efd;
+        transition: 0.2s;
+      }
+
+      .icon-link:hover {
+        color: #084298;
+      }
+      .icon-link {
+        font-size: 1.3rem;
+        color: #0d6efd;
+        cursor: pointer;
+      }
+
+      .icon-link:hover {
+        color: #084298;
+      }
+
+      #modalLinks i {
+        font-size: 1.4rem;
+      }
+
     /* Avatar: fixed size, rounded and crop to fill without distortion */
     .avatar-img{width:44px;height:44px;object-fit:cover;border-radius:50%;display:inline-block}
     /* extra gap between nav and user avatar (increased) */
@@ -132,13 +206,7 @@ function renderLayout($content, $script) {
     .navmenu{padding-right:3rem}
   </style>
 
-  <!-- =======================================================
-  * Template Name: Arsha
-  * Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
-  * Updated: Feb 22 2025 with Bootstrap v5.3.3
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+  
 </head>
 
 <body class="index-page">
@@ -146,15 +214,13 @@ function renderLayout($content, $script) {
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
-      <a href="index.html" class="logo d-flex align-items-center me-auto">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.webp" alt=""> -->
+      <a href="#" class="logo d-flex align-items-center me-auto">
         <h5 class="sitename">Humas BPS Bangkalan</h5>
       </a>
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="#hero" class="active">Beranda</a></li>
+          <li><a href="#beranda" class="active">Beranda</a></li>
           <li><a href="#about">Humas</a></li>
           <li><a href="#services">Manajemen</a></li>
           <li><a href="#portfolio">Dokumentasi</a></li>
@@ -167,7 +233,7 @@ function renderLayout($content, $script) {
         <div class="ms-3">
         <div class="dropdown">
           <a class="d-flex align-items-center text-decoration-none dropdown-toggle"
-            href="#"
+            href=""
             id="userDropdown"
             data-bs-toggle="dropdown"
             aria-expanded="false"
@@ -211,26 +277,13 @@ function renderLayout($content, $script) {
     </div>
   </header>
 
+
+
+<!-- ======= Isi Content ======= -->
   <?= $content ?>
 
+<!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
-
-    <div class="footer-newsletter">
-      <div class="container">
-        <div class="row justify-content-center text-center">
-          <div class="col-lg-6">
-            <h4>Join Our Newsletter</h4>
-            <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
-            <form action="forms/newsletter.php" method="post" class="php-email-form">
-              <div class="newsletter-form"><input type="email" name="email"><input type="submit" value="Subscribe"></div>
-              <div class="loading">Loading</div>
-              <div class="error-message"></div>
-              <div class="sent-message">Your subscription request has been sent. Thank you!</div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <div class="container footer-top">
       <div class="row gy-4">
@@ -281,13 +334,9 @@ function renderLayout($content, $script) {
     </div>
 
     <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Arsha</strong> <span>All Rights Reserved</span></p>
+      <p>© <span>Copyright</span> <span>Badan Pusat Statisik Bangkalan</span></p>
       <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you've purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        Designed by <strong class="px-1 sitename">Humas BPS bangkalan</strong>
       </div>
     </div>
 
@@ -314,36 +363,7 @@ function renderLayout($content, $script) {
 
   <?= $script ?>
   
-   <!-- Required Jquery -->
-    <script type="text/javascript" src="assets/js/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="assets/js/jquery-ui/jquery-ui.min.js "></script>
-    <script type="text/javascript" src="assets/js/popper.js/popper.min.js"></script>
-    <script type="text/javascript" src="assets/js/bootstrap/js/bootstrap.min.js "></script>
-    <script type="text/javascript" src="assets/pages/widget/excanvas.js "></script>
-    <!-- waves js -->
-    <script src="assets/pages/waves/js/waves.min.js"></script>
-    <!-- jquery slimscroll js -->
-    <script type="text/javascript" src="assets/js/jquery-slimscroll/jquery.slimscroll.js "></script>
-    <!-- modernizr js -->
-    <script type="text/javascript" src="assets/js/modernizr/modernizr.js "></script>
-    <!-- slimscroll js -->
-    <script type="text/javascript" src="assets/js/SmoothScroll.js"></script>
-    <script src="assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
-    <!-- Chart js -->
-     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- amchart js -->
-    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-    <script src="assets/pages/widget/amchart/gauge.js"></script>
-    <script src="assets/pages/widget/amchart/serial.js"></script>
-    <script src="assets/pages/widget/amchart/light.js"></script>
-    <script src="assets/pages/widget/amchart/pie.min.js"></script>
-    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-    <!-- menu js -->
-    <script src="assets/js/pcoded.min.js"></script>
-    <script src="assets/js/vertical-layout.min.js "></script>
-    <!-- custom js -->
-    <script type="text/javascript" src="assets/pages/dashboard/custom-dashboard.js"></script>
-    <script type="text/javascript" src="assets/js/script.js "></script>
+   
 </body>
 
 </html>
