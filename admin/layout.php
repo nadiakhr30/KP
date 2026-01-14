@@ -8,120 +8,181 @@ global $user;
 
 <head>
     <title>Dashboard Admin</title>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <meta name="author" content="kamila" />
-      <!-- Favicon icon -->
-      <link rel="icon" href="assets/images/logo_bps.ico" type="image/x-icon">
-    <!-- Google font-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="author" content="Kamila" />
+    <link rel="icon" href="assets/images/logo_bps.ico" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500" rel="stylesheet">
-    <!-- waves.css -->
     <link rel="stylesheet" href="assets/pages/waves/css/waves.min.css" type="text/css" media="all">
-      <!-- Required Fremwork -->
-      <link rel="stylesheet" type="text/css" href="assets/css/bootstrap/css/bootstrap.min.css">
-      <!-- waves.css -->
-      <link rel="stylesheet" href="assets/pages/waves/css/waves.min.css" type="text/css" media="all">
-      <!-- themify icon -->
-      <link rel="stylesheet" type="text/css" href="assets/icon/themify-icons/themify-icons.css">
-      <!-- Font Awesome -->
-      <link rel="stylesheet" type="text/css" href="assets/icon/font-awesome/css/font-awesome.min.css">
-      <!-- scrollbar.css -->
-      <link rel="stylesheet" type="text/css" href="assets/css/jquery.mCustomScrollbar.css">
-        <!-- am chart export.css -->
-        <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
-      <!-- Style.css -->
-      <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-      <!-- Full Calendar -->
-      <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
-      <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
-      <!-- jVector Map -->
-      <link rel="stylesheet" type="text/css" href="assets/geo/jquery-jvectormap-2.0.2.css">
-<style>
-.modal-body th {
-  color: #6c757d;
-  font-weight: 500;
-}
-.modal-body td {
-  color: #212529;
-}
-#modalLinks i, #modalDokumentasi i {
-  font-size: 20px;        /* atur sesuai selera: 18–22px */
-  vertical-align: middle;
-  transition: transform 0.15s ease, color 0.15s ease;
-}
-#modalLinks a,
-#modalLinks span, #modalDokumentasi a, #modalDokumentasi span {
-  margin-right: 6px;
-}
-.nav-pills .nav-link {
-  background: #f1f2f6;
-  color: #555;
-}
-.nav-pills .nav-link.active {
-  background: #6f42c1;
-  color: #fff;
-}
-.jvm-tooltip {
-  background: rgba(30, 30, 30, 0.9);
-  color: #fff;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 13px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-}
-#map-wrapper {
-  position: relative;
-  width: 100%;
-  height: 480px; /* atau 500px, sesuaikan dashboard */
-  overflow: hidden;
-}
-#map-bangkalan svg {
-  position: absolute;
-  inset: 0;
-  pointer-events: auto;
-  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.12));
-}
-/* ======================
-   PC
-   ====================== */
-@media (min-width: 992px) {
-  .navbar-logo {
-    display: flex;
-    align-items: center;
-  }
-
-  .navbar-logo .logo {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    margin-right: 80px;
-    margin-left: 20px; /* JAUHKAN DARI HAMBURGER KIRI */
-  }
-}
-
-/* ======================
-   MOBILE
-   ====================== */
-@media (max-width: 788px) {
-  .navbar-logo {
-    display: flex;
-    justify-content: center;
-  }
-
-  .navbar-logo .logo {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    margin: 0 auto;
-  }
-}
-
-</style>
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/pages/waves/css/waves.min.css" type="text/css" media="all">
+    <link rel="stylesheet" type="text/css" href="assets/icon/themify-icons/themify-icons.css">
+    <link rel="stylesheet" type="text/css" href="assets/icon/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/geo/jquery-jvectormap-2.0.2.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/pages/data-table/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css">
+      <link rel="stylesheet" type="text/css" href="assets/pages/data-table/extensions/buttons/css/buttons.dataTables.min.css">
+    <style>
+    /* Kalender */
+    .modal-body th {
+      color: #6c757d;
+      font-weight: 500;
+    }
+    .modal-body td {
+      color: #212529;
+    }
+    #modalLinks i, #modalDokumentasi i {
+      font-size: 20px;        /* atur sesuai selera: 18–22px */
+      vertical-align: middle;
+      transition: transform 0.15s ease, color 0.15s ease;
+    }
+    #modalLinks a,
+    #modalLinks span, #modalDokumentasi a, #modalDokumentasi span {
+      margin-right: 6px;
+    }
+    
+    /* Total konten */
+    .nav-pills .nav-link {
+      background: #f1f2f6;
+      color: #555;
+    }
+    .nav-pills .nav-link.active {
+      background: #6f42c1;
+      color: #fff;
+    }
+    
+    /* Top 5 Pegawai */
+    .podium-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      overflow: visible;
+      position: relative;
+      z-index:5;
+    }
+    .podium-step {
+      position: relative;
+      height: 54px;
+      color: #fff;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      cursor: default;
+      transition: transform .15s ease;
+      z-index: 1;
+    }
+    .podium-step .name {
+      max-width: 80%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 14px;
+      text-align: center;
+    }
+    .podium-step:hover {
+      transform: translateY(-2px);
+      z-index: 10;
+    }
+    .step-1 { width: 45%; background: #2d3436; }
+    .step-2 { width: 55%; background: #e84118; }
+    .step-3 { width: 65%; background: #fbc531; color:#222; }
+    .step-4 { width: 75%; background: #00a8ff; }
+    .step-5 { width: 85%; background: #44bd32; }
+    .crown {
+      position: absolute;
+      top: -26px;
+      font-size: 22px;
+    }
+    .podium-step::after {
+      content:
+        attr(data-name) "\A"
+        "Total Penugasan: " attr(data-total);
+      position: absolute;
+      top: -52px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(30,30,30,.95);
+      text-align: center;
+      color: #fff;
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 6px;
+      white-space: pre;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .podium-step:hover::after {
+      opacity: 1;
+    }
+    
+    /* Maps */
+    .jvm-tooltip {
+      background: rgba(30, 30, 30, 0.9);
+      color: #fff;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    }
+    #map-wrapper {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      overflow: hidden;
+    }
+    #map-bangkalan svg {
+      position: absolute;
+      inset: 0;
+      pointer-events: auto;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.12));
+    }
+    
+    /* ======================
+       PC
+       ====================== */
+    @media (min-width: 992px) {
+      .navbar-logo {
+        display: flex;
+        align-items: center;
+      }
+      .navbar-logo .logo {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        margin-right: 80px;
+        margin-left: 20px;
+      }
+    }
+    
+    /* ======================
+       MOBILE
+       ====================== */
+    @media (max-width: 788px) {
+      .navbar-logo {
+        display: flex;
+        justify-content: center;
+      }
+      .navbar-logo .logo {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        margin: 0 auto;
+      }
+    }
+    </style>
   </head>
-
   <body>
-  <!-- Pre-loader start -->
   <div class="theme-loader">
       <div class="loader-track">
           <div class="preloader-wrapper">
@@ -184,17 +245,6 @@ global $user;
                       <a class="mobile-menu waves-effect waves-light" id="mobile-collapse">
                           <i class="ti-menu"></i>
                       </a>
-                      <div class="mobile-search waves-effect waves-light">
-                          <div class="header-search">
-                              <div class="main-search morphsearch-search">
-                                  <div class="input-group">
-                                      <span class="input-group-addon search-close"><i class="ti-close"></i></span>
-                                      <input type="text" class="form-control" placeholder="Enter Keyword">
-                                      <span class="input-group-addon search-btn"><i class="ti-search"></i></span>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
                       <a href="index.php" style="display:flex; align-items:center; gap:8px; text-decoration:none; max-width:220px;" class="logo">
                           <img src="../images/bps.png" alt="Logo BPS" style="width:40px; height:auto; flex-shrink:0;" />
                           <span style="color:white;">Humas BPS Bangkalan</span>
@@ -208,15 +258,6 @@ global $user;
                       <ul class="nav-left">
                           <li>
                               <div class="sidebar_toggle"><a href="javascript:void(0)"><i class="ti-menu"></i></a></div>
-                          </li>
-                          <li class="header-search">
-                              <div class="main-search morphsearch-search">
-                                  <div class="input-group">
-                                      <span class="input-group-addon search-close"><i class="ti-close"></i></span>
-                                      <input type="text" class="form-control">
-                                      <span class="input-group-addon search-btn"><i class="ti-search"></i></span>
-                                  </div>
-                              </div>
                           </li>
                           <li>
                               <a href="#!" onclick="javascript:toggleFullScreen()" class="waves-effect waves-light">
@@ -294,7 +335,7 @@ global $user;
                                   </a>
                                   <ul class="pcoded-submenu">
                                       <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
+                                          <a href="manajemen_user.php" class="waves-effect waves-dark">
                                               <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                                               <span class="pcoded-mtext" data-i18n="???">User</span>
                                               <span class="pcoded-mcaret"></span>
@@ -561,53 +602,51 @@ global $user;
                           </ul>
                       </div>
                   </nav>
-                        <!-- Page-header end -->
-                        <!-- Page-header end -->
-                        <!-- Page-header end -->
-                        <?= $content ?>
-                        <!-- Page-header end -->
-                        <!-- Page-header end -->
-                        <!-- Page-header end -->
+                  <?= $content ?>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Required Jquery -->
     <script type="text/javascript" src="assets/js/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="assets/js/jquery-ui/jquery-ui.min.js "></script>
     <script type="text/javascript" src="assets/js/popper.js/popper.min.js"></script>
     <script type="text/javascript" src="assets/js/bootstrap/js/bootstrap.min.js "></script>
     <script type="text/javascript" src="assets/pages/widget/excanvas.js "></script>
-    <!-- waves js -->
     <script src="assets/pages/waves/js/waves.min.js"></script>
-    <!-- jquery slimscroll js -->
     <script type="text/javascript" src="assets/js/jquery-slimscroll/jquery.slimscroll.js "></script>
-    <!-- modernizr js -->
     <script type="text/javascript" src="assets/js/modernizr/modernizr.js "></script>
-    <!-- slimscroll js -->
     <script type="text/javascript" src="assets/js/SmoothScroll.js"></script>
     <script src="assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
-    <!-- Chart js -->
-     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- amchart js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
     <script src="assets/pages/widget/amchart/gauge.js"></script>
     <script src="assets/pages/widget/amchart/serial.js"></script>
     <script src="assets/pages/widget/amchart/light.js"></script>
     <script src="assets/pages/widget/amchart/pie.min.js"></script>
     <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-    <!-- menu js -->
     <script src="assets/js/pcoded.min.js"></script>
     <script src="assets/js/vertical-layout.min.js "></script>
-    <!-- custom js -->
     <script type="text/javascript" src="assets/pages/dashboard/custom-dashboard.js"></script>
     <script type="text/javascript" src="assets/js/script.js "></script>
-    <!-- jVectorMap core -->
     <script type="text/javascript" src="assets/geo/jquery-jvectormap-2.0.2.min.js"></script>
-    <!-- MAP Bangkalan -->
     <script type="text/javascript" src="assets/geo/bangkalan.js"></script>
-    <!-- Javascript -->
+    <script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="bower_components/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="assets/pages/data-table/js/jszip.min.js"></script>
+    <script src="assets/pages/data-table/js/pdfmake.min.js"></script>
+    <script src="bower_components/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="bower_components/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="bower_components/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="bower_components/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script src="assets/pages/data-table/js/data-table-custom.js"></script>
+    <script src="assets/pages/data-table/js/vfs_fonts.js"></script>
+    <script src="assets/pages/data-table/extensions/buttons/js/dataTables.buttons.min.js"></script>
+    <script src="assets/pages/data-table/extensions/buttons/js/buttons.flash.min.js"></script>
+    <script src="assets/pages/data-table/extensions/buttons/js/jszip.min.js"></script>
+    <script src="assets/pages/data-table/extensions/buttons/js/vfs_fonts.js"></script>
+    <script src="assets/pages/data-table/extensions/buttons/js/buttons.colVis.min.js"></script>
+    <script src="../files/assets/pages/data-table/extensions/buttons/js/extension-btns-custom.js"></script>
     <?= $script; ?>
 </body>
 

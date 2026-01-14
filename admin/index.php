@@ -8,7 +8,7 @@ if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
     exit();
 }
 
-// TOTAL HIRED EMPLOYEE (user aktif)
+// TOTAL HIRED EMPLOYEE
 $qUser = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM user WHERE status = 1");
 $totalUser = mysqli_fetch_assoc($qUser)['total'];
 
@@ -116,291 +116,302 @@ while($s = mysqli_fetch_assoc($qStatus)){
   $statusData[] = $s;
 }
 
-// MEDIA CHART
-$qMedia = mysqli_query($koneksi, "SELECT j.nama_jenis, COUNT(m.id_media) AS total FROM media m JOIN sub_jenis sj ON m.id_sub_jenis = sj.id_sub_jenis JOIN jenis j ON sj.id_jenis = j.id_jenis GROUP BY j.nama_jenis");
-$labels = [];
-$data = [];
-while($m = mysqli_fetch_assoc($qMedia)){
-  $labels[] = $m['nama_jenis'];
-  $data[] = $m['total'];
+// TOP 5 PEGAWAI
+$qTopPegawai = mysqli_query($koneksi, "
+  SELECT u.nama, COUNT(*) AS total
+  FROM (
+    SELECT pic_desain AS pic FROM jadwal WHERE pic_desain IS NOT NULL AND pic_desain != ''
+    UNION ALL
+    SELECT pic_narasi FROM jadwal WHERE pic_narasi IS NOT NULL AND pic_narasi != ''
+    UNION ALL
+    SELECT pic_medsos FROM jadwal WHERE pic_medsos IS NOT NULL AND pic_medsos != ''
+  ) j
+  JOIN user u ON u.id_user = j.pic
+  GROUP BY u.nama
+  ORDER BY total DESC
+  LIMIT 5
+");
+
+$pegawai = [];
+while ($r = mysqli_fetch_assoc($qTopPegawai)) {
+  $pegawai[] = [
+    'nama' => $r['nama'],
+    'total' => (int)$r['total']
+  ];
 }
 ?>
-                  <div class="pcoded-content">
-                      <!-- Page-header start -->
-                      <div class="page-header">
-                          <div class="page-block">
-                              <div class="row align-items-center">
-                                  <div class="col-md-8">
-                                      <div class="page-header-title">
-                                          <h5 class="m-b-10">Dashboard</h5>
-                                          <p class="m-b-0">Selamat Datang, <?= $_SESSION['user']['nama'] ?>!</p>
-                                      </div>
-                                  </div>
-                                  <div class="col-md-4">
-                                      <ul class="breadcrumb-title">
-                                          <li class="breadcrumb-item">
-                                              <a href="index.php"> <i class="fa fa-home"></i> </a>
-                                          </li>
-                                          <li class="breadcrumb-item"><a href="index.php">Dashboard</a>
-                                          </li>
-                                      </ul>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                        <div class="pcoded-inner-content">
-                            <!-- Main-body start -->
-                            <div class="main-body">
-                                <div class="page-wrapper">
-                                    <!-- Page-body start -->
-                                    <div class="page-body">
-                                        <div class="row">
-                                            <!-- task, page, download counter  start -->
-                                            <div class="col-xl-3 col-md-6">
-                                                <div class="card">
-                                                    <div class="card-block">
-                                                        <div class="row align-items-center m-l-0">
-                                                            <div class="col-auto">
-                                                                <i class="fa fa-user f-30 text-c-purple"></i>
-                                                            </div>
-                                                            <div class="col-auto">
-                                                                <h6 class="text-muted m-b-10">Total Karyawan</h6>
-                                                                <h2 class="m-b-0"><?= $totalUser; ?></h2>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-md-6">
-                                                <div class="card">
-                                                    <div class="card-block">
-                                                        <div class="row align-items-center m-l-0">
-                                                            <div class="col-auto">
-                                                                <i class="fa fa-group f-30 text-c-purple"></i>
-                                                            </div>
-                                                            <div class="col-auto">
-                                                                <h6 class="text-muted m-b-10">Total Tim</h6>
-                                                                <h2 class="m-b-0"><?= $totalTim; ?></h2>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-md-6">
-                                                <div class="card">
-                                                    <div class="card-block">
-                                                        <div class="row align-items-center m-l-0">
-                                                            <div class="col-auto">
-                                                                <i class="fa fa-archive f-30 text-c-purple"></i>
-                                                            </div>
-                                                            <div class="col-auto">
-                                                                <h6 class="text-muted m-b-10">Total Aset</h6>
-                                                                <h2 class="m-b-0"><?= $totalAset; ?></h2>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-<div class="col-xl-3 col-md-6">
-  <div class="card">
-    <div class="card-block">
-      <div class="row align-items-center">
-          <div class="col-auto">
-              <i class="fa fa-file-text-o f-30 text-c-purple"></i>
-          </div>
-          <div class="col-auto">
-            <h6 class="text-muted mb-2">Total Konten</h6>
-            <!-- Angka -->
-            <div class="d-flex align-items-start">
-              <div class="tab-content me-4">
-                <div class="tab-pane fade show active" id="konten-bulan">
-                  <h2 class="m-b-0"><?= $totalBulan; ?></h2>
+<div class="pcoded-content">
+    <div class="page-header">
+        <div class="page-block">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="page-header-title">
+                        <h5 class="m-b-10">Dashboard</h5>
+                        <p class="m-b-0">Selamat Datang, <?= $_SESSION['user']['nama'] ?>!</p>
+                    </div>
                 </div>
-                <div class="tab-pane fade" id="konten-tahun">
-                  <h2 class="m-b-0"><?= $totalTahun; ?></h2>
+                <div class="col-md-4">
+                    <ul class="breadcrumb-title">
+                        <li class="breadcrumb-item">
+                            <a href="index.php"> <i class="fa fa-home"></i> </a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="index.php">Dashboard</a>
+                        </li>
+                    </ul>
                 </div>
-              </div>
-
-              <!-- Tabs vertikal -->
-              <ul class="nav nav-pills flex-column ms-auto small text-end" role="tablist">
-                <li class="nav-item">
-                  <a class="nav-link active py-1 px-1"
-                     data-bs-toggle="tab"
-                     href="#konten-bulan">
-                    Bulan
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link py-1 px-1"
-                     data-bs-toggle="tab"
-                     href="#konten-tahun">
-                    Tahun
-                  </a>
-                </li>
-              </ul>
             </div>
-          </div>
-      </div>
-    </div>
-  </div>
-</div>
-                                            <!-- task, page, download counter  end -->
-                                            <div class="col-xl-4 col-md-12">
-                                                <div class="card ">
-                                                    <div class="card-header">
-                                                        <h5>Peta Bangkalan</h5>
-                                                        <div class="card-header-right">
-                                                            <ul class="list-unstyled card-option">
-                                                                <li><i class="fa fa fa-wrench open-card-option"></i></li>
-                                                                <li><i class="fa fa-window-maximize full-card"></i></li>
-                                                                <li><i class="fa fa-minus minimize-card"></i></li>
-                                                                <li><i class="fa fa-refresh reload-card"></i></li>
-                                                                <li><i class="fa fa-trash close-card"></i></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-block">
-                                                      <div id="map-wrapper">
-                                                        <div id="map-bangkalan" style="position:absolute; inset:0; pointer-events:auto;"></div>
-                                                      </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-8 col-md-12">
-                                                <div class="card ">
-                                                    <div class="card-header">
-                                                        <h5>Kalender & Jadwal</h5>
-                                                        <div class="card-header-right">
-                                                            <ul class="list-unstyled card-option">
-                                                                <li><i class="fa fa fa-wrench open-card-option"></i></li>
-                                                                <li><i class="fa fa-window-maximize full-card"></i></li>
-                                                                <li><i class="fa fa-minus minimize-card"></i></li>
-                                                                <li><i class="fa fa-refresh reload-card"></i></li>
-                                                                <li><i class="fa fa-trash close-card"></i></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-block"><div id="calendar"></div></div>
-                                                </div>
-                                            </div>
-<div class="modal fade" id="jadwalModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div>
-          <h5 class="text-muted" id="modalTopik"></h5>
-          <h3 class="modal-title mb-0" id="modalJudul"></h3>
         </div>
-        <button class="btn waves-effect waves-dark btn-danger btn-outline-danger btn-icon" aria-label="Close" data-bs-dismiss="modal"><i class="ti-close"></i></button>
-      </div>
-      <div class="modal-body">
-        <table class="table table-sm table-borderless">
-          <tr>
-            <th width="180">Tanggal Penugasan</th>
-            <td id="modalTanggalPenugasan"></td>
-          </tr>
-          <tr>
-            <th>Target Rilis</th>
-            <td id="modalTargetRilis"></td>
-          </tr>
-          <tr>
-            <th>Tim</th>
-            <td id="modalTim"></td>
-          </tr>
-          <tr>
-            <th>Status</th>
-            <td id="modalStatus"></td>
-          </tr>
-          <tr>
-            <th>PIC</th>
-            <td id="modalPIC"></td>
-          </tr>
-          <tr>
-            <th>Keterangan</th>
-            <td id="modalKeterangan"></td>
-          </tr>
-          <tr id="rowDokumentasi" style="display:none">
-            <th>Dokumentasi</th>
-            <td>
-              <a href="#" target="_blank" id="modalDokumentasi"><i class="ti-eye"></i> Lihat</a>
-            </td>
-          </tr>
-          <tr id="rowLink" style="display:none">
-            <th>Link Publikasi</th>
-            <td id="modalLinks"></td>
-          </tr>
-        </table>
-      </div>
     </div>
-  </div>
-</div>
-                                            <div class="col-xl-3 col-md-6">
-                                                <div class="card ">
-                                                    <div class="card-header">
-                                                        <h5>Status Jadwal Kegiatan</h5>
-                                                        <div class="card-header-right">
-                                                            <ul class="list-unstyled card-option">
-                                                                <li><i class="fa fa fa-wrench open-card-option"></i></li>
-                                                                <li><i class="fa fa-window-maximize full-card"></i></li>
-                                                                <li><i class="fa fa-minus minimize-card"></i></li>
-                                                                <li><i class="fa fa-refresh reload-card"></i></li>
-                                                                <li><i class="fa fa-trash close-card"></i></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-block"><canvas id="statusChart"></canvas></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3 col-md-6">
-                                                <div class="card ">
-                                                    <div class="card-header">
-                                                        <h5>Media Chart</h5>
-                                                        <div class="card-header-right">
-                                                            <ul class="list-unstyled card-option">
-                                                                <li><i class="fa fa fa-wrench open-card-option"></i></li>
-                                                                <li><i class="fa fa-window-maximize full-card"></i></li>
-                                                                <li><i class="fa fa-minus minimize-card"></i></li>
-                                                                <li><i class="fa fa-refresh reload-card"></i></li>
-                                                                <li><i class="fa fa-trash close-card"></i></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-block"><canvas id="mediaChart"></canvas></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-6 col-md-12">
-                                                <div class="card ">
-                                                    <div class="card-header">
-                                                        <h5>Skill Chart</h5>
-                                                        <div class="card-header-right">
-                                                            <ul class="list-unstyled card-option">
-                                                                <li><i class="fa fa fa-wrench open-card-option"></i></li>
-                                                                <li><i class="fa fa-window-maximize full-card"></i></li>
-                                                                <li><i class="fa fa-minus minimize-card"></i></li>
-                                                                <li><i class="fa fa-refresh reload-card"></i></li>
-                                                                <li><i class="fa fa-trash close-card"></i></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-block"><canvas id="skillChart"></canvas></div>
-                                                </div>
-                                            </div>
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card">
+                                <div class="card-block">
+                                    <div class="row align-items-center m-l-0">
+                                        <div class="col-auto">
+                                            <i class="fa fa-user f-30 text-c-purple"></i>
+                                        </div>
+                                        <div class="col-auto">
+                                            <h6 class="text-muted m-b-10">Total Karyawan</h6>
+                                            <h2 class="m-b-0"><?= $totalUser; ?></h2>
                                         </div>
                                     </div>
-                                    <!-- Page-body end -->
                                 </div>
-                                <div id="styleSelector"> </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card">
+                                <div class="card-block">
+                                    <div class="row align-items-center m-l-0">
+                                        <div class="col-auto">
+                                            <i class="fa fa-group f-30 text-c-purple"></i>
+                                        </div>
+                                        <div class="col-auto">
+                                            <h6 class="text-muted m-b-10">Total Tim</h6>
+                                            <h2 class="m-b-0"><?= $totalTim; ?></h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card">
+                                <div class="card-block">
+                                    <div class="row align-items-center m-l-0">
+                                        <div class="col-auto">
+                                            <i class="fa fa-archive f-30 text-c-purple"></i>
+                                        </div>
+                                        <div class="col-auto">
+                                            <h6 class="text-muted m-b-10">Total Aset</h6>
+                                            <h2 class="m-b-0"><?= $totalAset; ?></h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                          <div class="card">
+                            <div class="card-block">
+                              <div class="row align-items-center">
+                                  <div class="col-auto">
+                                      <i class="fa fa-file-text-o f-30 text-c-purple"></i>
+                                  </div>
+                                  <div class="col-auto">
+                                    <h6 class="text-muted mb-2">Total Konten</h6>
+                                    <!-- Angka -->
+                                    <div class="tab-content tabs-right-content card-block">
+                                      <div class="tab-pane active" id="konten-bulan" role="tabpanel">
+                                        <h2 class="m-b-0"><?= $totalBulan; ?></h2>
+                                      </div>
+                                      <div class="tab-pane" id="konten-tahun" role="tabpanel">
+                                        <h2 class="m-b-0"><?= $totalTahun; ?></h2>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-auto ms-auto">
+                                    <ul class="nav nav-tabs md-tabs tabs-right b-none" role="tablist">
+                                      <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" href="#konten-bulan">Bulan Ini</a>
+                                        <div class="slide"></div>
+                                      </li>
+                                      <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#konten-tahun">Tahun Ini</a>
+                                        <div class="slide"></div>
+                                      </li>
+                                    </ul>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xl-4 col-md-12">
+                            <div class="card ">
+                                <div class="card-header">
+                                    <h5>Peta Bangkalan</h5>
+                                    <div class="card-header-right">
+                                        <ul class="list-unstyled card-option">
+                                            <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                                            <li><i class="fa fa-window-maximize full-card"></i></li>
+                                            <li><i class="fa fa-minus minimize-card"></i></li>
+                                            <li><i class="fa fa-refresh reload-card"></i></li>
+                                            <li><i class="fa fa-trash close-card"></i></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="card-block">
+                                  <div id="map-wrapper">
+                                    <div id="map-bangkalan" style="position:absolute; inset:0; pointer-events:auto;"></div>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-8 col-md-12">
+                            <div class="card ">
+                                <div class="card-header">
+                                    <h5>Kalender & Jadwal</h5>
+                                    <div class="card-header-right">
+                                        <ul class="list-unstyled card-option">
+                                            <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                                            <li><i class="fa fa-window-maximize full-card"></i></li>
+                                            <li><i class="fa fa-minus minimize-card"></i></li>
+                                            <li><i class="fa fa-refresh reload-card"></i></li>
+                                            <li><i class="fa fa-trash close-card"></i></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="card-block"><div id="calendar"></div></div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="jadwalModal" tabindex="-1">
+                          <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <div>
+                                  <h5 class="text-muted" id="modalTopik"></h5>
+                                  <h3 class="modal-title mb-0" id="modalJudul"></h3>
+                                </div>
+                                <button class="btn waves-effect waves-dark btn-danger btn-outline-danger btn-icon" aria-label="Close" data-bs-dismiss="modal"><i class="ti-close"></i></button>
+                              </div>
+                              <div class="modal-body">
+                                <table class="table table-sm table-borderless">
+                                  <tr>
+                                    <th width="180">Tanggal Penugasan</th>
+                                    <td id="modalTanggalPenugasan"></td>
+                                  </tr>
+                                  <tr>
+                                    <th>Target Rilis</th>
+                                    <td id="modalTargetRilis"></td>
+                                  </tr>
+                                  <tr>
+                                    <th>Tim</th>
+                                    <td id="modalTim"></td>
+                                  </tr>
+                                  <tr>
+                                    <th>Status</th>
+                                    <td id="modalStatus"></td>
+                                  </tr>
+                                  <tr>
+                                    <th>PIC</th>
+                                    <td id="modalPIC"></td>
+                                  </tr>
+                                  <tr>
+                                    <th>Keterangan</th>
+                                    <td id="modalKeterangan"></td>
+                                  </tr>
+                                  <tr id="rowDokumentasi" style="display:none">
+                                    <th>Dokumentasi</th>
+                                    <td>
+                                      <a href="#" target="_blank" id="modalDokumentasi"><i class="ti-eye"></i> Lihat</a>
+                                    </td>
+                                  </tr>
+                                  <tr id="rowLink" style="display:none">
+                                    <th>Link Publikasi</th>
+                                    <td id="modalLinks"></td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card ">
+                                <div class="card-header">
+                                    <h5>Status Jadwal Kegiatan</h5>
+                                    <div class="card-header-right">
+                                        <ul class="list-unstyled card-option">
+                                            <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                                            <li><i class="fa fa-window-maximize full-card"></i></li>
+                                            <li><i class="fa fa-minus minimize-card"></i></li>
+                                            <li><i class="fa fa-refresh reload-card"></i></li>
+                                            <li><i class="fa fa-trash close-card"></i></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="card-block"><canvas id="statusChart"></canvas></div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                          <div class="card ">
+                            <div class="card-header">
+                                <h5>Top 5 Pegawai Paling Sibuk</h5>
+                                <div class="card-header-right">
+                                    <ul class="list-unstyled card-option">
+                                        <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                                        <li><i class="fa fa-window-maximize full-card"></i></li>
+                                        <li><i class="fa fa-minus minimize-card"></i></li>
+                                        <li><i class="fa fa-refresh reload-card"></i></li>
+                                        <li><i class="fa fa-trash close-card"></i></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-block text-center pb-0">
+                              <h6>Berdasarkan Total Penugasan</h6>
+                              <div class="podium-wrapper">
+                                <?php foreach ($pegawai as $i => $p): ?>
+                                  <div class="podium-step step-<?= $i+1 ?>" data-total="<?= $p['total'] ?>" data-name="<?= htmlspecialchars($p['nama']) ?>">
+                                    <?php if ($i === 0): ?>
+                                      <div class="crown">👑</div>
+                                    <?php endif; ?>
+                                    <div class="name" title="<?= htmlspecialchars($p['nama']) ?>"><?= htmlspecialchars($p['nama']) ?></div>
+                                  </div>
+                                <?php endforeach; ?>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xl-6 col-md-12">
+                            <div class="card ">
+                                <div class="card-header">
+                                    <h5>Skill Chart</h5>
+                                    <div class="card-header-right">
+                                        <ul class="list-unstyled card-option">
+                                            <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                                            <li><i class="fa fa-window-maximize full-card"></i></li>
+                                            <li><i class="fa fa-minus minimize-card"></i></li>
+                                            <li><i class="fa fa-refresh reload-card"></i></li>
+                                            <li><i class="fa fa-trash close-card"></i></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="card-block"><canvas id="skillChart"></canvas></div>
                             </div>
                         </div>
                       </div>
-                        <!-- Page-header end -->
-                        <!-- Page-header end -->
-                        <!-- Page-header end -->
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+</div>
 <?php
 $content = ob_get_clean();
 ob_start();
 ?>
 <script>
+  // Chart Skill
 new Chart(document.getElementById('skillChart'), {
   type: 'bar',
   data: {
@@ -422,6 +433,8 @@ new Chart(document.getElementById('skillChart'), {
     }]
   }
 });
+
+//Chart Status Jadwal
 new Chart(document.getElementById('statusChart'), {
   type: 'doughnut',
   data: {
@@ -432,15 +445,6 @@ new Chart(document.getElementById('statusChart'), {
         <?= $statusData[0]['total'] ?? 0 ?>,
         <?= $statusData[1]['total'] ?? 0 ?>
       ]
-    }]
-  }
-});
-new Chart(document.getElementById('mediaChart'), {
-  type: 'pie',
-  data: {
-    labels: <?= json_encode($labels) ?>,
-    datasets: [{
-      data: <?= json_encode($data) ?>
     }]
   }
 });
