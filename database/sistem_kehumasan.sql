@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Waktu pembuatan: 12 Jan 2026 pada 05.00
+-- Waktu pembuatan: 14 Jan 2026 pada 08.48
 -- Versi server: 8.0.30
 -- Versi PHP: 8.1.10
 
@@ -33,19 +33,20 @@ CREATE TABLE `aset` (
   `link` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `keterangan` text COLLATE utf8mb4_general_ci,
   `jenis` int DEFAULT NULL,
-  `pemegang` int DEFAULT NULL
+  `pemegang` int DEFAULT NULL,
+  `foto_aset` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `aset`
 --
 
-INSERT INTO `aset` (`id_aset`, `nama`, `link`, `keterangan`, `jenis`, `pemegang`) VALUES
-(1, 'Kamera', NULL, 'Merk Canon EOS 1500D', 1, 7),
-(2, 'Printer Kantor', NULL, 'HP LaserJet Pro M404dn', 2, 4),
-(3, 'Infografis Kemiskinan', 'https://bangkalan.bps.go.id', 'Desain Adobe Illustrator', 1, 8),
-(4, 'Lisensi Microsoft Office', 'https://www.microsoft.com', 'Office 2021 Professional Plus', 3, 7),
-(5, 'Video Profil BPS', 'https://youtube.com', 'Resolusi Full HD 1080p', 1, 14);
+INSERT INTO `aset` (`id_aset`, `nama`, `link`, `keterangan`, `jenis`, `pemegang`, `foto_aset`) VALUES
+(1, 'Kamera', NULL, 'Merk Canon EOS 1500D', 2, 7, ''),
+(2, 'Printer Kantor', NULL, 'HP LaserJet Pro M404dn', 2, 4, ''),
+(3, 'Infografis Kemiskinan', 'https://bangkalan.bps.go.id', 'Desain Adobe Illustrator', 1, 8, ''),
+(4, 'Lisensi Microsoft Office', 'https://www.microsoft.com', 'Office 2021 Professional Plus', 3, 7, ''),
+(5, 'Video Profil BPS', 'https://youtube.com', 'Resolusi Full HD 1080p', 1, 14, '');
 
 -- --------------------------------------------------------
 

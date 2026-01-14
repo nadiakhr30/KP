@@ -113,8 +113,8 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     <!-- /Beranda -->
 
 
- <!-- About Section -->
-    <section id="about" class="about section">
+ <!-- Kalender & Jadwal -->
+    <section id="kalender-jadwal" class="about section">
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
@@ -203,9 +203,86 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     </div>
   </div>
 </div>
-        
+</section><!-- /Kalender & Jadwal -->
 
-    </section><!-- /About Section -->
+
+ <!-- Humas Section -->
+<section id="Humas" class="services section light-background">
+
+  <!-- Section Title -->
+  <div class="container section-title" data-aos="fade-up">
+    <h2>Humas</h2>
+    <p>Mengelola komunikasi dan publikasi institusi secara terintegrasi dan efisien</p>
+  </div>
+
+  <div class="container">
+    <div class="row gy-3 justify-content-center">
+
+            <!-- Ruang Humas -->
+      <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
+        <div class="service-item humas-card position-relative text-center">
+          <div class="icon"><i class="bi bi-people icon"></i></div>
+          <h4>Ruang Humas</h4>
+          <p>Koordinasi dan kolaborasi pegawai kehumasan.</p>
+
+          <!-- Overlay -->
+          <div class="humas-overlay">
+            <a href="#" class="overlay-item">
+              <i class="bi bi-diagram-3"></i>
+              <span>Struktur Humas</span>
+            </a>
+            <a href="#kalender-jadwal" class="overlay-item">
+              <i class="bi bi-calendar-event"></i>
+              <span>Jadwal Konten Humas</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Brankas Humas -->
+      <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
+        <div class="service-item humas-card position-relative text-center">
+          <div class="icon"><i class="bi bi-folder2-open icon"></i></div>
+          <h4>Brankas Humas</h4>
+          <p>Penyimpanan dokumen dan arsip publikasi.</p>
+
+          <div class="humas-overlay">
+            <a href="https://drive.google.com" target="_blank" class="overlay-item">
+              <i class="bi bi-google"></i>
+              <span>Google Drive Humas</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aset Humas -->
+      <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
+        <div class="service-item humas-card position-relative text-center">
+          <div class="icon"><i class="bi bi-journal-bookmark icon"></i></div>
+          <h4>Aset Humas</h4>
+          <p>Manajemen aset dan materi komunikasi.</p>
+
+          <div class="humas-overlay">
+            <a href="aset.php?jenis=1" class="overlay-item">
+              <i class="bi bi-image"></i>
+              <span>Aset Visual</span>
+            </a>
+            <a href="aset.php?jenis=2" class="overlay-item">
+              <i class="bi bi-box-seam"></i>
+              <span>Aset Barang</span>
+            </a>
+            <a href="aset.php?jenis=3" class="overlay-item">
+              <i class="bi bi-patch-check"></i>
+              <span>Aset Lisensi</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+<!-- End Humas Section -->
 
 
 

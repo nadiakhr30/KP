@@ -109,12 +109,10 @@ function renderLayout($content, $script) {
   <link href="assets/css/main.css" rel="stylesheet">
 
   <!-- themify icon -->
-  <link rel="stylesheet" type="text/css" href="assets/icon/themify-icons/themify-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/themify-icons/0.1.2/css/themify-icons.min.css">
 
   <!-- Font Awesome -->
-  <link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
 
   <!-- Full Calendar -->
@@ -195,6 +193,72 @@ function renderLayout($content, $script) {
       #modalLinks i {
         font-size: 1.4rem;
       }
+      /* CARD */
+.humas-card {
+  position: relative;
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* KONTEN AWAL TETAP DI ATAS */
+.humas-card .icon,
+.humas-card h4,
+.humas-card p {
+  position: relative;
+  z-index: 1;
+}
+
+/* OVERLAY */
+.humas-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #0d6efd, #084298);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  text-align: center;
+
+  /* animasi */
+  transform: translateY(100%);
+  transition: transform 0.4s ease-in-out;
+
+  z-index: 10;
+}
+
+/* HOVER CARD */
+.humas-card:hover .humas-overlay {
+  transform: translateY(0);
+}
+
+/* ITEM OVERLAY */
+.overlay-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: background 0.25s ease;
+}
+
+.overlay-item i {
+  font-size: 18px;
+}
+
+/* HOVER ITEM */
+.overlay-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 
     /* Avatar: fixed size, rounded and crop to fill without distortion */
     .avatar-img{width:44px;height:44px;object-fit:cover;border-radius:50%;display:inline-block}
@@ -221,7 +285,7 @@ function renderLayout($content, $script) {
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="#beranda" class="active">Beranda</a></li>
-          <li><a href="#about">Humas</a></li>
+          <li><a href="#Humas">Humas</a></li>
           <li><a href="#services">Manajemen</a></li>
           <li><a href="#portfolio">Dokumentasi</a></li>
           <li><a href="#team">Pengembangan</a></li>
@@ -345,8 +409,7 @@ function renderLayout($content, $script) {
   <!-- Scroll Top -->
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-  <!-- Preloader -->
-  <div id="preloader"></div>
+
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
