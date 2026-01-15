@@ -2,6 +2,11 @@
 session_start();
 require_once __DIR__ . '/../koneksi.php';
 
+
+$isPegawai = ($_SESSION['user']['role'] == 2);
+
+
+
 if (!isset($_SESSION['user'])) {
     header('Location: ../login.php');
     exit;
@@ -293,13 +298,30 @@ input, select {
         <table>
           <tr><th>Nama</th><td><div class="input-box"><input type="text" name="nama" value="<?= htmlspecialchars($data['nama']) ?>"></div></td></tr>
           <tr><th>Email</th><td><div class="input-box"><input type="email" name="email" value="<?= htmlspecialchars($data['email']) ?>"></div></td></tr>
-          <tr><th>Role</th><td><div class="input-box"><select name="role">
-            <option value="1" <?= $data['role']==1?'selected':'' ?>>Administrasi</option>
-            <option value="2" <?= $data['role']==2?'selected':'' ?>>Pegawai</option>
-          </select></div></td></tr>
-          <tr><th>Status</th><td><div class="input-box"><select name="status">
-            <option value="1" <?= $data['status']==1?'selected':'' ?>>Aktif</option>
-            <option value="0" <?= $data['status']==0?'selected':'' ?>>Non-Aktif</option>
+          <tr><th>Role</th><td>
+                <div class="input-box">
+                <select name="role" <?= $isPegawai ? 'disabled' : '' ?>>
+                    <option value="1" <?= $data['role']==1?'selected':'' ?>>Administrasi</option>
+                    <option value="2" <?= $data['role']==2?'selected':'' ?>>Pegawai</option>
+                </select>
+
+                <?php if ($isPegawai): ?>
+                    <input type="hidden" name="role" value="<?= $data['role'] ?>">
+                <?php endif; ?>
+                </div>
+            </td></tr>
+          <tr><th>Status</th> <td>
+                <div class="input-box">
+                <select name="status" <?= $isPegawai ? 'disabled' : '' ?>>
+                    <option value="1" <?= $data['status']==1?'selected':'' ?>>Aktif</option>
+                    <option value="0" <?= $data['status']==0?'selected':'' ?>>Non-Aktif</option>
+                </select>
+
+                <?php if ($isPegawai): ?>
+                    <input type="hidden" name="status" value="<?= $data['status'] ?>">
+                <?php endif; ?>
+                </div>
+            </td>
           </select></div></td></tr>
           <tr><th>NIP</th><td><div class="input-box"><input type="text" name="nip" value="<?= htmlspecialchars($data['nip']) ?>"></div></td></tr>
           <tr><th>Role Humas</th><td><div class="input-box"><select name="role_humas">

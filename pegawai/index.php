@@ -175,7 +175,14 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
           </tr>
           <tr>
             <th>PIC</th>
-            <td id="modalPIC"></td>
+            <td >
+               <span id="modalPIC"></span>
+
+                <!-- tombol edit PIC -->
+                <a id="editPicBtn" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-pencil"></i>
+                </a>
+            </td>
           </tr>
           <tr>
             <th>Keterangan</th>
@@ -183,7 +190,8 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
           </tr>
           <tr>
             <th>Dokumentasi</th>
-            <td>
+            <td class="d-flex align-items-center gap-2">
+
               <a
                 id="modalDokumentasi"
                 target="_blank"
@@ -192,11 +200,35 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
               >
                 <i class="bi bi-eye-fill"></i>
               </a>
+
+              <a
+                id="editDokumentasiBtn"
+                class="btn btn-sm btn-outline-primary"
+                title="Edit Dokumentasi"
+                href="edit_dokumentasi.php"
+              >
+                <i class="bi bi-pencil"></i>
+              </a>
+
             </td>
           </tr>
+
+
           <tr>
             <th>Link Publikasi</th>
-            <td id="modalLinks" class="d-flex gap-3"></td>
+            <td class="d-flex align-items-center gap-2">
+
+              <div id="modalLinks" class="d-flex gap-2"></div>
+
+              <a
+                id="editPublikasiBtn"
+                class="btn btn-sm btn-outline-primary"
+                title="Edit Link Publikasi"
+              >
+                <i class="bi bi-pencil"></i>
+              </a>
+
+            </td>
           </tr>
         </table>
       </div>
@@ -450,6 +482,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
             eventClick: function(info) {
         info.jsEvent.preventDefault();
         const p = info.event.extendedProps;
+        const id = info.event.id; 
         document.getElementById('modalTopik').innerText = p.topik ?? '-';
         document.getElementById('modalJudul').innerText = info.event.title;
         document.getElementById('modalTanggalPenugasan').innerText =
@@ -485,41 +518,62 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
         document.getElementById('modalKeterangan').innerHTML =
           p.keterangan ?? '-';
         // Dokumentasi
-        const docIcon = document.getElementById('modalDokumentasi');
-
-        if (p.dokumentasi && p.dokumentasi.trim() !== '') {
-          docIcon.href = p.dokumentasi;
-          docIcon.style.display = 'inline-block';
-        } else {
-          docIcon.style.display = 'none';
-        }
-
-        // Link publikasi
-        let linksHTML = '';
-
-        function renderIcon(icon, url, color, title) {
-          if (!url || url.trim() === '') return '';
-          return `
-            <a href="${url}" target="_blank" title="${title}" class="me-2">
-              <i class="bi ${icon}" style="font-size:1.4rem;color:${color}"></i>
-            </a>
-          `;
-        }
-
-        linksHTML += renderIcon('bi-instagram', p.link_instagram, '#E1306C', 'Instagram');
-        linksHTML += renderIcon('bi-facebook', p.link_facebook, '#1877F2', 'Facebook');
-        linksHTML += renderIcon('bi-youtube', p.link_youtube, '#FF0000', 'YouTube');
-        linksHTML += renderIcon('bi-globe', p.link_website, '#0d6efd', 'Website');
-
-        document.getElementById('modalLinks').innerHTML = linksHTML;
-                // Show modal
-        var jadwalModal = new bootstrap.Modal(document.getElementById('jadwalModal'));
-        jadwalModal.show();
-      }
+        // ===============================
+          // Dokumentasi (eye icon)
+          // ===============================
+          const docIcon = document.getElementById('modalDokumentasi');
+          if (p.dokumentasi && p.dokumentasi.trim() !== '') {
+            docIcon.href = p.dokumentasi;
+            docIcon.style.display = 'inline-block';
+          } else {
+            docIcon.style.display = 'none';
           }
-        );
-        calendar.render();
-      });
+
+          // ===============================
+          // Link Publikasi
+          // ===============================
+          let linksHTML = '';
+
+          function renderIcon(icon, url, color, title) {
+            if (!url || url.trim() === '') return '';
+            return `
+              <a href="${url}" target="_blank" title="${title}" class="me-2">
+                <i class="bi ${icon}" style="font-size:1.4rem;color:${color}"></i>
+              </a>
+            `;
+          }
+
+          linksHTML += renderIcon('bi-instagram', p.link_instagram, '#E1306C', 'Instagram');
+          linksHTML += renderIcon('bi-facebook', p.link_facebook, '#1877F2', 'Facebook');
+          linksHTML += renderIcon('bi-youtube', p.link_youtube, '#FF0000', 'YouTube');
+          linksHTML += renderIcon('bi-globe', p.link_website, '#0d6efd', 'Website');
+
+          document.getElementById('modalLinks').innerHTML = linksHTML;
+
+          // ===============================
+          // 🔥 TOMBOL EDIT (INI YANG KEMARIN SALAH)
+          // ===============================
+          document.getElementById('editDokumentasiBtn').href =
+            `edit_dokumentasi.php?id=${id}&mode=dokumentasi`;
+
+          document.getElementById('editPublikasiBtn').href =
+            `edit_dokumentasi.php?id=${id}&mode=publikasi`;
+
+          document.getElementById('editPicBtn').href =
+            `edit_dokumentasi.php?id=${id}&mode=pic`;
+
+          // Show modal
+          var jadwalModal = new bootstrap.Modal(
+            document.getElementById('jadwalModal')
+          );
+          jadwalModal.show();
+        }
+      }
+    );
+
+    calendar.render();
+  });
+
 </script>
 
   <?php
