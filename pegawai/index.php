@@ -385,7 +385,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
         <div class="row justify-content-center" data-aos="zoom-in" data-aos-delay="100">
           <div class="col-xl-9 text-center">
             <h3>BADAN PUSAT STATISTIK </h3>
-            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Melayani Dengan Hati, Bersama Membangun Negri</p>
           </div>
       </div>
 

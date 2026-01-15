@@ -41,20 +41,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $foto_sql = "";
     if (!empty($_FILES['foto_profil']['name'])) {
-        $ext = pathinfo($_FILES['foto_profil']['name'], PATHINFO_EXTENSION);
-        $allowed = ['jpg','jpeg','png','gif'];
-        if (in_array(strtolower($ext), $allowed)) {
-            $new = time() . '_' . $id_user . '.' . $ext;
-            $upload_dir = __DIR__ . '/../uploads/';
-            if (move_uploaded_file($_FILES['foto_profil']['tmp_name'], $upload_dir . $new)) {
-                $foto_sql = ", foto_profil='$new'";
-            } else {
-                echo "<script>alert('Gagal mengunggah foto. Pastikan folder uploads writable.');</script>";
-            }
+    $ext = pathinfo($_FILES['foto_profil']['name'], PATHINFO_EXTENSION);
+    $allowed = ['jpg','jpeg','png','gif'];
+
+    if (in_array(strtolower($ext), $allowed)) {
+        $new = time() . '_' . $id_user . '.' . $ext;
+        $upload_dir = __DIR__ . '/../uploads/';
+
+        if (move_uploaded_file($_FILES['foto_profil']['tmp_name'], $upload_dir . $new)) {
+
+           
+            $foto_sql = ", foto_profil='$new'";
+
+            $_SESSION['user']['foto_profil'] = $new;
+
         } else {
-            echo "<script>alert('Format file tidak didukung!');</script>";
+            echo "<script>alert('Gagal mengunggah foto. Pastikan folder uploads writable.');</script>";
         }
+    } else {
+        echo "<script>alert('Format file tidak didukung!');</script>";
     }
+}
+
 
     $sql = "UPDATE user SET
         nama='$nama',
@@ -299,7 +307,7 @@ input, select {
             <option value="2" <?= $data['role_humas']==2?'selected':'' ?>>Koordinator Humas</option>
             <option value="3" <?= $data['role_humas']==3?'selected':'' ?>>Kepala BPS Kabupaten</option>
           </select></div></td></tr>
-          <tr><th>Jabatan</th><td><div class="input-box"><input type="text" name="jabatan" value="<?= htmlspecialchars($data['jabatan']) ?>"></div></td></tr>
+          <tr><th>Jabatan</th><td><div class="input-box"><input type="text" name="jabatan" disabled value="<?= htmlspecialchars($data['jabatan']) ?>"></div></td></tr>
           <tr><th>Nomor Telepon</th><td><div class="input-box"><input type="text" name="nomor_telepon" value="<?= htmlspecialchars($data['nomor_telepon']) ?>"></div></td></tr>
         </table>
       </div>

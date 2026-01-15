@@ -1,84 +1,9 @@
 <?php
 function renderLayout($content, $script) {
-    
-  // Determine avatar HTML: prefer user's uploaded foto_profil, else Font Awesome icon, else default asset
-  $avatar_html = '<i class="fa-solid fa-user avatar-icon me-2"></i>';
-  if (session_status() !== PHP_SESSION_ACTIVE) {
-    @session_start();
-  }
-  if (!empty($_SESSION['user'])) {
-    // Attempt to fetch foto_profil from database
-    $userId = $_SESSION['user']['id_user'] ?? null;
-    $userEmail = $_SESSION['user']['email'] ?? null;
-    if ($userId || $userEmail) {
-      $koneksiPath = __DIR__ . '/../koneksi.php';
-      if (file_exists($koneksiPath)) {
-        require_once $koneksiPath;
-        $foto = '';
-                if ($userId) {
-          // Use existing $koneksi if available, otherwise try a temporary connection
-          $dbConn = (isset($koneksi) && $koneksi) ? $koneksi : null;
-          $tmpConn = null;
-          if (!$dbConn) {
-            // fallback: try to open a temporary connection (credentials from project koneksi.php)
-            $tmpConn = @mysqli_connect('localhost','root','123','sistem_kehumasan');
-            if ($tmpConn) $dbConn = $tmpConn;
-          }
 
-          if ($dbConn) {
-            $id_esc = mysqli_real_escape_string($dbConn, $userId);
-            $q = "SELECT foto_profil FROM user WHERE id_user='" . $id_esc . "' LIMIT 1";
-            $r = mysqli_query($dbConn, $q);
-            if ($r && mysqli_num_rows($r) > 0) {
-              $row = mysqli_fetch_assoc($r);
-              $foto = $row['foto_profil'] ?? '';
-            }
-          } else {
-            // as last resort, escape with addslashes
-            $id_esc = addslashes($userId);
-            $q = "SELECT foto_profil FROM user WHERE id_user='" . $id_esc . "' LIMIT 1";
-            // cannot run query without DB connection
-          }
+global $user;
+?>
 
-          if (!empty($tmpConn)) {
-            mysqli_close($tmpConn);
-          }
-        }
-        if (empty($foto) && $userEmail) {
-          // Use existing $koneksi if available, otherwise try a temporary connection
-          $dbConn2 = (isset($koneksi) && $koneksi) ? $koneksi : null;
-          $tmpConn2 = null;
-          if (!$dbConn2) {
-            $tmpConn2 = @mysqli_connect('localhost','root','123','sistem_kehumasan');
-            if ($tmpConn2) $dbConn2 = $tmpConn2;
-          }
-
-          if ($dbConn2) {
-            $email_esc = mysqli_real_escape_string($dbConn2, $userEmail);
-            $q = "SELECT foto_profil FROM user WHERE email='" . $email_esc . "' LIMIT 1";
-            $r = mysqli_query($dbConn2, $q);
-            if ($r && mysqli_num_rows($r) > 0) {
-              $row = mysqli_fetch_assoc($r);
-              $foto = $row['foto_profil'] ?? '';
-            }
-          }
-
-          if (!empty($tmpConn2)) {
-            mysqli_close($tmpConn2);
-          }
-        }
-        if (!empty($foto)) {
-          $uploadsPath = __DIR__ . '/../uploads/' . $foto;
-          if (file_exists($uploadsPath)) {
-                        $avatar_url = '../uploads/' . rawurlencode($foto);
-                        $avatar_html = '<img src="' . htmlspecialchars($avatar_url) . '" alt="User" class="avatar-img me-2">';
-          } 
-        }
-      }
-    }
-  }
-
-  ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -193,71 +118,71 @@ function renderLayout($content, $script) {
       #modalLinks i {
         font-size: 1.4rem;
       }
-      /* CARD */
-.humas-card {
-  position: relative;
-  overflow: hidden;
-  font-family: 'Poppins', sans-serif;
-}
+      
+      .humas-card {
+        position: relative;
+        overflow: hidden;
+        font-family: 'Poppins', sans-serif;
+      }
 
-/* KONTEN AWAL TETAP DI ATAS */
-.humas-card .icon,
-.humas-card h4,
-.humas-card p {
-  position: relative;
-  z-index: 1;
-}
 
-/* OVERLAY */
-.humas-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, #0d6efd, #084298);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-  padding: 20px;
-  text-align: center;
+      .humas-card .icon,
+      .humas-card h4,
+      .humas-card p {
+        position: relative;
+        z-index: 1;
+      }
 
-  /* animasi */
-  transform: translateY(100%);
-  transition: transform 0.4s ease-in-out;
 
-  z-index: 10;
-}
+      .humas-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #0d6efd, #084298);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        padding: 20px;
+        text-align: center;
 
-/* HOVER CARD */
-.humas-card:hover .humas-overlay {
-  transform: translateY(0);
-}
+      
+        transform: translateY(100%);
+        transition: transform 0.4s ease-in-out;
 
-/* ITEM OVERLAY */
-.overlay-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+        z-index: 10;
+      }
 
-  color: #fff;
-  font-size: 15px;
-  font-weight: 600;
-  text-decoration: none;
 
-  padding: 10px 16px;
-  border-radius: 8px;
-  transition: background 0.25s ease;
-}
+      .humas-card:hover .humas-overlay {
+        transform: translateY(0);
+      }
 
-.overlay-item i {
-  font-size: 18px;
-}
 
-/* HOVER ITEM */
-.overlay-item:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
+      .overlay-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+
+        padding: 10px 16px;
+        border-radius: 8px;
+        transition: background 0.25s ease;
+      }
+
+      .overlay-item i {
+        font-size: 18px;
+      }
+
+
+      .overlay-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
 
 
     /* Avatar: fixed size, rounded and crop to fill without distortion */
@@ -297,14 +222,26 @@ function renderLayout($content, $script) {
         <div class="ms-3">
         <div class="dropdown">
           <a class="d-flex align-items-center text-decoration-none dropdown-toggle"
-            href=""
+            href="#"
             id="userDropdown"
             data-bs-toggle="dropdown"
             aria-expanded="false"
             style="color:#fff">
-            <?= $avatar_html ?>
+
+            <?php
+              $foto = $_SESSION['user']['foto_profil'] ?? '';
+
+              if (!empty($foto) && file_exists(__DIR__ . '/../uploads/' . $foto)) {
+            ?>
+                <img src="../uploads/<?= htmlspecialchars($foto); ?>"
+                    class="avatar-img me-2"
+                    alt="User">
+            <?php } else { ?>
+                <i class="fa-solid fa-user avatar-icon me-2"></i>
+            <?php } ?>
+
+            <i class="ti-angle-down ms-1"></i>
           </a>
-          
           <ul class="dropdown-menu dropdown-menu-end shadow mt-2" aria-labelledby="userDropdown">
 
            <!-- Header User + Foto -->
