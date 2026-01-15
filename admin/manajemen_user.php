@@ -15,7 +15,6 @@ function badge($text, $color) {
   return "<span class='badge bg-$color'>$text</span>";
 }
 ?>
-?>
 <div class="pcoded-content">
     <div class="page-header">
         <div class="page-block">
@@ -60,8 +59,9 @@ function badge($text, $color) {
                     <div class="tab-content tabs card">
                         <div class="tab-pane active" id="table" role="tabpanel">
                             <div class="card-block">
+                                <div class="button">Ini nanti tombol-tombol.</div>
                                 <div class="dt-responsive table-responsive">
-                                    <table id="cbtn-seletors" class="table table-striped table-bordered nowrap">
+                                    <table id="order-table" class="table table-striped table-bordered nowrap">
                                         <thead>
                                             <tr>
                                                 <th rowspan="2">ID</th>

@@ -610,7 +610,7 @@ onRegionTipShow: function (e, el, code) {
   let kecNama = namaKecamatan[kecId] || kecId;
 
   el.html(`
-    <strong>Kelurahan</strong><br>
+    <strong>Desa</strong><br>
     ${el.text()}<br>
     <small>Kec. ${kecNama}</small>
   `);
