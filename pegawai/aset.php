@@ -35,13 +35,11 @@ ob_start();
 <section class="section aset-section">
   <div class="container" data-aos="fade-up">
 
-    <!-- JUDUL DINAMIS -->
     <div class="section-title text-center mb-5">
       <h2 class="fw-bold"><?= $title ?></h2>
       <p class="text-muted"><?= $subtitle ?></p>
     </div>
 
-    <!-- TAB FILTER (OPSIONAL TAPI KEREN) -->
     <div class="text-center mb-4">
       <a href="aset.php" class="btn btn-outline-secondary btn-sm">Semua</a>
       <a href="aset.php?jenis=1" class="btn btn-outline-primary btn-sm">Visual</a>
@@ -58,6 +56,7 @@ ob_start();
           a.link,
           a.keterangan,
           a.jenis,
+          a.foto_aset,
           u.nama AS pemegang
         FROM aset a
         LEFT JOIN user u ON a.pemegang = u.id_user
@@ -92,6 +91,20 @@ ob_start();
 
       <div class="col-lg-4 col-md-6">
         <div class="card asset-card h-100 border-0">
+
+          <!-- FOTO ASET / DEFAULT NO IMAGE -->
+          <div class="asset-img">
+            <?php if (!empty($aset['foto_aset'])) { ?>
+              <img 
+                src="../uploads/aset/<?= htmlspecialchars($aset['foto_aset']) ?>" 
+                alt="<?= htmlspecialchars($aset['nama']) ?>">
+            <?php } else { ?>
+              <img 
+                src="assets/img/noimage.png"
+                alt="No Image"
+                class="img-fluid noimage">
+            <?php } ?>
+          </div>
 
           <div class="card-body">
             <span class="badge bg-<?= $badge ?> mb-3"><?= $jenis ?></span>
@@ -137,20 +150,12 @@ ob_start();
 ?>
 
 <style>
-  .page-aset #header,
+.page-aset #header,
 .page-aset #header.header-scrolled {
   background: #3d4d6a !important;
   box-shadow: 0 2px 12px rgba(0,0,0,.08);
 }
 
-.page-aset .navbar a {
-  color: #222 !important;
-}
-
-.page-aset .navbar a:hover,
-.page-aset .navbar .active {
-  color: #0d6efd !important;
-}
 .aset-section {
   margin-top: 120px;
 }
@@ -161,18 +166,22 @@ ob_start();
   transition: .3s ease;
 }
 
-.asset-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 25px 45px rgba(0,0,0,.12);
+.asset-img {
+  height: 200px;
+  overflow: hidden;
+  border-radius: 18px 18px 0 0;
 }
 
-.asset-icon {
-  font-size: 1.8rem;
-  transition: .3s ease;
+.asset-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.asset-icon:hover {
-  transform: scale(1.25);
+.noimage {
+  object-fit: contain;
+  padding: 30px;
+  opacity: .8;
 }
 </style>
 

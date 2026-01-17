@@ -101,7 +101,7 @@ if (!$data) die('Data pengguna tidak ditemukan');
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
-/* Reset & Body */
+
 body {
     font-family: Poppins, sans-serif;
     background: #f4f7fb;
@@ -113,7 +113,7 @@ body {
     margin: auto;
 }
 
-/* Header */
+
 .page-header {
     display: flex;
     align-items: center;
@@ -125,7 +125,7 @@ body {
     font-size: 20px;
 }
 
-/* Card */
+
 .card {
     background: #fff;
     border-radius: 14px;
@@ -158,7 +158,7 @@ body {
     overflow: hidden;
 }
 
-/* Info Box & Table */
+
 .info-box {
     background: #fff;
     border-radius: 12px;
@@ -197,7 +197,7 @@ input, select {
     border-radius: 12px;
 }
 
-/* Skills */
+
 .skill-box {
     margin-top: 25px;
 }
@@ -266,6 +266,11 @@ input, select {
     box-shadow: none !important;
     border-color: #000 !important;
 }
+.link-profil {
+  text-decoration: none;
+  color: inherit; 
+}
+
 </style>
 </head>
 <body>
@@ -273,7 +278,7 @@ input, select {
 
   <div class="page-header">
     <a href="index.php"><i class="fas fa-home"></i></a>
-    <span>› Profil</span>
+    <a href="profile.php" class="link-profil"> <span>›Profil</span></a>
     <span>› Edit Profil</span>
   </div>
 
@@ -360,7 +365,7 @@ input, select {
       </div>
 
       <div class="btn-group">
-        <a href="profile.php" class="btn btn-back"><i class="fas fa-arrow-left"></i> Kembali</a>
+        
         <button type="submit" class="btn btn-save"><i class="fas fa-save"></i> Simpan Perubahan</button>
       </div>
 

@@ -234,10 +234,6 @@ td{
     </div>
 
     <div class="btn-group">
-    <!-- Tombol Kembali -->
-    <a href="index.php" class="btn btn-back">
-        <i class="fas fa-arrow-left"></i> Kembali
-    </a>
 
     <!-- Tombol Edit Profil -->
     <a href="editprofil.php" class="btn btn-edit">

@@ -85,9 +85,9 @@ if (!$can_edit) {
       <script>
         Swal.fire({
           icon: 'error',
-          title: 'Akses Ditolak',
-          text: 'Anda tidak memiliki hak akses untuk mengedit ini',
-          confirmButtonText: 'Kembali'
+          title: '<span style="font-family:Poppins,sans-serif;font-weight:600">Akses Ditolak</span>',
+          html: '<span style="font-family:Poppins, sans-serif">Anda tidak memiliki hak akses untuk mengedit ini</span>',
+          confirmButtonText: '<span style="font-family:Poppins, sans-serif;font-weight:600">Kembali</span>',
         }).then(() => {
           window.location.href = 'index.php';
         });
@@ -138,7 +138,7 @@ if (isset($_POST['simpan'])) {
     ");
   }
 
-  header("Location: index.php");
+  header("Location: edit_dokumentasi.php");
   exit;
 }
 ?>
@@ -148,24 +148,102 @@ if (isset($_POST['simpan'])) {
 <meta charset="UTF-8">
 <title>Edit</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 
 <style>
-body{font-family:Poppins,sans-serif;background:#f4f7fb;padding:40px}
-.page-wrapper{max-width:900px;margin:auto}
-.page-header{display:flex;gap:10px;margin-bottom:25px;color:#1f3c88}
-.card{background:#fff;border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.08);padding:30px}
-.card-title{font-size:22px;font-weight:700;color:#1f3c88;margin-bottom:25px}
-table{width:100%;border-collapse:collapse}
-tr{border-bottom:1px solid #eee}
-th,td{padding:14px 0}
-th{width:30%;text-align:left}
-.input-box{border:1px solid #e6e6e6;border-radius:12px;padding:8px 12px}
-input,select{width:100%;border:0;background:transparent;font-size:15px}
-.btn-group{display:flex;justify-content:center;gap:15px;margin-top:30px}
-.btn{padding:12px 22px;border-radius:8px;font-weight:600;text-decoration:none;color:#fff;border:0;cursor:pointer}
-.btn-back{background:#1e6cff}
-.btn-save{background:#ffb347;color:#000}
+body {
+  font-family: Poppins, sans-serif;
+  background: #f4f7fb;
+  padding: 40px;
+}
+
+.page-wrapper {
+  max-width: 900px;
+  margin: auto;
+}
+
+.page-header {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  color: #1f3c88;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.08);
+  padding: 30px;
+}
+
+.card-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1f3c88;
+  margin-bottom: 25px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+tr {
+  border-bottom: 1px solid #eee;
+}
+
+th,
+td {
+  padding: 14px 0;
+}
+
+th {
+  width: 30%;
+  text-align: left;
+}
+
+.input-box {
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+
+input,
+select {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font-size: 15px;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.btn {
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+}
+
+.btn-back {
+  background: #1e6cff;
+}
+
+.btn-save {
+  background: #ffb347;
+  color: #000;
+}
 </style>
+
 </head>
 
 <body>
@@ -173,7 +251,6 @@ input,select{width:100%;border:0;background:transparent;font-size:15px}
 
   <div class="page-header">
     <a href="index.php"><i class="fas fa-home"></i></a>
-    <span>› Kalender</span>
     <span>› Edit</span>
   </div>
 
@@ -241,9 +318,6 @@ input,select{width:100%;border:0;background:transparent;font-size:15px}
       </table>
 
       <div class="btn-group">
-        <a href="index.php" class="btn btn-back">
-          <i class="fas fa-arrow-left"></i> Kembali
-        </a>
         <button type="submit" name="simpan" class="btn btn-save">
           <i class="fas fa-save"></i> Simpan
         </button>

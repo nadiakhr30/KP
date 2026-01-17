@@ -184,14 +184,58 @@ global $user;
         background: rgba(255, 255, 255, 0.2);
       }
 
+      #footer {
+        background: #3d4d6a;
+        color: #fff;
+      }
 
-    /* Avatar: fixed size, rounded and crop to fill without distortion */
+      
+      #footer p,
+      #footer span,
+      #footer h4,
+      #footer strong,
+      #footer .sitename {
+        color: #fff;
+      }
+
+      
+      #footer a {
+        color: #fff;
+        text-decoration: none;
+      }
+
+      
+      #footer a:hover {
+        color: #ddd;
+      }
+
+      
+      #footer .footer-links ul li i {
+        color: #fff;
+      }
+
+      
+      #footer .social-links a {
+        color: #fff;
+        font-size: 18px;
+      }
+
+      #footer .social-links a:hover {
+        color: #ddd;
+      }
+
+      
+      #footer .copyright {
+        color: #fff;
+      }
+
+    
     .avatar-img{width:44px;height:44px;object-fit:cover;border-radius:50%;display:inline-block}
-    /* extra gap between nav and user avatar (increased) */
+    
     .user-area{margin-left:6rem}
     @media (max-width:1199px){.user-area{margin-left:4rem}}
     @media (max-width:991px){.user-area{margin-left:1rem}}
-    /* increase right padding for nav to prevent crowding */
+    
     .navmenu{padding-right:3rem}
   </style>
 
@@ -301,28 +345,30 @@ global $user;
         </div>
 
         <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Useful Links</h4>
+          <h4>Quick Links</h4>
           <ul>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Home</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">About us</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Services</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Terms of service</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Beranda</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Ruang Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Dokumentasi</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Sumber Daya</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Broadcast</a></li>
           </ul>
         </div>
 
         <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Our Services</h4>
+          <h4>Layanan Informasi</h4>
           <ul>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Web Design</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Web Development</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Product Management</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Marketing</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Jadwal Konten Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Galeri Foto</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Galeri Video</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Laporan Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Pedoman Visual Medsos</a></li>
           </ul>
         </div>
 
         <div class="col-lg-4 col-md-12">
           <h4>Follow Us</h4>
-          <p>Cras fermentum odio eu feugiat lide par naso tierra videa magna derita valies</p>
+          <p>Ikuti kami untuk informasi dan publikasi terbaru dari BPS Bangkalan.</p>
           <div class="social-links d-flex">
             <a href=""><i class="bi bi-twitter-x"></i></a>
             <a href=""><i class="bi bi-facebook"></i></a>
@@ -335,9 +381,9 @@ global $user;
     </div>
 
     <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <span>Badan Pusat Statisik Bangkalan</span></p>
+      <p>© <span>2026 </span> <span>Badan Pusat Statisik Bangkalan</span></p>
       <div class="credits">
-        Designed by <strong class="px-1 sitename">Humas BPS bangkalan</strong>
+        Dikelola oleh <strong class="px-1 sitename">Humas BPS bangkalan</strong>
       </div>
     </div>
 
