@@ -263,7 +263,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
               <i class="bi bi-diagram-3"></i>
               <span>Struktur Humas</span>
             </a>
-            <a href="#kalender-jadwal" class="overlay-item">
+            <a href="viewjadwal.php" class="overlay-item">
               <i class="bi bi-calendar-event"></i>
               <span>Jadwal Konten Humas</span>
             </a>
@@ -518,9 +518,6 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
         document.getElementById('modalKeterangan').innerHTML =
           p.keterangan ?? '-';
         // Dokumentasi
-        // ===============================
-          // Dokumentasi (eye icon)
-          // ===============================
           const docIcon = document.getElementById('modalDokumentasi');
           if (p.dokumentasi && p.dokumentasi.trim() !== '') {
             docIcon.href = p.dokumentasi;
@@ -550,9 +547,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
           document.getElementById('modalLinks').innerHTML = linksHTML;
 
-          // ===============================
-          // 🔥 TOMBOL EDIT (INI YANG KEMARIN SALAH)
-          // ===============================
+          
           document.getElementById('editDokumentasiBtn').href =
             `edit_dokumentasi.php?id=${id}&mode=dokumentasi`;
 
