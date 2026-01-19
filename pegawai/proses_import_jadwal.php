@@ -17,7 +17,7 @@ function excelDateToDate($value) {
         $unixDate = ($value - 25569) * 86400;
         return gmdate("Y-m-d", $unixDate);
     }
-    return $value; // sudah string
+    return $value; 
 }
 
 // Validasi file upload
@@ -38,7 +38,7 @@ $rows = $sheet->toArray();
 
 $berhasil = 0;
 
-// Loop mulai dari baris ke-2 (index 1) → header aman
+// Loop mulai dari baris ke-2 (index 1) 
 for ($i = 1; $i < count($rows); $i++) {
     $row = $rows[$i];
 
@@ -56,7 +56,7 @@ for ($i = 1; $i < count($rows); $i++) {
 
     // Validasi kolom wajib
     if ($topik === '' || $judul_kegiatan === '' || $target_rilis === '') {
-        continue; // lewati baris
+        continue; 
     }
 
     // Validasi tanggal format YYYY-MM-DD
@@ -75,7 +75,7 @@ for ($i = 1; $i < count($rows); $i++) {
     $link_youtube    = '';
     $link_website    = '';
 
-    // Query langsung tanpa bind_param
+    
     $sql = "INSERT INTO jadwal (
         tim, topik, judul_kegiatan,
         tanggal_penugasan, target_rilis, keterangan,
