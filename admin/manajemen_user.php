@@ -9,7 +9,10 @@ if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
 }
 // DATA USER
 $qUser = mysqli_query($koneksi, "SELECT * FROM user");
-$dataUser = mysqli_fetch_assoc($qUser);
+$dataUsers = [];
+while ($row = mysqli_fetch_assoc($qUser)) {
+    $dataUsers[] = $row;
+}
 
 function badge($text, $color) {
   return "<span class='badge bg-$color'>$text</span>";
@@ -30,7 +33,7 @@ function badge($text, $color) {
                         <li class="breadcrumb-item">
                             <a href="index.php"> <i class="fa fa-home"></i> </a>
                         </li>
-                        <li class="breadcrumb-item">+
+                        <li class="breadcrumb-item">
                           <a href="index.php">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item">
@@ -55,11 +58,35 @@ function badge($text, $color) {
                         <li class="nav-item">
                             <a class="nav-link text-success" data-toggle="tab" href="#tambah" role="tab"><i class="ti-plus"></i> Tambah User</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-success" data-toggle="tab" href="#import" role="tab"><i class="ti-import"></i> Import Data</a>
+                        </li>
                     </ul>
                     <div class="tab-content tabs card">
                         <div class="tab-pane active" id="table" role="tabpanel">
                             <div class="card-block">
-                                <div class="button">Ini nanti tombol-tombol.</div>
+                                <div class="row m-b-5">
+                                    <div class="col-6">
+                                        <div class="dropdown-info dropdown open">
+                                            <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
+                                            <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                                <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 ">
+                                        <div class="dropdown-success dropdown open align-items-right" style="float: right;">
+                                            <button class="btn btn-success dropdown-toggle waves-effect waves-light" type="button" id="tambah" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Tambah</button>
+                                            <div class="dropdown-menu" aria-labelledby="tambah" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                                <a class="dropdown-item waves-light waves-effect" href="#">Input Data</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">Import Data</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="dt-responsive table-responsive">
                                     <table id="order-table" class="table table-striped table-bordered nowrap">
                                         <thead>
@@ -92,7 +119,7 @@ function badge($text, $color) {
                                             </tr>
                                         </thead>
                                         <tbody>
-<?php while ($user = mysqli_fetch_assoc($qUser)) : ?>
+<?php foreach ($dataUsers as $user) : ?>
 <tr>
   <td><?= $user['id_user']; ?></td>
   <td><?= htmlspecialchars($user['nama']); ?></td>
@@ -110,7 +137,7 @@ function badge($text, $color) {
   <td><?= $user['nip'] ?: '-'; ?></td>
   <td><?= $user['role_humas'] ?: '-'; ?></td>
   <td><?= $user['jabatan'] ?: '-'; ?></td>
-  <td><?= $user['nomor_telepon'] ?: '-'; ?></td>
+  <td>0<?= $user['nomor_telepon'] ?: '-'; ?></td>
 <td class="text-center"><?= $user['skill_data_contributor'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
 <td class="text-center"><?= $user['skill_content_creator'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
 <td class="text-center"><?= $user['skill_editor_photo_layout'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
@@ -131,7 +158,7 @@ function badge($text, $color) {
     </a>
   </td>
 </tr>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </tbody>
                                         <tfoot>
                                             <tr>
@@ -166,11 +193,115 @@ function badge($text, $color) {
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane" id="card" role="tabpanel">
-                            
+                        <div class="tab-pane p-5" id="card" role="tabpanel">
+                            <div class="row m-b-10">
+                                <div class="col-6">
+                                    <div class="dropdown-info dropdown open">
+                                        <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
+                                        <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                            <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 ">
+                                    <div class="dropdown-success dropdown open align-items-right" style="float: right;">
+                                        <button class="btn btn-success dropdown-toggle waves-effect waves-light" type="button" id="tambah" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Tambah</button>
+                                        <div class="dropdown-menu" aria-labelledby="tambah" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                            <a class="dropdown-item waves-light waves-effect" href="#">Input Data</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="#">Import Data</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row users-card">
+                                <?php foreach ($dataUsers as $pengguna) : ?>
+                                <div class="col-lg-4 col-xl-3 col-md-6">
+                                    <div class="card rounded-card user-card">
+                                        <div class="card-block">
+                                            <div class="img-hover avatar-wrapper">
+                                                <?php if ($pengguna['foto_profil']) : ?>
+                                                  <img src="../uploads/<?= $pengguna['foto_profil']; ?>" class="avatar-img" alt="<?= $pengguna['foto_profil']; ?>">
+                                                <?php else : ?>
+                                                  <img src="../images/noimages.jpg" class="avatar-img" alt="<?= $pengguna['foto_profil']; ?>">
+                                                <?php endif; ?>
+                                                <div class="img-overlay img-radius">
+                                                    <span>
+                                                        <a href="#" class="btn btn-sm btn-primary" data-popup="lightbox"><i class="ti-pencil"></i></a>
+                                                        <a href="#" class="btn btn-sm btn-primary"><i class="ti-trash"></i></a>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="user-content">
+                                                <h4><?= $pengguna['nama']; ?></h4>
+                                                <span style="font-size: 12px; color: #d35858;"><?= $pengguna['nip']; ?></span>
+                                                <h5 style="padding: 5px 0px"><?= $pengguna['email']; ?></h5>
+                                                <p><?= $pengguna['jabatan']; ?></p>
+                                                <button type="button" class="btn btn-primary waves-effect waves-light">Detail</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
                         <div class="tab-pane" id="tambah" role="tabpanel">
-                            
+                            <div class="card-block">
+                                <form action="" class="form-material">
+                                    <div class="form-group form-default">
+                                        <input type="number" name="footer-email" class="form-control" required>
+                                        <span class="form-bar"></span>
+                                        <label class="float-label">NIP</label>
+                                    </div>
+                                    <div class="form-group form-default">
+                                        <input type="text" name="footer-email" class="form-control" required>
+                                        <span class="form-bar"></span>
+                                        <label class="float-label">Nama</label>
+                                    </div>
+                                    <div class="form-group form-default">
+                                        <input type="password" name="footer-email" class="form-control" required>
+                                        <span class="form-bar"></span>
+                                        <label class="float-label">Password</label>
+                                    </div>
+                                    <div class="form-group form-default">
+                                        <select name="select" class="form-control" required>
+                                            <option value="">Pilih Role User</option>
+                                            <option value="1">Admin</option>
+                                            <option value="2">Pegawai</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group form-default">
+                                        <input type="text" name="footer-email" class="form-control" required>
+                                        <span class="form-bar"></span>
+                                        <label class="float-label">Email (contoh.bps3526@gmail.com)</label>
+                                    </div>
+                                    <div class="form-group form-default">
+                                        <select name="select" class="form-control" required>
+                                            <option value="">Status Kepegawaian</option>
+                                            <option value="0">Tidak Aktif</option>
+                                            <option value="1">Aktif</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group form-default">
+                                        <input type="text" name="footer-email" class="form-control" required>
+                                        <span class="form-bar"></span>
+                                        <label class="float-label">Jabatan</label>
+                                    </div>
+                                    <div class="form-group form-default">
+                                        <input type="number" name="footer-email" class="form-control" required>
+                                        <span class="form-bar"></span>
+                                        <label class="float-label">Nomor Telepon</label>
+                                    </div>
+                                    <button class="btn waves-effect waves-light btn-primary btn-outline-primary">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="import" role="tabpanel">
+                            <div class="card-block">
+
+                            </div>
                         </div>
                     </div>
                 </div>

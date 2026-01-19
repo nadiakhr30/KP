@@ -70,13 +70,14 @@ global $user;
     }
     .podium-step {
       position: relative;
-      height: 54px;
+      height: auto;
+      padding: 10px;
       color: #fff;
-      font-weight: 600;
+      font-weight: 100;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 10px;
+      border-radius: 25px;
       cursor: default;
       transition: transform .15s ease;
       z-index: 1;
@@ -93,11 +94,11 @@ global $user;
       transform: translateY(-2px);
       z-index: 10;
     }
-    .step-1 { width: 45%; background: #2d3436; }
-    .step-2 { width: 55%; background: #e84118; }
-    .step-3 { width: 65%; background: #fbc531; color:#222; }
-    .step-4 { width: 75%; background: #00a8ff; }
-    .step-5 { width: 85%; background: #44bd32; }
+    .step-1 { width: 45%; background: #0b3c74; }
+    .step-2 { width: 55%; background: #1768af; }
+    .step-3 { width: 65%; background: #5d97de; }
+    .step-4 { width: 75%; background: #88bcef; }
+    .step-5 { width: 85%; background: #9ddaee; }
     .crown {
       position: absolute;
       top: -26px;
@@ -180,6 +181,20 @@ global $user;
         margin: 0 auto;
       }
     }
+
+    /* user card */
+.avatar-wrapper {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+}
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
     </style>
   </head>
   <body>

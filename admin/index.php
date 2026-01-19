@@ -214,34 +214,36 @@ while ($r = mysqli_fetch_assoc($qTopPegawai)) {
                         </div>
                         <div class="col-xl-3 col-md-6">
                           <div class="card">
-                            <div class="card-block">
+                            <div class="card-block pb-0">
                               <div class="row align-items-center">
-                                  <div class="col-auto">
+                                  <div class="col-2">
                                       <i class="fa fa-file-text-o f-30 text-c-purple"></i>
                                   </div>
-                                  <div class="col-auto">
-                                    <h6 class="text-muted mb-2">Total Konten</h6>
-                                    <!-- Angka -->
-                                    <div class="tab-content tabs-right-content card-block">
-                                      <div class="tab-pane active" id="konten-bulan" role="tabpanel">
-                                        <h2 class="m-b-0"><?= $totalBulan; ?></h2>
+                                  <div class="col-10">
+                                    <div class="row align-items-center">
+                                      <div class="col-3 pb-0">
+                                        <h6 class="pb-0">Total Konten</h6>
                                       </div>
-                                      <div class="tab-pane" id="konten-tahun" role="tabpanel">
-                                        <h2 class="m-b-0"><?= $totalTahun; ?></h2>
+                                      <div class="col-9">
+                                        <ul class="nav nav-tabs tabs p-0" role="tablist">
+                                          <li class="nav-item">
+                                            <a class="nav-link active" data-toggle="tab" href="#konten-bulan">Bulan Ini</a>
+                                          </li>
+                                          <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#konten-tahun">Tahun Ini</a>
+                                          </li>
+                                        </ul>
                                       </div>
                                     </div>
-                                  </div>
-                                  <div class="col-auto ms-auto">
-                                    <ul class="nav nav-tabs md-tabs tabs-right b-none" role="tablist">
-                                      <li class="nav-item">
-                                        <a class="nav-link active" data-toggle="tab" href="#konten-bulan">Bulan Ini</a>
-                                        <div class="slide"></div>
-                                      </li>
-                                      <li class="nav-item">
-                                        <a class="nav-link" data-toggle="tab" href="#konten-tahun">Tahun Ini</a>
-                                        <div class="slide"></div>
-                                      </li>
-                                    </ul>
+                                    <!-- Angka -->
+                                    <div class="tab-content tabs card-block p-0">
+                                      <div class="tab-pane active" id="konten-bulan" role="tabpanel">
+                                        <h2><?= $totalBulan; ?></h2>
+                                      </div>
+                                      <div class="tab-pane" id="konten-tahun" role="tabpanel">
+                                        <h2><?= $totalTahun; ?></h2>
+                                      </div>
+                                    </div>
                                   </div>
                               </div>
                             </div>
