@@ -37,7 +37,7 @@ function checkLogin($data, &$errors)
                 // Login sukses
                 $_SESSION["user"] = $user;
 
-                if ($user["role"] == '1') {
+                if ($user["id_role"] == '1') {
                     $_SESSION["role"] = "Admin";
                     header("Location: admin/index.php");
                     exit;
