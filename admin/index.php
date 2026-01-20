@@ -3,7 +3,7 @@ ob_start();
 session_start();
 include_once("../koneksi.php");
 
-if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
+if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
     header('Location: ../index.php');
     exit();
 }
@@ -37,7 +37,7 @@ $qTahun = mysqli_query($koneksi, "
 ");
 $totalTahun = mysqli_fetch_assoc($qTahun)['total'];
 
-// Kalender
+// Kalender - Get PIC data
 $jadwalkalender = [];
 $qKalender = mysqli_query($koneksi, "
   SELECT 
@@ -45,7 +45,7 @@ $qKalender = mysqli_query($koneksi, "
     j.topik,
     j.judul_kegiatan,
     j.tanggal_penugasan,
-    j.target_rilis,
+    j.tanggal_rilis,
     j.tim,
     j.keterangan,
     j.status,
@@ -53,25 +53,46 @@ $qKalender = mysqli_query($koneksi, "
     j.link_instagram,
     j.link_facebook,
     j.link_youtube,
-    j.link_website,
-    u1.nama AS pic_desain_nama,
-    u2.nama AS pic_narasi_nama,
-    u3.nama AS pic_medsos_nama
+    j.link_website
   FROM jadwal j
-  LEFT JOIN user u1 ON j.pic_desain = u1.id_user
-  LEFT JOIN user u2 ON j.pic_narasi = u2.id_user
-  LEFT JOIN user u3 ON j.pic_medsos = u3.id_user
-  WHERE j.target_rilis IS NOT NULL
+  ORDER BY j.tanggal_rilis DESC
 ");
+
 while ($row = mysqli_fetch_assoc($qKalender)) {
+  // Get PIC for this jadwal
+  $id_jadwal = $row['id_jadwal'];
+  $qPic = mysqli_query($koneksi, "
+    SELECT u.nama, jp.nama_jenis_pic
+    FROM pic p
+    JOIN user u ON p.nip = u.nip
+    JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic
+    WHERE p.id_jadwal = " . (int)$id_jadwal . "
+    ORDER BY jp.nama_jenis_pic
+  ");
+  
+  $picData = [];
+  if ($qPic) {
+    while ($pic = mysqli_fetch_assoc($qPic)) {
+      $picData[$pic['nama_jenis_pic']] = $pic['nama'];
+    }
+  }
+  
   if ($row['status'] == 0) $color = '#e84118';
   else if ($row['status'] == 1) $color = '#fbc531';
   else if ($row['status'] == 2) $color = '#44bd32';
   else $color = '#718093';
+  
+  // Build PIC text dynamically
+  $picText = [];
+  foreach ($picData as $jenis => $nama) {
+    $picText[] = "<b>$jenis:</b> $nama";
+  }
+  $picDisplay = count($picText) > 0 ? implode("<br>", $picText) : "-";
+  
   $jadwalkalender[] = [
     'id'    => $row['id_jadwal'],
     'title' => $row['judul_kegiatan'],
-    'start' => $row['target_rilis'],
+    'start' => $row['tanggal_rilis'],
     'color' => $color,
     'extendedProps' => [
       'topik' => $row['topik'],
@@ -79,9 +100,8 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
       'tim' => $row['tim'],
       'status' => (int)$row['status'],
       'keterangan' => $row['keterangan'],
-      'pic_desain' => $row['pic_desain_nama'] ?? '-',
-      'pic_narasi' => $row['pic_narasi_nama'] ?? '-',
-      'pic_medsos' => $row['pic_medsos_nama'] ?? '-',
+      'pic_data' => $picData,
+      'pic_display' => $picDisplay,
       'dokumentasi' => $row['dokumentasi'],
       'link_instagram' => $row['link_instagram'],
       'link_facebook' => $row['link_facebook'],
@@ -94,40 +114,33 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 // SKILL DATA FOR CHART
 $qSkill = mysqli_query($koneksi, "
 SELECT
-  SUM(skill_data_contributor) AS data_contributor,
-  SUM(skill_content_creator) AS content_creator,
-  SUM(skill_editor_photo_layout) AS editor_photo_layout,
-  SUM(skill_editor_video) AS editor_video,
-  SUM(skill_photo_videographer) AS photo_videographer,
-  SUM(skill_talent) AS talent,
-  SUM(skill_project_manager) AS project_manager,
-  SUM(skill_copywriting) AS copywriting,
-  SUM(skill_protokol) AS protokol,
-  SUM(skill_mc) AS mc,
-  SUM(skill_operator) AS operator
-FROM user
+  s.nama_skill,
+  COUNT(us.id_user_skill) AS total_skill
+FROM skill s
+LEFT JOIN user_skill us ON s.id_skill = us.id_skill
+GROUP BY s.id_skill, s.nama_skill
+ORDER BY total_skill DESC
 ");
-$skill = mysqli_fetch_assoc($qSkill);
+$skillLabels = [];
+$skillData = [];
+while ($row = mysqli_fetch_assoc($qSkill)) {
+  $skillLabels[] = $row['nama_skill'];
+  $skillData[] = (int)$row['total_skill'];
+}
 
 // STATUS JADWAL FOR CHART
-$qStatus = mysqli_query($koneksi, "SELECT status, COUNT(*) AS total FROM jadwal GROUP BY status");
+$qStatus = mysqli_query($koneksi, "SELECT status, COUNT(*) AS total FROM jadwal GROUP BY status ORDER BY status");
 $statusData = [];
 while($s = mysqli_fetch_assoc($qStatus)){
   $statusData[] = $s;
 }
 
-// TOP 5 PEGAWAI
+// TOP 5 PEGAWAI (berdasarkan penugasan di pic)
 $qTopPegawai = mysqli_query($koneksi, "
   SELECT u.nama, COUNT(*) AS total
-  FROM (
-    SELECT pic_desain AS pic FROM jadwal WHERE pic_desain IS NOT NULL AND pic_desain != ''
-    UNION ALL
-    SELECT pic_narasi FROM jadwal WHERE pic_narasi IS NOT NULL AND pic_narasi != ''
-    UNION ALL
-    SELECT pic_medsos FROM jadwal WHERE pic_medsos IS NOT NULL AND pic_medsos != ''
-  ) j
-  JOIN user u ON u.id_user = j.pic
-  GROUP BY u.nama
+  FROM pic p
+  JOIN user u ON p.nip = u.nip
+  GROUP BY u.nip, u.nama
   ORDER BY total DESC
   LIMIT 5
 ");
@@ -214,35 +227,24 @@ while ($r = mysqli_fetch_assoc($qTopPegawai)) {
                         </div>
                         <div class="col-xl-3 col-md-6">
                           <div class="card">
-                            <div class="card-block pb-0">
+                            <div class="card-block">
                               <div class="row align-items-center">
                                   <div class="col-2">
                                       <i class="fa fa-file-text-o f-30 text-c-purple"></i>
                                   </div>
                                   <div class="col-10">
                                     <div class="row align-items-center">
-                                      <div class="col-3 pb-0">
-                                        <h6 class="pb-0">Total Konten</h6>
+                                      <div class="col-6">
+                                        <h6 class="text-muted m-b-10">Konten Bulan Ini</h6>
+                                        <h2 class="m-b-0"><?= $totalBulan; ?></h2>
                                       </div>
-                                      <div class="col-9">
-                                        <ul class="nav nav-tabs tabs p-0" role="tablist">
-                                          <li class="nav-item">
-                                            <a class="nav-link active" data-toggle="tab" href="#konten-bulan">Bulan Ini</a>
-                                          </li>
-                                          <li class="nav-item">
-                                            <a class="nav-link" data-toggle="tab" href="#konten-tahun">Tahun Ini</a>
-                                          </li>
-                                        </ul>
+                                      <div class="col-6">
+                                        <h6 class="text-muted m-b-10">Konten Tahun Ini</h6>
+                                        <h2 class="m-b-0"><?= $totalTahun; ?></h2>
                                       </div>
                                     </div>
                                     <!-- Angka -->
                                     <div class="tab-content tabs card-block p-0">
-                                      <div class="tab-pane active" id="konten-bulan" role="tabpanel">
-                                        <h2><?= $totalBulan; ?></h2>
-                                      </div>
-                                      <div class="tab-pane" id="konten-tahun" role="tabpanel">
-                                        <h2><?= $totalTahun; ?></h2>
-                                      </div>
                                     </div>
                                   </div>
                               </div>
@@ -300,37 +302,35 @@ while ($r = mysqli_fetch_assoc($qTopPegawai)) {
                               <div class="modal-body">
                                 <table class="table table-sm table-borderless">
                                   <tr>
-                                    <th width="180">Tanggal Penugasan</th>
+                                    <td><b>Tanggal Penugasan</b></td>
                                     <td id="modalTanggalPenugasan"></td>
                                   </tr>
                                   <tr>
-                                    <th>Target Rilis</th>
+                                    <td><b>Target Rilis</b></td>
                                     <td id="modalTargetRilis"></td>
                                   </tr>
                                   <tr>
-                                    <th>Tim</th>
+                                    <td><b>Tim</b></td>
                                     <td id="modalTim"></td>
                                   </tr>
                                   <tr>
-                                    <th>Status</th>
+                                    <td><b>Status</b></td>
                                     <td id="modalStatus"></td>
                                   </tr>
                                   <tr>
-                                    <th>PIC</th>
+                                    <td><b>PIC</b></td>
                                     <td id="modalPIC"></td>
                                   </tr>
                                   <tr>
-                                    <th>Keterangan</th>
+                                    <td><b>Keterangan</b></td>
                                     <td id="modalKeterangan"></td>
                                   </tr>
                                   <tr id="rowDokumentasi" style="display:none">
-                                    <th>Dokumentasi</th>
-                                    <td>
-                                      <a href="#" target="_blank" id="modalDokumentasi"><i class="ti-eye"></i> Lihat</a>
-                                    </td>
+                                    <td><b>Dokumentasi</b></td>
+                                    <td id="modalDokumentasi"></td>
                                   </tr>
                                   <tr id="rowLink" style="display:none">
-                                    <th>Link Publikasi</th>
+                                    <td><b>Link Publikasi</b></td>
                                     <td id="modalLinks"></td>
                                   </tr>
                                 </table>
@@ -373,11 +373,11 @@ while ($r = mysqli_fetch_assoc($qTopPegawai)) {
                               <h6>Berdasarkan Total Penugasan</h6>
                               <div class="podium-wrapper">
                                 <?php foreach ($pegawai as $i => $p): ?>
-                                  <div class="podium-step step-<?= $i+1 ?>" data-total="<?= $p['total'] ?>" data-name="<?= htmlspecialchars($p['nama']) ?>">
+                                  <div class="podium-step step-<?= $i + 1 ?>" data-name="<?= htmlspecialchars($p['nama']) ?>" data-total="<?= $p['total'] ?>">
                                     <?php if ($i === 0): ?>
                                       <div class="crown">👑</div>
                                     <?php endif; ?>
-                                    <div class="name" title="<?= htmlspecialchars($p['nama']) ?>"><?= htmlspecialchars($p['nama']) ?></div>
+                                    <div class="name"><?= htmlspecialchars($p['nama']) ?></div>
                                   </div>
                                 <?php endforeach; ?>
                               </div>
@@ -417,22 +417,20 @@ ob_start();
 new Chart(document.getElementById('skillChart'), {
   type: 'bar',
   data: {
-    labels: ['Data Contributor', 'Content Creator', 'Editor Photo Layout', 'Editor Video', 'Photo Videographer', 'Talent', 'Project Manager', 'Copywriting', 'Protokol', 'MC', 'Operator'],
+    labels: <?= json_encode($skillLabels) ?>,
     datasets: [{
-      data: [
-        <?= $skill['data_contributor'] ?>,
-        <?= $skill['content_creator'] ?>,
-        <?= $skill['editor_photo_layout'] ?>,
-        <?= $skill['editor_video'] ?>,
-        <?= $skill['photo_videographer'] ?>,
-        <?= $skill['talent'] ?>,
-        <?= $skill['project_manager'] ?>,
-        <?= $skill['copywriting'] ?>,
-        <?= $skill['protokol'] ?>,
-        <?= $skill['mc'] ?>,
-        <?= $skill['operator'] ?>
-      ]
+      label: 'Total Pengguna',
+      data: <?= json_encode($skillData) ?>,
+      backgroundColor: '#007bff'
     }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
   }
 });
 
@@ -440,13 +438,14 @@ new Chart(document.getElementById('skillChart'), {
 new Chart(document.getElementById('statusChart'), {
   type: 'doughnut',
   data: {
-    labels: ['Selesai', 'Belum', 'Proses'],
+    labels: ['Belum Dikerjakan', 'Sedang Dikerjakan', 'Selesai'],
     datasets: [{
       data: [
-        <?= $statusData[2]['total'] ?? 0 ?>,
         <?= $statusData[0]['total'] ?? 0 ?>,
-        <?= $statusData[1]['total'] ?? 0 ?>
-      ]
+        <?= $statusData[1]['total'] ?? 0 ?>,
+        <?= $statusData[2]['total'] ?? 0 ?>
+      ],
+      backgroundColor: ['#e81818', '#fbc531', '#44bd32']
     }]
   }
 });
@@ -459,78 +458,87 @@ document.addEventListener('DOMContentLoaded', function () {
       initialView: 'dayGridMonth',
       height: 520,
       locale: 'id',
-      events: 'kalender_jadwal.php',
+      events: <?= json_encode($jadwalkalender) ?>,
       eventClick: function(info) {
-  info.jsEvent.preventDefault();
-  const p = info.event.extendedProps;
-  document.getElementById('modalTopik').innerText = p.topik ?? '-';
-  document.getElementById('modalJudul').innerText = info.event.title;
-  document.getElementById('modalTanggalPenugasan').innerText =
-    p.tanggal_penugasan
-      ? new Date(p.tanggal_penugasan).toLocaleDateString('id-ID')
-      : '-';
-  document.getElementById('modalTargetRilis').innerText =
-    info.event.start.toLocaleDateString('id-ID');
-  document.getElementById('modalTim').innerText = p.tim ?? '-';
-let statusText = '-';
-let statusClass = 'secondary';
-switch (String(p.status)) {
-  case '0':
-    statusText = 'Belum Dikerjakan';
-    statusClass = 'danger';
-    break;
-  case '1':
-    statusText = 'Sedang Dikerjakan';
-    statusClass = 'warning';
-    break;
-  case '2':
-    statusText = 'Selesai';
-    statusClass = 'success';
-    break;
-}
-document.getElementById('modalStatus').innerHTML =
-  `<span class="badge bg-${statusClass}">${statusText}</span>`;
-  document.getElementById('modalPIC').innerHTML = `
-    <b>Desain:</b> ${p.pic_desain}<br>
-    <b>Narasi:</b> ${p.pic_narasi}<br>
-    <b>Medsos:</b> ${p.pic_medsos}
-  `;
-  document.getElementById('modalKeterangan').innerHTML =
-    p.keterangan ?? '-';
-  // Dokumentasi
-  if (p.dokumentasi) {
-    document.getElementById('rowDokumentasi').style.display = '';
-    document.getElementById('modalDokumentasi').href = p.dokumentasi;
-  } else {
-    document.getElementById('rowDokumentasi').style.display = 'none';
-  }
-  // Link publikasi
-let links = [];
-function renderLink(label, url) {
-  // NULL / undefined / empty → tidak ditampilkan
-  if (!url) return;
-  // Isinya "-" → tampil tapi tidak bisa diklik
-  if (url === '-') {
-    links.push(`<span class="text-muted">${label}</span>`);
-    return;
-  }
-  // Selain "-" → tampil & bisa diklik
-  links.push(
-    `<a href="${url}" target="_blank" class="link-primary">${label}</a>`
-  );
-}
-renderLink('<i class="ti-instagram"></i>', p.link_instagram);
-renderLink('<i class="ti-facebook"></i>', p.link_facebook);
-renderLink('<i class="ti-youtube"></i>', p.link_youtube);
-renderLink('<i class="ti-world"></i>', p.link_website);
-if (links.length > 0) {
-  document.getElementById('rowLink').style.display = '';
-  document.getElementById('modalLinks').innerHTML = links.join(' | ');
-} else {
-  document.getElementById('rowLink').style.display = 'none';
-}
-  new bootstrap.Modal(document.getElementById('jadwalModal')).show();
-}
+        info.jsEvent.preventDefault();
+        const p = info.event.extendedProps;
+        document.getElementById('modalTopik').innerText = p.topik ?? '-';
+        document.getElementById('modalJudul').innerText = info.event.title;
+        document.getElementById('modalTanggalPenugasan').innerText =
+          p.tanggal_penugasan
+            ? new Date(p.tanggal_penugasan).toLocaleDateString('id-ID')
+            : '-';
+        document.getElementById('modalTargetRilis').innerText =
+          info.event.start.toLocaleDateString('id-ID');
+        document.getElementById('modalTim').innerText = p.tim ?? '-';
+        
+        let statusText = '-';
+        let statusClass = 'secondary';
+        switch (String(p.status)) {
+          case '0':
+            statusText = 'Belum Dikerjakan';
+            statusClass = 'danger';
+            break;
+          case '1':
+            statusText = 'Sedang Dikerjakan';
+            statusClass = 'warning';
+            break;
+          case '2':
+            statusText = 'Selesai';
+            statusClass = 'success';
+            break;
+        }
+        document.getElementById('modalStatus').innerHTML =
+          `<span class="badge bg-${statusClass}">${statusText}</span>`;
+        
+        // Display PIC data
+        let picHtml = '';
+        const picData = p.pic_data || {};
+        if (Object.keys(picData).length > 0) {
+          for (const [jenis, nama] of Object.entries(picData)) {
+            picHtml += `<b>${jenis}:</b> ${nama}<br>`;
+          }
+        } else {
+          picHtml = '-';
+        }
+        document.getElementById('modalPIC').innerHTML = picHtml;
+        
+        document.getElementById('modalKeterangan').innerHTML =
+          p.keterangan ?? '-';
+        
+        // Dokumentasi
+        if (p.dokumentasi) {
+          document.getElementById('rowDokumentasi').style.display = '';
+          document.getElementById('modalDokumentasi').innerHTML = 
+            `<a href="${p.dokumentasi}" target="_blank" class="link-primary">Lihat Dokumentasi</a>`;
+        } else {
+          document.getElementById('rowDokumentasi').style.display = 'none';
+        }
+        
+        // Link publikasi
+        let links = [];
+        function renderLink(label, url) {
+          if (!url) return;
+          if (url === '-') {
+            links.push(`<span class="text-muted">${label}</span>`);
+            return;
+          }
+          links.push(
+            `<a href="${url}" target="_blank" class="link-primary">${label}</a>`
+          );
+        }
+        renderLink('<i class="ti-instagram"></i>', p.link_instagram);
+        renderLink('<i class="ti-facebook"></i>', p.link_facebook);
+        renderLink('<i class="ti-youtube"></i>', p.link_youtube);
+        renderLink('<i class="ti-world"></i>', p.link_website);
+        if (links.length > 0) {
+          document.getElementById('rowLink').style.display = '';
+          document.getElementById('modalLinks').innerHTML = links.join(' | ');
+        } else {
+          document.getElementById('rowLink').style.display = 'none';
+        }
+        new bootstrap.Modal(document.getElementById('jadwalModal')).show();
+      }
     }
   );
   calendar.render();
@@ -607,16 +615,16 @@ $('#map-bangkalan').vectorMap({
     }]
   },
 
-onRegionTipShow: function (e, el, code) {
-  let kecId = code.substring(0, 7);
-  let kecNama = namaKecamatan[kecId] || kecId;
+  onRegionTipShow: function (e, el, code) {
+    let kecId = code.substring(0, 7);
+    let kecNama = namaKecamatan[kecId] || kecId;
 
-  el.html(`
-    <strong>Desa</strong><br>
-    ${el.text()}<br>
-    <small>Kec. ${kecNama}</small>
-  `);
-}
+    el.html(`
+      <strong>Desa</strong><br>
+      ${el.text()}<br>
+      <small>Kec. ${kecNama}</small>
+    `);
+  }
 });
 });
 </script>
@@ -625,3 +633,4 @@ onRegionTipShow: function (e, el, code) {
 $script = ob_get_clean();
 include 'layout.php';
 renderLayout($content, $script);
+?>

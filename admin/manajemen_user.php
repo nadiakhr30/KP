@@ -3,19 +3,52 @@ ob_start();
 session_start();
 include_once("../koneksi.php");
 
-if (!isset($_SESSION['user']) && $_SESSION['role'] != "Admin") {
+if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
     header('Location: ../index.php');
     exit();
 }
-// DATA USER
-$qUser = mysqli_query($koneksi, "SELECT * FROM user");
+
+// DATA USER with related information
+$qUser = mysqli_query($koneksi, "
+    SELECT 
+        u.nip,
+        u.nama,
+        u.email,
+        u.foto_profil,
+        u.status,
+        u.nomor_telepon,
+        u.id_jabatan,
+        u.id_role,
+        j.nama_jabatan,
+        r.nama_role
+    FROM user u
+    LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
+    LEFT JOIN role r ON u.id_role = r.id_role
+    ORDER BY u.nama
+");
 $dataUsers = [];
 while ($row = mysqli_fetch_assoc($qUser)) {
     $dataUsers[] = $row;
 }
 
+// Get skills for each user
+function getUserSkills($koneksi, $nip) {
+    $qSkill = mysqli_query($koneksi, "
+        SELECT s.nama_skill
+        FROM user_skill us
+        JOIN skill s ON us.id_skill = s.id_skill
+        WHERE us.nip = " . (int)$nip . "
+        ORDER BY s.nama_skill
+    ");
+    $skills = [];
+    while ($row = mysqli_fetch_assoc($qSkill)) {
+        $skills[] = $row['nama_skill'];
+    }
+    return $skills;
+}
+
 function badge($text, $color) {
-  return "<span class='badge bg-$color'>$text</span>";
+    return "<span class='badge bg-$color'>$text</span>";
 }
 ?>
 <div class="pcoded-content">
@@ -34,10 +67,10 @@ function badge($text, $color) {
                             <a href="index.php"> <i class="fa fa-home"></i> </a>
                         </li>
                         <li class="breadcrumb-item">
-                          <a href="index.php">Dashboard</a>
+                            <a href="index.php">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item">
-                          <a href="manajemen_user.php">Manajemen User</a>
+                            <a href="manajemen_user.php">Manajemen User</a>
                         </li>
                     </ul>
                 </div>
@@ -55,12 +88,6 @@ function badge($text, $color) {
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#card" role="tab"><i class="ti-layout-grid2"></i> Card</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-success" data-toggle="tab" href="#tambah" role="tab"><i class="ti-plus"></i> Tambah User</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-success" data-toggle="tab" href="#import" role="tab"><i class="ti-import"></i> Import Data</a>
-                        </li>
                     </ul>
                     <div class="tab-content tabs card">
                         <div class="tab-pane active" id="table" role="tabpanel">
@@ -77,12 +104,12 @@ function badge($text, $color) {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-6 ">
+                                    <div class="col-6">
                                         <div class="dropdown-success dropdown open align-items-right" style="float: right;">
                                             <button class="btn btn-success dropdown-toggle waves-effect waves-light" type="button" id="tambah" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Tambah</button>
                                             <div class="dropdown-menu" aria-labelledby="tambah" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                <a class="dropdown-item waves-light waves-effect" href="#">Input Data</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="#">Import Data</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="tambah/tambah_user_input.php">Input Data</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="tambah/tambah_user_import.php">Import Data</a>
                                             </div>
                                         </div>
                                     </div>
@@ -91,102 +118,75 @@ function badge($text, $color) {
                                     <table id="order-table" class="table table-striped table-bordered nowrap">
                                         <thead>
                                             <tr>
-                                                <th rowspan="2">ID</th>
-                                                <th rowspan="2">Nama Lengkap</th>
-                                                <th rowspan="2">Role</th>
-                                                <th rowspan="2">Email</th>
-                                                <th rowspan="2">Foto Profil</th>
-                                                <th rowspan="2">Status</th>
-                                                <th rowspan="2">NIP</th>
-                                                <th rowspan="2">Role Humas</th>
-                                                <th rowspan="2">Jabatan</th>
-                                                <th rowspan="2">Nomor Telepon</th>
-                                                <th colspan="11">Skill</th>
-                                                <th rowspan="2">Aksi</th>
-                                            </tr>
-                                            <tr>
-                                                <th>Data Contributor</th>
-                                                <th>Content Creator</th>
-                                                <th>Editor Foto & Layout</th>
-                                                <th>Editor Video</th>
-                                                <th>Photo & Videographer</th>
-                                                <th>Talent</th>
-                                                <th>Project Manager</th>
-                                                <th>Copywriting</th>
-                                                <th>Protokol</th>
-                                                <th>MC</th>
-                                                <th>Operator</th>
+                                                <th>NIP</th>
+                                                <th>Nama Lengkap</th>
+                                                <th>Email</th>
+                                                <th>Jabatan</th>
+                                                <th>Role</th>
+                                                <th>Foto Profil</th>
+                                                <th>Status</th>
+                                                <th>Nomor Telepon</th>
+                                                <th>Skills</th>
+                                                <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
 <?php foreach ($dataUsers as $user) : ?>
 <tr>
-  <td><?= $user['id_user']; ?></td>
+  <td><?= $user['nip']; ?></td>
   <td><?= htmlspecialchars($user['nama']); ?></td>
-  <td><?= $user['role'] == 1 ? badge('Admin', 'primary') : badge('Pegawai', 'secondary'); ?></td>
   <td><?= htmlspecialchars($user['email']); ?></td>
+  <td><?= htmlspecialchars($user['nama_jabatan'] ?? '-'); ?></td>
+  <td><?= badge(htmlspecialchars($user['nama_role'] ?? '-'), 'primary'); ?></td>
   <td>
     <?php if ($user['foto_profil']) : ?>
-      <img src="../uploads/<?= $user['foto_profil']; ?>" width="40">
+      <img src="../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" width="40" style="border-radius: 50%;">
     <?php else : ?>
-      -
+      <span class="badge bg-secondary">-</span>
     <?php endif; ?>
   </td>
-<td><?= $user['status'] == 1 ? badge('Aktif', 'success') : badge('Tidak Aktif', 'danger'); ?></td>
-</td>
-  <td><?= $user['nip'] ?: '-'; ?></td>
-  <td><?= $user['role_humas'] ?: '-'; ?></td>
-  <td><?= $user['jabatan'] ?: '-'; ?></td>
-  <td>0<?= $user['nomor_telepon'] ?: '-'; ?></td>
-<td class="text-center"><?= $user['skill_data_contributor'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
-<td class="text-center"><?= $user['skill_content_creator'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
-<td class="text-center"><?= $user['skill_editor_photo_layout'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
-<td class="text-center"><?= $user['skill_editor_video'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
-<td class="text-center"><?= $user['skill_photo_videographer'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
-<td class="text-center"><?= $user['skill_talent'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
-<td class="text-center"><?= $user['skill_project_manager'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
-<td class="text-center"><?= $user['skill_copywriting'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
-<td class="text-center"><?= $user['skill_protokol'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
-<td class="text-center"><?= $user['skill_mc'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
-<td class="text-center"><?= $user['skill_operator'] == 1 ? '<i class="ti-check text-success"></i>' : '<i class="ti-close text-danger"></i>'; ?></td>
   <td>
-    <a href="edit_user.php?id=<?= $user['id_user']; ?>" class="btn btn-sm btn-warning"><i class="ti-pencil text-dark"></i></a>
-    <a href="hapus_user.php?id=<?= $user['id_user']; ?>" 
+    <?php echo $user['status'] == 1 ? badge('Aktif', 'success') : badge('Tidak Aktif', 'danger'); ?>
+  </td>
+  <td><?= $user['nomor_telepon'] ? '0' . $user['nomor_telepon'] : '-'; ?></td>
+  <td>
+    <?php 
+      $skills = getUserSkills($koneksi, $user['nip']);
+      if (count($skills) > 0) {
+        foreach ($skills as $skill) {
+          echo "<span class='badge bg-info mr-2 mb-2'>" . htmlspecialchars($skill) . "</span>";
+        }
+      } else {
+        echo '-';
+      }
+    ?>
+  </td>
+  <td>
+    <a href="edit_user.php?nip=<?= $user['nip']; ?>" class="btn btn-sm btn-warning" title="Edit">
+      <i class="ti-pencil text-dark"></i>
+    </a>
+    <a href="hapus_user.php?nip=<?= $user['nip']; ?>" 
        class="btn btn-sm btn-danger"
-       onclick="return confirm('Yakin hapus user ini?')">
+       onclick="return confirm('Yakin hapus user ini?')"
+       title="Hapus">
        <i class="ti-trash text-dark"></i>
     </a>
   </td>
 </tr>
 <?php endforeach; ?>
-</tbody>
+                                        </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th rowspan="2">ID</th>
-                                                <th rowspan="2">Nama Lengkap</th>
-                                                <th rowspan="2">Role</th>
-                                                <th rowspan="2">Email</th>
-                                                <th rowspan="2">Foto Profil</th>
-                                                <th rowspan="2">Status</th>
-                                                <th rowspan="2">NIP</th>
-                                                <th rowspan="2">Role Humas</th>
-                                                <th rowspan="2">Jabatan</th>
-                                                <th rowspan="2">Nomor Telepon</th>
-                                                <th colspan="11">Skill</th>
-                                                <th rowspan="2">Aksi</th>
-                                            </tr>
-                                            <tr>
-                                                <th>Data Contributor</th>
-                                                <th>Content Creator</th>
-                                                <th>Editor Foto & Layout</th>
-                                                <th>Editor Video</th>
-                                                <th>Photo & Videographer</th>
-                                                <th>Talent</th>
-                                                <th>Project Manager</th>
-                                                <th>Copywriting</th>
-                                                <th>Protokol</th>
-                                                <th>MC</th>
-                                                <th>Operator</th>
+                                                <th>NIP</th>
+                                                <th>Nama Lengkap</th>
+                                                <th>Email</th>
+                                                <th>Jabatan</th>
+                                                <th>Role</th>
+                                                <th>Foto Profil</th>
+                                                <th>Status</th>
+                                                <th>Nomor Telepon</th>
+                                                <th>Skills</th>
+                                                <th>Aksi</th>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -197,8 +197,8 @@ function badge($text, $color) {
                             <div class="row m-b-10">
                                 <div class="col-6">
                                     <div class="dropdown-info dropdown open">
-                                        <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
-                                        <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                        <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak2" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
+                                        <div class="dropdown-menu" aria-labelledby="cetak2" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
                                             <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
                                             <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
                                             <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
@@ -206,12 +206,12 @@ function badge($text, $color) {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-6 ">
+                                <div class="col-6">
                                     <div class="dropdown-success dropdown open align-items-right" style="float: right;">
-                                        <button class="btn btn-success dropdown-toggle waves-effect waves-light" type="button" id="tambah" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Tambah</button>
-                                        <div class="dropdown-menu" aria-labelledby="tambah" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                            <a class="dropdown-item waves-light waves-effect" href="#">Input Data</a>
-                                            <a class="dropdown-item waves-light waves-effect" href="#">Import Data</a>
+                                        <button class="btn btn-success dropdown-toggle waves-effect waves-light" type="button" id="tambah2" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Tambah</button>
+                                        <div class="dropdown-menu" aria-labelledby="tambah2" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                            <a class="dropdown-item waves-light waves-effect" href="tambah/tambah_user_input.php">Input Data</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="tambah/tambah_user_import.php">Import Data</a>
                                         </div>
                                     </div>
                                 </div>
@@ -223,84 +223,30 @@ function badge($text, $color) {
                                         <div class="card-block">
                                             <div class="img-hover avatar-wrapper">
                                                 <?php if ($pengguna['foto_profil']) : ?>
-                                                  <img src="../uploads/<?= $pengguna['foto_profil']; ?>" class="avatar-img" alt="<?= $pengguna['foto_profil']; ?>">
+                                                    <img src="../uploads/<?= htmlspecialchars($pengguna['foto_profil']); ?>" class="avatar-img" alt="<?= htmlspecialchars($pengguna['nama']); ?>">
                                                 <?php else : ?>
-                                                  <img src="../images/noimages.jpg" class="avatar-img" alt="<?= $pengguna['foto_profil']; ?>">
+                                                    <img src="../images/noimages.jpg" class="avatar-img" alt="No Image">
                                                 <?php endif; ?>
                                                 <div class="img-overlay img-radius">
                                                     <span>
-                                                        <a href="#" class="btn btn-sm btn-primary" data-popup="lightbox"><i class="ti-pencil"></i></a>
-                                                        <a href="#" class="btn btn-sm btn-primary"><i class="ti-trash"></i></a>
+                                                        <a href="edit_user.php?nip=<?= $pengguna['nip']; ?>" class="btn btn-sm btn-primary"><i class="ti-pencil"></i></a>
+                                                        <a href="hapus_user.php?nip=<?= $pengguna['nip']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus user ini?')"><i class="ti-trash"></i></a>
                                                     </span>
                                                 </div>
                                             </div>
                                             <div class="user-content">
-                                                <h4><?= $pengguna['nama']; ?></h4>
+                                                <h4><?= htmlspecialchars($pengguna['nama']); ?></h4>
                                                 <span style="font-size: 12px; color: #d35858;"><?= $pengguna['nip']; ?></span>
-                                                <h5 style="padding: 5px 0px"><?= $pengguna['email']; ?></h5>
-                                                <p><?= $pengguna['jabatan']; ?></p>
-                                                <button type="button" class="btn btn-primary waves-effect waves-light">Detail</button>
+                                                <h5 style="padding: 5px 0px"><?= htmlspecialchars($pengguna['email']); ?></h5>
+                                                <p><?= htmlspecialchars($pengguna['nama_jabatan'] ?? '-'); ?></p>
+                                                <small class="badge bg-info">
+                                                    <?php echo $pengguna['status'] == 1 ? 'Aktif' : 'Tidak Aktif'; ?>
+                                                </small>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <?php endforeach; ?>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="tambah" role="tabpanel">
-                            <div class="card-block">
-                                <form action="" class="form-material">
-                                    <div class="form-group form-default">
-                                        <input type="number" name="footer-email" class="form-control" required>
-                                        <span class="form-bar"></span>
-                                        <label class="float-label">NIP</label>
-                                    </div>
-                                    <div class="form-group form-default">
-                                        <input type="text" name="footer-email" class="form-control" required>
-                                        <span class="form-bar"></span>
-                                        <label class="float-label">Nama</label>
-                                    </div>
-                                    <div class="form-group form-default">
-                                        <input type="password" name="footer-email" class="form-control" required>
-                                        <span class="form-bar"></span>
-                                        <label class="float-label">Password</label>
-                                    </div>
-                                    <div class="form-group form-default">
-                                        <select name="select" class="form-control" required>
-                                            <option value="">Pilih Role User</option>
-                                            <option value="1">Admin</option>
-                                            <option value="2">Pegawai</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group form-default">
-                                        <input type="text" name="footer-email" class="form-control" required>
-                                        <span class="form-bar"></span>
-                                        <label class="float-label">Email (contoh.bps3526@gmail.com)</label>
-                                    </div>
-                                    <div class="form-group form-default">
-                                        <select name="select" class="form-control" required>
-                                            <option value="">Status Kepegawaian</option>
-                                            <option value="0">Tidak Aktif</option>
-                                            <option value="1">Aktif</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group form-default">
-                                        <input type="text" name="footer-email" class="form-control" required>
-                                        <span class="form-bar"></span>
-                                        <label class="float-label">Jabatan</label>
-                                    </div>
-                                    <div class="form-group form-default">
-                                        <input type="number" name="footer-email" class="form-control" required>
-                                        <span class="form-bar"></span>
-                                        <label class="float-label">Nomor Telepon</label>
-                                    </div>
-                                    <button class="btn waves-effect waves-light btn-primary btn-outline-primary">Submit</button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="import" role="tabpanel">
-                            <div class="card-block">
-
                             </div>
                         </div>
                     </div>
@@ -317,3 +263,4 @@ ob_start();
 $script = ob_get_clean();
 include 'layout.php';
 renderLayout($content, $script);
+?>

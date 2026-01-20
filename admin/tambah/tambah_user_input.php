@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         if ($skills_insert_success) {
                             $success = "User berhasil ditambahkan!";
                             // Redirect after 1 second
-                            header("Refresh: 1; url=../index.php");
+                            header("Refresh: 1; url=../manajemen_user.php");
                         }
                     }
                 }
@@ -349,7 +349,6 @@ if ($skill_result) {
                             </div>
 
                             <div class="form-group">
-                                <label>Skill yang Dipilih <span class="text-danger">*</span></label>
                                 <div id="selected-skills"></div>
                                 <input type="hidden" id="skills_input" name="skills" value="">
                             </div>
@@ -358,7 +357,7 @@ if ($skill_result) {
                                 <button type="submit" class="btn btn-primary mr-2">
                                     Simpan
                                 </button>
-                                <a href="../index.php" class="btn btn-secondary">
+                                <a href="../manajemen_user.php" class="btn btn-secondary">
                                     Batal
                                 </a>
                             </div>

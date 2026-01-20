@@ -47,6 +47,43 @@ global $user;
     #modalLinks span, #modalDokumentasi a, #modalDokumentasi span {
       margin-right: 6px;
     }
+    /* Default */
+#modalLinks a {
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+/* Instagram */
+#modalLinks .ti-instagram {
+  color: #E1306C;
+}
+#modalLinks a:hover .ti-instagram {
+  color: #C13584;
+}
+/* Facebook */
+#modalLinks .ti-facebook {
+  color: #1877F2;
+}
+#modalLinks a:hover .ti-facebook {
+  color: #145DBF;
+}
+/* YouTube */
+#modalLinks .ti-youtube {
+  color: #FF0000;
+}
+#modalLinks a:hover .ti-youtube {
+  color: #CC0000;
+}
+/* Website */
+#modalLinks .ti-world {
+  color: #6c757d;
+}
+#modalLinks a:hover .ti-world {
+  color: #343a40;
+}
+/* Hover efek halus */
+#modalLinks a:hover {
+  transform: scale(1.1);
+}
     
     /* Total konten */
     .nav-pills .nav-link {
@@ -360,6 +397,13 @@ global $user;
                                           <a href="#" class="waves-effect waves-dark">
                                               <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                                               <span class="pcoded-mtext" data-i18n="???">Link</span>
+                                              <span class="pcoded-mcaret"></span>
+                                          </a>
+                                      </li>
+                                      <li class=" ">
+                                          <a href="#" class="waves-effect waves-dark">
+                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                                              <span class="pcoded-mtext" data-i18n="???">Data Lainnya</span>
                                               <span class="pcoded-mcaret"></span>
                                           </a>
                                       </li>
