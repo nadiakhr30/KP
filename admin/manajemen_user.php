@@ -162,11 +162,11 @@ function badge($text, $color) {
     ?>
   </td>
   <td>
-    <a href="edit_user.php?nip=<?= $user['nip']; ?>" class="btn btn-sm btn-warning" title="Edit">
+    <a href="edit_user.php?nip=<?= $user['nip']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
       <i class="ti-pencil text-dark"></i>
     </a>
     <a href="hapus_user.php?nip=<?= $user['nip']; ?>" 
-       class="btn btn-sm btn-danger"
+       class="btn waves-effect waves-light btn-danger btn-icon"
        onclick="return confirm('Yakin hapus user ini?')"
        title="Hapus">
        <i class="ti-trash text-dark"></i>
@@ -240,7 +240,16 @@ function badge($text, $color) {
                                                 <h5 style="padding: 5px 0px"><?= htmlspecialchars($pengguna['email']); ?></h5>
                                                 <p><?= htmlspecialchars($pengguna['nama_jabatan'] ?? '-'); ?></p>
                                                 <small class="badge bg-info">
-                                                    <?php echo $pengguna['status'] == 1 ? 'Aktif' : 'Tidak Aktif'; ?>
+                                                    <?php 
+                                                      $skills = getUserSkills($koneksi, $pengguna['nip']);
+                                                      if (count($skills) > 0) {
+                                                        foreach ($skills as $skill) {
+                                                          echo "<span class='badge bg-info'>" . htmlspecialchars($skill) . "</span>";
+                                                        }
+                                                      } else {
+                                                        echo '-';
+                                                      }
+                                                    ?>
                                                 </small>
                                             </div>
                                         </div>

@@ -8601,10 +8601,12 @@ body.menu-bottom #collapse-menu {
 .btn.btn-icon {
   border-radius: 50%;
   width: 40px;
-  line-height: 30px;
   height: 40px;
-  padding: 3px;
-  text-align: center; }
+  padding: 0;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; }
 .btn.btn-out {
   outline: 1px solid #fff;
   outline-offset: -5px; }

@@ -1,15 +1,12 @@
 <?php
 include("../../koneksi.php");
-
 $error = "";
 $success = "";
 $previewData = [];
 $fileUploaded = false;
-
 // Handle file upload
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["excelFile"])) {
     $file = $_FILES["excelFile"];
-    
     // Validate file
     if ($file["error"] !== UPLOAD_ERR_OK) {
         $error = "Gagal upload file!";
@@ -22,23 +19,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["excelFile"])) {
         } else {
             // Process the file
             require '../../vendor/autoload.php';
-            
             $inputFileName = $file["tmp_name"];
-            
             try {
                 $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
                 $worksheet = $spreadsheet->getActiveSheet();
                 $rows = $worksheet->toArray();
-                
                 // Skip header row and validate data
                 for ($i = 1; $i < count($rows); $i++) {
                     $row = $rows[$i];
-                    
                     // Check if row is empty
                     if (empty($row[0]) && empty($row[1])) {
                         continue;
                     }
-                    
                     $previewData[] = [
                         'nip' => trim($row[0] ?? ''),
                         'nama' => trim($row[1] ?? ''),
@@ -53,7 +45,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["excelFile"])) {
                         'skills' => trim($row[10] ?? '')
                     ];
                 }
-                
                 if (count($previewData) > 0) {
                     $fileUploaded = true;
                 } else {
@@ -65,16 +56,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["excelFile"])) {
         }
     }
 }
-
 // Handle data submission
 if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
     $data = json_decode($_POST["preview_data"], true);
-    
     if ($data && is_array($data)) {
         $successCount = 0;
         $errorCount = 0;
         $errors = [];
-        
         foreach ($data as $index => $user) {
             // Validate required fields
             if (empty($user['nip']) || empty($user['nama']) || empty($user['email']) || empty($user['password'])) {
@@ -82,7 +70,6 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                 $errors[] = "Baris " . ($index + 2) . ": NIP, Nama, Email, dan Password harus diisi!";
                 continue;
             }
-            
             // Check if email already exists
             $checkEmail = mysqli_query($koneksi, "SELECT email FROM user WHERE email = '" . mysqli_real_escape_string($koneksi, $user['email']) . "'");
             if (mysqli_num_rows($checkEmail) > 0) {
@@ -90,10 +77,8 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                 $errors[] = "Baris " . ($index + 2) . ": Email sudah terdaftar!";
                 continue;
             }
-            
             // Hash password
             $hashed_password = password_hash($user['password'], PASSWORD_DEFAULT);
-            
             // Insert into user table
             $insertUser = "INSERT INTO user (nip, nama, email, password, status, nomor_telepon, id_jabatan, id_role) 
                           VALUES (
@@ -106,20 +91,17 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                             " . (int)$user['id_jabatan'] . ",
                             " . (int)$user['id_role'] . "
                           )";
-            
             if (mysqli_query($koneksi, $insertUser)) {
                 // Insert into user_ppid
                 if (!empty($user['id_ppid'])) {
                     $insertPPID = "INSERT INTO user_ppid (id_ppid, nip) VALUES (" . (int)$user['id_ppid'] . ", '" . mysqli_real_escape_string($koneksi, $user['nip']) . "')";
                     mysqli_query($koneksi, $insertPPID);
                 }
-                
                 // Insert into user_halo_pst
                 if (!empty($user['id_halo_pst'])) {
                     $insertHaloPST = "INSERT INTO user_halo_pst (id_halo_pst, nip) VALUES (" . (int)$user['id_halo_pst'] . ", '" . mysqli_real_escape_string($koneksi, $user['nip']) . "')";
                     mysqli_query($koneksi, $insertHaloPST);
                 }
-                
                 // Insert skills
                 if (!empty($user['skills'])) {
                     $skillIds = array_filter(array_map('intval', explode(',', $user['skills'])));
@@ -128,58 +110,49 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                         mysqli_query($koneksi, $insertSkill);
                     }
                 }
-                
                 $successCount++;
             } else {
                 $errorCount++;
                 $errors[] = "Baris " . ($index + 2) . ": Gagal menambahkan user!";
             }
         }
-        
         if ($successCount > 0) {
             $success = "Berhasil menambahkan $successCount user!";
             $previewData = [];
             $fileUploaded = false;
         }
-        
         if ($errorCount > 0) {
             $error = "Gagal menambahkan $errorCount user. " . implode(" ", $errors);
         }
     }
 }
-
 // Get reference data for preview
 $jabatan = [];
 $qJabatan = mysqli_query($koneksi, "SELECT id_jabatan, nama_jabatan FROM jabatan");
 while ($row = mysqli_fetch_assoc($qJabatan)) {
     $jabatan[$row['id_jabatan']] = $row['nama_jabatan'];
 }
-
 $role = [];
 $qRole = mysqli_query($koneksi, "SELECT id_role, nama_role FROM role");
 while ($row = mysqli_fetch_assoc($qRole)) {
     $role[$row['id_role']] = $row['nama_role'];
 }
-
 $ppid = [];
 $qPPID = mysqli_query($koneksi, "SELECT id_ppid, nama_ppid FROM ppid");
 while ($row = mysqli_fetch_assoc($qPPID)) {
     $ppid[$row['id_ppid']] = $row['nama_ppid'];
 }
-
 $haloPST = [];
 $qHaloPST = mysqli_query($koneksi, "SELECT id_halo_pst, nama_halo_pst FROM halo_pst");
 while ($row = mysqli_fetch_assoc($qHaloPST)) {
     $haloPST[$row['id_halo_pst']] = $row['nama_halo_pst'];
 }
-
 $skill = [];
 $qSkill = mysqli_query($koneksi, "SELECT id_skill, nama_skill FROM skill");
 while ($row = mysqli_fetch_assoc($qSkill)) {
     $skill[$row['id_skill']] = $row['nama_skill'];
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -221,6 +194,12 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
             margin-bottom: 20px;
             border-radius: 4px;
         }
+        .upload-progress {
+            display: none;
+        }
+        .progress-bar-animated {
+            animation: progress-bar-stripes 1s linear infinite;
+        }
     </style>
 </head>
 <body>
@@ -240,7 +219,6 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                 </button>
                             </div>
                         <?php endif; ?>
-                        
                         <?php if ($success): ?>
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 <?php echo htmlspecialchars($success); ?>
@@ -249,7 +227,6 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                 </button>
                             </div>
                         <?php endif; ?>
-
                         <!-- Template Information -->
                         <div class="template-info">
                             <h6 class="mb-2"><i class="ti-info-alt"></i> Format Excel yang Dibutuhkan</h6>
@@ -330,10 +307,9 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                 </a>
                             </p>
                         </div>
-
                         <?php if (!$fileUploaded): ?>
                         <!-- Upload Section -->
-                        <form method="POST" enctype="multipart/form-data">
+                        <form method="POST" enctype="multipart/form-data" id="uploadForm">
                             <div class="form-group">
                                 <label>Pilih File Excel</label>
                                 <div class="dropzone" id="dropzone">
@@ -344,10 +320,22 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                     <input type="file" id="fileInput" name="excelFile" accept=".xlsx,.xls" style="display: none;">
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Upload & Preview</button>
                             <a href="../manajemen_user.php" class="btn btn-secondary">Batal</a>
                         </form>
-
+                        <!-- Upload Progress Section -->
+                        <div class="upload-progress" id="uploadProgress">
+                            <h5 class="mb-3">Mengupload File...</h5>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" 
+                                     aria-valuenow="100" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100" 
+                                     style="width: 100%">
+                                    Memproses...
+                                </div>
+                            </div>
+                        </div>
                         <?php else: ?>
                         <!-- Preview Section -->
                         <h5 class="mt-4 mb-3">Preview Data (<?php echo count($previewData); ?> User)</h5>
@@ -359,9 +347,14 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         <th>NIP</th>
                                         <th>Nama</th>
                                         <th>Email</th>
+                                        <th>Password</th>
+                                        <th>Nomor Telepon</th>
                                         <th>Jabatan</th>
                                         <th>Role</th>
                                         <th>Status</th>
+                                        <th>PPID</th>
+                                        <th>Halo PST</th>
+                                        <th>Skills</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -371,21 +364,40 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         <td><?php echo htmlspecialchars($user['nip']); ?></td>
                                         <td><?php echo htmlspecialchars($user['nama']); ?></td>
                                         <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                        <td><small class="text-muted">●●●●●●●●</small></td>
+                                        <td><?php echo htmlspecialchars($user['nomor_telepon'] ?: '-'); ?></td>
                                         <td><?php echo htmlspecialchars($jabatan[$user['id_jabatan']] ?? '-'); ?></td>
                                         <td><?php echo htmlspecialchars($role[$user['id_role']] ?? '-'); ?></td>
-                                        <td><?php echo $user['status'] == 1 ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Tidak Aktif</span>'; ?></td>
+                                        <td><?php echo $user['status'] == 1 ? '<span class="badge badge-success">Aktif</span>' : '<span class="badge badge-danger">Tidak Aktif</span>'; ?></td>
+                                        <td><?php echo htmlspecialchars($ppid[$user['id_ppid']] ?? '-'); ?></td>
+                                        <td><?php echo htmlspecialchars($haloPST[$user['id_halo_pst']] ?? '-'); ?></td>
+                                        <td>
+                                            <?php 
+                                            if (!empty($user['skills'])) {
+                                                $skillIds = array_filter(array_map('intval', explode(',', $user['skills'])));
+                                                $skillNames = [];
+                                                foreach ($skillIds as $skillId) {
+                                                    if (isset($skill[$skillId])) {
+                                                        $skillNames[] = htmlspecialchars($skill[$skillId]);
+                                                    }
+                                                }
+                                                echo implode(', ', $skillNames) ?: '-';
+                                            } else {
+                                                echo '-';
+                                            }
+                                            ?>
+                                        </td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
-
                         <!-- Submit Form -->
                         <form method="POST" class="mt-4">
                             <input type="hidden" name="preview_data" value="<?php echo htmlspecialchars(json_encode($previewData)); ?>">
                             <div class="form-group">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="confirmCheckbox" required>
+                                    <input type="checkbox" class="custom-control-input" id="confirmCheckbox">
                                     <label class="custom-control-label" for="confirmCheckbox">
                                         Saya sudah memverifikasi data di atas dan siap untuk mengimport
                                     </label>
@@ -396,52 +408,62 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                             </button>
                             <a href="tambah_user_import.php" class="btn btn-secondary">Batal</a>
                         </form>
-
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const dropzone = document.getElementById('dropzone');
-        const fileInput = document.getElementById('fileInput');
-        const confirmCheckbox = document.getElementById('confirmCheckbox');
-        const submitBtn = document.getElementById('submitBtn');
-
-        // Drag and drop handlers
-        dropzone.addEventListener('click', () => fileInput.click());
-
-        dropzone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropzone.classList.add('dragover');
-        });
-
-        dropzone.addEventListener('dragleave', () => {
-            dropzone.classList.remove('dragover');
-        });
-
-        dropzone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropzone.classList.remove('dragover');
-            fileInput.files = e.dataTransfer.files;
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            if (fileInput.files.length > 0) {
-                document.querySelector('form').submit();
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('fileInput');
+            const uploadForm = document.getElementById('uploadForm');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const uploadProgress = document.getElementById('uploadProgress');
+            const confirmCheckbox = document.getElementById('confirmCheckbox');
+            const submitBtn = document.getElementById('submitBtn');
+            // Handle upload section
+            if (dropzone && fileInput && uploadForm) {
+                // Drag and drop handlers
+                dropzone.addEventListener('click', () => fileInput.click());
+                dropzone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add('dragover');
+                });
+                dropzone.addEventListener('dragleave', () => {
+                    dropzone.classList.remove('dragover');
+                });
+                dropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('dragover');
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileSelect();
+                });
+                fileInput.addEventListener('change', handleFileSelect);
+                function handleFileSelect() {
+                    if (fileInput.files.length > 0) {
+                        // Show loading progress
+                        dropzone.style.display = 'none';
+                        if (uploadBtn) uploadBtn.style.display = 'none';
+                        if (uploadProgress) uploadProgress.style.display = 'block';
+                        if (uploadBtn) uploadBtn.disabled = true;
+                        // Submit form after short delay to ensure UI updates
+                        setTimeout(() => {
+                            uploadForm.submit();
+                        }, 300);
+                    }
+                }
+            }
+            // Handle preview section checkbox
+            if (confirmCheckbox && submitBtn) {
+                confirmCheckbox.addEventListener('change', function() {
+                    submitBtn.disabled = !this.checked;
+                });
             }
         });
-
-        // Enable/disable submit button based on checkbox
-        if (confirmCheckbox) {
-            confirmCheckbox.addEventListener('change', () => {
-                submitBtn.disabled = !confirmCheckbox.checked;
-            });
-        }
     </script>
 </body>
 </html>

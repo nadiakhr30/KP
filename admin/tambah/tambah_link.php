@@ -48,7 +48,7 @@ if (isset($_POST['simpan'])) {
         if ($simpan) {
             $status  = 'success';
             $message = 'Link berhasil ditambahkan!';
-            header("../index.php");
+            header("Refresh: 1; url=../manajemen_link.php");
         } else {
             $status  = 'error';
             $message = 'Link gagal ditambahkan!';
@@ -98,7 +98,7 @@ if (isset($_POST['simpan'])) {
                     <form method="POST" enctype="multipart/form-data">
 
                         <div class="form-group">
-                            <label>Nama Instansi / Website</label>
+                            <label>Nama Instansi / Website <span class="text-danger">*</span></label>
                             <input
                                 type="text"
                                 name="nama_link"
@@ -109,7 +109,7 @@ if (isset($_POST['simpan'])) {
                         </div>
 
                         <div class="form-group">
-                            <label>Link Website</label>
+                            <label>Link Website <span class="text-danger">*</span></label>
                             <input
                                 type="url"
                                 name="link"
@@ -133,7 +133,7 @@ if (isset($_POST['simpan'])) {
                         </div>
 
                         <div class="form-group d-flex justify-content-between mt-4">
-                            <a href="../index.php" class="btn btn-secondary">
+                            <a href="../manajemen_link.php" class="btn btn-secondary">
                                 Batal
                             </a>
 

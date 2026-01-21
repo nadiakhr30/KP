@@ -394,14 +394,14 @@ global $user;
                                           </a>
                                       </li>
                                       <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
+                                          <a href="manajemen_link.php" class="waves-effect waves-dark">
                                               <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                                               <span class="pcoded-mtext" data-i18n="???">Link</span>
                                               <span class="pcoded-mcaret"></span>
                                           </a>
                                       </li>
                                       <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
+                                          <a href="manajemen_data_lainnya.php" class="waves-effect waves-dark">
                                               <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                                               <span class="pcoded-mtext" data-i18n="???">Data Lainnya</span>
                                               <span class="pcoded-mcaret"></span>
