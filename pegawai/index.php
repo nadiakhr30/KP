@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 require '../koneksi.php';
 
@@ -8,58 +9,58 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
 }
 
 // Kalender
-$jadwalkalender = [];
-$qKalender = mysqli_query($koneksi, "
-  SELECT 
-    j.id_jadwal,
-    j.topik,
-    j.judul_kegiatan,
-    j.tanggal_penugasan,
-    j.target_rilis,
-    j.tim,
-    j.keterangan,
-    j.status,
-    j.dokumentasi,
-    j.link_instagram,
-    j.link_facebook,
-    j.link_youtube,
-    j.link_website,
-    u1.nama AS pic_desain_nama,
-    u2.nama AS pic_narasi_nama,
-    u3.nama AS pic_medsos_nama
-  FROM jadwal j
-  LEFT JOIN user u1 ON j.pic_desain = u1.id_user
-  LEFT JOIN user u2 ON j.pic_narasi = u2.id_user
-  LEFT JOIN user u3 ON j.pic_medsos = u3.id_user
-  WHERE j.target_rilis IS NOT NULL
-");
-while ($row = mysqli_fetch_assoc($qKalender)) {
-  if ($row['status'] == 0) $color = '#e84118';
-  else if ($row['status'] == 1) $color = '#fbc531';
-  else if ($row['status'] == 2) $color = '#44bd32';
-  else $color = '#718093';
-  $jadwalkalender[] = [
-    'id'    => $row['id_jadwal'],
-    'title' => $row['judul_kegiatan'],
-    'start' => $row['target_rilis'],
-    'color' => $color,
-    'extendedProps' => [
-      'topik' => $row['topik'],
-      'tanggal_penugasan' => $row['tanggal_penugasan'],
-      'tim' => $row['tim'],
-      'status' => (int)$row['status'],
-      'keterangan' => $row['keterangan'],
-      'pic_desain' => $row['pic_desain_nama'] ?? '-',
-      'pic_narasi' => $row['pic_narasi_nama'] ?? '-',
-      'pic_medsos' => $row['pic_medsos_nama'] ?? '-',
-      'dokumentasi' => $row['dokumentasi'],
-      'link_instagram' => $row['link_instagram'],
-      'link_facebook' => $row['link_facebook'],
-      'link_youtube' => $row['link_youtube'],
-      'link_website' => $row['link_website']
-    ]
-  ];
-}
+// $jadwalkalender = [];
+// $qKalender = mysqli_query($koneksi, "
+//   SELECT 
+//     j.id_jadwal,
+//     j.topik,
+//     j.judul_kegiatan,
+//     j.tanggal_penugasan,
+//     j.target_rilis,
+//     j.tim,
+//     j.keterangan,
+//     j.status,
+//     j.dokumentasi,
+//     j.link_instagram,
+//     j.link_facebook,
+//     j.link_youtube,
+//     j.link_website,
+//     u1.nama AS pic_desain_nama,
+//     u2.nama AS pic_narasi_nama,
+//     u3.nama AS pic_medsos_nama
+//   FROM jadwal j
+//   LEFT JOIN user u1 ON j.pic_desain = u1.id_user
+//   LEFT JOIN user u2 ON j.pic_narasi = u2.id_user
+//   LEFT JOIN user u3 ON j.pic_medsos = u3.id_user
+//   WHERE j.target_rilis IS NOT NULL
+// ");
+// while ($row = mysqli_fetch_assoc($qKalender)) {
+//   if ($row['status'] == 0) $color = '#e84118';
+//   else if ($row['status'] == 1) $color = '#fbc531';
+//   else if ($row['status'] == 2) $color = '#44bd32';
+//   else $color = '#718093';
+//   $jadwalkalender[] = [
+//     'id'    => $row['id_jadwal'],
+//     'title' => $row['judul_kegiatan'],
+//     'start' => $row['target_rilis'],
+//     'color' => $color,
+//     'extendedProps' => [
+//       'topik' => $row['topik'],
+//       'tanggal_penugasan' => $row['tanggal_penugasan'],
+//       'tim' => $row['tim'],
+//       'status' => (int)$row['status'],
+//       'keterangan' => $row['keterangan'],
+//       'pic_desain' => $row['pic_desain_nama'] ?? '-',
+//       'pic_narasi' => $row['pic_narasi_nama'] ?? '-',
+//       'pic_medsos' => $row['pic_medsos_nama'] ?? '-',
+//       'dokumentasi' => $row['dokumentasi'],
+//       'link_instagram' => $row['link_instagram'],
+//       'link_facebook' => $row['link_facebook'],
+//       'link_youtube' => $row['link_youtube'],
+//       'link_website' => $row['link_website']
+//     ]
+//   ];
+// }
 ?>
 
 
@@ -320,7 +321,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
     <!-- Manajemen Link -->
     <section id="services" class="services section light-background">
-      </section><!-- End Manajemen Link Section -->
+      </section><!--End Manajemen Link Section -->
 
     <!-- Work Process Section -->
     <section id="work-process" class="work-process section">
