@@ -47,6 +47,38 @@ function getUserSkills($koneksi, $nip) {
     return $skills;
 }
 
+// Get PPID for each user
+function getUserPPID($koneksi, $nip) {
+    $qPPID = mysqli_query($koneksi, "
+        SELECT p.nama_ppid
+        FROM user_ppid up
+        JOIN ppid p ON up.id_ppid = p.id_ppid
+        WHERE up.nip = " . (int)$nip . "
+        ORDER BY p.nama_ppid
+    ");
+    $ppids = [];
+    while ($row = mysqli_fetch_assoc($qPPID)) {
+        $ppids[] = $row['nama_ppid'];
+    }
+    return $ppids;
+}
+
+// Get Halo PST for each user
+function getUserHaloPST($koneksi, $nip) {
+    $qHaloPST = mysqli_query($koneksi, "
+        SELECT hp.nama_halo_pst
+        FROM user_halo_pst uhp
+        JOIN halo_pst hp ON uhp.id_halo_pst = hp.id_halo_pst
+        WHERE uhp.nip = " . (int)$nip . "
+        ORDER BY hp.nama_halo_pst
+    ");
+    $haloPSTs = [];
+    while ($row = mysqli_fetch_assoc($qHaloPST)) {
+        $haloPSTs[] = $row['nama_halo_pst'];
+    }
+    return $haloPSTs;
+}
+
 function badge($text, $color) {
     return "<span class='badge bg-$color'>$text</span>";
 }
@@ -97,10 +129,10 @@ function badge($text, $color) {
                                         <div class="dropdown-info dropdown open">
                                             <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                             <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=print">Print</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=excel">Excel</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=json">JSON</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=csv">CSV</a>
                                             </div>
                                         </div>
                                     </div>
@@ -126,6 +158,8 @@ function badge($text, $color) {
                                                 <th>Foto Profil</th>
                                                 <th>Status</th>
                                                 <th>Nomor Telepon</th>
+                                                <th>PPID</th>
+                                                <th>Halo PST</th>
                                                 <th>Skills</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -137,10 +171,12 @@ function badge($text, $color) {
   <td><?= htmlspecialchars($user['nama']); ?></td>
   <td><?= htmlspecialchars($user['email']); ?></td>
   <td><?= htmlspecialchars($user['nama_jabatan'] ?? '-'); ?></td>
-  <td><?= badge(htmlspecialchars($user['nama_role'] ?? '-'), 'primary'); ?></td>
+  <td><?= htmlspecialchars($user['nama_role'] ?? '-'); ?></td>
   <td>
     <?php if ($user['foto_profil']) : ?>
-      <img src="../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" width="40" style="border-radius: 50%;">
+      <a href="../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" class="glightbox" data-gallery="gallery">
+        <img src="../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" width="40" style="border-radius: 50%; cursor: pointer;">
+      </a>
     <?php else : ?>
       <span class="badge bg-secondary">-</span>
     <?php endif; ?>
@@ -149,6 +185,30 @@ function badge($text, $color) {
     <?php echo $user['status'] == 1 ? badge('Aktif', 'success') : badge('Tidak Aktif', 'danger'); ?>
   </td>
   <td><?= $user['nomor_telepon'] ? '0' . $user['nomor_telepon'] : '-'; ?></td>
+  <td>
+    <?php 
+      $ppids = getUserPPID($koneksi, $user['nip']);
+      if (count($ppids) > 0) {
+        foreach ($ppids as $ppid) {
+          echo "<span class='mr-2 mb-2'>" . htmlspecialchars($ppid) . "</span>";
+        }
+      } else {
+        echo '-';
+      }
+    ?>
+  </td>
+  <td>
+    <?php 
+      $haloPSTs = getUserHaloPST($koneksi, $user['nip']);
+      if (count($haloPSTs) > 0) {
+        foreach ($haloPSTs as $haloPST) {
+          echo "<span class='mr-2 mb-2'>" . htmlspecialchars($haloPST) . "</span>";
+        }
+      } else {
+        echo '-';
+      }
+    ?>
+  </td>
   <td>
     <?php 
       $skills = getUserSkills($koneksi, $user['nip']);
@@ -162,15 +222,10 @@ function badge($text, $color) {
     ?>
   </td>
   <td>
-    <a href="edit_user.php?nip=<?= $user['nip']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+    <a href="edit/edit_user.php?nip=<?= $user['nip']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
       <i class="ti-pencil text-dark"></i>
     </a>
-    <a href="hapus_user.php?nip=<?= $user['nip']; ?>" 
-       class="btn waves-effect waves-light btn-danger btn-icon"
-       onclick="return confirm('Yakin hapus user ini?')"
-       title="Hapus">
-       <i class="ti-trash text-dark"></i>
-    </a>
+    <a href="hapus/hapus_user.php?nip=<?= $user['nip']; ?>" class="btn waves-effect waves-light btn-danger btn-icon"><i class="ti-trash"></i></a>
   </td>
 </tr>
 <?php endforeach; ?>
@@ -185,6 +240,8 @@ function badge($text, $color) {
                                                 <th>Foto Profil</th>
                                                 <th>Status</th>
                                                 <th>Nomor Telepon</th>
+                                                <th>PPID</th>
+                                                <th>Halo PST</th>
                                                 <th>Skills</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -199,10 +256,10 @@ function badge($text, $color) {
                                     <div class="dropdown-info dropdown open">
                                         <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak2" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                         <div class="dropdown-menu" aria-labelledby="cetak2" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                            <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                            <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
-                                            <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
-                                            <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=print" target="_blank">Print</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=excel">Excel</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=json">JSON</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=csv">CSV</a>
                                         </div>
                                     </div>
                                 </div>
@@ -223,14 +280,16 @@ function badge($text, $color) {
                                         <div class="card-block">
                                             <div class="img-hover avatar-wrapper">
                                                 <?php if ($pengguna['foto_profil']) : ?>
-                                                    <img src="../uploads/<?= htmlspecialchars($pengguna['foto_profil']); ?>" class="avatar-img" alt="<?= htmlspecialchars($pengguna['nama']); ?>">
+                                                    <a href="../uploads/<?= htmlspecialchars($pengguna['foto_profil']); ?>" class="glightbox">
+                                                        <img src="../uploads/<?= htmlspecialchars($pengguna['foto_profil']); ?>" class="avatar-img" alt="<?= htmlspecialchars($pengguna['nama']); ?>" style="cursor: pointer;">
+                                                    </a>
                                                 <?php else : ?>
                                                     <img src="../images/noimages.jpg" class="avatar-img" alt="No Image">
                                                 <?php endif; ?>
                                                 <div class="img-overlay img-radius">
                                                     <span>
-                                                        <a href="edit_user.php?nip=<?= $pengguna['nip']; ?>" class="btn btn-sm btn-primary"><i class="ti-pencil"></i></a>
-                                                        <a href="hapus_user.php?nip=<?= $pengguna['nip']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus user ini?')"><i class="ti-trash"></i></a>
+                                                        <a href="edit/edit_user.php?nip=<?= $pengguna['nip']; ?>" class="btn btn-sm btn-primary"><i class="ti-pencil"></i></a>
+                                                        <a href="hapus/hapus_user.php?nip=<?= $pengguna['nip']; ?>" class="btn btn-sm btn-danger"><i class="ti-trash"></i></a>
                                                     </span>
                                                 </div>
                                             </div>
@@ -239,18 +298,18 @@ function badge($text, $color) {
                                                 <span style="font-size: 12px; color: #d35858;"><?= $pengguna['nip']; ?></span>
                                                 <h5 style="padding: 5px 0px"><?= htmlspecialchars($pengguna['email']); ?></h5>
                                                 <p><?= htmlspecialchars($pengguna['nama_jabatan'] ?? '-'); ?></p>
-                                                <small class="badge bg-info">
+                                                <div style="margin-top: 10px;">
                                                     <?php 
                                                       $skills = getUserSkills($koneksi, $pengguna['nip']);
                                                       if (count($skills) > 0) {
                                                         foreach ($skills as $skill) {
-                                                          echo "<span class='badge bg-info'>" . htmlspecialchars($skill) . "</span>";
+                                                          echo "<span class='badge bg-info mr-2 mb-2'>" . htmlspecialchars($skill) . "</span>";
                                                         }
                                                       } else {
-                                                        echo '-';
+                                                        echo '<span class="text-muted">-</span>';
                                                       }
                                                     ?>
-                                                </small>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -264,6 +323,17 @@ function badge($text, $color) {
         </div>
     </div>
 </div>
+
+<!-- Lightbox Library -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+
+<script>
+    const lightbox = GLightbox({
+        selector: '.glightbox'
+    });
+</script>
+
 <?php
 $content = ob_get_clean();
 ob_start();

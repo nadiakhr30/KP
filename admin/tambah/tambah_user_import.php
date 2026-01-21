@@ -302,7 +302,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                 </div>
                             </p>
                             <p style="font-size: 12px; margin-top: 10px;">
-                                <a href="../download_template_user.php" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <a href="../download_template/download_template_user.php" class="btn btn-sm btn-outline-primary" target="_blank">
                                     <i class="fa fa-download"></i> Download Template
                                 </a>
                             </p>

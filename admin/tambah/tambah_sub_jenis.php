@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (mysqli_query($koneksi, $query)) {
             $success = "Sub Jenis berhasil ditambahkan!";
-            header("Refresh: 1; url=../index.php");
+            header("Refresh: 1; url=../manajemen_data_lainnya.php");
         } else {
             $error = "Gagal menambahkan Sub Jenis: " . mysqli_error($koneksi);
         }
@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <button type="submit" class="btn btn-primary mr-2">
                                 Simpan
                             </button>
-                            <a href="../index.php" class="btn btn-secondary">
+                            <a href="../manajemen_data_lainnya.php" class="btn btn-secondary">
                                 Batal
                             </a>
                         </div>

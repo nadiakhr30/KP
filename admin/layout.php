@@ -324,7 +324,7 @@ global $user;
                                   <img src="../images/noimages.jpg" class="img-radius" alt="No Images">
                                   <i class="ti-angle-down"></i>
                                 <?php else: ?>
-                                  <img src="../images/<?= $_SESSION['user']['foto_profil'];?>" class="img-radius" alt="<?= $_SESSION['user']['foto_profil'];?>">;
+                                  <img src="../uploads/<?= $_SESSION['user']['foto_profil'] ?>" class="img-radius" alt="<?= $_SESSION['user']['foto_profil'];?>">
                                   <i class="ti-angle-down"></i>
                                 <?php endif; ?>
                               </a>
@@ -340,7 +340,7 @@ global $user;
                                     </div>
                                     <div class="card-block">
                                         <li class="waves-effect waves-light">
-                                            <a href="user-profile.html">
+                                            <a href="../pegawai/profile.php">
                                                 <i class="ti-user"></i> View Profile
                                             </a>
                                         </li>
