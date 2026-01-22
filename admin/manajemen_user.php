@@ -137,12 +137,8 @@ function badge($text, $color) {
                                         </div>
                                     </div>
                                     <div class="col-6">
-                                        <div class="dropdown-success dropdown open align-items-right" style="float: right;">
-                                            <button class="btn btn-success dropdown-toggle waves-effect waves-light" type="button" id="tambah" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Tambah</button>
-                                            <div class="dropdown-menu" aria-labelledby="tambah" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                <a class="dropdown-item waves-light waves-effect" href="tambah/tambah_user_input.php">Input Data</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="tambah/tambah_user_import.php">Import Data</a>
-                                            </div>
+                                        <div class="align-items-right" style="float: right;">
+                                            <a href="tambah/tambah_user.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
                                         </div>
                                     </div>
                                 </div>

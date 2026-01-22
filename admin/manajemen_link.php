@@ -105,10 +105,10 @@ while ($row = mysqli_fetch_assoc($qLink)) {
   </td>
   <td><?= htmlspecialchars($link['link']); ?></td>
   <td>
-    <a href="edit_link.php?id=<?= $link['id_link']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+    <a href="edit/edit_link.php?id=<?= $link['id_link']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
       <i class="ti-pencil text-dark"></i>
     </a>
-    <a href="hapus_link.php?id=<?= $link['id_link']; ?>"
+    <a href="hapus/hapus_link.php?id=<?= $link['id_link']; ?>"
        class="btn waves-effect waves-light btn-danger btn-icon"
        onclick="return confirm('Yakin hapus link ini?')"
        title="Hapus">
@@ -161,8 +161,8 @@ while ($row = mysqli_fetch_assoc($qLink)) {
                                                 <?php endif; ?>
                                                 <div class="img-overlay img-radius">
                                                     <span>
-                                                        <a href="edit_link.php?id=<?= $link['id_link']; ?>" class="btn btn-sm btn-primary"><i class="ti-pencil"></i></a>
-                                                        <a href="hapus_link.php?id=<?= $link['id_link']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus link ini?')"><i class="ti-trash"></i></a>
+                                                        <a href="edit/edit_link.php?id=<?= $link['id_link']; ?>" class="btn btn-sm btn-primary"><i class="ti-pencil"></i></a>
+                                                        <a href="hapus/hapus_link.php?id=<?= $link['id_link']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus link ini?')"><i class="ti-trash"></i></a>
                                                     </span>
                                                 </div>
                                             </div>

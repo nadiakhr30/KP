@@ -5,6 +5,18 @@ $status  = '';
 $message = '';
 $previewData = [];
 $fileUploaded = false;
+$activeTab = 'input'; // Default to input tab
+
+// Determine which tab should be active
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_FILES["excelFile"])) {
+        $activeTab = 'import';
+    } elseif (isset($_POST["submit_data"])) {
+        $activeTab = 'import';
+    } else {
+        $activeTab = 'input';
+    }
+}
 
 // proses simpan input manual
 if (isset($_POST['simpan'])) {
@@ -241,13 +253,13 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                     <!-- Tab Navigation -->
                     <ul class="nav nav-tabs md-tabs" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="input-tab" data-toggle="tab" href="#input-pane" role="tab">
+                            <a class="nav-link <?php echo $activeTab === 'input' ? 'active' : ''; ?>" id="input-tab" data-toggle="tab" href="#input-pane" role="tab">
                                 <i class="fas fa-keyboard"></i> Input Manual
                             </a>
                             <div class="slide"></div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="import-tab" data-toggle="tab" href="#import-pane" role="tab">
+                            <a class="nav-link <?php echo $activeTab === 'import' ? 'active' : ''; ?>" id="import-tab" data-toggle="tab" href="#import-pane" role="tab">
                                 <i class="fas fa-file-upload"></i> Import dari Excel
                             </a>
                             <div class="slide"></div>
@@ -270,7 +282,7 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                     <!-- Tab Content -->
                     <div class="tab-content">
                         <!-- Input Manual Tab -->
-                        <div class="tab-pane fade show active" id="input-pane" role="tabpanel">
+                        <div class="tab-pane fade <?php echo $activeTab === 'input' ? 'show active' : ''; ?>" id="input-pane" role="tabpanel">
                             <form method="POST" enctype="multipart/form-data">
 
                                 <div class="form-group">
@@ -318,7 +330,7 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                         </div>
 
                         <!-- Import Tab -->
-                        <div class="tab-pane fade" id="import-pane" role="tabpanel">
+                        <div class="tab-pane fade <?php echo $activeTab === 'import' ? 'show active' : ''; ?>" id="import-pane" role="tabpanel">
                             <!-- Template Information -->
                             <div class="template-info">
                                 <h6 class="mb-2"><i class="fas fa-info-circle"></i> Format Excel yang Dibutuhkan</h6>
@@ -411,7 +423,6 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                                 </button>
                                 <a href="tambah_link.php" class="btn btn-secondary">Batal</a>
                             </form>
-
                             <?php endif; ?>
                         </div>
                     </div>

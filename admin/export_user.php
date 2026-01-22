@@ -275,7 +275,10 @@ else if ($format == 'csv') {
     $output = fopen('php://output', 'w');
 
     // Add headers
-    fputcsv($output, ['No', 'NIP', 'Nama', 'Email', 'Jabatan', 'Role', 'Status', 'Nomor Telepon', 'PPID', 'Halo PST', 'Skills'], ',');
+    // Detect system locale delimiter
+    $delim = (strpos(setlocale(LC_NUMERIC, ''), 'de_') === 0 || 
+              strpos(setlocale(LC_NUMERIC, ''), 'fr_') === 0) ? ';' : ',';
+    fputcsv($output, ['No', 'NIP', 'Nama', 'Email', 'Jabatan', 'Role', 'Status', 'Nomor Telepon', 'PPID', 'Halo PST', 'Skills'], $delim);
 
     // Add data
     foreach ($dataUsers as $index => $user) {
@@ -291,7 +294,7 @@ else if ($format == 'csv') {
             getUserPPID($koneksi, $user['nip']),
             getUserHaloPST($koneksi, $user['nip']),
             getUserSkills($koneksi, $user['nip'])
-        ], ',');
+        ], $delim);
     }
 
     fclose($output);

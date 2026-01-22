@@ -153,10 +153,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                   <td><?= $pst['id_halo_pst']; ?></td>
                                                   <td><?= htmlspecialchars($pst['nama_halo_pst']); ?></td>
                                                   <td>
-                                                    <a href="edit_halo_pst.php?id=<?= $pst['id_halo_pst']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
+                                                    <a href="edit/edit_halo_pst.php?id=<?= $pst['id_halo_pst']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
                                                       <i class="ti-pencil text-dark"></i>
                                                     </a>
-                                                    <a href="hapus_halo_pst.php?id=<?= $pst['id_halo_pst']; ?>"
+                                                    <a href="hapus/hapus_halo_pst.php?id=<?= $pst['id_halo_pst']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
                                                        onclick="return confirm('Yakin hapus bagian ini?')">
                                                        <i class="ti-trash text-dark"></i>
@@ -193,10 +193,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 <div class="card-block">
                                                     <div class="user-content">
                                                         <h4><?= htmlspecialchars($halo['nama_halo_pst']); ?></h4>
-                                                        <a href="edit_halo_pst.php?id=<?= $halo['id_halo_pst']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                        <a href="edit/edit_halo_pst.php?id=<?= $halo['id_halo_pst']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
                                                           <i class="ti-pencil text-dark"></i>
                                                         </a>
-                                                        <a href="hapus_halo_pst.php?id=<?= $halo['id_halo_pst']; ?>" 
+                                                        <a href="hapus/hapus_halo_pst.php?id=<?= $halo['id_halo_pst']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
                                                            onclick="return confirm('Yakin hapus bagian ini?')"
                                                            title="Hapus">
@@ -272,10 +272,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                   <td><?= $jabatan['id_jabatan']; ?></td>
                                                   <td><?= htmlspecialchars($jabatan['nama_jabatan']); ?></td>
                                                   <td>
-                                                    <a href="edit_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
+                                                    <a href="edit/edit_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
                                                       <i class="ti-pencil text-dark"></i>
                                                     </a>
-                                                    <a href="hapus_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>"
+                                                    <a href="hapus/hapus_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
                                                        onclick="return confirm('Yakin hapus jabatan ini?')">
                                                        <i class="ti-trash text-dark"></i>
@@ -312,10 +312,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 <div class="card-block">
                                                     <div class="user-content">
                                                         <h4><?= htmlspecialchars($jabatan['nama_jabatan']); ?></h4>
-                                                        <a href="edit_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                        <a href="edit/edit_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
                                                           <i class="ti-pencil text-dark"></i>
                                                         </a>
-                                                        <a href="hapus_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>" 
+                                                        <a href="hapus/hapus_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
                                                            onclick="return confirm('Yakin hapus bagian ini?')"
                                                            title="Hapus">
@@ -391,10 +391,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                   <td><?= $jenis['id_jenis']; ?></td>
                                                   <td><?= htmlspecialchars($jenis['nama_jenis']); ?></td>
                                                   <td>
-                                                    <a href="edit_jenis.php?id=<?= $jenis['id_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
+                                                    <a href="edit/edit_jenis.php?id=<?= $jenis['id_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
                                                       <i class="ti-pencil text-dark"></i>
                                                     </a>
-                                                    <a href="hapus_jenis.php?id=<?= $jenis['id_jenis']; ?>"
+                                                    <a href="hapus/hapus_jenis.php?id=<?= $jenis['id_jenis']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
                                                        onclick="return confirm('Yakin hapus bagian ini?')">
                                                        <i class="ti-trash text-dark"></i>
@@ -431,10 +431,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 <div class="card-block">
                                                     <div class="user-content">
                                                         <h4><?= htmlspecialchars($jenis['nama_jenis']); ?></h4>
-                                                        <a href="edit_jenis.php?id=<?= $jenis['id_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                        <a href="edit/edit_jenis.php?id=<?= $jenis['id_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
                                                           <i class="ti-pencil text-dark"></i>
                                                         </a>
-                                                        <a href="hapus_jenis.php?id=<?= $jenis['id_jenis']; ?>" 
+                                                        <a href="hapus/hapus_jenis.php?id=<?= $jenis['id_jenis']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
                                                            onclick="return confirm('Yakin hapus bagian ini?')"
                                                            title="Hapus">
@@ -512,10 +512,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                   <td><?= htmlspecialchars($subjenis['nama_jenis']); ?></td>
                                                   <td><?= htmlspecialchars($subjenis['nama_sub_jenis']); ?></td>
                                                   <td>
-                                                    <a href="edit_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
+                                                    <a href="edit/edit_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
                                                       <i class="ti-pencil text-dark"></i>
                                                     </a>
-                                                    <a href="hapus_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>"
+                                                    <a href="hapus/hapus_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
                                                        onclick="return confirm('Yakin hapus bagian ini?')">
                                                        <i class="ti-trash text-dark"></i>
@@ -554,10 +554,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                     <div class="user-content">
                                                         <h4><?= htmlspecialchars($subjenis['nama_sub_jenis']); ?></h4>
                                                         <span><?= htmlspecialchars($subjenis['nama_jenis']); ?></span><br>
-                                                        <a href="edit_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                        <a href="edit/edit_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
                                                           <i class="ti-pencil text-dark"></i>
                                                         </a>
-                                                        <a href="hapus_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>" 
+                                                        <a href="hapus/hapus_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
                                                            onclick="return confirm('Yakin hapus bagian ini?')"
                                                            title="Hapus">
@@ -633,10 +633,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                   <td><?= $jenisaset['id_jenis_aset']; ?></td>
                                                   <td><?= htmlspecialchars($jenisaset['nama_jenis_aset']); ?></td>
                                                   <td>
-                                                    <a href="edit_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
+                                                    <a href="edit/edit_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
                                                       <i class="ti-pencil text-dark"></i>
                                                     </a>
-                                                    <a href="hapus_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>"
+                                                    <a href="hapus/hapus_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
                                                        onclick="return confirm('Yakin hapus bagian ini?')">
                                                        <i class="ti-trash text-dark"></i>
@@ -673,10 +673,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 <div class="card-block">
                                                     <div class="user-content">
                                                         <h4><?= htmlspecialchars($jenisaset['nama_jenis_aset']); ?></h4>
-                                                        <a href="edit_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                        <a href="edit/edit_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
                                                           <i class="ti-pencil text-dark"></i>
                                                         </a>
-                                                        <a href="hapus_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>" 
+                                                        <a href="hapus/hapus_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
                                                            onclick="return confirm('Yakin hapus bagian ini?')"
                                                            title="Hapus">
@@ -752,10 +752,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                   <td><?= $jenispic['id_jenis_pic']; ?></td>
                                                   <td><?= htmlspecialchars($jenispic['nama_jenis_pic']); ?></td>
                                                   <td>
-                                                    <a href="edit_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
+                                                    <a href="edit/edit_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
                                                       <i class="ti-pencil text-dark"></i>
                                                     </a>
-                                                    <a href="hapus_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>"
+                                                    <a href="hapus/hapus_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
                                                        onclick="return confirm('Yakin hapus bagian ini?')">
                                                        <i class="ti-trash text-dark"></i>
@@ -792,10 +792,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 <div class="card-block">
                                                     <div class="user-content">
                                                         <h4><?= htmlspecialchars($jenispic['nama_jenis_pic']); ?></h4>
-                                                        <a href="edit_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                        <a href="edit/edit_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
                                                           <i class="ti-pencil text-dark"></i>
                                                         </a>
-                                                        <a href="hapus_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>" 
+                                                        <a href="hapus/hapus_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
                                                            onclick="return confirm('Yakin hapus bagian ini?')"
                                                            title="Hapus">
@@ -871,10 +871,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                   <td><?= $ppid['id_ppid']; ?></td>
                                                   <td><?= htmlspecialchars($ppid['nama_ppid']); ?></td>
                                                   <td>
-                                                    <a href="edit_ppid.php?id=<?= $ppid['id_ppid']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
+                                                    <a href="edit/edit_ppid.php?id=<?= $ppid['id_ppid']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
                                                       <i class="ti-pencil text-dark"></i>
                                                     </a>
-                                                    <a href="hapus_ppid.php?id=<?= $ppid['id_ppid']; ?>"
+                                                    <a href="hapus/hapus_ppid.php?id=<?= $ppid['id_ppid']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
                                                        onclick="return confirm('Yakin hapus bagian ini?')">
                                                        <i class="ti-trash text-dark"></i>
@@ -911,10 +911,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 <div class="card-block">
                                                     <div class="user-content">
                                                         <h4><?= htmlspecialchars($ppid['nama_ppid']); ?></h4>
-                                                        <a href="edit_ppid.php?id=<?= $ppid['id_ppid']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                        <a href="edit/edit_ppid.php?id=<?= $ppid['id_ppid']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
                                                           <i class="ti-pencil text-dark"></i>
                                                         </a>
-                                                        <a href="hapus_ppid.php?id=<?= $ppid['id_ppid']; ?>" 
+                                                        <a href="hapus/hapus_ppid.php?id=<?= $ppid['id_ppid']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
                                                            onclick="return confirm('Yakin hapus bagian ini?')"
                                                            title="Hapus">
@@ -990,10 +990,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                   <td><?= $role['id_role']; ?></td>
                                                   <td><?= htmlspecialchars($role['nama_role']); ?></td>
                                                   <td>
-                                                    <a href="edit_role.php?id=<?= $role['id_role']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
+                                                    <a href="edit/edit_role.php?id=<?= $role['id_role']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
                                                       <i class="ti-pencil text-dark"></i>
                                                     </a>
-                                                    <a href="hapus_role.php?id=<?= $role['id_role']; ?>"
+                                                    <a href="hapus/hapus_role.php?id=<?= $role['id_role']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
                                                        onclick="return confirm('Yakin hapus bagian ini?')">
                                                        <i class="ti-trash text-dark"></i>
@@ -1030,10 +1030,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 <div class="card-block">
                                                     <div class="user-content">
                                                         <h4><?= htmlspecialchars($role['nama_role']); ?></h4>
-                                                        <a href="edit_role.php?id=<?= $role['id_role']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                        <a href="edit/edit_role.php?id=<?= $role['id_role']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
                                                           <i class="ti-pencil text-dark"></i>
                                                         </a>
-                                                        <a href="hapus_role.php?id=<?= $role['id_role']; ?>" 
+                                                        <a href="hapus/hapus_role.php?id=<?= $role['id_role']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
                                                            onclick="return confirm('Yakin hapus bagian ini?')"
                                                            title="Hapus">
@@ -1109,10 +1109,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                   <td><?= $skill['id_skill']; ?></td>
                                                   <td><?= htmlspecialchars($skill['nama_skill']); ?></td>
                                                   <td>
-                                                    <a href="edit_skill.php?id=<?= $skill['id_skill']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
+                                                    <a href="edit/edit_skill.php?id=<?= $skill['id_skill']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
                                                       <i class="ti-pencil text-dark"></i>
                                                     </a>
-                                                    <a href="hapus_skill.php?id=<?= $skill['id_skill']; ?>"
+                                                    <a href="hapus/hapus_skill.php?id=<?= $skill['id_skill']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
                                                        onclick="return confirm('Yakin hapus bagian ini?')">
                                                        <i class="ti-trash text-dark"></i>
@@ -1149,10 +1149,10 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 <div class="card-block">
                                                     <div class="user-content">
                                                         <h4><?= htmlspecialchars($skill['nama_skill']); ?></h4>
-                                                        <a href="edit_skill.php?id=<?= $skill['id_skill']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                        <a href="edit/edit_skill.php?id=<?= $skill['id_skill']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
                                                           <i class="ti-pencil text-dark"></i>
                                                         </a>
-                                                        <a href="hapus_skill.php?id=<?= $skill['id_skill']; ?>" 
+                                                        <a href="hapus/hapus_skill.php?id=<?= $skill['id_skill']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
                                                            onclick="return confirm('Yakin hapus bagian ini?')"
                                                            title="Hapus">
