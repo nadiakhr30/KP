@@ -8,59 +8,83 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
     exit;
 }
 
-// Kalender
-// $jadwalkalender = [];
-// $qKalender = mysqli_query($koneksi, "
-//   SELECT 
-//     j.id_jadwal,
-//     j.topik,
-//     j.judul_kegiatan,
-//     j.tanggal_penugasan,
-//     j.target_rilis,
-//     j.tim,
-//     j.keterangan,
-//     j.status,
-//     j.dokumentasi,
-//     j.link_instagram,
-//     j.link_facebook,
-//     j.link_youtube,
-//     j.link_website,
-//     u1.nama AS pic_desain_nama,
-//     u2.nama AS pic_narasi_nama,
-//     u3.nama AS pic_medsos_nama
-//   FROM jadwal j
-//   LEFT JOIN user u1 ON j.pic_desain = u1.id_user
-//   LEFT JOIN user u2 ON j.pic_narasi = u2.id_user
-//   LEFT JOIN user u3 ON j.pic_medsos = u3.id_user
-//   WHERE j.target_rilis IS NOT NULL
-// ");
-// while ($row = mysqli_fetch_assoc($qKalender)) {
-//   if ($row['status'] == 0) $color = '#e84118';
-//   else if ($row['status'] == 1) $color = '#fbc531';
-//   else if ($row['status'] == 2) $color = '#44bd32';
-//   else $color = '#718093';
-//   $jadwalkalender[] = [
-//     'id'    => $row['id_jadwal'],
-//     'title' => $row['judul_kegiatan'],
-//     'start' => $row['target_rilis'],
-//     'color' => $color,
-//     'extendedProps' => [
-//       'topik' => $row['topik'],
-//       'tanggal_penugasan' => $row['tanggal_penugasan'],
-//       'tim' => $row['tim'],
-//       'status' => (int)$row['status'],
-//       'keterangan' => $row['keterangan'],
-//       'pic_desain' => $row['pic_desain_nama'] ?? '-',
-//       'pic_narasi' => $row['pic_narasi_nama'] ?? '-',
-//       'pic_medsos' => $row['pic_medsos_nama'] ?? '-',
-//       'dokumentasi' => $row['dokumentasi'],
-//       'link_instagram' => $row['link_instagram'],
-//       'link_facebook' => $row['link_facebook'],
-//       'link_youtube' => $row['link_youtube'],
-//       'link_website' => $row['link_website']
-//     ]
-//   ];
-// }
+// Kalender - Get PIC data
+$jadwalkalender = [];
+$qKalender = mysqli_query($koneksi, "
+  SELECT 
+    j.id_jadwal,
+    j.topik,
+    j.judul_kegiatan,
+    j.tanggal_penugasan,
+    j.tanggal_rilis,
+    j.tim,
+    j.keterangan,
+    j.status,
+    j.dokumentasi,
+    j.link_instagram,
+    j.link_facebook,
+    j.link_youtube,
+    j.link_website
+  FROM jadwal j
+  ORDER BY j.tanggal_rilis DESC
+");
+
+while ($row = mysqli_fetch_assoc($qKalender)) {
+  // Get PIC for this jadwal
+  $id_jadwal = $row['id_jadwal'];
+  $qPic = mysqli_query($koneksi, "
+    SELECT u.nip, u.nama, jp.nama_jenis_pic
+    FROM pic p
+    JOIN user u ON p.nip = u.nip
+    JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic
+    WHERE p.id_jadwal = " . (int)$id_jadwal . "
+    ORDER BY jp.nama_jenis_pic
+  ");
+
+  $picData = [];
+  $nipList = [];
+  if ($qPic) {
+    while ($pic = mysqli_fetch_assoc($qPic)) {
+      $picData[$pic['nama_jenis_pic']] = $pic['nama'];
+      $nipList[] = $pic['nip'];
+    }
+  }
+
+  $isPic = in_array($_SESSION['user']['nip'], $nipList);
+  
+  if ($row['status'] == 0) $color = '#e84118';
+  else if ($row['status'] == 1) $color = '#fbc531';
+  else if ($row['status'] == 2) $color = '#44bd32';
+  else $color = '#718093';
+  
+  // Build PIC text dynamically
+  $picText = [];
+  foreach ($picData as $jenis => $nama) {
+    $picText[] = "<b>$jenis:</b> $nama";
+  }
+  $picDisplay = count($picText) > 0 ? implode("<br>", $picText) : "-";
+  
+  $jadwalkalender[] = [
+    'id'    => $row['id_jadwal'],
+    'title' => $row['judul_kegiatan'],
+    'start' => $row['tanggal_rilis'],
+    'color' => $color,
+    'extendedProps' => [
+      'topik' => $row['topik'],
+      'tanggal_penugasan' => $row['tanggal_penugasan'],
+      'tim' => $row['tim'],
+      'status' => $row['status'],
+      'keterangan' => $row['keterangan'],
+      'pic_display' => $picDisplay,
+      'dokumentasi' => $row['dokumentasi'],
+      'link_instagram' => $row['link_instagram'],
+      'link_facebook' => $row['link_facebook'],
+      'link_youtube' => $row['link_youtube'],
+      'link_website' => $row['link_website'],
+      'isPic' => $isPic
+    ]
+  ];
+}
 ?>
 
 
@@ -127,14 +151,13 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
 
         <div class="row gy-4">
           <div class="col-lg-12">
-
-            <div id="calendar"></div>
-            <div class="col-xl-8 col-md-12">
-          <div class="card ">
-              <div class="card-block"><div id="calendar"></div></div>
+            <div class="card">
+              <div class="card-block">
+                <div id="calendar"></div>
               </div>
+            </div>
           </div>
-          </div>
+        </div>
 
                                        
       
@@ -189,7 +212,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
             <th>Keterangan</th>
             <td id="modalKeterangan"></td>
           </tr>
-          <tr>
+          <tr id="rowDokumentasi">
             <th>Dokumentasi</th>
             <td class="d-flex align-items-center gap-2">
 
@@ -206,7 +229,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
                 id="editDokumentasiBtn"
                 class="btn btn-sm btn-outline-primary"
                 title="Edit Dokumentasi"
-                href="edit_dokumentasi.php"
+                href="#"
               >
                 <i class="bi bi-pencil"></i>
               </a>
@@ -215,7 +238,7 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
           </tr>
 
 
-          <tr>
+         <tr id="rowLink">
             <th>Link Publikasi</th>
             <td class="d-flex align-items-center gap-2">
 
@@ -472,18 +495,17 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
       });
 
       // Kalender
-      document.addEventListener('DOMContentLoaded', function () {
-        var calendar = new FullCalendar.Calendar(
-          document.getElementById('calendar'),
-          {
-            initialView: 'dayGridMonth',
-            height: 520,
-            locale: 'id',
-            events: 'kalender_jadwal.php',
-            eventClick: function(info) {
+document.addEventListener('DOMContentLoaded', function () {
+  var calendar = new FullCalendar.Calendar(
+    document.getElementById('calendar'),
+    {
+      initialView: 'dayGridMonth',
+      height: 520,
+      locale: 'id',
+      events: <?= json_encode($jadwalkalender) ?>,
+      eventClick: function(info) {
         info.jsEvent.preventDefault();
         const p = info.event.extendedProps;
-        const id = info.event.id; 
         document.getElementById('modalTopik').innerText = p.topik ?? '-';
         document.getElementById('modalJudul').innerText = info.event.title;
         document.getElementById('modalTanggalPenugasan').innerText =
@@ -493,82 +515,83 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
         document.getElementById('modalTargetRilis').innerText =
           info.event.start.toLocaleDateString('id-ID');
         document.getElementById('modalTim').innerText = p.tim ?? '-';
-      let statusText = '-';
-      let statusClass = 'secondary';
-      switch (String(p.status)) {
-        case '0':
-          statusText = 'Belum Dikerjakan';
-          statusClass = 'danger';
-          break;
-        case '1':
-          statusText = 'Sedang Dikerjakan';
-          statusClass = 'warning';
-          break;
-        case '2':
-          statusText = 'Selesai';
-          statusClass = 'success';
-          break;
-      }
-      document.getElementById('modalStatus').innerHTML =
-        `<span class="badge bg-${statusClass}">${statusText}</span>`;
-        document.getElementById('modalPIC').innerHTML = `
-          <b>Desain:</b> ${p.pic_desain}<br>
-          <b>Narasi:</b> ${p.pic_narasi}<br>
-          <b>Medsos:</b> ${p.pic_medsos}
-        `;
+        
+        let statusText = '-';
+        let statusClass = 'secondary';
+        switch (String(p.status)) {
+          case '0':
+            statusText = 'Belum Dikerjakan';
+            statusClass = 'danger';
+            break;
+          case '1':
+            statusText = 'Sedang Dikerjakan';
+            statusClass = 'warning';
+            break;
+          case '2':
+            statusText = 'Selesai';
+            statusClass = 'success';
+            break;
+        }
+        document.getElementById('modalStatus').innerHTML =
+          `<span class="badge bg-${statusClass}">${statusText}</span>`;
+        
+        // Display PIC data
+        document.getElementById('modalPIC').innerHTML = p.pic_display || '-';
+        
         document.getElementById('modalKeterangan').innerHTML =
           p.keterangan ?? '-';
+        
         // Dokumentasi
-          const docIcon = document.getElementById('modalDokumentasi');
-          if (p.dokumentasi && p.dokumentasi.trim() !== '') {
-            docIcon.href = p.dokumentasi;
-            docIcon.style.display = 'inline-block';
-          } else {
-            docIcon.style.display = 'none';
+        if (p.dokumentasi) {
+  document.getElementById('rowDokumentasi').style.display = '';
+  document.getElementById('modalDokumentasi').href = p.dokumentasi;
+  document.getElementById('modalDokumentasi').style.display = 'inline-flex';
+} else {
+  document.getElementById('rowDokumentasi').style.display = 'none';
+}
+
+        
+        // Link publikasi
+        let links = [];
+        function renderLink(label, url) {
+          if (!url || url === '-') {
+            links.push(`<span class="text-muted">${label}</span>`);
+            return;
           }
-
-          // ===============================
-          // Link Publikasi
-          // ===============================
-          let linksHTML = '';
-
-          function renderIcon(icon, url, color, title) {
-            if (!url || url.trim() === '') return '';
-            return `
-              <a href="${url}" target="_blank" title="${title}" class="me-2">
-                <i class="bi ${icon}" style="font-size:1.4rem;color:${color}"></i>
-              </a>
-            `;
-          }
-
-          linksHTML += renderIcon('bi-instagram', p.link_instagram, '#E1306C', 'Instagram');
-          linksHTML += renderIcon('bi-facebook', p.link_facebook, '#1877F2', 'Facebook');
-          linksHTML += renderIcon('bi-youtube', p.link_youtube, '#FF0000', 'YouTube');
-          linksHTML += renderIcon('bi-globe', p.link_website, '#0d6efd', 'Website');
-
-          document.getElementById('modalLinks').innerHTML = linksHTML;
-
-          
-          document.getElementById('editDokumentasiBtn').href =
-            `edit_dokumentasi.php?id=${id}&mode=dokumentasi`;
-
-          document.getElementById('editPublikasiBtn').href =
-            `edit_dokumentasi.php?id=${id}&mode=publikasi`;
-
-          document.getElementById('editPicBtn').href =
-            `edit_dokumentasi.php?id=${id}&mode=pic`;
-
-          // Show modal
-          var jadwalModal = new bootstrap.Modal(
-            document.getElementById('jadwalModal')
+          links.push(
+            `<a href="${url}" target="_blank" class="link-primary">${label}</a>`
           );
-          jadwalModal.show();
         }
-      }
-    );
+        renderLink('<i class="bi bi-instagram"></i>', p.link_instagram);
+        renderLink('<i class="bi bi-facebook"></i>', p.link_facebook);
+        renderLink('<i class="bi bi-youtube"></i>', p.link_youtube);
+        renderLink('<i class="bi bi-globe"></i>', p.link_website);
+        document.getElementById('rowLink').style.display = '';
+        document.getElementById('modalLinks').innerHTML = links.length > 0 ? links.join(' | ') : '-';
 
-    calendar.render();
-  });
+        // Hide edit buttons if user is not PIC
+        if (!p.isPic) {
+          document.getElementById('editDokumentasiBtn').style.display = 'none';
+          document.getElementById('editPublikasiBtn').style.display = 'none';
+        } else {
+          document.getElementById('editDokumentasiBtn').style.display = 'inline-block';
+          document.getElementById('editPublikasiBtn').style.display = 'inline-block';
+        }
+
+        // Add click handlers for edit buttons
+        document.getElementById('editDokumentasiBtn').onclick = function() {
+          window.location.href = 'edit_dokumentasi.php?id=' + info.event.id + '&mode=dokumentasi';
+        };
+        document.getElementById('editPublikasiBtn').onclick = function() {
+          window.location.href = 'edit_dokumentasi.php?id=' + info.event.id + '&mode=publikasi';
+        };
+
+        new bootstrap.Modal(document.getElementById('jadwalModal')).show();
+      }
+    }
+  );
+  calendar.render();
+});
 
 </script>
 

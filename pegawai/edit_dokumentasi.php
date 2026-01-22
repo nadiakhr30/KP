@@ -1,330 +1,250 @@
 <?php
 session_start();
-include "../koneksi.php";
+require "../koneksi.php";
 
-// cek login
+/* ======================
+   CEK LOGIN
+====================== */
 if (!isset($_SESSION['user'])) {
   header("Location: ../login.php");
   exit;
 }
 
-$id_user = $_SESSION['user']['id_user'];
-$role    = $_SESSION['user']['role']; // 1=admin, 2=pegawai
+$nip_login = $_SESSION['user']['nip'];
+$role      = $_SESSION['user']['id_role']; // 1=Admin, 2=Pegawai
 
 $id   = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $mode = $_GET['mode'] ?? '';
 
-$error = '';
-if ($id == 0) {
-    $error = "Akses tidak valid: ID kosong";
-} elseif (!in_array($mode, ['dokumentasi','publikasi','pic'])) {
-    $error = "Akses tidak valid";
-} else {
-    $data = mysqli_fetch_assoc(
-      mysqli_query($koneksi, "SELECT * FROM jadwal WHERE id_jadwal='$id'")
-    );
-    if (!$data) $error = "Data tidak ditemukan";
+if ($id <= 0 || !in_array($mode, ['dokumentasi','publikasi','pic'])) {
+  errorPage("Akses tidak valid");
 }
 
-// jika ada error, tampilkan halaman alert
-if ($error) {
-    ?>
-    <!DOCTYPE html>
-    <html lang="id">
-    <head>
-      <meta charset="UTF-8">
-      <title>Error</title>
-      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    </head>
-    <body>
-      <script>
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: '<?= addslashes($error) ?>',
-          confirmButtonText: 'Kembali'
-        }).then(() => {
-          window.location.href = 'index.php';
-        });
-      </script>
-    </body>
-    </html>
-    <?php
-    exit;
-}
+/* ======================
+   DATA JADWAL
+====================== */
+$q = mysqli_query($koneksi,"SELECT * FROM jadwal WHERE id_jadwal='$id'");
+$data = mysqli_fetch_assoc($q);
+if (!$data) errorPage("Data jadwal tidak ditemukan");
 
-// ambil list user untuk dropdown PIC
-$users = mysqli_query($koneksi, "SELECT id_user,nama FROM user ORDER BY nama");
+/* ======================
+   CEK PIC
+====================== */
+$is_pic = mysqli_num_rows(mysqli_query($koneksi,"
+  SELECT 1 FROM pic
+  WHERE id_jadwal='$id' AND nip='$nip_login'
+")) > 0;
 
-// cek hak akses edit
+$is_medsos = mysqli_num_rows(mysqli_query($koneksi,"
+  SELECT 1 FROM pic
+  WHERE id_jadwal='$id' AND nip='$nip_login' AND id_jenis_pic=2
+")) > 0;
+
+/* ======================
+   AKSES
+====================== */
 $can_edit = false;
-if ($mode == 'dokumentasi') {
-    if (in_array($id_user, [$data['pic_desain'], $data['pic_medsos'], $data['pic_narasi']]) || $role == 1) {
-        $can_edit = true;
-    }
-} elseif ($mode == 'publikasi') {
-    if ($id_user == $data['pic_medsos'] || $role == 1) {
-        $can_edit = true;
-    }
-} elseif ($mode == 'pic') {
-    if ($role == 1) {
-        $can_edit = true;
-    }
+if ($role == 1) $can_edit = true;
+else {
+  if ($mode=='dokumentasi' && $is_pic) $can_edit=true;
+  if ($mode=='publikasi' && $is_medsos) $can_edit=true;
 }
+if (!$can_edit) errorPage("Anda tidak memiliki hak akses");
 
-if (!$can_edit) {
-    ?>
-    <!DOCTYPE html>
-    <html lang="id">
-    <head>
-      <meta charset="UTF-8">
-      <title>Akses Ditolak</title>
-      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    </head>
-    <body>
-      <script>
-        Swal.fire({
-          icon: 'error',
-          title: '<span style="font-family:Poppins,sans-serif;font-weight:600">Akses Ditolak</span>',
-          html: '<span style="font-family:Poppins, sans-serif">Anda tidak memiliki hak akses untuk mengedit ini</span>',
-          confirmButtonText: '<span style="font-family:Poppins, sans-serif;font-weight:600">Kembali</span>',
-        }).then(() => {
-          window.location.href = 'index.php';
-        });
-      </script>
-    </body>
-    </html>
-    <?php
-    exit;
-}
-
-// proses simpan data
+/* ======================
+   SIMPAN
+====================== */
 if (isset($_POST['simpan'])) {
 
-  if ($mode == 'dokumentasi') {
-    $dok = mysqli_real_escape_string($koneksi, $_POST['dokumentasi']);
-    mysqli_query($koneksi,
-      "UPDATE jadwal SET dokumentasi='$dok' WHERE id_jadwal='$id'"
-    );
+  if ($mode=='dokumentasi') {
+    $dok = mysqli_real_escape_string($koneksi,$_POST['dokumentasi']);
+    mysqli_query($koneksi,"UPDATE jadwal SET dokumentasi='$dok' WHERE id_jadwal='$id'");
   }
 
-  if ($mode == 'publikasi') {
-    $ig  = mysqli_real_escape_string($koneksi, $_POST['link_instagram']);
-    $fb  = mysqli_real_escape_string($koneksi, $_POST['link_facebook']);
-    $yt  = mysqli_real_escape_string($koneksi, $_POST['link_youtube']);
-    $web = mysqli_real_escape_string($koneksi, $_POST['link_website']);
-
+  if ($mode=='publikasi') {
     mysqli_query($koneksi,"
       UPDATE jadwal SET
-        link_instagram='$ig',
-        link_facebook='$fb',
-        link_youtube='$yt',
-        link_website='$web'
+        link_instagram='".mysqli_real_escape_string($koneksi,$_POST['link_instagram'])."',
+        link_facebook='".mysqli_real_escape_string($koneksi,$_POST['link_facebook'])."',
+        link_youtube='".mysqli_real_escape_string($koneksi,$_POST['link_youtube'])."',
+        link_website='".mysqli_real_escape_string($koneksi,$_POST['link_website'])."'
       WHERE id_jadwal='$id'
     ");
   }
 
-  if ($mode == 'pic') {
-    $desain = $_POST['pic_desain'];
-    $medsos = $_POST['pic_medsos'];
-    $narasi = $_POST['pic_narasi'];
-
-    mysqli_query($koneksi,"
-      UPDATE jadwal SET
-        pic_desain='$desain',
-        pic_medsos='$medsos',
-        pic_narasi='$narasi'
-      WHERE id_jadwal='$id'
-    ");
+  if ($mode=='pic' && $role==1) {
+    mysqli_query($koneksi,"DELETE FROM pic WHERE id_jadwal='$id'");
+    foreach ($_POST['pic'] as $j=>$nip) {
+      if ($nip) {
+        mysqli_query($koneksi,"
+          INSERT INTO pic (id_jadwal,nip,id_jenis_pic)
+          VALUES ('$id','$nip','$j')
+        ");
+      }
+    }
   }
 
-  header("Location: edit_dokumentasi.php");
+  header("Location: index.php");
   exit;
 }
+
+/* ======================
+   DATA USER
+====================== */
+$qUsers = mysqli_query($koneksi,"SELECT nip,nama FROM user ORDER BY nama");
+
+function errorPage($msg){
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<script>
+Swal.fire({
+  icon:'error',
+  title:'Akses Ditolak',
+  text:'<?= addslashes($msg) ?>'
+}).then(()=>location.href='index.php');
+</script>
+</body>
+</html>
+<?php exit; }
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Edit</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+<title>Edit Data</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-body {
-  font-family: Poppins, sans-serif;
-  background: #f4f7fb;
-  padding: 40px;
+body{
+  font-family:Poppins,sans-serif;
+  background:#f4f7fb;
+  margin:0;
+  padding:40px;
+}
+.page-wrapper{
+  max-width:900px;
+  margin:auto;
+}
+.page-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:25px;
+  color:#1f3c88;
+}
+.card{
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 12px 30px rgba(0,0,0,.08);
+  padding:30px;
+  position:relative;
+}
+.card-title{
+  font-size:22px;
+  font-weight:700;
+  color:#1f3c88;
+  margin-bottom:25px;
+  text-align:center;
+}
+.info-box{
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+  padding:10px 20px;
+}
+table{width:100%;border-collapse:collapse}
+tr{border-bottom:1px solid #eee}
+th{padding:14px 0;width:30%;text-align:left}
+td{padding:14px 0}
+
+input,select{
+  width:100%;
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid #e6e6e6;
 }
 
-.page-wrapper {
-  max-width: 900px;
-  margin: auto;
+.btn-save{
+  margin-top:25px;
+  padding:10px 24px;
+  background:#1e6cff;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
 }
-
-.page-header {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 25px;
-  color: #1f3c88;
-}
-
-.card {
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 12px 30px rgba(0,0,0,.08);
-  padding: 30px;
-}
-
-.card-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #1f3c88;
-  margin-bottom: 25px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-tr {
-  border-bottom: 1px solid #eee;
-}
-
-th,
-td {
-  padding: 14px 0;
-}
-
-th {
-  width: 30%;
-  text-align: left;
-}
-
-.input-box {
-  border: 1px solid #e6e6e6;
-  border-radius: 12px;
-  padding: 8px 12px;
-}
-
-input,
-select {
-  width: 100%;
-  border: 0;
-  background: transparent;
-  font-size: 15px;
-}
-
-.btn-group {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 30px;
-}
-
-.btn {
-  padding: 12px 22px;
-  border-radius: 8px;
-  font-weight: 600;
-  text-decoration: none;
-  color: #fff;
-  border: 0;
-  cursor: pointer;
-}
-
-.btn-back {
-  background: #1e6cff;
-}
-
-.btn-save {
-  background: #ffb347;
-  color: #000;
-}
+.btn-save:hover{background:#1a5ed8}
 </style>
-
 </head>
 
 <body>
+
 <div class="page-wrapper">
 
   <div class="page-header">
     <a href="index.php"><i class="fas fa-home"></i></a>
-    <span>› Edit</span>
+    <span>› Edit <?= ucfirst($mode) ?></span>
   </div>
 
   <div class="card">
     <div class="card-title">
-      <?= $mode=='dokumentasi'?'Edit Dokumentasi':($mode=='publikasi'?'Edit Link Publikasi':'Edit PIC') ?>
+      Edit <?= strtoupper($mode) ?>
     </div>
 
     <form method="post">
-      <table>
+      <div class="info-box">
+        <table>
 
-        <?php if ($mode=='dokumentasi'): ?>
-        <tr>
-          <th>Link Dokumentasi</th>
-          <td>
-            <div class="input-box">
-              <input type="url" name="dokumentasi"
-                value="<?= htmlspecialchars($data['dokumentasi']) ?>">
-            </div>
-          </td>
-        </tr>
-        <?php endif; ?>
+<?php if($mode=='dokumentasi'): ?>
+<tr>
+  <th>Link Dokumentasi</th>
+  <td><input type="url" name="dokumentasi" value="<?= htmlspecialchars($data['dokumentasi']) ?>"></td>
+</tr>
+<?php endif; ?>
 
-        <?php if ($mode=='publikasi'): ?>
-        <tr><th>Instagram</th><td><div class="input-box">
-          <input type="url" name="link_instagram" value="<?= htmlspecialchars($data['link_instagram']) ?>">
-        </div></td></tr>
+<?php if($mode=='publikasi'): ?>
+<tr><th>Instagram</th><td><input name="link_instagram" value="<?= $data['link_instagram'] ?>"></td></tr>
+<tr><th>Facebook</th><td><input name="link_facebook" value="<?= $data['link_facebook'] ?>"></td></tr>
+<tr><th>YouTube</th><td><input name="link_youtube" value="<?= $data['link_youtube'] ?>"></td></tr>
+<tr><th>Website</th><td><input name="link_website" value="<?= $data['link_website'] ?>"></td></tr>
+<?php endif; ?>
 
-        <tr><th>Facebook</th><td><div class="input-box">
-          <input type="url" name="link_facebook" value="<?= htmlspecialchars($data['link_facebook']) ?>">
-        </div></td></tr>
+<?php if($mode=='pic' && $role==1): ?>
+<?php $jenis=[1=>'Desain',2=>'Medsos',3=>'Narasi']; ?>
+<?php foreach($jenis as $j=>$label): ?>
+<tr>
+  <th>PIC <?= $label ?></th>
+  <td>
+    <select name="pic[<?= $j ?>]">
+      <option value="">-- Pilih --</option>
+      <?php mysqli_data_seek($qUsers,0); while($u=mysqli_fetch_assoc($qUsers)): ?>
+        <option value="<?= $u['nip'] ?>"><?= $u['nama'] ?></option>
+      <?php endwhile; ?>
+    </select>
+  </td>
+</tr>
+<?php endforeach; ?>
+<?php endif; ?>
 
-        <tr><th>YouTube</th><td><div class="input-box">
-          <input type="url" name="link_youtube" value="<?= htmlspecialchars($data['link_youtube']) ?>">
-        </div></td></tr>
+        </table>
+      </div>
 
-        <tr><th>Website</th><td><div class="input-box">
-          <input type="url" name="link_website" value="<?= htmlspecialchars($data['link_website']) ?>">
-        </div></td></tr>
-        <?php endif; ?>
-
-        <?php if ($mode=='pic'): ?>
-        <?php
-        function opt($users,$selected){
-          mysqli_data_seek($users,0);
-          while($u=mysqli_fetch_assoc($users)){
-            $s=$u['id_user']==$selected?'selected':'';
-            echo "<option value='{$u['id_user']}' $s>".htmlspecialchars($u['nama'])."</option>";
-          }
-        }
-        ?>
-        <tr><th>PIC Desain</th><td><div class="input-box">
-          <select name="pic_desain"><option value="">-- Pilih --</option><?php opt($users,$data['pic_desain']); ?></select>
-        </div></td></tr>
-
-        <tr><th>PIC Medsos</th><td><div class="input-box">
-          <select name="pic_medsos"><option value="">-- Pilih --</option><?php opt($users,$data['pic_medsos']); ?></select>
-        </div></td></tr>
-
-        <tr><th>PIC Narasi</th><td><div class="input-box">
-          <select name="pic_narasi"><option value="">-- Pilih --</option><?php opt($users,$data['pic_narasi']); ?></select>
-        </div></td></tr>
-        <?php endif; ?>
-
-      </table>
-
-      <div class="btn-group">
-        <button type="submit" name="simpan" class="btn btn-save">
+      <div style="text-align:center">
+        <button class="btn-save" name="simpan">
           <i class="fas fa-save"></i> Simpan
         </button>
       </div>
-
     </form>
+
   </div>
 </div>
+
 </body>
 </html>
