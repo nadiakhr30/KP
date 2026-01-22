@@ -15,7 +15,7 @@ $title = "Daftar Aset";
 $subtitle = "Aset visual, barang, dan lisensi Humas";
 
 if (in_array($filterJenis, ['1','2','3'])) {
-    $where = "WHERE a.jenis = '$filterJenis'";
+    $where = "WHERE a.jenis_aset = '$filterJenis'";
 
     if ($filterJenis == '1') {
         $title = "Aset Visual";
@@ -52,25 +52,27 @@ ob_start();
       <?php
       $query = mysqli_query($koneksi, "
         SELECT 
-          a.nama,
-          a.link,
-          a.keterangan,
-          a.jenis,
+          a.id_aset,
+          a.nama_aset,
+          a.deskripsi,
+          a.jenis_aset,
           a.foto_aset,
+          a.link_aset,
+          a.tanggal_ditambahkan,
           u.nama AS pemegang
         FROM aset a
-        LEFT JOIN user u ON a.pemegang = u.id_user
+        LEFT JOIN user u ON a.nip_pemegang = u.nip
         $where
-        ORDER BY a.id_aset DESC
+        ORDER BY a.tanggal_ditambahkan DESC
       ");
 
       if (mysqli_num_rows($query) == 0) {
-        echo '<div class="text-center text-muted">Data aset tidak tersedia</div>';
+        echo '<div class="col-12"><div class="text-center text-muted py-5">Data aset tidak tersedia</div></div>';
       }
 
       while ($aset = mysqli_fetch_assoc($query)) {
 
-        switch ($aset['jenis']) {
+        switch ($aset['jenis_aset']) {
           case '1':
             $jenis = 'Aset Visual';
             $badge = 'primary';
@@ -86,6 +88,10 @@ ob_start();
             $badge = 'warning';
             $icon  = 'bi-patch-check';
             break;
+          default:
+            $jenis = 'Aset Lainnya';
+            $badge = 'secondary';
+            $icon  = 'bi-file';
         }
       ?>
 
@@ -97,19 +103,13 @@ ob_start();
             <?php if (!empty($aset['foto_aset'])) { ?>
               <img 
                 src="../uploads/aset/<?= htmlspecialchars($aset['foto_aset']) ?>" 
-                alt="<?= htmlspecialchars($aset['nama']) ?>">
+                alt="<?= htmlspecialchars($aset['nama_aset']) ?>"
+                onerror="this.src='assets/img/noimage.png'">
             <?php } else { ?>
               <img 
                 src="assets/img/noimage.png"
                 alt="No Image"
-                class="img-fluid noimage">
-            <?php } ?>
-          </div>
-
-          <div class="card-body">
-            <span class="badge bg-<?= $badge ?> mb-3"><?= $jenis ?></span>
-
-            <h5 class="fw-bold"><?= htmlspecialchars($aset['nama']) ?></h5>
+                class="img-fluid no
 
             <p class="text-muted small">
               <?= nl2br(htmlspecialchars($aset['keterangan'])) ?>

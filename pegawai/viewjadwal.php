@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 require '../koneksi.php';
 
@@ -7,7 +8,94 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
     exit;
 }
 
-ob_start();
+// Cek apakah user adalah admin atau PIC
+$isAdmin = $_SESSION['role'] == 'Admin';
+$userNip = $_SESSION['user']['nip'];
+
+// Get all PIC untuk validasi
+$qAllPic = mysqli_query($koneksi, "SELECT DISTINCT nip FROM pic");
+$picNipList = [];
+while ($picRow = mysqli_fetch_assoc($qAllPic)) {
+    $picNipList[] = $picRow['nip'];
+}
+$canImport = $isAdmin || in_array($userNip, $picNipList);
+
+// Kalender - Get PIC data
+$jadwalkalender = [];
+$qKalender = mysqli_query($koneksi, "
+  SELECT 
+    j.id_jadwal,
+    j.topik,
+    j.judul_kegiatan,
+    j.tanggal_penugasan,
+    j.tanggal_rilis,
+    j.tim,
+    j.keterangan,
+    j.status,
+    j.dokumentasi,
+    j.link_instagram,
+    j.link_facebook,
+    j.link_youtube,
+    j.link_website
+  FROM jadwal j
+  ORDER BY j.tanggal_rilis DESC
+");
+
+while ($row = mysqli_fetch_assoc($qKalender)) {
+  $id_jadwal = $row['id_jadwal'];
+  $qPic = mysqli_query($koneksi, "
+    SELECT u.nip, u.nama, jp.nama_jenis_pic
+    FROM pic p
+    JOIN user u ON p.nip = u.nip
+    JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic
+    WHERE p.id_jadwal = " . (int)$id_jadwal . "
+    ORDER BY jp.nama_jenis_pic
+  ");
+
+  $picData = [];
+  $nipList = [];
+  if ($qPic) {
+    while ($pic = mysqli_fetch_assoc($qPic)) {
+      $picData[$pic['nama_jenis_pic']] = $pic['nama'];
+      $nipList[] = $pic['nip'];
+    }
+  }
+
+  $isPic = in_array($_SESSION['user']['nip'], $nipList);
+  
+  if ($row['status'] == 0) $color = '#e84118';
+  else if ($row['status'] == 1) $color = '#fbc531';
+  else if ($row['status'] == 2) $color = '#44bd32';
+  else $color = '#718093';
+  
+  // Build PIC text dynamically
+  $picText = [];
+  foreach ($picData as $jenis => $nama) {
+    $picText[] = "<b>$jenis:</b> $nama";
+  }
+  $picDisplay = count($picText) > 0 ? implode("<br>", $picText) : "-";
+  
+  $jadwalkalender[] = [
+    'id'    => $row['id_jadwal'],
+    'title' => $row['judul_kegiatan'],
+    'start' => $row['tanggal_rilis'],
+    'color' => $color,
+    'extendedProps' => [
+      'topik' => $row['topik'],
+      'tanggal_penugasan' => $row['tanggal_penugasan'],
+      'tim' => $row['tim'],
+      'status' => $row['status'],
+      'keterangan' => $row['keterangan'],
+      'pic_display' => $picDisplay,
+      'dokumentasi' => !empty($row['dokumentasi']) ? $row['dokumentasi'] : '',
+      'link_instagram' => !empty($row['link_instagram']) ? $row['link_instagram'] : '',
+      'link_facebook' => !empty($row['link_facebook']) ? $row['link_facebook'] : '',
+      'link_youtube' => !empty($row['link_youtube']) ? $row['link_youtube'] : '',
+      'link_website' => !empty($row['link_website']) ? $row['link_website'] : '',
+      'isPic' => $isPic
+    ]
+  ];
+}
 ?>
 
 <!-- Kalender & Jadwal -->
@@ -20,10 +108,7 @@ ob_start();
       <p class="text-muted mb-0">Jadwal rilis dan kegiatan kehumasan</p>
     </div>
 
-    <!-- TOMBOL IMPORT JADWAL -->
-    <a href="import_jadwal.php" class="btn btn-primary mt-3 mt-md-0">
-      <i class="bi bi-plus-circle me-1"></i> Import Data
-    </a>
+    
   </div>
 
   <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -73,31 +158,29 @@ ob_start();
               <th>PIC</th>
               <td>
                 <span id="modalPIC"></span>
-                <a id="editPicBtn" class="btn btn-sm btn-outline-primary ms-2">
-                  <i class="bi bi-pencil"></i>
-                </a>
               </td>
             </tr>
             <tr>
               <th>Keterangan</th>
               <td id="modalKeterangan"></td>
             </tr>
-            <tr>
+            <tr id="rowDokumentasi">
               <th>Dokumentasi</th>
               <td class="d-flex align-items-center gap-2">
-                <a id="modalDokumentasi" target="_blank" class="icon-link" style="display:none">
+                <a id="modalDokumentasi" target="_blank" class="icon-link" style="display:none; font-size: 1.2rem;">
                   <i class="bi bi-eye-fill"></i>
                 </a>
-                <a id="editDokumentasiBtn" class="btn btn-sm btn-outline-primary" title="Edit Dokumentasi" href="edit_dokumentasi.php">
+                <span id="docPlaceholder" style="display:none; color:#999;">Belum ada dokumentasi</span>
+                <a id="editDokumentasiBtn" class="btn btn-sm btn-outline-primary" title="Edit Dokumentasi" href="#" style="display:none;">
                   <i class="bi bi-pencil"></i>
                 </a>
               </td>
             </tr>
-            <tr>
+            <tr id="rowLink">
               <th>Link Publikasi</th>
-              <td class="d-flex align-items-center gap-2">
+              <td class="d-flex align-items-center gap-2 flex-wrap">
                 <div id="modalLinks" class="d-flex gap-2"></div>
-                <a id="editPublikasiBtn" class="btn btn-sm btn-outline-primary" title="Edit Link Publikasi">
+                <a id="editPublikasiBtn" class="btn btn-sm btn-outline-primary" title="Edit Link Publikasi" style="display:none;">
                   <i class="bi bi-pencil"></i>
                 </a>
               </td>
@@ -123,7 +206,6 @@ ob_start();
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 <style>
-
 .page-kalender #header,
 .page-kalender #header.header-scrolled {
   background: #3d4d6a !important;
@@ -139,71 +221,109 @@ ob_start();
 </style>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  document.body.classList.add("page-kalender"); // Header selalu warna default
-
-  var calendarEl = document.getElementById("calendar");
-  var calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: "dayGridMonth",
-    locale: "id",
-    height: "auto",
-    events: "kalender_jadwal.php",
-    eventClick: function(info) {
-      info.jsEvent.preventDefault();
-      const p = info.event.extendedProps;
-      const id = info.event.id;
-
-      document.getElementById('modalTopik').innerText = p.topik ?? '-';
-      document.getElementById('modalJudul').innerText = info.event.title;
-      document.getElementById('modalTanggalPenugasan').innerText = p.tanggal_penugasan ? new Date(p.tanggal_penugasan).toLocaleDateString('id-ID') : '-';
-      document.getElementById('modalTargetRilis').innerText = info.event.start.toLocaleDateString('id-ID');
-      document.getElementById('modalTim').innerText = p.tim ?? '-';
-
-      let statusText = '-', statusClass = 'secondary';
-      switch(String(p.status)) {
-        case '0': statusText='Belum Dikerjakan'; statusClass='danger'; break;
-        case '1': statusText='Sedang Dikerjakan'; statusClass='warning'; break;
-        case '2': statusText='Selesai'; statusClass='success'; break;
-      }
-      document.getElementById('modalStatus').innerHTML = `<span class="badge bg-${statusClass}">${statusText}</span>`;
-
-      document.getElementById('modalPIC').innerHTML = `
-        <b>Desain:</b> ${p.pic_desain ?? '-'}<br>
-        <b>Narasi:</b> ${p.pic_narasi ?? '-'}<br>
-        <b>Medsos:</b> ${p.pic_medsos ?? '-'}
+document.addEventListener('DOMContentLoaded', function () {
+  document.body.classList.add("page-kalender");
+  
+  var calendar = new FullCalendar.Calendar(
+    document.getElementById('calendar'),
+    {
+      initialView: 'dayGridMonth',
+      height: 520,
+      locale: 'id',
+      events: <?= json_encode($jadwalkalender) ?>,
+      eventClick: function(info) {
+        info.jsEvent.preventDefault();
+        const p = info.event.extendedProps;
+        const jadwalId = info.event.id;
         
-      `;
+        document.getElementById('modalTopik').innerText = p.topik ?? '-';
+        document.getElementById('modalJudul').innerText = info.event.title;
+        document.getElementById('modalTanggalPenugasan').innerText =
+          p.tanggal_penugasan
+            ? new Date(p.tanggal_penugasan).toLocaleDateString('id-ID')
+            : '-';
+        document.getElementById('modalTargetRilis').innerText =
+          info.event.start.toLocaleDateString('id-ID');
+        document.getElementById('modalTim').innerText = p.tim ?? '-';
+        
+        let statusText = '-';
+        let statusClass = 'secondary';
+        switch (String(p.status)) {
+          case '0':
+            statusText = 'Belum Dikerjakan';
+            statusClass = 'danger';
+            break;
+          case '1':
+            statusText = 'Sedang Dikerjakan';
+            statusClass = 'warning';
+            break;
+          case '2':
+            statusText = 'Selesai';
+            statusClass = 'success';
+            break;
+        }
+        document.getElementById('modalStatus').innerHTML =
+          `<span class="badge bg-${statusClass}">${statusText}</span>`;
+        
+        // Display PIC data
+        document.getElementById('modalPIC').innerHTML = p.pic_display || '-';
+        document.getElementById('modalKeterangan').innerHTML = p.keterangan ?? '-';
+        
+        // Dokumentasi
+        if (p.dokumentasi && p.dokumentasi.trim() !== '') {
+          document.getElementById('rowDokumentasi').style.display = 'table-row';
+          document.getElementById('modalDokumentasi').href = '../uploads/dokumentasi/' + p.dokumentasi;
+          document.getElementById('modalDokumentasi').style.display = 'inline-flex';
+          document.getElementById('docPlaceholder').style.display = 'none';
+        } else {
+          document.getElementById('rowDokumentasi').style.display = 'table-row';
+          document.getElementById('modalDokumentasi').style.display = 'none';
+          document.getElementById('docPlaceholder').style.display = p.isPic ? 'none' : 'inline';
+        }
 
-      document.getElementById('modalKeterangan').innerText = p.keterangan ?? '-';
+        // Link publikasi
+        let links = [];
+        
+        function renderLink(icon, label, url, color) {
+          if (!url || url === '-' || url.trim() === '') {
+            // Icon tidak berwarna jika belum ada link
+            links.push(`<span class="text-muted" title="${label} (belum diisi)"><i class="bi ${icon}" style="font-size: 1.2rem; opacity: 0.3;"></i></span>`);
+          } else {
+            // Icon berwarna jika sudah ada link
+            links.push(`<a href="${url}" target="_blank" title="${label}" style="color: ${color};"><i class="bi ${icon}" style="font-size: 1.2rem;"></i></a>`);
+          }
+        }
+        
+        renderLink('bi-instagram', 'Instagram', p.link_instagram, '#E1306C');
+        renderLink('bi-facebook', 'Facebook', p.link_facebook, '#1877F2');
+        renderLink('bi-youtube', 'YouTube', p.link_youtube, '#FF0000');
+        renderLink('bi-globe', 'Website', p.link_website, '#0d6efd');
+        
+        document.getElementById('rowLink').style.display = 'table-row';
+        document.getElementById('modalLinks').innerHTML = links.length > 0 ? links.join(' ') : '-';
 
-      const docIcon = document.getElementById('modalDokumentasi');
-      if (p.dokumentasi && p.dokumentasi.trim() !== '') {
-        docIcon.href = p.dokumentasi;
-        docIcon.style.display = 'inline-block';
-      } else {
-        docIcon.style.display = 'none';
+        // Sembunyikan semua tombol edit terlebih dahulu
+        document.getElementById('editDokumentasiBtn').style.display = 'none';
+        document.getElementById('editPublikasiBtn').style.display = 'none';
+
+        // Tampilkan tombol edit hanya jika user adalah PIC dari jadwal ini
+        if (p.isPic) {
+          document.getElementById('editDokumentasiBtn').style.display = 'inline-block';
+          document.getElementById('editPublikasiBtn').style.display = 'inline-block';
+        }
+
+        // Add click handlers for edit buttons
+        document.getElementById('editDokumentasiBtn').onclick = function() {
+          window.location.href = 'edit_dokumentasi.php?id=' + jadwalId + '&mode=dokumentasi';
+        };
+        document.getElementById('editPublikasiBtn').onclick = function() {
+          window.location.href = 'edit_dokumentasi.php?id=' + jadwalId + '&mode=publikasi';
+        };
+
+        new bootstrap.Modal(document.getElementById('jadwalModal')).show();
       }
-
-      let linksHTML = '';
-      function renderIcon(icon, url, color, title) {
-        if (!url || url.trim() === '') return '';
-        return `<a href="${url}" target="_blank" title="${title}" class="me-2"><i class="bi ${icon}" style="font-size:1.4rem;color:${color}"></i></a>`;
-      }
-      linksHTML += renderIcon('bi-instagram', p.link_instagram, '#E1306C','Instagram');
-      linksHTML += renderIcon('bi-facebook', p.link_facebook, '#1877F2','Facebook');
-      linksHTML += renderIcon('bi-youtube', p.link_youtube, '#FF0000','YouTube');
-      linksHTML += renderIcon('bi-globe', p.link_website, '#0d6efd','Website');
-      document.getElementById('modalLinks').innerHTML = linksHTML;
-
-      document.getElementById('editDokumentasiBtn').href = `edit_dokumentasi.php?id=${id}&mode=dokumentasi`;
-      document.getElementById('editPublikasiBtn').href = `edit_dokumentasi.php?id=${id}&mode=publikasi`;
-      document.getElementById('editPicBtn').href = `edit_dokumentasi.php?id=${id}&mode=pic`;
-
-      var jadwalModal = new bootstrap.Modal(document.getElementById('jadwalModal'));
-      jadwalModal.show();
     }
-  });
-
+  );
   calendar.render();
 });
 </script>
@@ -212,3 +332,4 @@ document.addEventListener("DOMContentLoaded", function () {
 $script = ob_get_clean();
 include 'layout.php';
 renderLayout($content, $script);
+?>

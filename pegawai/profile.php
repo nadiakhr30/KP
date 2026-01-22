@@ -85,204 +85,304 @@ while ($row = mysqli_fetch_assoc($haloQuery)) {
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Profil Pengguna</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Pengguna</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif !important;
+        }
+        
+        body {
+            
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .page-wrapper {
+            max-width: 800px;
+            margin: auto;
+            color: #009cfd 0%;
+        }
+        
+        .breadcrumb-custom {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            color: #009cfd 0%;
+            font-size: 14px;
+        }
+        
+        .breadcrumb-custom a {
+            color: #009cfd 0%;
+            text-decoration: none;
+            transition: 0.25s;
+        }
+        
+        .breadcrumb-custom a:hover {
+            text-decoration: underline;
+        }
+        .breadcrumb-link {
+            color: #009cfd;
+            text-decoration: none;
+        }
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        .breadcrumb-link i {
+            font-size: 16px;
+        }
 
-<style>
-body{
-  font-family:Poppins,sans-serif;
-  background:#f4f7fb;
-  margin:0;
-  padding:40px;
-}
-.page-wrapper{
-  max-width:900px;
-  margin:auto;
-}
-.page-header{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:25px;
-  color:#1f3c88;
-}
-.card{
-  background:#fff;
-  border-radius:14px;
-  box-shadow:0 12px 30px rgba(0,0,0,.08);
-  padding:30px;
-  position:relative;
-}
-.card-title{
-  font-size:22px;
-  font-weight:700;
-  color:#1f3c88;
-  margin-bottom:25px;
-}
-.profile-img{
-  display:flex;
-  justify-content:center;
-  margin-bottom:25px;
-}
-.profile-img img{
-  width:110px;
-  height:110px;
-  border-radius:50%;
-  object-fit:cover;
-}
-.info-box{
-  background:#fff;
-  border-radius:12px;
-  box-shadow:0 10px 25px rgba(0,0,0,.08);
-  padding:10px 20px;
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-tr{
-  border-bottom:1px solid #eee;
-}
-th{
-  text-align:left;
-  padding:14px 0;
-  width:30%;
-}
-td{
-  padding:14px 0;
-}
-.skill-box{
-  margin-top:25px;
-}
-.skill-title{
-  font-weight:700;
-  margin-bottom:10px;
-}
-.skill-list{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-.skill{
-  background:#e9f2ff;
-  color:#1f3c88;
-  padding:6px 14px;
-  border-radius:20px;
-  font-size:13px;
-  font-weight:600;
-}
+        .breadcrumb-separator {
+            color: #b0b0b0;
+        }
 
-/* BUTTON EDIT */
-.btn-edit{
-  position:absolute;
-  top:20px;
-  right:20px;
-  width:38px;
-  height:38px;
-  border:1.5px solid #e0e0e0;
-  background:#fff;
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#555;
-  text-decoration:none;
-  transition:.25s;
-}
-.btn-edit:hover{
-  background:#fff3c4;
-  color:#d99a00;
-  border-color:#ffd54f;
-}
-</style>
+        .breadcrumb-active {
+            color: #009cfd;
+            font-weight: 600;
+        }
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 156, 253, 0.3);
+            padding: 40px;
+            position: relative;
+        }
+        
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .profile-img {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .profile-img img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #009cfd 0%;
+        }
+        
+        .profile-img i {
+            font-size: 120px;
+            color: #ddd;
+        }
+        
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .info-table tr {
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .info-table th {
+            text-align: left;
+            padding: 15px 0;
+            width: 30%;
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .info-table td {
+            padding: 15px 0;
+            color: #333;
+        }
+        
+        .skill-section {
+            margin-top: 30px;
+        }
+        
+        .skill-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .skill-badge {
+            background: #009cfd 0%;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .skill-empty {
+            color: #999;
+            font-style: italic;
+        }
+        
+        .btn-edit {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: #009cfd 0%;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: 0.25s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+            background: #0f4382;
+        }
+    </style>
 </head>
-
 <body>
+    <div class="page-wrapper">
+        <div class="breadcrumb-custom">
+            <a href="index.php" class="breadcrumb-link">
+                <i class="bi bi-house-fill"></i>
+            </a>
+            <span class="breadcrumb-separator">›</span>
+            <span class="breadcrumb-active">Profil</span>
+        </div>
 
-<div class="page-wrapper">
+        <div class="profile-card">
+            <!-- BUTTON EDIT -->
+            <a href="editprofil.php" class="btn-edit" title="Edit Profil">
+                <i class="bi bi-pencil-fill"></i>
+            </a>
 
-  <div class="page-header">
-    <a href="index.php"><i class="fas fa-home"></i></a>
-    <span>› Profil</span>
-  </div>
+            <div class="card-title">
+                <i class="bi bi-person-circle"></i>
+                Informasi Pengguna
+            </div>
 
-  <div class="card">
+            <div class="profile-img">
+                <?php
+                $foto = trim($data['foto_profil'] ?? '');
+                $path = __DIR__ . '/../uploads/' . $foto;
 
-    <!-- BUTTON EDIT -->
-    <a href="editprofil.php" class="btn-edit" title="Edit Profil">
-      <i class="fas fa-pen"></i>
-    </a>
+                if ($foto && file_exists($path)) {
+                    echo '<img src="../uploads/'.htmlspecialchars($foto).'" alt="Foto Profil">';
+                } else {
+                    echo '<i class="bi bi-person-circle"></i>';
+                }
+                ?>
+            </div>
 
-    <div class="card-title">Informasi Pengguna</div>
+            <table class="info-table">
+                <tr>
+                    <th>Nama</th>
+                    <td><?= htmlspecialchars($data['nama']) ?></td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td><?= htmlspecialchars($data['email']) ?></td>
+                </tr>
+                <tr>
+                    <th>Role</th>
+                    <td>
+                        <?php
+                        $roles = [1 => 'Administrasi', 2 => 'Pegawai', 3 => 'Admin'];
+                        echo $roles[$data['id_role']] ?? 'Tidak Diketahui';
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>
+                        <?php if ($data['status'] == 1): ?>
+                            <span class="badge bg-success">Aktif</span>
+                        <?php else: ?>
+                            <span class="badge bg-danger">Non-Aktif</span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th>NIP</th>
+                    <td><?= htmlspecialchars($data['nip']) ?></td>
+                </tr>
+                <tr>
+                    <th>Jabatan</th>
+                    <td><?= htmlspecialchars($data['nama_jabatan'] ?? '-') ?></td>
+                </tr>
+                <tr>
+                    <th>Nomor Telepon</th>
+                    <td>0<?= htmlspecialchars($data['nomor_telepon'] ?? '-') ?></td>
+                </tr>
+            </table>
 
-    <div class="profile-img">
-      <?php
-      $foto = trim($data['foto_profil'] ?? '');
-      $path = __DIR__ . '/../uploads/' . $foto;
+            <div class="skill-section">
+                <div class="skill-title">
+                    <i class="bi bi-star-fill"></i> Skill
+                </div>
+                <div class="skill-list">
+                    <?php if (!empty($skills)): ?>
+                        <?php foreach ($skills as $skill): ?>
+                            <span class="skill-badge"><?= htmlspecialchars($skill) ?></span>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <span class="skill-empty">Tidak ada skill</span>
+                    <?php endif; ?>
+                </div>
+            </div>
 
-      if ($foto && file_exists($path)) {
-          echo '<img src="../uploads/'.htmlspecialchars($foto).'">';
-      } else {
-          echo '<i class="fas fa-user-circle fa-6x"></i>';
-      }
-      ?>
+            <div class="skill-section">
+                <div class="skill-title">
+                    <i class="bi bi-shield-check"></i> PPID
+                </div>
+                <div class="skill-list">
+                    <?php if (!empty($ppids)): ?>
+                        <?php foreach ($ppids as $p): ?>
+                            <span class="skill-badge"><?= htmlspecialchars($p) ?></span>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <span class="skill-empty">Tidak ada PPID</span>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="skill-section">
+                <div class="skill-title">
+                    <i class="bi bi-chat-left-text"></i> Halo PST
+                </div>
+                <div class="skill-list">
+                    <?php if (!empty($halos)): ?>
+                        <?php foreach ($halos as $h): ?>
+                            <span class="skill-badge"><?= htmlspecialchars($h) ?></span>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <span class="skill-empty">Tidak ada Halo PST</span>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="info-box">
-      <table>
-        <tr><th>Nama</th><td><?= htmlspecialchars($data['nama']) ?></td></tr>
-        <tr><th>Email</th><td><?= htmlspecialchars($data['email']) ?></td></tr>
-        <tr><th>Role</th><td><?= $data['id_role']==1?'Administrasi':($data['id_role']==2?'Pegawai':'Admin') ?></td></tr>
-        <tr><th>Status</th><td><?= $data['status']==1?'Aktif':'Non-Aktif' ?></td></tr>
-        <tr><th>NIP</th><td><?= htmlspecialchars($data['nip']) ?></td></tr>
-        <tr><th>Jabatan</th><td><?= htmlspecialchars($data['nama_jabatan'] ?? '-') ?></td></tr>
-        <tr><th>Nomor Telepon</th><td>0<?= htmlspecialchars($data['nomor_telepon'] ?? '-') ?></td></tr>
-      </table>
-    </div>
-
-    <div class="skill-box">
-      <div class="skill-title">Skill</div>
-      <div class="skill-list">
-        <?php if (!empty($skills)): ?>
-          <?php foreach ($skills as $skill): ?>
-            <span class="skill"><?= htmlspecialchars($skill) ?></span>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <span>- Tidak ada skill -</span>
-        <?php endif; ?>
-      </div>
-    </div>
-
-    <div class="skill-box">
-      <div class="skill-title">PPID</div>
-      <div class="skill-list">
-        <?php if (!empty($ppids)): ?>
-          <?php foreach ($ppids as $p): ?>
-            <span class="skill"><?= htmlspecialchars($p) ?></span>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <span>- Tidak ada PPID -</span>
-        <?php endif; ?>
-      </div>
-    </div>
-
-    <div class="skill-box">
-      <div class="skill-title">Halo PST</div>
-      <div class="skill-list">
-        <?php if (!empty($halos)): ?>
-          <?php foreach ($halos as $h): ?>
-            <span class="skill"><?= htmlspecialchars($h) ?></span>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <span>- Tidak ada Halo PST -</span>
-        <?php endif; ?>
-      </div>
-    </div>
-
-  </div>
-</div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -149,259 +149,362 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Edit Profil</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif !important;
+        }
+        
+        body {
+           
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .page-wrapper {
+            max-width: 800px;
+            margin: auto;
+        }
+        
+        .breadcrumb-custom {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .breadcrumb-custom a {
+            color: #009cfd 0%;
+            text-decoration: none;
+            transition: 0.25s;
+        }
+        .breadcrumb-link {
+            color: #009cfd;
+            text-decoration: none;
+            font-weight: 500;
+        }
 
-<style>
+        .breadcrumb-link:hover {
+            text-decoration: underline;
+        }
 
-body { 
-font-family: Poppins,sans-serif; 
-background:#f4f7fb; 
-margin:0; 
-padding:40px; 
-}
-.page-wrapper { 
-    max-width:900px; 
-    margin:auto; 
-}
+        .breadcrumb-separator {
+            color: #b0b0b0;
+        }
 
-.page-header { 
-    display:flex; 
-    align-items:center; 
-    gap:10px; 
-    margin-bottom:25px; 
-    color:#1f3c88; 
-}
-.page-header a { 
-    text-decoration:none; 
-    color:inherit; 
-}
-.page-header a:hover { 
-    text-decoration:none; 
-    color:inherit; 
-    cursor:pointer; 
-}
-
-.card { 
-    background:#fff; 
-    border-radius:14px; 
-    box-shadow:0 12px 30px rgba(0,0,0,.08); 
-    padding:30px; 
-    position:relative; }
-.card-title { 
-    font-size:22px; 
-    font-weight:700; 
-    color:#1f3c88; 
-    margin-bottom:25px; 
-}
-
-.profile-img {
-    display: flex;
-    flex-direction: column; 
-    align-items: center;    
-    margin-bottom: 25px;
-}
-
-.profile-img img {
-    width: 110px;
-    height: 110px;
-    max-width: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block; 
-}
-
-.upload-btn {
-  display: inline-block;
-  margin-top: 10px; 
-  padding: 6px 10px;
-  font-size: 14px;
-  border-radius: 6px;
-  background: #f0f0f0;
-  color: #333;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  border: 1px solid #000;
-  outline: none;
-  box-shadow: none;
-}
-
-.upload-btn:hover {
-  background: #e0e0e0;
-}
-
-.info-box { 
-    background:#fff; 
-    border-radius:12px; 
-    box-shadow:0 10px 25px rgba(0,0,0,.08); 
-    padding:10px 20px; 
-}
-table { 
-    width:100%; 
-    border-collapse:collapse; 
-}
-tr { 
-    border-bottom:1px s
-    olid #eee; 
-}
-th { 
-    text-align:left; 
-    padding:14px 0; 
-    width:30%; 
-}
-td { 
-    padding:14px 0; 
-}
-input[type=text], 
-input[type=email] { 
-    width:100%; 
-    padding:8px 10px; 
-    border-radius:8px; 
-    border:1px solid #e6e6e6; 
-    font-size:14px; 
-}
-
-
-.skill-box { 
-    margin-top:25px; 
-}
-.skill-title { 
-    font-weight:700; 
-    margin-bottom:10px; 
-}
-.skill-list { 
-    display:flex; 
-    flex-wrap:wrap; 
-    gap:8px; 
-}
-.skill { 
-    background:#e9f2ff; 
-    color:#1f3c88; 
-    padding:6px 14px; 
-    border-radius:20px; 
-    font-size:13px; 
-    font-weight:600; 
-    display:flex; 
-    align-items:center; 
-    gap:6px; 
-}
-.skill input[type=checkbox] { 
-    width:16px; 
-    height:16px; 
-    cursor:pointer; 
-}
-
-.btn-save-float { 
-    position:absolute; 
-    top:20px; 
-    right:20px; 
-    width:38px; 
-    height:38px; 
-    border:1.5px solid #e0e0e0; 
-    background:#fff; 
-    border-radius:10px; 
-    display:flex; 
-    align-items:center; 
-    justify-content:center; 
-    color:#555; 
-    cursor:pointer; 
-    transition:.25s; 
-}
-.btn-save-float:hover { 
-    background:#1e6cff; 
-    color:#fff; border-color:#1a5ed8; 
-}
-
-
-</style>
+        .breadcrumb-active {
+            color: #009cfd;
+            font-weight: 600;
+        }
+        .breadcrumb-custom a:hover {
+            text-decoration: underline;
+        }
+        
+        .edit-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 156, 253, 0.3);
+            padding: 40px;
+            position: relative;
+        }
+        
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .profile-img {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .profile-img img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+           
+        }
+        
+        .profile-img i {
+            font-size: 100px;
+            color: #ddd;
+        }
+        
+        .upload-label {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 12px;
+            background: #009cfd 0%;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: 0.25s;
+        }
+        
+        .upload-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            background: #0f4382;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: 0.25s;
+        }
+        
+        .form-control:focus {
+            border-color: #009cfd 0%;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+        }
+        
+        .form-control:disabled {
+            background-color: #f5f5f5;
+            color: #999;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            color: #009cfd 0%;
+            font-size: 15px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .skill-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: #f0f4ff;
+            border: 1.5px solid #e0e6ff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        
+        .skill-item:hover {
+            background: #e5ebff;
+            border-color: #667eea;
+        }
+        
+        .skill-item input[type="checkbox"] {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .skill-item label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 600;
+            flex: 1;
+            border: none;
+            transition: 0.25s;
+        }
+        
+        .btn-primary {
+            background: #009cfd 0%;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #009cfd 0%;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-<div class="page-wrapper">
-  <div class="page-header">
-    <a href="index.php"><i class="fas fa-home"></i></a>
-    <a href="profile.php"> › Profil</a>
-    <span> › Edit Profil</span>
-  </div>
-
-  <div class="card">
-    <!-- BUTTON SIMPAN FLOAT -->
-    <button type="submit" form="editForm" class="btn-save-float" title="Simpan Perubahan">
-      <i class="fas fa-save"></i>
-    </button>
-
-    <div class="card-title">Edit Profil Pengguna</div>
-
-    <form id="editForm" method="post" enctype="multipart/form-data">
-
-      <!-- FOTO PROFIL -->
-      <div class="profile-img">
-        <?php if($data['foto_profil']): ?>
-            <img src="../uploads/<?= htmlspecialchars($data['foto_profil']) ?>">
-        <?php else: ?>
-            <i class="fas fa-user-circle fa-6x"></i>
-        <?php endif; ?>
-
-        <input type="file" name="foto_profil" id="foto_profil" class="visually-hidden">
-        
-       </div>
-
-
-      <!-- INFO USER -->
-      <div class="info-box">
-        <table>
-          <tr><th>Nama</th><td><input type="text" name="nama" value="<?= htmlspecialchars($data['nama']) ?>"></td></tr>
-          <tr><th>Email</th><td><input type="email" name="email" value="<?= htmlspecialchars($data['email']) ?>"></td></tr>
-          <tr><th>NIP</th><td><input type="text" name="nip" value="<?= htmlspecialchars($data['nip']) ?>" readonly></td></tr>
-          <tr><th>Nomor Telepon</th><td><input type="text" name="nomor_telepon" value="<?= 0 . htmlspecialchars($data['nomor_telepon']) ?>"></td></tr>
-        </table>
-      </div>
-
-      <!-- SKILL -->
-      <div class="skill-box">
-        <div class="skill-title">Skill</div>
-        <div class="skill-list">
-          <?php foreach ($allSkillQuery as $row): ?>
-            <?php $checked = in_array($row['id_skill'], $userSkills) ? 'checked' : ''; ?>
-            <label class="skill">
-              <input type="checkbox" name="skill[]" value="<?= $row['id_skill'] ?>" <?= $checked ?>>
-              <?= htmlspecialchars($row['nama_skill']) ?>
-            </label>
-          <?php endforeach; ?>
+    <div class="page-wrapper">
+        <div class="breadcrumb-custom">
+            <a href="index.php" class="breadcrumb-link">
+                <i class="bi bi-house-fill"></i>
+            </a>
+            <span class="breadcrumb-separator">›</span>
+            <a href="profile.php" class="breadcrumb-link">Profil</a>
+            <span class="breadcrumb-separator">›</span>
+            <span class="breadcrumb-active">Edit</span>
         </div>
-      </div>
 
-      <!-- PPID -->
-      <div class="skill-box">
-        <div class="skill-title">PPID</div>
-        <div class="skill-list">
-          <?php foreach ($ppidList as $p): ?>
-            <?php $checked = $p['selected'] ? 'checked' : ''; ?>
-            <label class="skill">
-              <input type="checkbox" name="ppid[]" value="<?= $p['id_ppid'] ?>" <?= $checked ?>>
-              <?= htmlspecialchars($p['nama_ppid']) ?>
-            </label>
-          <?php endforeach; ?>
+        <div class="edit-card">
+            <div class="card-title">
+                <i class="bi bi-pencil-square"></i>
+                Edit Profil
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                <!-- FOTO PROFIL -->
+                <div class="profile-img">
+                    <?php if ($data['foto_profil']): ?>
+                        <img src="../uploads/<?= htmlspecialchars($data['foto_profil']) ?>" alt="Foto Profil">
+                    <?php else: ?>
+                        <i class="bi bi-person-circle"></i>
+                    <?php endif; ?>
+                    
+                    <input type="file" name="foto_profil" id="foto_profil" class="d-none" accept="image/*">
+                    <label for="foto_profil" class="upload-label">
+                         Ganti Foto
+                    </label>
+                </div>
+
+                <!-- INFORMASI DASAR -->
+                <div class="section-title">
+                    <i class="bi bi-person-fill"></i>
+                    Informasi Dasar
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nama Lengkap</label>
+                    <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($data['nama']) ?>" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($data['email']) ?>" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">NIP</label>
+                    <input type="text" name="nip" class="form-control" value="<?= htmlspecialchars($data['nip']) ?>" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nomor Telepon</label>
+                    <input type="text" name="nomor_telepon" class="form-control" value="<?= htmlspecialchars($data['nomor_telepon']) ?>">
+                </div>
+
+                <!-- SKILL -->
+                <div class="section-title">
+                    <i class="bi bi-star-fill"></i>
+                    Skill
+                </div>
+
+                <div class="skill-group">
+                    <?php
+                    // Reset pointer ke awal
+                    mysqli_data_seek($allSkillQuery, 0);
+                    while ($row = mysqli_fetch_assoc($allSkillQuery)):
+                        $checked = in_array($row['id_skill'], $userSkills) ? 'checked' : '';
+                    ?>
+                        <div class="skill-item">
+                            <input type="checkbox" name="skill[]" id="skill_<?= $row['id_skill'] ?>" value="<?= $row['id_skill'] ?>" <?= $checked ?>>
+                            <label for="skill_<?= $row['id_skill'] ?>">
+                                <?= htmlspecialchars($row['nama_skill']) ?>
+                            </label>
+                        </div>
+                    <?php endwhile; ?>
+                </div>
+
+                <!-- PPID -->
+                <div class="section-title">
+                    <i class="bi bi-shield-check"></i>
+                    PPID
+                </div>
+
+                <div class="skill-group">
+                    <?php foreach ($ppidList as $p): ?>
+                        <div class="skill-item">
+                            <input type="checkbox" name="ppid[]" id="ppid_<?= $p['id_ppid'] ?>" value="<?= $p['id_ppid'] ?>" <?= $p['selected'] ? 'checked' : '' ?>>
+                            <label for="ppid_<?= $p['id_ppid'] ?>">
+                                <?= htmlspecialchars($p['nama_ppid']) ?>
+                            </label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- HALO PST -->
+                <div class="section-title">
+                    <i class="bi bi-chat-left-text"></i>
+                    Halo PST
+                </div>
+
+                <div class="skill-group">
+                    <?php foreach ($haloList as $h): ?>
+                        <div class="skill-item">
+                            <input type="checkbox" name="halo_pst[]" id="halo_<?= $h['id_halo_pst'] ?>" value="<?= $h['id_halo_pst'] ?>" <?= $h['selected'] ? 'checked' : '' ?>>
+                            <label for="halo_<?= $h['id_halo_pst'] ?>">
+                                <?= htmlspecialchars($h['nama_halo_pst']) ?>
+                            </label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Simpan Perubahan
+                    </button>
+                    <a href="profile.php" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Batal
+                    </a>
+                </div>
+            </form>
         </div>
-      </div>
+    </div>
 
-      <!-- HALO PST -->
-      <div class="skill-box">
-        <div class="skill-title">Halo PST</div>
-        <div class="skill-list">
-          <?php foreach ($haloList as $h): ?>
-            <?php $checked = $h['selected'] ? 'checked' : ''; ?>
-            <label class="skill">
-              <input type="checkbox" name="halo_pst[]" value="<?= $h['id_halo_pst'] ?>" <?= $checked ?>>
-              <?= htmlspecialchars($h['nama_halo_pst']) ?>
-            </label>
-          <?php endforeach; ?>
-        </div>
-      </div>
-
-    </form>
-  </div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -30,7 +30,6 @@ $qKalender = mysqli_query($koneksi, "
 ");
 
 while ($row = mysqli_fetch_assoc($qKalender)) {
-  // Get PIC for this jadwal
   $id_jadwal = $row['id_jadwal'];
   $qPic = mysqli_query($koneksi, "
     SELECT u.nip, u.nama, jp.nama_jenis_pic
@@ -76,11 +75,11 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
       'status' => $row['status'],
       'keterangan' => $row['keterangan'],
       'pic_display' => $picDisplay,
-      'dokumentasi' => $row['dokumentasi'],
-      'link_instagram' => $row['link_instagram'],
-      'link_facebook' => $row['link_facebook'],
-      'link_youtube' => $row['link_youtube'],
-      'link_website' => $row['link_website'],
+      'dokumentasi' => !empty($row['dokumentasi']) ? $row['dokumentasi'] : '',
+      'link_instagram' => !empty($row['link_instagram']) ? $row['link_instagram'] : '',
+      'link_facebook' => !empty($row['link_facebook']) ? $row['link_facebook'] : '',
+      'link_youtube' => !empty($row['link_youtube']) ? $row['link_youtube'] : '',
+      'link_website' => !empty($row['link_website']) ? $row['link_website'] : '',
       'isPic' => $isPic
     ]
   ];
@@ -144,122 +143,90 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Kalender & Jadwal</h2>
+        <p class="text-muted mb-0">Jadwal rilis dan kegiatan kehumasan</p>
       </div><!-- End Section Title -->
 
-
       <div class="container" data-aos="fade-up" data-aos-delay="100">
-
         <div class="row gy-4">
           <div class="col-lg-12">
-            <div class="card">
+            <div class="card p-4 shadow-sm border-0">
               <div class="card-block">
                 <div id="calendar"></div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-                                       
-      
-<!-- Modal Jadwal -->
-
-<div class="modal fade" id="jadwalModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div>
-          <h5 class="text-muted" id="modalTopik"></h5>
-          <h3 class="modal-title mb-0" id="modalJudul"></h3>
+      <!-- Modal Jadwal -->
+      <div class="modal fade" id="jadwalModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div>
+                <h5 class="text-muted" id="modalTopik"></h5>
+                <h3 class="modal-title mb-0" id="modalJudul"></h3>
+              </div>
+              <button type="button" class="btn btn-outline-danger btn-close-circle position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <div class="modal-body">
+              <table class="table table-sm table-borderless">
+                <tr>
+                  <th width="180">Tanggal Penugasan</th>
+                  <td id="modalTanggalPenugasan"></td>
+                </tr>
+                <tr>
+                  <th>Target Rilis</th>
+                  <td id="modalTargetRilis"></td>
+                </tr>
+                <tr>
+                  <th>Tim</th>
+                  <td id="modalTim"></td>
+                </tr>
+                <tr>
+                  <th>Status</th>
+                  <td id="modalStatus"></td>
+                </tr>
+                <tr>
+                  <th>PIC</th>
+                  <td>
+                    <span id="modalPIC"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Keterangan</th>
+                  <td id="modalKeterangan"></td>
+                </tr>
+                <tr id="rowDokumentasi">
+                  <th>Dokumentasi</th>
+                  <td class="d-flex align-items-center gap-2">
+                    <a id="modalDokumentasi" target="_blank" class="icon-link" style="display:none; font-size: 1.2rem;">
+                      <i class="bi bi-eye-fill"></i>
+                    </a>
+                    <span id="docPlaceholder" style="display:none; color:#999;">Belum ada dokumentasi</span>
+                    <a id="editDokumentasiBtn" class="btn btn-sm btn-outline-primary" title="Edit Dokumentasi" href="#" style="display:none;">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                  </td>
+                </tr>
+                <tr id="rowLink">
+                  <th>Link Publikasi</th>
+                  <td class="d-flex align-items-center gap-2 flex-wrap">
+                    <div id="modalLinks" class="d-flex gap-2"></div>
+                    <a id="editPublikasiBtn" class="btn btn-sm btn-outline-primary" title="Edit Link Publikasi" style="display:none;">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
         </div>
-          <button
-            type="button"
-            class="btn btn-outline-danger btn-close-circle position-absolute top-0 end-0 m-3"
-            data-bs-dismiss="modal"
-            aria-label="Close">
-            <i class="bi bi-x-lg"></i>
-          </button>
       </div>
-      <div class="modal-body">
-        <table class="table table-sm table-borderless">
-          <tr>
-            <th width="180">Tanggal Penugasan</th>
-            <td id="modalTanggalPenugasan"></td>
-          </tr>
-          <tr>
-            <th>Target Rilis</th>
-            <td id="modalTargetRilis"></td>
-          </tr>
-          <tr>
-            <th>Tim</th>
-            <td id="modalTim"></td>
-          </tr>
-          <tr>
-            <th>Status</th>
-            <td id="modalStatus"></td>
-          </tr>
-          <tr>
-            <th>PIC</th>
-            <td >
-               <span id="modalPIC"></span>
 
-                <!-- tombol edit PIC -->
-                <a id="editPicBtn" class="btn btn-sm btn-outline-primary">
-                  <i class="bi bi-pencil"></i>
-                </a>
-            </td>
-          </tr>
-          <tr>
-            <th>Keterangan</th>
-            <td id="modalKeterangan"></td>
-          </tr>
-          <tr id="rowDokumentasi">
-            <th>Dokumentasi</th>
-            <td class="d-flex align-items-center gap-2">
-
-              <a
-                id="modalDokumentasi"
-                target="_blank"
-                class="icon-link"
-                style="display:none"
-              >
-                <i class="bi bi-eye-fill"></i>
-              </a>
-
-              <a
-                id="editDokumentasiBtn"
-                class="btn btn-sm btn-outline-primary"
-                title="Edit Dokumentasi"
-                href="#"
-              >
-                <i class="bi bi-pencil"></i>
-              </a>
-
-            </td>
-          </tr>
-
-
-         <tr id="rowLink">
-            <th>Link Publikasi</th>
-            <td class="d-flex align-items-center gap-2">
-
-              <div id="modalLinks" class="d-flex gap-2"></div>
-
-              <a
-                id="editPublikasiBtn"
-                class="btn btn-sm btn-outline-primary"
-                title="Edit Link Publikasi"
-              >
-                <i class="bi bi-pencil"></i>
-              </a>
-
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-</section><!-- /Kalender & Jadwal -->
+    </section><!-- /Kalender & Jadwal -->
 
 
  <!-- Humas Section -->
@@ -283,11 +250,11 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
           <!-- Overlay -->
           <div class="humas-overlay">
-            <a href="#" class="overlay-item">
+            <a href="#container section-title" class="overlay-item">
               <i class="bi bi-diagram-3"></i>
               <span>Struktur Humas</span>
             </a>
-            <a href="viewjadwal.php" class="overlay-item">
+            <a href="#" class="overlay-item">
               <i class="bi bi-calendar-event"></i>
               <span>Jadwal Konten Humas</span>
             </a>
@@ -452,148 +419,191 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
   $content = ob_get_clean();
   ob_start();
   ?>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const track = document.getElementById("stepsTrack");
-        const slides = document.querySelectorAll(".steps-slide");
-        const nextBtn = document.getElementById("nextSlide");
-        const prevBtn = document.getElementById("prevSlide");
 
-        let index = 0;
+  <!-- FULLCALENDAR CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
-        function slidesPerView() {
-          const w = window.innerWidth;
-          if (w < 768) return 1;
-          if (w < 992) return 2;
-          return 3;
+  <!-- BOOTSTRAP ICONS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    
+    .fc .fc-toolbar {
+      border: none !important;
+      border-bottom: none !important;
+    }
+    
+    .fc-toolbar-chunk {
+      border: none !important;
+    }
+    
+    
+    .fc .fc-daygrid-head-frame {
+      border: none !important;
+    }
+    
+    
+    .fc .fc-daygrid-day {
+      border: 1px solid #e0e0e0 !important;
+    }
+    
+    .fc .fc-col-header-cell {
+      border: 1px solid #e0e0e0 !important;
+    }
+    
+    .fc .fc-daygrid-day-frame {
+      border: 1px solid #e0e0e0 !important;
+    }
+    
+    .fc-theme-standard {
+      border: 1px solid #e0e0e0 !important;
+    }
+    
+    .fc .fc-daygrid-day-number {
+      padding: 6px 4px;
+    }
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const track = document.getElementById("stepsTrack");
+      const slides = document.querySelectorAll(".steps-slide");
+      const nextBtn = document.getElementById("nextSlide");
+      const prevBtn = document.getElementById("prevSlide");
+
+      let index = 0;
+
+      function slidesPerView() {
+        const w = window.innerWidth;
+        if (w < 768) return 1;
+        if (w < 992) return 2;
+        return 3;
+      }
+
+      function slideWidth() {
+        return slides[0].getBoundingClientRect().width;
+      }
+
+      function updateSlide() {
+        track.style.transform = `translateX(-${index * slideWidth()}px)`;
+      }
+
+      nextBtn.addEventListener("click", () => {
+        const maxIndex = slides.length - slidesPerView();
+        if (index < maxIndex) {
+          index++;
+          updateSlide();
         }
-
-        function slideWidth() {
-          return slides[0].getBoundingClientRect().width;
-        }
-
-        function updateSlide() {
-          track.style.transform = `translateX(-${index * slideWidth()}px)`;
-        }
-
-        nextBtn.addEventListener("click", () => {
-          const maxIndex = slides.length - slidesPerView();
-          if (index < maxIndex) {
-            index++;
-            updateSlide();
-          }
-        });
-
-        prevBtn.addEventListener("click", () => {
-          if (index > 0) {
-            index--;
-            updateSlide();
-          }
-        });
-
-        window.addEventListener("resize", updateSlide);
       });
 
+      prevBtn.addEventListener("click", () => {
+        if (index > 0) {
+          index--;
+          updateSlide();
+        }
+      });
+
+      window.addEventListener("resize", updateSlide);
+
       // Kalender
-document.addEventListener('DOMContentLoaded', function () {
-  var calendar = new FullCalendar.Calendar(
-    document.getElementById('calendar'),
-    {
-      initialView: 'dayGridMonth',
-      height: 520,
-      locale: 'id',
-      events: <?= json_encode($jadwalkalender) ?>,
-      eventClick: function(info) {
-        info.jsEvent.preventDefault();
-        const p = info.event.extendedProps;
-        document.getElementById('modalTopik').innerText = p.topik ?? '-';
-        document.getElementById('modalJudul').innerText = info.event.title;
-        document.getElementById('modalTanggalPenugasan').innerText =
-          p.tanggal_penugasan
-            ? new Date(p.tanggal_penugasan).toLocaleDateString('id-ID')
-            : '-';
-        document.getElementById('modalTargetRilis').innerText =
-          info.event.start.toLocaleDateString('id-ID');
-        document.getElementById('modalTim').innerText = p.tim ?? '-';
-        
-        let statusText = '-';
-        let statusClass = 'secondary';
-        switch (String(p.status)) {
-          case '0':
-            statusText = 'Belum Dikerjakan';
-            statusClass = 'danger';
-            break;
-          case '1':
-            statusText = 'Sedang Dikerjakan';
-            statusClass = 'warning';
-            break;
-          case '2':
-            statusText = 'Selesai';
-            statusClass = 'success';
-            break;
-        }
-        document.getElementById('modalStatus').innerHTML =
-          `<span class="badge bg-${statusClass}">${statusText}</span>`;
-        
-        // Display PIC data
-        document.getElementById('modalPIC').innerHTML = p.pic_display || '-';
-        
-        document.getElementById('modalKeterangan').innerHTML =
-          p.keterangan ?? '-';
-        
-        // Dokumentasi
-        if (p.dokumentasi) {
-  document.getElementById('rowDokumentasi').style.display = '';
-  document.getElementById('modalDokumentasi').href = p.dokumentasi;
-  document.getElementById('modalDokumentasi').style.display = 'inline-flex';
-} else {
-  document.getElementById('rowDokumentasi').style.display = 'none';
-}
+      var calendar = new FullCalendar.Calendar(
+        document.getElementById('calendar'),
+        {
+          initialView: 'dayGridMonth',
+          height: 'auto',
+          locale: 'id',
+          events: <?= json_encode($jadwalkalender) ?>,
+          eventClick: function(info) {
+            info.jsEvent.preventDefault();
+            const p = info.event.extendedProps;
+            const jadwalId = info.event.id;
 
-        
-        // Link publikasi
-        let links = [];
-        function renderLink(label, url) {
-          if (!url || url === '-') {
-            links.push(`<span class="text-muted">${label}</span>`);
-            return;
+            document.getElementById('modalTopik').innerText = p.topik ?? '-';
+            document.getElementById('modalJudul').innerText = info.event.title;
+            document.getElementById('modalTanggalPenugasan').innerText =
+              p.tanggal_penugasan
+                ? new Date(p.tanggal_penugasan).toLocaleDateString('id-ID')
+                : '-';
+            document.getElementById('modalTargetRilis').innerText =
+              info.event.start.toLocaleDateString('id-ID');
+            document.getElementById('modalTim').innerText = p.tim ?? '-';
+            
+            let statusText = '-';
+            let statusClass = 'secondary';
+            switch (String(p.status)) {
+              case '0':
+                statusText = 'Belum Dikerjakan';
+                statusClass = 'danger';
+                break;
+              case '1':
+                statusText = 'Sedang Dikerjakan';
+                statusClass = 'warning';
+                break;
+              case '2':
+                statusText = 'Selesai';
+                statusClass = 'success';
+                break;
+            }
+            document.getElementById('modalStatus').innerHTML =
+              `<span class="badge bg-${statusClass}">${statusText}</span>`;
+            
+            document.getElementById('modalPIC').innerHTML = p.pic_display || '-';
+            document.getElementById('modalKeterangan').innerHTML = p.keterangan ?? '-';
+            
+            // Dokumentasi
+            if (p.dokumentasi && p.dokumentasi.trim() !== '') {
+              document.getElementById('rowDokumentasi').style.display = 'table-row';
+              document.getElementById('modalDokumentasi').href = '../uploads/dokumentasi/' + p.dokumentasi;
+              document.getElementById('modalDokumentasi').style.display = 'inline-flex';
+              document.getElementById('docPlaceholder').style.display = 'none';
+            } else {
+              document.getElementById('rowDokumentasi').style.display = 'table-row';
+              document.getElementById('modalDokumentasi').style.display = 'none';
+              document.getElementById('docPlaceholder').style.display = p.isPic ? 'none' : 'inline';
+            }
+
+            // Link publikasi
+            let links = [];
+            
+            function renderLink(icon, label, url, color) {
+              if (!url || url === '-' || url.trim() === '') {
+                links.push(`<span class="text-muted" title="${label} (belum diisi)"><i class="bi ${icon}" style="font-size: 1.2rem; opacity: 0.3;"></i></span>`);
+              } else {
+                links.push(`<a href="${url}" target="_blank" title="${label}" style="color: ${color};"><i class="bi ${icon}" style="font-size: 1.2rem;"></i></a>`);
+              }
+            }
+            
+            renderLink('bi-instagram', 'Instagram', p.link_instagram, '#E1306C');
+            renderLink('bi-facebook', 'Facebook', p.link_facebook, '#1877F2');
+            renderLink('bi-youtube', 'YouTube', p.link_youtube, '#FF0000');
+            renderLink('bi-globe', 'Website', p.link_website, '#0d6efd');
+            
+            document.getElementById('rowLink').style.display = 'table-row';
+            document.getElementById('modalLinks').innerHTML = links.length > 0 ? links.join(' ') : '-';
+
+            document.getElementById('editDokumentasiBtn').style.display = 'none';
+            document.getElementById('editPublikasiBtn').style.display = 'none';
+            
+            if (p.isPic) {
+              document.getElementById('editDokumentasiBtn').style.display = 'inline-block';
+              document.getElementById('editPublikasiBtn').style.display = 'inline-block';
+            }
+
+            document.getElementById('editDokumentasiBtn').onclick = function() {
+              window.location.href = 'edit_dokumentasi.php?id=' + jadwalId + '&mode=dokumentasi';
+            };
+            document.getElementById('editPublikasiBtn').onclick = function() {
+              window.location.href = 'edit_dokumentasi.php?id=' + jadwalId + '&mode=publikasi';
+            };
+
+            new bootstrap.Modal(document.getElementById('jadwalModal')).show();
           }
-          links.push(
-            `<a href="${url}" target="_blank" class="link-primary">${label}</a>`
-          );
         }
-        renderLink('<i class="bi bi-instagram"></i>', p.link_instagram);
-        renderLink('<i class="bi bi-facebook"></i>', p.link_facebook);
-        renderLink('<i class="bi bi-youtube"></i>', p.link_youtube);
-        renderLink('<i class="bi bi-globe"></i>', p.link_website);
-        document.getElementById('rowLink').style.display = '';
-        document.getElementById('modalLinks').innerHTML = links.length > 0 ? links.join(' | ') : '-';
-
-        // Hide edit buttons if user is not PIC
-        if (!p.isPic) {
-          document.getElementById('editDokumentasiBtn').style.display = 'none';
-          document.getElementById('editPublikasiBtn').style.display = 'none';
-        } else {
-          document.getElementById('editDokumentasiBtn').style.display = 'inline-block';
-          document.getElementById('editPublikasiBtn').style.display = 'inline-block';
-        }
-
-        // Add click handlers for edit buttons
-        document.getElementById('editDokumentasiBtn').onclick = function() {
-          window.location.href = 'edit_dokumentasi.php?id=' + info.event.id + '&mode=dokumentasi';
-        };
-        document.getElementById('editPublikasiBtn').onclick = function() {
-          window.location.href = 'edit_dokumentasi.php?id=' + info.event.id + '&mode=publikasi';
-        };
-
-        new bootstrap.Modal(document.getElementById('jadwalModal')).show();
-      }
-    }
-  );
-  calendar.render();
-});
-
-</script>
+      );
+      calendar.render();
+    });
+  </script>
 
   <?php
   $script = ob_get_clean();
