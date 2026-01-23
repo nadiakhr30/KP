@@ -414,6 +414,66 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
     </section><!-- /Jargon BPS  -->
 
+    <!--Sumber Daya -->
+    <section id="sumberdaya" class="team section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Sumber Daya</h2>
+        <p>
+        Sumber daya visual media sosial BPS
+        </p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row gy-4">
+
+  <div class="asset-grid">
+
+  <!-- TEMPLATE MEDSOS -->
+    <?php
+    // Ambil jenis dengan id_jenis = 1
+    $jenisQ = mysqli_query($koneksi, "SELECT id_jenis, nama_jenis FROM jenis WHERE id_jenis = 1");
+    if ($jenisQ && mysqli_num_rows($jenisQ) > 0) {
+        while ($j = mysqli_fetch_assoc($jenisQ)) {
+            // Ambil sub jenis untuk id_jenis = 1
+            $subQ = mysqli_query($koneksi, "SELECT id_sub_jenis, nama_sub_jenis FROM sub_jenis WHERE id_jenis = " . (int)$j['id_jenis'] . " ORDER BY nama_sub_jenis ASC");
+    ?>
+    <div class="asset-card">
+      <div class="card-content">
+        <div class="icon-circle blue">
+          <i class="bi bi-layout-text-window-reverse"></i>
+        </div>
+        <h4><?= htmlspecialchars($j['nama_jenis']) ?></h4>
+        <p>Konten visual siap pakai</p>
+      </div>
+
+      <div class="card-overlay">
+        <div class="overlay-menu">
+          <?php if ($subQ && mysqli_num_rows($subQ) > 0): ?>
+            <?php while ($s = mysqli_fetch_assoc($subQ)): ?>
+              <a href="aset.php?jenis=1&sub=<?= urlencode($s['id_sub_jenis']) ?>"><?= htmlspecialchars($s['nama_sub_jenis']) ?></a>
+            <?php endwhile; ?>
+          <?php else: ?>
+            <span style="color:#fff;">Tidak ada sub jenis tersedia</span> 
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+    <?php
+        }
+    }
+    ?>
+
+  
+
+
+
+      </div>
+
+    </section><!-- /Sumber Daya -->
+
   </main>
   <?php
   $content = ob_get_clean();
@@ -427,43 +487,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
   <!-- BOOTSTRAP ICONS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <style>
-    
-    .fc .fc-toolbar {
-      border: none !important;
-      border-bottom: none !important;
-    }
-    
-    .fc-toolbar-chunk {
-      border: none !important;
-    }
-    
-    
-    .fc .fc-daygrid-head-frame {
-      border: none !important;
-    }
-    
-    
-    .fc .fc-daygrid-day {
-      border: 1px solid #e0e0e0 !important;
-    }
-    
-    .fc .fc-col-header-cell {
-      border: 1px solid #e0e0e0 !important;
-    }
-    
-    .fc .fc-daygrid-day-frame {
-      border: 1px solid #e0e0e0 !important;
-    }
-    
-    .fc-theme-standard {
-      border: 1px solid #e0e0e0 !important;
-    }
-    
-    .fc .fc-daygrid-day-number {
-      padding: 6px 4px;
-    }
-  </style>
+  
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {

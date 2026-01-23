@@ -184,6 +184,194 @@ global $user;
         background: rgba(255, 255, 255, 0.2);
       }
 
+   
+    
+    .fc .fc-toolbar {
+      border: none !important;
+      border-bottom: none !important;
+    }
+    
+    .fc-toolbar-chunk {
+      border: none !important;
+    }
+    
+    
+    .fc .fc-daygrid-head-frame {
+      border: none !important;
+    }
+    
+    
+    .fc .fc-daygrid-day {
+      border: 1px solid #e0e0e0 !important;
+    }
+    
+    .fc .fc-col-header-cell {
+      border: 1px solid #e0e0e0 !important;
+    }
+    
+    .fc .fc-daygrid-day-frame {
+      border: 1px solid #e0e0e0 !important;
+    }
+    
+    .fc-theme-standard {
+      border: 1px solid #e0e0e0 !important;
+    }
+    
+    .fc .fc-daygrid-day-number {
+      padding: 6px 4px;
+    }
+/* ================= GRID ================= */
+.asset-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:28px;
+  margin-top:32px;
+}
+
+/* ================= CARD ================= */
+.asset-card{
+  position:relative;
+  background:#ffffff;
+  border-radius:22px;
+  padding:44px 30px;
+  text-align:center;
+  box-shadow:
+    0 18px 40px rgba(15,23,42,.08),
+    inset 0 1px 0 rgba(255,255,255,.7);
+  transition:.4s cubic-bezier(.16,1,.3,1);
+  overflow:hidden;
+  min-height:260px;
+}
+
+.asset-card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 30px 70px rgba(15,23,42,.16);
+}
+
+/* ================= CONTENT ================= */
+.card-content{
+  transition:.4s;
+}
+
+.icon-circle{
+  width:66px;
+  height:66px;
+  margin:0 auto 20px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  color:#fff;
+}
+
+.icon-circle.blue{
+  background:linear-gradient(135deg,#38bdf8,#2563eb);
+}
+.icon-circle.green{
+  background:linear-gradient(135deg,#4ade80,#16a34a);
+}
+
+/* ================= OVERLAY CARD (KELUAR DARI KIRI) ================= */
+.card-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,#0d6efd,#084298);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:24px;
+
+  transform:translateX(-100%);
+  transition:.45s cubic-bezier(.16,1,.3,1);
+  z-index:10;
+}
+
+.asset-card:hover .card-overlay{
+  transform:translateX(0);
+}
+
+.asset-card:hover .card-content{
+  filter:blur(3px);
+}
+
+/* ================= MENU GRID ================= */
+.overlay-menu{
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(160px,1fr));
+  gap:18px;
+}
+
+/* ================= BUTTON (TANPA OVERLAY) ================= */
+.overlay-menu a{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  height:70px;
+  padding:0 22px;
+
+  border-radius:18px;
+  background:rgba(255,255,255,0.18);
+  backdrop-filter:blur(6px);
+
+  color:#ffffff;
+  font-size:15px;
+  font-weight:600;
+  text-decoration:none;
+  text-align:center;
+
+  border:1px solid rgba(255,255,255,0.28);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.35);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    background .25s ease,
+    color .25s ease;
+}
+
+/* ================= HOVER BUTTON ================= */
+.overlay-menu a:hover{
+  transform:translateY(-6px) scale(1.03);
+  background:rgba(255,255,255,0.35);
+  color:#0f172a;
+  box-shadow:
+    0 20px 45px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width:992px){
+  .overlay-menu{
+    grid-template-columns:repeat(3,minmax(140px,1fr));
+  }
+}
+
+@media (max-width:768px){
+  .overlay-menu{
+    grid-template-columns:repeat(2,minmax(140px,1fr));
+  }
+}
+
+@media (max-width:480px){
+  .overlay-menu{
+    grid-template-columns:1fr;
+  }
+  .overlay-menu a{
+    height:62px;
+    font-size:14px;
+  }
+}
+
+
+
+
+
       #footer {
         background: #3d4d6a;
         color: #fff;
@@ -258,7 +446,7 @@ global $user;
           <li><a href="#services">Manajemen</a></li>
           <li><a href="#portfolio">Dokumentasi</a></li>
           <li><a href="#team">Pengembangan</a></li>
-          <li><a href="#pricing">Sumber Daya</a></li>
+          <li><a href="#sumberdaya">Sumber Daya</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>

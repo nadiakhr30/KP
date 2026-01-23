@@ -7,191 +7,252 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
     exit;
 }
 
-/* ================= FILTER JENIS ================= */
+/* ================= FILTER ================= */
 $filterJenis = $_GET['jenis'] ?? 'all';
-
 $where = "";
-$title = "Daftar Aset";
+
+/* Breadcrumb & Title */
+$breadcrumbTitle = "Daftar Aset";
 $subtitle = "Aset visual, barang, dan lisensi Humas";
 
-if (in_array($filterJenis, ['1','2','3'])) {
-    $where = "WHERE a.jenis_aset = '$filterJenis'";
-
-    if ($filterJenis == '1') {
-        $title = "Aset Visual";
-        $subtitle = "Kumpulan aset visual Humas";
-    } elseif ($filterJenis == '2') {
-        $title = "Aset Barang";
-        $subtitle = "Kumpulan aset barang Humas";
-    } elseif ($filterJenis == '3') {
-        $title = "Aset Lisensi";
-        $subtitle = "Kumpulan aset lisensi Humas";
-    }
+if ($filterJenis == '1') {
+    $breadcrumbTitle = "Aset Visual";
+    $subtitle = "Kumpulan aset visual Humas";
+    $where = "WHERE a.id_jenis_aset = '1'";
+} elseif ($filterJenis == '2') {
+    $breadcrumbTitle = "Aset Barang";
+    $subtitle = "Kumpulan aset barang Humas";
+    $where = "WHERE a.id_jenis_aset = '2'";
+} elseif ($filterJenis == '3') {
+    $breadcrumbTitle = "Aset Lisensi";
+    $subtitle = "Kumpulan aset lisensi Humas";
+    $where = "WHERE a.id_jenis_aset = '3'";
 }
-
-ob_start();
 ?>
-
-<section class="section aset-section">
-  <div class="container" data-aos="fade-up">
-
-    <div class="section-title text-center mb-5">
-      <h2 class="fw-bold"><?= $title ?></h2>
-      <p class="text-muted"><?= $subtitle ?></p>
-    </div>
-
-    <div class="text-center mb-4">
-      <a href="aset.php" class="btn btn-outline-secondary btn-sm">Semua</a>
-      <a href="aset.php?jenis=1" class="btn btn-outline-primary btn-sm">Visual</a>
-      <a href="aset.php?jenis=2" class="btn btn-outline-success btn-sm">Barang</a>
-      <a href="aset.php?jenis=3" class="btn btn-outline-warning btn-sm">Lisensi</a>
-    </div>
-
-    <div class="row g-4">
-
-      <?php
-      $query = mysqli_query($koneksi, "
-        SELECT 
-          a.id_aset,
-          a.nama_aset,
-          a.deskripsi,
-          a.jenis_aset,
-          a.foto_aset,
-          a.link_aset,
-          a.tanggal_ditambahkan,
-          u.nama AS pemegang
-        FROM aset a
-        LEFT JOIN user u ON a.nip_pemegang = u.nip
-        $where
-        ORDER BY a.tanggal_ditambahkan DESC
-      ");
-
-      if (mysqli_num_rows($query) == 0) {
-        echo '<div class="col-12"><div class="text-center text-muted py-5">Data aset tidak tersedia</div></div>';
-      }
-
-      while ($aset = mysqli_fetch_assoc($query)) {
-
-        switch ($aset['jenis_aset']) {
-          case '1':
-            $jenis = 'Aset Visual';
-            $badge = 'primary';
-            $icon  = 'bi-image';
-            break;
-          case '2':
-            $jenis = 'Aset Barang';
-            $badge = 'success';
-            $icon  = 'bi-box-seam';
-            break;
-          case '3':
-            $jenis = 'Aset Lisensi';
-            $badge = 'warning';
-            $icon  = 'bi-patch-check';
-            break;
-          default:
-            $jenis = 'Aset Lainnya';
-            $badge = 'secondary';
-            $icon  = 'bi-file';
-        }
-      ?>
-
-      <div class="col-lg-4 col-md-6">
-        <div class="card asset-card h-100 border-0">
-
-          <!-- FOTO ASET / DEFAULT NO IMAGE -->
-          <div class="asset-img">
-            <?php if (!empty($aset['foto_aset'])) { ?>
-              <img 
-                src="../uploads/aset/<?= htmlspecialchars($aset['foto_aset']) ?>" 
-                alt="<?= htmlspecialchars($aset['nama_aset']) ?>"
-                onerror="this.src='assets/img/noimage.png'">
-            <?php } else { ?>
-              <img 
-                src="assets/img/noimage.png"
-                alt="No Image"
-                class="img-fluid no
-
-            <p class="text-muted small">
-              <?= nl2br(htmlspecialchars($aset['keterangan'])) ?>
-            </p>
-          </div>
-
-          <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center">
-            <div class="small">
-              <div class="text-muted fw-semibold">Penanggung Jawab</div>
-              <hr>
-              <div class="fw-bold">
-                <i class="bi bi-person-check"></i>
-                <?= htmlspecialchars($aset['pemegang'] ?? '-') ?>
-              </div>
-            </div>
-
-            <?php if ($aset['link']) { ?>
-              <a href="<?= htmlspecialchars($aset['link']) ?>" 
-                 target="_blank"
-                 class="asset-icon text-<?= $badge ?>">
-                <i class="bi <?= $icon ?>"></i>
-              </a>
-            <?php } ?>
-          </div>
-
-        </div>
-      </div>
-
-      <?php } ?>
-
-    </div>
-  </div>
-</section>
-
-<?php
-$content = ob_get_clean();
-ob_start();
-?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title><?= $breadcrumbTitle ?></title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 <style>
-.page-aset #header,
-.page-aset #header.header-scrolled {
-  background: #3d4d6a !important;
-  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+*{font-family:Poppins,sans-serif}
+body{
+  margin:0;
+  background:linear-gradient(180deg,#f8fafc,#eef2f7);
+  padding:32px;
+  color:#0f172a
+}
+.page-wrapper{max-width:1200px;margin:auto}
+
+/* ===== BREADCRUMB ===== */
+.breadcrumb-custom{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:14px;
+  margin-bottom:24px;
+}
+.breadcrumb-custom i{
+  background:#2563eb;
+  color:#fff;
+  padding:8px;
+  border-radius:10px;
+  font-size:14px;
+}
+.breadcrumb-active{
+  font-weight:600;
+  color:#0f172a;
 }
 
-.aset-section {
-  margin-top: 120px;
+/* ===== HEADER SECTION ===== */
+.header{
+  background:#fff;
+  border-radius:20px;
+  padding:28px 32px;
+  box-shadow:0 10px 30px rgba(15,23,42,.08);
+  margin-bottom:28px;
+}
+.header h2{
+  margin:0;
+  font-size:26px;
+  font-weight:700;
+}
+.header p{
+  margin-top:8px;
+  color:#64748b;
+  font-size:14px;
 }
 
-.asset-card {
-  border-radius: 18px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.06);
-  transition: .3s ease;
+/* ===== FILTER ===== */
+.filter-wrapper{
+  background:#fff;
+  border-radius:16px;
+  padding:14px;
+  box-shadow:0 6px 20px rgba(15,23,42,.06);
+  margin-bottom:30px;
+}
+.filter{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.filter a{
+  padding:8px 22px;
+  border-radius:999px;
+  border:1px solid #e2e8f0;
+  text-decoration:none;
+  color:#334155;
+  background:#f8fafc;
+  font-size:14px;
+  font-weight:500;
+  transition:.25s;
+}
+.filter a:hover{
+  background:#e0e7ff;
+  border-color:#2563eb;
+  color:#2563eb;
+}
+.filter a.active{
+  background:#2563eb;
+  color:#fff;
+  border-color:#2563eb;
 }
 
-.asset-img {
-  height: 200px;
-  overflow: hidden;
-  border-radius: 18px 18px 0 0;
+/* ===== GRID ===== */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:24px;
 }
 
-.asset-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* ===== CARD (TIDAK DIUBAH) ===== */
+.card{
+  background:#fff;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 6px 24px rgba(15,23,42,.06);
+  transition:.25s ease;
+}
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 14px 40px rgba(15,23,42,.12);
 }
 
-.noimage {
-  object-fit: contain;
-  padding: 30px;
-  opacity: .8;
+.thumb{height:160px;background:#e5e7eb}
+.thumb img{width:100%;height:100%;object-fit:cover}
+
+.body{padding:16px;display:flex;flex-direction:column;gap:10px}
+
+.badge{
+  width:max-content;
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-weight:600;
+  color:#fff;
 }
+.primary{background:#2563eb}
+.success{background:#16a34a}
+.warning{background:#f59e0b}
+.secondary{background:#64748b}
+
+.body h4{margin:0;font-size:16px;font-weight:600}
+.body p{font-size:13px;color:#64748b;line-height:1.5}
+
+.footer{
+  margin-top:auto;
+  padding-top:10px;
+  border-top:1px solid #eef2f7;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.footer small{font-size:11px;color:#6b7280}
+.footer strong{font-size:13px}
+
+.open{font-size:18px;color:#2563eb;text-decoration:none}
 </style>
+</head>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  document.body.classList.add("page-aset");
-});
-</script>
+<body>
+<div class="page-wrapper">
 
-<?php
-$script = ob_get_clean();
-include 'layout.php';
-renderLayout($content, $script);
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb-custom">
+    <a href="index.php" class="breadcrumb-link">
+        <i class="bi bi-house-fill"></i>
+    </a>
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-active"><?= $breadcrumbTitle ?></span>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <h2><?= $breadcrumbTitle ?></h2>
+    <p><?= $subtitle ?></p>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-wrapper">
+    <div class="filter">
+      <a href="aset.php" class="<?= $filterJenis == 'all' ? 'active' : '' ?>">Semua</a>
+      <a href="aset.php?jenis=1" class="<?= $filterJenis == '1' ? 'active' : '' ?>">Visual</a>
+      <a href="aset.php?jenis=2" class="<?= $filterJenis == '2' ? 'active' : '' ?>">Barang</a>
+      <a href="aset.php?jenis=3" class="<?= $filterJenis == '3' ? 'active' : '' ?>">Lisensi</a>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid">
+  <?php
+    $q = mysqli_query($koneksi,"
+      SELECT a.*, u.nama AS pemegang
+      FROM aset a
+      LEFT JOIN user u ON a.nip = u.nip
+      $where
+      ORDER BY a.id_aset DESC
+    ");
+
+    if (mysqli_num_rows($q) == 0) {
+        echo '<div style="color:#64748b">Data aset tidak tersedia</div>';
+    }
+
+    while($a = mysqli_fetch_assoc($q)){
+      switch($a['id_jenis_aset']){
+        case '1': $jenis="Visual"; $badge="primary"; $icon="bi-image"; break;
+        case '2': $jenis="Barang"; $badge="success"; $icon="bi-box"; break;
+        case '3': $jenis="Lisensi"; $badge="warning"; $icon="bi-patch-check"; break;
+        default:  $jenis="Lainnya"; $badge="secondary"; $icon="bi-file";
+      }
+  ?>
+    <div class="card">
+      <div class="thumb">
+        <img src="assets/img/noimage.png">
+      </div>
+      <div class="body">
+        <span class="badge <?= $badge ?>">
+          <i class="bi <?= $icon ?>"></i> <?= $jenis ?>
+        </span>
+        <h4><?= htmlspecialchars($a['nama']) ?></h4>
+        <p><?= htmlspecialchars($a['keterangan']) ?></p>
+        <div class="footer">
+          <div>
+            <small>Penanggung Jawab</small><br>
+            <strong><?= htmlspecialchars($a['pemegang'] ?? '-') ?></strong>
+          </div>
+          <?php if(!empty($a['link'])){ ?>
+            <a href="<?= htmlspecialchars($a['link']) ?>" target="_blank" class="open">
+              <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+          <?php } ?>
+        </div>
+      </div>
+    </div>
+  <?php } ?>
+  </div>
+
+</div>
+</body>
+</html>

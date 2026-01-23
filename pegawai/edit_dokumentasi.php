@@ -105,70 +105,144 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         * {
             font-family: 'Poppins', sans-serif !important;
         }
+        body {
+            min-height: 100vh;
+            padding: 40px 20px;
+            background: #f7fbff;
+        }
+        .page-wrapper {
+            max-width: 800px;
+            margin: auto;
+        }
+        .breadcrumb-custom {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            color: #009cfd;
+            font-size: 14px;
+        }
+        .breadcrumb-link { color: #009cfd; text-decoration: none; }
+        .breadcrumb-separator { color: #b0b0b0; }
+        .breadcrumb-active { color: #009cfd; font-weight: 600; }
+
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 156, 253, 0.12);
+            padding: 32px;
+            position: relative;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+        .info-table tr { border-bottom: 1px solid #eee; }
+        .info-table th { text-align: left; padding: 10px 0; width: 30%; font-weight: 600; color: #666; }
+        .info-table td { padding: 10px 0; color: #333; }
+
+        .form-section { margin-top: 12px; }
+        .btn-save { background: #009cfd; border: none; }
+        .btn-save:hover { background: #007acc; }
+
+        .btn-cancel { background: #f0f0f0; border: none; color: #333; }
+
+        .doc-preview { margin-top: 10px; }
+        .doc-preview img, .doc-preview video { max-width: 100%; border-radius: 8px; display: block; }
     </style>
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">
-                            <?= $mode == 'dokumentasi' ? 'Edit Dokumentasi' : 'Edit Link Publikasi' ?>
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <h6 class="mb-3 text-muted"><?= $jadwal['judul_kegiatan'] ?></h6>
-                        
-                        <form method="POST" enctype="multipart/form-data">
-                            <?php if ($mode == 'dokumentasi'): ?>
-                                <div class="mb-3">
-                                    <label class="form-label">Upload Dokumentasi (Foto/Video)</label>
-                                    <input type="file" name="file_dokumentasi" class="form-control" accept="image/*,video/*" required>
-                                    <small class="text-muted d-block mt-2">Format: JPG, PNG, MP4, dll</small>
-                                </div>
-                                <?php if (!empty($jadwal['dokumentasi'])): ?>
+<body>
+    <div class="page-wrapper">
+        <div class="breadcrumb-custom">
+            <a href="index.php" class="breadcrumb-link">
+                <i class="bi bi-house-fill"></i>
+            </a>
+            
+            <span class="breadcrumb-separator">›</span>
+            <span class="breadcrumb-active"><?= $mode == 'dokumentasi' ? 'Edit Dokumentasi' : 'Edit Link Publikasi' ?></span>
+        </div>
+
+        <div class="profile-card">
+            <div class="card-title">
+                <i class="bi bi-camera-reels"></i>
+                <?= $mode == 'dokumentasi' ? 'Edit Dokumentasi' : 'Edit Link Publikasi' ?>
+            </div>
+
+            <table class="info-table">
+                <tr>
+                    <th>Judul Kegiatan</th>
+                    <td><?= htmlspecialchars($jadwal['judul_kegiatan']) ?></td>
+                </tr>
+                
+            </table>
+
+            <div class="form-section">
+                <form method="POST" enctype="multipart/form-data">
+                    <?php if ($mode == 'dokumentasi'): ?>
+                        <div class="mb-3">
+                            <label class="form-label">Upload Dokumentasi (Foto/Video)</label>
+                            <input type="file" name="file_dokumentasi" class="form-control" accept="image/*,video/*" required>
+                            <small class="text-muted d-block mt-2">Format: JPG, PNG, MP4, dll</small>
+                        </div>
+
+                        <?php if (!empty($jadwal['dokumentasi'])): ?>
+                            <div class="doc-preview">
+                                <?php $doc = $jadwal['dokumentasi']; ?>
+                                <?php if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $doc)): ?>
+                                    <img src="<?= $doc ?>" alt="Dokumentasi">
+                                <?php elseif (preg_match('/\.(mp4|webm|ogg)$/i', $doc)): ?>
+                                    <video controls src="<?= $doc ?>"></video>
+                                <?php else: ?>
                                     <div class="alert alert-info">
-                                        <small><i class="bi bi-info-circle"></i> Dokumentasi saat ini: 
-                                            <a href="<?= $jadwal['dokumentasi'] ?>" target="_blank">Lihat</a>
-                                        </small>
+                                        <small><i class="bi bi-info-circle"></i> Dokumentasi saat ini: <a href="<?= $doc ?>" target="_blank">Lihat</a></small>
                                     </div>
                                 <?php endif; ?>
-                            <?php elseif ($mode == 'publikasi'): ?>
-                                <div class="mb-3">
-                                    <label class="form-label"><i class="bi bi-instagram"></i> Link Instagram</label>
-                                    <input type="url" name="link_instagram" class="form-control" value="<?= htmlspecialchars($jadwal['link_instagram'] ?? '') ?>">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label"><i class="bi bi-facebook"></i> Link Facebook</label>
-                                    <input type="url" name="link_facebook" class="form-control" value="<?= htmlspecialchars($jadwal['link_facebook'] ?? '') ?>" >
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label"><i class="bi bi-youtube"></i> Link YouTube</label>
-                                    <input type="url" name="link_youtube" class="form-control" value="<?= htmlspecialchars($jadwal['link_youtube'] ?? '') ?>" >
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label"><i class="bi bi-globe"></i> Link Website</label>
-                                    <input type="url" name="link_website" class="form-control" value="<?= htmlspecialchars($jadwal['link_website'] ?? '') ?>" >
-                                </div>
-                                <div class="alert alert-warning">
-                                    <small><i class="bi bi-info-circle"></i> Status akan otomatis berubah ke "Selesai" ketika dokumentasi dan minimal 1 link publikasi terisi.</small>
-                                </div>
-                            <?php endif; ?>
-                            
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check-circle"></i> Simpan
-                                </button>
-                                <a href="viewjadwal.php" class="btn btn-secondary">
-                                    <i class="bi bi-x-circle"></i> Batal
-                                </a>
                             </div>
-                        </form>
+                        <?php endif; ?>
+
+                    <?php elseif ($mode == 'publikasi'): ?>
+                        <div class="mb-3">
+                            <label class="form-label"><i class="bi bi-instagram"></i> Link Instagram</label>
+                            <input type="url" name="link_instagram" class="form-control" value="<?= htmlspecialchars($jadwal['link_instagram'] ?? '') ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><i class="bi bi-facebook"></i> Link Facebook</label>
+                            <input type="url" name="link_facebook" class="form-control" value="<?= htmlspecialchars($jadwal['link_facebook'] ?? '') ?>" >
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><i class="bi bi-youtube"></i> Link YouTube</label>
+                            <input type="url" name="link_youtube" class="form-control" value="<?= htmlspecialchars($jadwal['link_youtube'] ?? '') ?>" >
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><i class="bi bi-globe"></i> Link Website</label>
+                            <input type="url" name="link_website" class="form-control" value="<?= htmlspecialchars($jadwal['link_website'] ?? '') ?>" >
+                        </div>
+                        <div class="alert alert-warning">
+                            <small><i class="bi bi-info-circle"></i> Status akan otomatis berubah ke "Selesai" ketika dokumentasi dan minimal 1 link publikasi terisi.</small>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-save btn-primary">
+                            <i class="bi bi-check-circle"></i> Simpan
+                        </button>
+                        <a href="index.php" class="btn btn-cancel btn-secondary">
+                            <i class="bi bi-x-circle"></i> Batal
+                        </a>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
