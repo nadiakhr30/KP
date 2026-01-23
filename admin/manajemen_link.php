@@ -92,13 +92,22 @@ while ($row = mysqli_fetch_assoc($qLink)) {
                                             </tr>
                                         </thead>
                                         <tbody>
+<?php if (count($dataLinks) === 0): ?>
+<tr>
+  <td colspan="5" class="text-center">Tidak ada data link tersedia.</td>
+</tr>
+<?php else: ?>
 <?php foreach ($dataLinks as $link) : ?>
 <tr>
   <td><?= $link['id_link']; ?></td>
   <td><?= htmlspecialchars($link['nama_link']); ?></td>
   <td>
     <?php if ($link['gambar']) : ?>
-      <img src="../uploads/<?= htmlspecialchars($link['gambar']); ?>" width="40" style="border-radius: 50%;">
+      <a href="../uploads/<?= htmlspecialchars($link['gambar']); ?>" class="glightbox" data-gallery="gallery">
+        <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: inline-block;">
+          <img src="../uploads/<?= htmlspecialchars($link['gambar']); ?>" style="width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer;">
+        </div>
+      </a>
     <?php else : ?>
       <span class="badge bg-secondary">-</span>
     <?php endif; ?>
@@ -108,15 +117,16 @@ while ($row = mysqli_fetch_assoc($qLink)) {
     <a href="edit/edit_link.php?id=<?= $link['id_link']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
       <i class="ti-pencil text-dark"></i>
     </a>
-    <a href="hapus/hapus_link.php?id=<?= $link['id_link']; ?>"
-       class="btn waves-effect waves-light btn-danger btn-icon"
-       onclick="return confirm('Yakin hapus link ini?')"
-       title="Hapus">
+    <button type="button" 
+            class="btn waves-effect waves-light btn-danger btn-icon"
+            onclick="deleteLink(<?= $link['id_link']; ?>, '<?= htmlspecialchars($link['nama_link']); ?>')"
+            title="Hapus">
        <i class="ti-trash text-dark"></i>
-    </a>
+    </button>
   </td>
 </tr>
 <?php endforeach; ?>
+<?php endif; ?>
                                         </tbody>
                                         <tfoot>
                                             <tr>
@@ -149,20 +159,27 @@ while ($row = mysqli_fetch_assoc($qLink)) {
                                 </div>
                             </div>
                             <div class="row users-card">
+                                <?php if (count($dataLinks) === 0): ?>
+                                    <div class="col-12 text-center">
+                                        <p>Tidak ada data link tersedia.</p>
+                                    </div>
+                                <?php else: ?>
                                 <?php foreach ($dataLinks as $link) : ?>
                                 <div class="col-lg-4 col-xl-3 col-md-6">
                                     <div class="card rounded-card user-card">
                                         <div class="card-block">
                                             <div class="img-hover avatar-wrapper">
                                                 <?php if ($link['gambar']) : ?>
-                                                    <img src="../uploads/<?= htmlspecialchars($link['gambar']); ?>" class="avatar-img" alt="<?= htmlspecialchars($link['judul']); ?>">
+                                                    <a href="../uploads/<?= htmlspecialchars($link['gambar']); ?>" class="glightbox" data-gallery="links">
+                                                        <img src="../uploads/<?= htmlspecialchars($link['gambar']); ?>" class="avatar-img" alt="<?= htmlspecialchars($link['nama_link']); ?>" style="cursor: pointer;">
+                                                    </a>
                                                 <?php else : ?>
-                                                    <img src="../images/noimages.jpg" class="avatar-img" alt="No Image">
+                                                    <img src="../images/no.jpg" class="avatar-img" alt="No Image">
                                                 <?php endif; ?>
                                                 <div class="img-overlay img-radius">
                                                     <span>
                                                         <a href="edit/edit_link.php?id=<?= $link['id_link']; ?>" class="btn btn-sm btn-primary"><i class="ti-pencil"></i></a>
-                                                        <a href="hapus/hapus_link.php?id=<?= $link['id_link']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin hapus link ini?')"><i class="ti-trash"></i></a>
+                                                        <button type="button" class="btn btn-sm btn-danger" onclick="deleteLink(<?= $link['id_link']; ?>, '<?= htmlspecialchars($link['nama_link']); ?>')"><i class="ti-trash"></i></button>
                                                     </span>
                                                 </div>
                                             </div>
@@ -174,6 +191,7 @@ while ($row = mysqli_fetch_assoc($qLink)) {
                                     </div>
                                 </div>
                                 <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -186,6 +204,63 @@ while ($row = mysqli_fetch_assoc($qLink)) {
 $content = ob_get_clean();
 ob_start();
 ?>
+<!-- Lightbox Library -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+
+<!-- Delete Modal with Artistic Design -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+            <div class="modal-header border-0" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: 15px 15px 0 0;">
+                <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+                    <i class="ti-trash" style="font-size: 24px; color: white;"></i>
+                    <h5 class="modal-title" id="deleteModalLabel" style="color: white; margin: 0; font-weight: 700;">Konfirmasi Hapus</h5>
+                </div>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 1;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <i class="ti-alert" style="font-size: 48px; color: #e74c3c;"></i>
+                </div>
+                <p style="font-size: 16px; color: #2c3e50; margin: 15px 0;">Apakah Anda yakin ingin menghapus link</p>
+                <p style="font-size: 18px; color: #e74c3c; font-weight: 700; margin: 15px 0;"><strong id="deleteLinkName"></strong>?</p>
+                <p style="color: #7f8c8d; font-size: 14px; margin: 15px 0;">
+                    <i class="ti-alert-alt" style="margin-right: 8px;"></i>
+                    Tindakan ini tidak dapat dibatalkan.
+                </p>
+                <input type="hidden" id="deleteLinkId" value="">
+            </div>
+            <div class="modal-footer border-0" style="padding: 20px 30px; background: rgba(0, 0, 0, 0.02);">
+                <button type="button" class="btn" data-dismiss="modal" style="background: #95a5a6; color: white; border-radius: 8px; padding: 8px 20px; font-weight: 500;">
+                    <i class="ti-close" style="margin-right: 5px;"></i> Batal
+                </button>
+                <button type="button" class="btn" id="confirmDelete" style="background: #e74c3c; color: white; border-radius: 8px; padding: 8px 20px; font-weight: 500;">
+                    <i class="ti-trash" style="margin-right: 5px;"></i> Hapus
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function deleteLink(id, namaLink) {
+        document.getElementById('deleteLinkId').value = id;
+        document.getElementById('deleteLinkName').textContent = namaLink;
+        $('#deleteModal').modal('show');
+    }
+    
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        const id = document.getElementById('deleteLinkId').value;
+        window.location.href = 'hapus/hapus_link.php?id=' + id;
+    });
+    
+    const lightbox = GLightbox({
+        selector: '.glightbox'
+    });
+</script>
 <?php
 $script = ob_get_clean();
 include 'layout.php';

@@ -314,8 +314,13 @@ if ($skill_result) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah User</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins&family=Jost&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
     <style>
         .nav-tabs .nav-link {
             color: #495057;
@@ -396,15 +401,10 @@ if ($skill_result) {
         }
     </style>
 </head>
-
-<body>
-
-<div class="container mt-5">
-    <div class="row justify-content-center">
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
         <div class="col-md-10">
-
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
+            <div class="card">
+                <div class="card-header">
                     <h5 class="mb-0">Tambah User</h5>
                 </div>
                 <div class="card-body">
@@ -441,7 +441,7 @@ if ($skill_result) {
                     <!-- Tab Content -->
                     <div class="tab-content">
                         <!-- Input Manual Tab -->
-                        <div class="tab-pane fade <?php echo $activeTab === 'input' ? 'show active' : ''; ?>" id="input-pane" role="tabpanel">
+                        <div class="tab-pane m-t-10 fade <?php echo $activeTab === 'input' ? 'show active' : ''; ?>" id="input-pane" role="tabpanel">
                             <form method="POST" action="">
                                 <input type="hidden" name="tab" value="input">
 
@@ -596,12 +596,12 @@ if ($skill_result) {
                                 </div>
                                 
                                 <div class="form-group mt-4 d-flex justify-content-between">
-                                    <button type="submit" class="btn btn-primary mr-2">
-                                        <i class="fas fa-save"></i> Simpan
-                                    </button>
-                                    <a href="../manajemen_user.php" class="btn btn-secondary">
+                                    <a href="../manajemen_user.php" class="btn btn-secondary mr-2">
                                         Batal
                                     </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        Simpan
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -800,10 +800,7 @@ if ($skill_result) {
 
                 </div>
             </div>
-
         </div>
-    </div>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>

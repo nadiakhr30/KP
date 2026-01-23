@@ -286,6 +286,27 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                             <form method="POST" enctype="multipart/form-data">
 
                                 <div class="form-group">
+                                    <label>Upload Gambar (Opsional)</label>
+                                    <div class="text-center" style="margin-bottom: 15px;">
+                                        <div id="gambarPreview" style="display: none; text-align: center; width: 120px; height: 120px; margin: 0 auto 15px;">
+                                            <img id="previewImg" src="" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input
+                                            type="file"
+                                            name="gambar"
+                                            class="form-control"
+                                            id="gambarInput"
+                                            accept="image/*"
+                                        >
+                                        <small class="text-muted">
+                                            Jika tidak upload, gambar akan dikosongkan
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
                                     <label>Nama Instansi / Website <span class="text-danger">*</span></label>
                                     <input
                                         type="text"
@@ -305,19 +326,6 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                                         required
                                         value="<?= isset($_POST['link']) ? htmlspecialchars($_POST['link']) : '' ?>"
                                     >
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Upload Gambar (Opsional)</label>
-                                    <input
-                                        type="file"
-                                        name="gambar"
-                                        class="form-control"
-                                        accept="image/*"
-                                    >
-                                    <small class="text-muted">
-                                        Jika tidak upload, gambar akan dikosongkan
-                                    </small>
                                 </div>
 
                                 <div class="form-group d-flex justify-content-between mt-4">
@@ -441,10 +449,27 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('fileInput');
         const uploadForm = document.getElementById('uploadForm');
-        const uploadBtn = document.getElementById('uploadBtn');
         const uploadProgress = document.getElementById('uploadProgress');
         const confirmCheckbox = document.getElementById('confirmCheckbox');
         const submitBtn = document.getElementById('submitBtn');
+        const gambarInput = document.getElementById('gambarInput');
+
+        // Image preview for input tab
+        if (gambarInput) {
+            gambarInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('previewImg').src = event.target.result;
+                        document.getElementById('gambarPreview').style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    document.getElementById('gambarPreview').style.display = 'none';
+                }
+            });
+        }
 
         // Handle upload section
         if (dropzone && fileInput && uploadForm) {
@@ -473,9 +498,7 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                 if (fileInput.files.length > 0) {
                     // Show loading progress
                     dropzone.style.display = 'none';
-                    if (uploadBtn) uploadBtn.style.display = 'none';
                     if (uploadProgress) uploadProgress.style.display = 'block';
-                    if (uploadBtn) uploadBtn.disabled = true;
 
                     // Submit form after short delay to ensure UI updates
                     setTimeout(() => {

@@ -161,6 +161,11 @@ function badge($text, $color) {
                                             </tr>
                                         </thead>
                                         <tbody>
+<?php if (count($dataUsers) === 0): ?>
+<tr>
+  <td colspan="12" class="text-center">Tidak ada data user tersedia.</td>
+</tr>
+<?php else: ?>
 <?php foreach ($dataUsers as $user) : ?>
 <tr>
   <td><?= $user['nip']; ?></td>
@@ -170,8 +175,8 @@ function badge($text, $color) {
   <td><?= htmlspecialchars($user['nama_role'] ?? '-'); ?></td>
   <td>
     <?php if ($user['foto_profil']) : ?>
-      <a href="../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" class="glightbox" data-gallery="gallery">
-        <img src="../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" width="40" style="border-radius: 50%; cursor: pointer;">
+      <a href="../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" class="glightbox" data-gallery="gallery"  style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: inline-block;">
+        <img src="../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" class="avatar-img" style="cursor: pointer;">
       </a>
     <?php else : ?>
       <span class="badge bg-secondary">-</span>
@@ -225,6 +230,7 @@ function badge($text, $color) {
   </td>
 </tr>
 <?php endforeach; ?>
+<?php endif; ?>
                                         </tbody>
                                         <tfoot>
                                             <tr>
@@ -252,7 +258,7 @@ function badge($text, $color) {
                                     <div class="dropdown-info dropdown open">
                                         <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak2" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                         <div class="dropdown-menu" aria-labelledby="cetak2" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                            <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=print" target="_blank">Print</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=print">Print</a>
                                             <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=excel">Excel</a>
                                             <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=json">JSON</a>
                                             <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=csv">CSV</a>
@@ -270,6 +276,11 @@ function badge($text, $color) {
                                 </div>
                             </div>
                             <div class="row users-card">
+                                <?php if (count($dataUsers) === 0): ?>
+                                    <div class="col-12 text-center">
+                                        <p>Tidak ada data user tersedia.</p>
+                                    </div>
+                                <?php else: ?>
                                 <?php foreach ($dataUsers as $pengguna) : ?>
                                 <div class="col-lg-4 col-xl-3 col-md-6">
                                     <div class="card rounded-card user-card">
@@ -311,6 +322,7 @@ function badge($text, $color) {
                                     </div>
                                 </div>
                                 <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

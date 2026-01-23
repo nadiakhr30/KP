@@ -100,6 +100,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <form method="POST" enctype="multipart/form-data">
                         <div class="form-group">
+                            <label>Gambar</label>
+                            <div class="text-center" style="margin-bottom: 15px;">
+                                <div id="gambarPreview" style="width: 120px; height: 120px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
+                                    <?php if ($data['gambar']): ?>
+                                        <img id="previewImg" src="../../uploads/<?= htmlspecialchars($data['gambar']); ?>" alt="Preview" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">
+                                    <?php else: ?>
+                                        <img id="previewImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect fill='%23ddd' width='120' height='120'/%3E%3Ctext x='50%' y='50%' text-anchor='middle' dy='.3em' fill='%23999' font-size='14'%3ENo Image%3C/text%3E%3C/svg%3E" alt="Preview" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <input type="file" id="gambarInput" name="gambar" class="form-control" accept="image/*">
+                            <small class="text-muted">Biarkan kosong untuk tidak mengubah gambar</small>
+                        </div>
+
+                        <div class="form-group">
                             <label>Nama Link <span class="text-danger">*</span></label>
                             <input type="text" name="nama_link" class="form-control" required 
                                    value="<?= htmlspecialchars($data['nama_link']) ?>">
@@ -109,18 +124,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label>Link Website <span class="text-danger">*</span></label>
                             <input type="url" name="link" class="form-control" required 
                                    value="<?= htmlspecialchars($data['link']) ?>">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Gambar</label>
-                            <?php if ($data['gambar']): ?>
-                                <div class="mb-2">
-                                    <img src="../../uploads/<?= htmlspecialchars($data['gambar']); ?>" width="100" style="border-radius: 5px;">
-                                    <br><small class="text-muted">Gambar saat ini</small>
-                                </div>
-                            <?php endif; ?>
-                            <input type="file" name="gambar" class="form-control" accept="image/*">
-                            <small class="text-muted">Biarkan kosong untuk tidak mengubah gambar</small>
                         </div>
 
                         <div class="form-group d-flex justify-content-between mt-4">
@@ -135,5 +138,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const gambarInput = document.getElementById('gambarInput');
+    gambarInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('previewImg').src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 </body>
 </html>

@@ -148,6 +148,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <?php if (count($dataHaloPSTs) === 0): ?>
+                                                <tr>
+                                                  <td colspan="3" class="text-center">Tidak ada data Halo PST tersedia.</td>
+                                                </tr>
+                                                <?php else: ?>
                                                 <?php foreach ($dataHaloPSTs as $pst) : ?>
                                                 <tr>
                                                   <td><?= $pst['id_halo_pst']; ?></td>
@@ -158,12 +163,13 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                     </a>
                                                     <a href="hapus/hapus_halo_pst.php?id=<?= $pst['id_halo_pst']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
-                                                       onclick="return confirm('Yakin hapus bagian ini?')">
+                                                       onclick="return confirmDelete('hapus/hapus_halo_pst.php?id=<?= $pst['id_halo_pst']; ?>')">
                                                        <i class="ti-trash text-dark"></i>
                                                     </a>
                                                   </td>
                                                 </tr>
                                                 <?php endforeach; ?>
+                                                <?php endif; ?>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
@@ -187,6 +193,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </div>
                                     </div>
                                     <div class="row users-card p-3">
+                                        <?php if (count($dataHaloPSTs) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Halo PST tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
                                         <?php foreach ($dataHaloPSTs as $halo) : ?>
                                         <div class="col-lg-3 col-md-4">
                                             <div class="card rounded-card user-card">
@@ -198,7 +209,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                         </a>
                                                         <a href="hapus/hapus_halo_pst.php?id=<?= $halo['id_halo_pst']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirm('Yakin hapus bagian ini?')"
+                                                           onclick="return confirmDelete('hapus/hapus_halo_pst.php?id=<?= $halo['id_halo_pst']; ?>')"
                                                            title="Hapus">
                                                            <i class="ti-trash text-dark"></i>
                                                         </a>
@@ -207,6 +218,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                             </div>
                                         </div>
                                         <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -267,6 +279,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <?php if (count($dataJabatans) === 0): ?>
+                                                <tr>
+                                                  <td colspan="3" class="text-center">Tidak ada data Jabatan tersedia.</td>
+                                                </tr>
+                                                <?php else: ?>
                                                 <?php foreach ($dataJabatans as $jabatan) : ?>
                                                 <tr>
                                                   <td><?= $jabatan['id_jabatan']; ?></td>
@@ -277,12 +294,13 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                     </a>
                                                     <a href="hapus/hapus_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
-                                                       onclick="return confirm('Yakin hapus jabatan ini?')">
+                                                       onclick="return confirmDelete('hapus/hapus_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>')">
                                                        <i class="ti-trash text-dark"></i>
                                                     </a>
                                                   </td>
                                                 </tr>
                                                 <?php endforeach; ?>
+                                                <?php endif; ?>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
@@ -306,6 +324,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </div>
                                     </div>
                                     <div class="row users-card p-3">
+                                        <?php if (count($dataJabatans) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Jabatan tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
                                         <?php foreach ($dataJabatans as $jabatan) : ?>
                                         <div class="col-lg-3 col-md-4">
                                             <div class="card rounded-card user-card">
@@ -317,7 +340,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                         </a>
                                                         <a href="hapus/hapus_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirm('Yakin hapus bagian ini?')"
+                                                           onclick="return confirmDelete('hapus/hapus_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>')"
                                                            title="Hapus">
                                                            <i class="ti-trash text-dark"></i>
                                                         </a>
@@ -326,6 +349,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                             </div>
                                         </div>
                                         <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -386,6 +410,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <?php if (count($dataJenises) === 0): ?>
+                                                <tr>
+                                                  <td colspan="3" class="text-center">Tidak ada data Jenis tersedia.</td>
+                                                </tr>
+                                                <?php else: ?>
                                                 <?php foreach ($dataJenises as $jenis) : ?>
                                                 <tr>
                                                   <td><?= $jenis['id_jenis']; ?></td>
@@ -396,12 +425,13 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                     </a>
                                                     <a href="hapus/hapus_jenis.php?id=<?= $jenis['id_jenis']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
-                                                       onclick="return confirm('Yakin hapus bagian ini?')">
+                                                       onclick="return confirmDelete('hapus/hapus_jenis.php?id=<?= $jenis['id_jenis']; ?>')">
                                                        <i class="ti-trash text-dark"></i>
                                                     </a>
                                                   </td>
                                                 </tr>
                                                 <?php endforeach; ?>
+                                                <?php endif; ?>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
@@ -425,6 +455,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </div>
                                     </div>
                                     <div class="row users-card p-3">
+                                        <?php if (count($dataJenises) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Jenis tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
                                         <?php foreach ($dataJenises as $jenis) : ?>
                                         <div class="col-lg-3 col-md-4">
                                             <div class="card rounded-card user-card">
@@ -436,7 +471,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                         </a>
                                                         <a href="hapus/hapus_jenis.php?id=<?= $jenis['id_jenis']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirm('Yakin hapus bagian ini?')"
+                                                           onclick="return confirmDelete('hapus/hapus_jenis.php?id=<?= $jenis['id_jenis']; ?>')"
                                                            title="Hapus">
                                                            <i class="ti-trash text-dark"></i>
                                                         </a>
@@ -445,6 +480,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                             </div>
                                         </div>
                                         <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -506,6 +542,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <?php if (count($dataSubJenises) === 0): ?>
+                                                <tr>
+                                                  <td colspan="4" class="text-center">Tidak ada data Sub Jenis tersedia.</td>
+                                                </tr>
+                                                <?php else: ?>
                                                 <?php foreach ($dataSubJenises as $subjenis) : ?>
                                                 <tr>
                                                   <td><?= $subjenis['id_sub_jenis']; ?></td>
@@ -517,12 +558,13 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                     </a>
                                                     <a href="hapus/hapus_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
-                                                       onclick="return confirm('Yakin hapus bagian ini?')">
+                                                       onclick="return confirmDelete('hapus/hapus_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>')">
                                                        <i class="ti-trash text-dark"></i>
                                                     </a>
                                                   </td>
                                                 </tr>
                                                 <?php endforeach; ?>
+                                                <?php endif; ?>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
@@ -547,6 +589,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </div>
                                     </div>
                                     <div class="row users-card p-3">
+                                        <?php if (count($dataSubJenises) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Sub Jenis tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
                                         <?php foreach ($dataSubJenises as $subjenis) : ?>
                                         <div class="col-lg-3 col-md-4">
                                             <div class="card rounded-card user-card">
@@ -559,7 +606,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                         </a>
                                                         <a href="hapus/hapus_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirm('Yakin hapus bagian ini?')"
+                                                           onclick="return confirmDelete('hapus/hapus_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>')"
                                                            title="Hapus">
                                                            <i class="ti-trash text-dark"></i>
                                                         </a>
@@ -568,6 +615,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                             </div>
                                         </div>
                                         <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -628,6 +676,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <?php if (count($dataJenisAsets) === 0): ?>
+                                                <tr>
+                                                  <td colspan="3" class="text-center">Tidak ada data Jenis Aset tersedia.</td>
+                                                </tr>
+                                                <?php else: ?>
                                                 <?php foreach ($dataJenisAsets as $jenisaset) : ?>
                                                 <tr>
                                                   <td><?= $jenisaset['id_jenis_aset']; ?></td>
@@ -638,12 +691,13 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                     </a>
                                                     <a href="hapus/hapus_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
-                                                       onclick="return confirm('Yakin hapus bagian ini?')">
+                                                       onclick="return confirmDelete('hapus/hapus_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>')">
                                                        <i class="ti-trash text-dark"></i>
                                                     </a>
                                                   </td>
                                                 </tr>
                                                 <?php endforeach; ?>
+                                                <?php endif; ?>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
@@ -667,6 +721,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </div>
                                     </div>
                                     <div class="row users-card p-3">
+                                        <?php if (count($dataJenisAsets) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Jenis Aset tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
                                         <?php foreach ($dataJenisAsets as $jenisaset) : ?>
                                         <div class="col-lg-3 col-md-4">
                                             <div class="card rounded-card user-card">
@@ -678,7 +737,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                         </a>
                                                         <a href="hapus/hapus_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirm('Yakin hapus bagian ini?')"
+                                                           onclick="return confirmDelete('hapus/hapus_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>')"
                                                            title="Hapus">
                                                            <i class="ti-trash text-dark"></i>
                                                         </a>
@@ -687,6 +746,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                             </div>
                                         </div>
                                         <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -747,6 +807,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <?php if (count($dataJenisPICs) === 0): ?>
+                                                <tr>
+                                                  <td colspan="3" class="text-center">Tidak ada data Jenis PIC tersedia.</td>
+                                                </tr>
+                                                <?php else: ?>
                                                 <?php foreach ($dataJenisPICs as $jenispic) : ?>
                                                 <tr>
                                                   <td><?= $jenispic['id_jenis_pic']; ?></td>
@@ -757,12 +822,13 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                     </a>
                                                     <a href="hapus/hapus_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
-                                                       onclick="return confirm('Yakin hapus bagian ini?')">
+                                                       onclick="return confirmDelete('hapus/hapus_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>')">
                                                        <i class="ti-trash text-dark"></i>
                                                     </a>
                                                   </td>
                                                 </tr>
                                                 <?php endforeach; ?>
+                                                <?php endif; ?>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
@@ -786,6 +852,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </div>
                                     </div>
                                     <div class="row users-card p-3">
+                                        <?php if (count($dataJenisPICs) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Jenis PIC tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
                                         <?php foreach ($dataJenisPICs as $jenispic) : ?>
                                         <div class="col-lg-3 col-md-4">
                                             <div class="card rounded-card user-card">
@@ -797,7 +868,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                         </a>
                                                         <a href="hapus/hapus_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirm('Yakin hapus bagian ini?')"
+                                                           onclick="return confirmDelete('hapus/hapus_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>')"
                                                            title="Hapus">
                                                            <i class="ti-trash text-dark"></i>
                                                         </a>
@@ -806,6 +877,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                             </div>
                                         </div>
                                         <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -866,6 +938,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <?php if (count($dataPPIDs) === 0): ?>
+                                                <tr>
+                                                  <td colspan="3" class="text-center">Tidak ada data PPID tersedia.</td>
+                                                </tr>
+                                                <?php else: ?>
                                                 <?php foreach ($dataPPIDs as $ppid) : ?>
                                                 <tr>
                                                   <td><?= $ppid['id_ppid']; ?></td>
@@ -876,12 +953,13 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                     </a>
                                                     <a href="hapus/hapus_ppid.php?id=<?= $ppid['id_ppid']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
-                                                       onclick="return confirm('Yakin hapus bagian ini?')">
+                                                       onclick="return confirmDelete('hapus/hapus_ppid.php?id=<?= $ppid['id_ppid']; ?>')">
                                                        <i class="ti-trash text-dark"></i>
                                                     </a>
                                                   </td>
                                                 </tr>
                                                 <?php endforeach; ?>
+                                                <?php endif; ?>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
@@ -905,6 +983,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </div>
                                     </div>
                                     <div class="row users-card p-3">
+                                        <?php if (count($dataPPIDs) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data PPID tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
                                         <?php foreach ($dataPPIDs as $ppid) : ?>
                                         <div class="col-lg-3 col-md-4">
                                             <div class="card rounded-card user-card">
@@ -916,7 +999,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                         </a>
                                                         <a href="hapus/hapus_ppid.php?id=<?= $ppid['id_ppid']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirm('Yakin hapus bagian ini?')"
+                                                           onclick="return confirmDelete('hapus/hapus_ppid.php?id=<?= $ppid['id_ppid']; ?>')"
                                                            title="Hapus">
                                                            <i class="ti-trash text-dark"></i>
                                                         </a>
@@ -925,6 +1008,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                             </div>
                                         </div>
                                         <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -985,6 +1069,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <?php if (count($dataRoles) === 0): ?>
+                                                <tr>
+                                                  <td colspan="3" class="text-center">Tidak ada data Role tersedia.</td>
+                                                </tr>
+                                                <?php else: ?>
                                                 <?php foreach ($dataRoles as $role) : ?>
                                                 <tr>
                                                   <td><?= $role['id_role']; ?></td>
@@ -995,12 +1084,13 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                     </a>
                                                     <a href="hapus/hapus_role.php?id=<?= $role['id_role']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
-                                                       onclick="return confirm('Yakin hapus bagian ini?')">
+                                                       onclick="return confirmDelete('hapus/hapus_role.php?id=<?= $role['id_role']; ?>')">
                                                        <i class="ti-trash text-dark"></i>
                                                     </a>
                                                   </td>
                                                 </tr>
                                                 <?php endforeach; ?>
+                                                <?php endif; ?>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
@@ -1024,6 +1114,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </div>
                                     </div>
                                     <div class="row users-card p-3">
+                                        <?php if (count($dataRoles) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Role tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
                                         <?php foreach ($dataRoles as $role) : ?>
                                         <div class="col-lg-3 col-md-4">
                                             <div class="card rounded-card user-card">
@@ -1035,7 +1130,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                         </a>
                                                         <a href="hapus/hapus_role.php?id=<?= $role['id_role']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirm('Yakin hapus bagian ini?')"
+                                                           onclick="return confirmDelete('hapus/hapus_role.php?id=<?= $role['id_role']; ?>')"
                                                            title="Hapus">
                                                            <i class="ti-trash text-dark"></i>
                                                         </a>
@@ -1044,6 +1139,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                             </div>
                                         </div>
                                         <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -1104,6 +1200,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <?php if (count($dataSkills) === 0): ?>
+                                                    <tr>
+                                                      <td colspan="3" class="text-center">Tidak ada data Skill tersedia.</td>
+                                                    </tr>
+                                                <?php else: ?>
                                                 <?php foreach ($dataSkills as $skill) : ?>
                                                 <tr>
                                                   <td><?= $skill['id_skill']; ?></td>
@@ -1114,12 +1215,13 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                     </a>
                                                     <a href="hapus/hapus_skill.php?id=<?= $skill['id_skill']; ?>"
                                                        class="btn waves-effect waves-light btn-danger btn-icon"
-                                                       onclick="return confirm('Yakin hapus bagian ini?')">
+                                                       onclick="return confirmDelete('hapus/hapus_skill.php?id=<?= $skill['id_skill']; ?>')">
                                                        <i class="ti-trash text-dark"></i>
                                                     </a>
                                                   </td>
                                                 </tr>
                                                 <?php endforeach; ?>
+                                                <?php endif; ?>
                                             </tbody>
                                             <tfoot>
                                                 <tr>
@@ -1143,6 +1245,11 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </div>
                                     </div>
                                     <div class="row users-card p-3">
+                                        <?php if (count($dataSkills) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Skill tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
                                         <?php foreach ($dataSkills as $skill) : ?>
                                         <div class="col-lg-3 col-md-4">
                                             <div class="card rounded-card user-card">
@@ -1154,7 +1261,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                         </a>
                                                         <a href="hapus/hapus_skill.php?id=<?= $skill['id_skill']; ?>" 
                                                            class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirm('Yakin hapus bagian ini?')"
+                                                           onclick="return confirmDelete('hapus/hapus_skill.php?id=<?= $skill['id_skill']; ?>')"
                                                            title="Hapus">
                                                            <i class="ti-trash text-dark"></i>
                                                         </a>
@@ -1163,6 +1270,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                             </div>
                                         </div>
                                         <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -1173,10 +1281,55 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
         </div>
     </div>
 </div>
+
+<!-- Artistic Delete Modal -->
+<div class="modal fade" id="deleteDataModal" tabindex="-1" role="dialog" aria-labelledby="deleteDataModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+            <div class="modal-header border-0" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: 15px 15px 0 0;">
+                <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+                    <i class="ti-trash" style="font-size: 24px; color: white;"></i>
+                    <h5 class="modal-title" id="deleteDataModalLabel" style="color: white; margin: 0; font-weight: 700;">Konfirmasi Hapus</h5>
+                </div>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 1;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <i class="ti-alert" style="font-size: 48px; color: #e74c3c;"></i>
+                </div>
+                <p style="font-size: 16px; color: #2c3e50; margin: 15px 0;">Apakah Anda yakin ingin menghapus data ini?</p>
+                <p style="color: #7f8c8d; font-size: 14px; margin: 15px 0;">
+                    <i class="ti-alert-alt" style="margin-right: 8px;"></i>
+                    Tindakan ini tidak dapat dibatalkan.
+                </p>
+            </div>
+            <div class="modal-footer border-0" style="padding: 20px 30px; background: rgba(0, 0, 0, 0.02);">
+                <button type="button" class="btn" data-dismiss="modal" style="background: #95a5a6; color: white; border-radius: 8px; padding: 8px 20px; font-weight: 500;">
+                    <i class="ti-close" style="margin-right: 5px;"></i> Batal
+                </button>
+                <a id="confirmDeleteLink" href="#" type="button" class="btn" style="background: #e74c3c; color: white; border-radius: 8px; padding: 8px 20px; font-weight: 500; text-decoration: none;">
+                    <i class="ti-trash" style="margin-right: 5px;"></i> Hapus
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
 $content = ob_get_clean();
 ob_start();
 ?>
+<script>
+// Handle delete confirmations with artistic modal
+function confirmDelete(url) {
+    event.preventDefault();
+    document.getElementById('confirmDeleteLink').href = url;
+    $('#deleteDataModal').modal('show');
+    return false;
+}
+</script>
 <?php
 $script = ob_get_clean();
 include 'layout.php';
