@@ -17,15 +17,21 @@ $subtitle = "Aset visual, barang, dan lisensi Humas";
 
 if ($filterJenis == '1') {
     $breadcrumbTitle = "Aset Visual";
-    $subtitle = "Kumpulan aset visual Humas";
+    $countQ = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM aset WHERE id_jenis_aset = '1'");
+    $countRow = mysqli_fetch_assoc($countQ);
+    $subtitle = "Total: " . $countRow['total'] . " aset visual tersedia";
     $where = "WHERE a.id_jenis_aset = '1'";
 } elseif ($filterJenis == '2') {
     $breadcrumbTitle = "Aset Barang";
-    $subtitle = "Kumpulan aset barang Humas";
+    $countQ = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM aset WHERE id_jenis_aset = '2'");
+    $countRow = mysqli_fetch_assoc($countQ);
+    $subtitle = "Total: " . $countRow['total'] . " aset barang tersedia";
     $where = "WHERE a.id_jenis_aset = '2'";
 } elseif ($filterJenis == '3') {
     $breadcrumbTitle = "Aset Lisensi";
-    $subtitle = "Kumpulan aset lisensi Humas";
+    $countQ = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM aset WHERE id_jenis_aset = '3'");
+    $countRow = mysqli_fetch_assoc($countQ);
+    $subtitle = "Total: " . $countRow['total'] . " aset lisensi tersedia";
     $where = "WHERE a.id_jenis_aset = '3'";
 }
 ?>
@@ -34,6 +40,7 @@ if ($filterJenis == '1') {
 <head>
 <meta charset="UTF-8">
 <title><?= $breadcrumbTitle ?></title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 <style>
@@ -73,51 +80,6 @@ body{
   padding:28px 32px;
   box-shadow:0 10px 30px rgba(15,23,42,.08);
   margin-bottom:28px;
-}
-.header h2{
-  margin:0;
-  font-size:26px;
-  font-weight:700;
-}
-.header p{
-  margin-top:8px;
-  color:#64748b;
-  font-size:14px;
-}
-
-/* ===== FILTER ===== */
-.filter-wrapper{
-  background:#fff;
-  border-radius:16px;
-  padding:14px;
-  box-shadow:0 6px 20px rgba(15,23,42,.06);
-  margin-bottom:30px;
-}
-.filter{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.filter a{
-  padding:8px 22px;
-  border-radius:999px;
-  border:1px solid #e2e8f0;
-  text-decoration:none;
-  color:#334155;
-  background:#f8fafc;
-  font-size:14px;
-  font-weight:500;
-  transition:.25s;
-}
-.filter a:hover{
-  background:#e0e7ff;
-  border-color:#2563eb;
-  color:#2563eb;
-}
-.filter a.active{
-  background:#2563eb;
-  color:#fff;
-  border-color:#2563eb;
 }
 
 /* ===== GRID ===== */
@@ -192,16 +154,6 @@ body{
   <div class="header">
     <h2><?= $breadcrumbTitle ?></h2>
     <p><?= $subtitle ?></p>
-  </div>
-
-  <!-- FILTER -->
-  <div class="filter-wrapper">
-    <div class="filter">
-      <a href="aset.php" class="<?= $filterJenis == 'all' ? 'active' : '' ?>">Semua</a>
-      <a href="aset.php?jenis=1" class="<?= $filterJenis == '1' ? 'active' : '' ?>">Visual</a>
-      <a href="aset.php?jenis=2" class="<?= $filterJenis == '2' ? 'active' : '' ?>">Barang</a>
-      <a href="aset.php?jenis=3" class="<?= $filterJenis == '3' ? 'active' : '' ?>">Lisensi</a>
-    </div>
   </div>
 
   <!-- GRID -->

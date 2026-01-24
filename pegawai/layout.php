@@ -220,157 +220,144 @@ global $user;
     .fc .fc-daygrid-day-number {
       padding: 6px 4px;
     }
-/* ================= GRID ================= */
-.asset-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:28px;
-  margin-top:32px;
-}
+    
+    /* GRID CARD */
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      padding: 20px 0;
+    }
 
-/* ================= CARD ================= */
-.asset-card{
-  position:relative;
-  background:#ffffff;
-  border-radius:22px;
-  padding:44px 30px;
-  text-align:center;
-  box-shadow:
-    0 18px 40px rgba(15,23,42,.08),
-    inset 0 1px 0 rgba(255,255,255,.7);
-  transition:.4s cubic-bezier(.16,1,.3,1);
-  overflow:hidden;
-  min-height:260px;
-}
+    /* CARD */
+    .asset-card {
+      position: relative;
+      height: 260px;
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.08);
+      overflow: hidden;
+      transition: transform .35s ease, box-shadow .35s ease;
+      align-items: center;
+    }
 
-.asset-card:hover{
-  transform:translateY(-8px);
-  box-shadow:0 30px 70px rgba(15,23,42,.16);
-}
+    .asset-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 22px 45px rgba(0,0,0,0.12);
+    }
 
-/* ================= CONTENT ================= */
-.card-content{
-  transition:.4s;
-}
+    /* CONTENT */
+    .card-content {
+      height: 100%;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+    }
 
-.icon-circle{
-  width:66px;
-  height:66px;
-  margin:0 auto 20px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:30px;
-  color:#fff;
-}
+    .card-content h4 {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin: 0;
+      text-align: center;
+    }
 
-.icon-circle.blue{
-  background:linear-gradient(135deg,#38bdf8,#2563eb);
-}
-.icon-circle.green{
-  background:linear-gradient(135deg,#4ade80,#16a34a);
-}
+    .card-content p {
+      margin: 0;
+      font-size: .9rem;
+      color: #6c757d;
+      text-align: center;
+    }
 
-/* ================= OVERLAY CARD (KELUAR DARI KIRI) ================= */
-.card-overlay{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(135deg,#0d6efd,#084298);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:24px;
+    /* ICON */
+    .icon-circle {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+      text-align: center;
+    }
 
-  transform:translateX(-100%);
-  transition:.45s cubic-bezier(.16,1,.3,1);
-  z-index:10;
-}
+    .icon-circle {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
 
-.asset-card:hover .card-overlay{
-  transform:translateX(0);
-}
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-.asset-card:hover .card-content{
-  filter:blur(3px);
-}
+      margin: 0 auto 20px;
+      font-size: 30px;
+    }
 
-/* ================= MENU GRID ================= */
-.overlay-menu{
-  width:100%;
-  display:grid;
-  grid-template-columns:repeat(4,minmax(160px,1fr));
-  gap:18px;
-}
-
-/* ================= BUTTON (TANPA OVERLAY) ================= */
-.overlay-menu a{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  height:70px;
-  padding:0 22px;
-
-  border-radius:18px;
-  background:rgba(255,255,255,0.18);
-  backdrop-filter:blur(6px);
-
-  color:#ffffff;
-  font-size:15px;
-  font-weight:600;
-  text-decoration:none;
-  text-align:center;
-
-  border:1px solid rgba(255,255,255,0.28);
-
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.18),
-    inset 0 1px 0 rgba(255,255,255,0.35);
-
-  transition:
-    transform .25s ease,
-    box-shadow .25s ease,
-    background .25s ease,
-    color .25s ease;
-}
-
-/* ================= HOVER BUTTON ================= */
-.overlay-menu a:hover{
-  transform:translateY(-6px) scale(1.03);
-  background:rgba(255,255,255,0.35);
-  color:#0f172a;
-  box-shadow:
-    0 20px 45px rgba(0,0,0,0.25),
-    inset 0 1px 0 rgba(255,255,255,0.9);
-}
-
-/* ================= RESPONSIVE ================= */
-@media (max-width:992px){
-  .overlay-menu{
-    grid-template-columns:repeat(3,minmax(140px,1fr));
-  }
-}
-
-@media (max-width:768px){
-  .overlay-menu{
-    grid-template-columns:repeat(2,minmax(140px,1fr));
-  }
-}
-
-@media (max-width:480px){
-  .overlay-menu{
-    grid-template-columns:1fr;
-  }
-  .overlay-menu a{
-    height:62px;
-    font-size:14px;
-  }
-}
+    .icon-circle.blue {
+      background: linear-gradient(135deg,#0d6efd,#4dabf7);
+      color: #fff;
+    }
 
 
+    /* OVERLAY */
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,#0d6efd,#084298);
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+      opacity: 0;
+      transform: scale(0.85);
+      transition: all .35s ease;
+    }
 
+    .asset-card:hover .card-overlay {
+      opacity: 1;
+      transform: scale(1);
+    }
 
+    /* OVERLAY MENU (FULL HEIGHT BUTTON) */
+    .overlay-menu {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    .overlay-menu a {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+      font-size: .99rem;
+      border-right: 1px solid rgba(255,255,255,.25);
+      transition: background .3s ease;
+      font-weight: 700;
+      font-family: poppins;
+    }
+
+    .overlay-menu a:last-child {
+      border-right: none;
+    }
+
+    .overlay-menu a:hover {
+      background: rgba(255,255,255,.15);
+    }
+
+    /* ICON DI BUTTON */
+    .overlay-menu a::before {
+      content: "\F392"; /* bi-folder-fill */
+      font-family: "Bootstrap-icons";
+      font-size: 1.2rem;
+      
+    }
 
       #footer {
         background: #3d4d6a;

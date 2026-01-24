@@ -429,47 +429,42 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
         <div class="row gy-4">
 
-  <div class="asset-grid">
+        <div class="asset-grid">
 
-  <!-- TEMPLATE MEDSOS -->
-    <?php
-    // Ambil jenis dengan id_jenis = 1
-    $jenisQ = mysqli_query($koneksi, "SELECT id_jenis, nama_jenis FROM jenis WHERE id_jenis = 1");
-    if ($jenisQ && mysqli_num_rows($jenisQ) > 0) {
-        while ($j = mysqli_fetch_assoc($jenisQ)) {
-            // Ambil sub jenis untuk id_jenis = 1
-            $subQ = mysqli_query($koneksi, "SELECT id_sub_jenis, nama_sub_jenis FROM sub_jenis WHERE id_jenis = " . (int)$j['id_jenis'] . " ORDER BY nama_sub_jenis ASC");
-    ?>
-    <div class="asset-card">
-      <div class="card-content">
-        <div class="icon-circle blue">
-          <i class="bi bi-layout-text-window-reverse"></i>
-        </div>
-        <h4><?= htmlspecialchars($j['nama_jenis']) ?></h4>
-        <p>Konten visual siap pakai</p>
-      </div>
+        <!-- TEMPLATE MEDSOS -->
+          <?php
+          // Ambil jenis dengan id_jenis = 1
+          $jenisQ = mysqli_query($koneksi, "SELECT id_jenis, nama_jenis FROM jenis WHERE id_jenis = 1");
+          if ($jenisQ && mysqli_num_rows($jenisQ) > 0) {
+              while ($j = mysqli_fetch_assoc($jenisQ)) {
+                  // Ambil sub jenis untuk id_jenis = 1
+                  $subQ = mysqli_query($koneksi, "SELECT id_sub_jenis, nama_sub_jenis FROM sub_jenis WHERE id_jenis = " . (int)$j['id_jenis'] . " ORDER BY nama_sub_jenis ASC");
+          ?>
+          <div class="asset-card">
+            <div class="card-content">
+              <div class="icon-circle blue">
+                <i class="bi bi-layout-text-window-reverse"></i>
+              </div>
+              <h4><?= htmlspecialchars($j['nama_jenis']) ?></h4>
+              <p>Konten visual siap pakai</p>
+            </div>
 
-      <div class="card-overlay">
-        <div class="overlay-menu">
-          <?php if ($subQ && mysqli_num_rows($subQ) > 0): ?>
-            <?php while ($s = mysqli_fetch_assoc($subQ)): ?>
-              <a href="aset.php?jenis=1&sub=<?= urlencode($s['id_sub_jenis']) ?>"><?= htmlspecialchars($s['nama_sub_jenis']) ?></a>
-            <?php endwhile; ?>
-          <?php else: ?>
-            <span style="color:#fff;">Tidak ada sub jenis tersedia</span> 
-          <?php endif; ?>
-        </div>
-      </div>
-    </div>
-    <?php
-        }
-    }
-    ?>
-
-  
-
-
-
+            <div class="card-overlay">
+              <div class="overlay-menu">
+                <?php if ($subQ && mysqli_num_rows($subQ) > 0): ?>
+                  <?php while ($s = mysqli_fetch_assoc($subQ)): ?>
+                    <a href="media.php?sub=<?= urlencode($s['id_sub_jenis']) ?>"><?= htmlspecialchars($s['nama_sub_jenis']) ?></a>
+                  <?php endwhile; ?>
+                <?php else: ?>
+                  <span style="color:#fff;">Tidak ada sub jenis tersedia</span> 
+                <?php endif; ?>
+              </div>
+            </div>
+          </div>
+          <?php
+              }
+          }
+          ?>
       </div>
 
     </section><!-- /Sumber Daya -->
