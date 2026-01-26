@@ -21,9 +21,11 @@ SELECT
     u.status,
     u.nomor_telepon,
     u.id_role,
-    j.nama_jabatan
+    j.nama_jabatan,
+    p.nama_ppid
 FROM user u
 LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
+LEFT JOIN ppid p ON u.id_ppid = p.id_ppid
 WHERE u.nip = '$nip'
 LIMIT 1
 ";
@@ -48,22 +50,6 @@ $skillQuery = mysqli_query($koneksi, $sqlSkill);
 $skills = [];
 while ($row = mysqli_fetch_assoc($skillQuery)) {
     $skills[] = $row['nama_skill'];
-}
-
-/* =======================
-   DATA PPID
-======================= */
-$sqlPPID = "
-SELECT p.nama_ppid
-FROM user_ppid up
-JOIN ppid p ON up.id_ppid = p.id_ppid
-WHERE up.nip = '$nip'
-ORDER BY p.nama_ppid ASC
-";
-$ppidQuery = mysqli_query($koneksi, $sqlPPID);
-$ppids = [];
-while ($row = mysqli_fetch_assoc($ppidQuery)) {
-    $ppids[] = $row['nama_ppid'];
 }
 
 /* =======================
@@ -356,13 +342,7 @@ while ($row = mysqli_fetch_assoc($haloQuery)) {
                     <i class="bi bi-shield-check"></i> PPID
                 </div>
                 <div class="skill-list">
-                    <?php if (!empty($ppids)): ?>
-                        <?php foreach ($ppids as $p): ?>
-                            <span class="skill-badge"><?= htmlspecialchars($p) ?></span>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <span class="skill-empty">Tidak ada PPID</span>
-                    <?php endif; ?>
+                    <span class="skill-badge"><?= htmlspecialchars($data['nama_ppid'] ?? '-') ?></span>
                 </div>
             </div>
 

@@ -20,10 +20,14 @@ SELECT
     u.foto_profil,
     u.status,
     u.nomor_telepon,
-    u.id_role,
-    j.nama_jabatan
+    u.id_ppid,
+    r.nama_role,
+    j.nama_jabatan,
+    p.nama_ppid
 FROM user u
 LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
+LEFT JOIN ppid p ON u.id_ppid = p.id_ppid
+LEFT JOIN role r ON u.id_role = r.id_role
 WHERE u.nip = '$nip'
 LIMIT 1
 ";
@@ -46,15 +50,10 @@ while ($row = mysqli_fetch_assoc($userSkillQuery)) {
 /* =======================
    DATA PPID
 ======================= */
-$sqlPPID = "
-SELECT p.id_ppid, p.nama_ppid, up.nip AS selected
-FROM ppid p
-LEFT JOIN user_ppid up ON p.id_ppid = up.id_ppid AND up.nip='$nip'
-ORDER BY p.nama_ppid ASC
-";
-$ppidQuery = mysqli_query($koneksi, $sqlPPID);
+$sqlAllPPID = "SELECT * FROM ppid ORDER BY nama_ppid ASC";
+$allPPIDQuery = mysqli_query($koneksi, $sqlAllPPID);
 $ppidList = [];
-while ($row = mysqli_fetch_assoc($ppidQuery)) {
+while ($row = mysqli_fetch_assoc($allPPIDQuery)) {
     $ppidList[] = $row;
 }
 
@@ -77,9 +76,15 @@ while ($row = mysqli_fetch_assoc($haloQuery)) {
    HANDLE FORM SUBMIT
 ======================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Validate Halo PST (required)
+    if (empty($_POST['halo_pst'])) {
+        die('Halo PST harus dipilih minimal satu!');
+    }
+
     $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
     $email = mysqli_real_escape_string($koneksi, $_POST['email']);
     $telp = mysqli_real_escape_string($koneksi, $_POST['nomor_telepon']);
+    $id_ppid = isset($_POST['id_ppid']) ? (int)$_POST['id_ppid'] : 0;
 
     /* =======================
        UPLOAD FOTO PROFIL
@@ -104,7 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         UPDATE user SET
             nama='$nama',
             email='$email',
-            nomor_telepon='$telp'
+            nomor_telepon='$telp',
+            id_ppid=" . ($id_ppid > 0 ? $id_ppid : "NULL") . "
         WHERE nip='$nip'
     ");
 
@@ -116,17 +122,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($_POST['skill'] as $id_skill) {
             $id_skill = (int)$id_skill;
             mysqli_query($koneksi, "INSERT INTO user_skill (nip,id_skill) VALUES ('$nip',$id_skill)");
-        }
-    }
-
-    /* =======================
-       UPDATE PPID
-    ======================= */
-    mysqli_query($koneksi, "DELETE FROM user_ppid WHERE nip='$nip'");
-    if (!empty($_POST['ppid'])) {
-        foreach ($_POST['ppid'] as $id_ppid) {
-            $id_ppid = (int)$id_ppid;
-            mysqli_query($koneksi, "INSERT INTO user_ppid (nip,id_ppid) VALUES ('$nip',$id_ppid)");
         }
     }
 
@@ -459,20 +454,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <!-- PPID -->
-                <div class="section-title">
-                    <i class="bi bi-shield-check"></i>
-                    PPID
-                </div>
-
-                <div class="skill-group">
-                    <?php foreach ($ppidList as $p): ?>
-                        <div class="skill-item">
-                            <input type="checkbox" name="ppid[]" id="ppid_<?= $p['id_ppid'] ?>" value="<?= $p['id_ppid'] ?>" <?= $p['selected'] ? 'checked' : '' ?>>
-                            <label for="ppid_<?= $p['id_ppid'] ?>">
-                                <?= htmlspecialchars($p['nama_ppid']) ?>
-                            </label>
-                        </div>
-                    <?php endforeach; ?>
+                <div class="mb-3">
+                    <label class="form-label">PPID</label>
+                    <select name="id_ppid" class="form-control">
+                        <option value="">-- Pilih PPID --</option>
+                        <?php foreach ($ppidList as $ppid): ?>
+                            <option value="<?= $ppid['id_ppid'] ?>" <?= ($data['id_ppid'] == $ppid['id_ppid']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($ppid['nama_ppid']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <!-- HALO PST -->
