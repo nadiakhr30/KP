@@ -2,37 +2,28 @@
 ob_start();
 session_start();
 include_once("../../koneksi.php");
-
 if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
     header('Location: ../../index.php');
     exit();
 }
-
 $error = '';
 $success = '';
 $nip = isset($_GET['nip']) ? mysqli_real_escape_string($koneksi, $_GET['nip']) : '';
-
 // Get user data
 $qUser = mysqli_query($koneksi, "SELECT * FROM user WHERE nip = '$nip'");
-
 if (mysqli_num_rows($qUser) == 0) {
     $error = "User tidak ditemukan!";
     header("Refresh: 2; url=../manajemen_user.php");
     exit();
 }
-
 $user = mysqli_fetch_assoc($qUser);
-
 // Handle deletion
 if (isset($_POST['konfirmasi_hapus'])) {
     // Delete user from all related tables
     mysqli_query($koneksi, "DELETE FROM user_skill WHERE nip = '$nip'");
-    mysqli_query($koneksi, "DELETE FROM user_ppid WHERE nip = '$nip'");
     mysqli_query($koneksi, "DELETE FROM user_halo_pst WHERE nip = '$nip'");
-    
     // Delete user
     $delete = mysqli_query($koneksi, "DELETE FROM user WHERE nip = '$nip'");
-
     if ($delete) {
         $success = "User berhasil dihapus!";
         header("Refresh: 2; url=../manajemen_user.php");
@@ -41,50 +32,44 @@ if (isset($_POST['konfirmasi_hapus'])) {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <title>Hapus User</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins&family=Jost&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/custom.css">
 </head>
-
 <body>
-
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-
             <div class="card shadow">
                 <div class="card-header bg-danger text-white">
                     <h5 class="mb-0">Konfirmasi Hapus User</h5>
                 </div>
-
                 <div class="card-body">
-
                     <?php if ($error) : ?>
                         <div class="alert alert-danger alert-dismissible fade show">
                             <?= htmlspecialchars($error) ?>
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
                     <?php endif; ?>
-
                     <?php if ($success) : ?>
                         <div class="alert alert-success alert-dismissible fade show">
                             <?= htmlspecialchars($success) ?>
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
                     <?php endif; ?>
-
                     <div class="alert alert-warning">
                         <h6 class="alert-heading"><i class="fa fa-exclamation-triangle"></i> Peringatan</h6>
                         <p>Anda akan menghapus user berikut. Tindakan ini <strong>TIDAK DAPAT DIBATALKAN</strong>!</p>
                     </div>
-
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="row">
@@ -104,7 +89,6 @@ if (isset($_POST['konfirmasi_hapus'])) {
                             </div>
                         </div>
                     </div>
-
                     <form method="POST">
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">
@@ -125,10 +109,8 @@ if (isset($_POST['konfirmasi_hapus'])) {
                             </button>
                         </div>
                     </form>
-
                 </div>
             </div>
-
         </div>
     </div>
 </div>

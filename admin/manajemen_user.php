@@ -20,10 +20,12 @@ $qUser = mysqli_query($koneksi, "
         u.id_jabatan,
         u.id_role,
         j.nama_jabatan,
-        r.nama_role
+        r.nama_role,
+        p.nama_ppid
     FROM user u
     LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
     LEFT JOIN role r ON u.id_role = r.id_role
+    LEFT JOIN ppid p ON u.id_ppid = p.id_ppid
     ORDER BY u.nama
 ");
 $dataUsers = [];
@@ -37,7 +39,7 @@ function getUserSkills($koneksi, $nip) {
         SELECT s.nama_skill
         FROM user_skill us
         JOIN skill s ON us.id_skill = s.id_skill
-        WHERE us.nip = " . (int)$nip . "
+        WHERE us.nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'
         ORDER BY s.nama_skill
     ");
     $skills = [];
@@ -47,29 +49,13 @@ function getUserSkills($koneksi, $nip) {
     return $skills;
 }
 
-// Get PPID for each user
-function getUserPPID($koneksi, $nip) {
-    $qPPID = mysqli_query($koneksi, "
-        SELECT p.nama_ppid
-        FROM user_ppid up
-        JOIN ppid p ON up.id_ppid = p.id_ppid
-        WHERE up.nip = " . (int)$nip . "
-        ORDER BY p.nama_ppid
-    ");
-    $ppids = [];
-    while ($row = mysqli_fetch_assoc($qPPID)) {
-        $ppids[] = $row['nama_ppid'];
-    }
-    return $ppids;
-}
-
 // Get Halo PST for each user
 function getUserHaloPST($koneksi, $nip) {
     $qHaloPST = mysqli_query($koneksi, "
         SELECT hp.nama_halo_pst
         FROM user_halo_pst uhp
         JOIN halo_pst hp ON uhp.id_halo_pst = hp.id_halo_pst
-        WHERE uhp.nip = " . (int)$nip . "
+        WHERE uhp.nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'
         ORDER BY hp.nama_halo_pst
     ");
     $haloPSTs = [];
@@ -129,10 +115,10 @@ function badge($text, $color) {
                                         <div class="dropdown-info dropdown open">
                                             <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                             <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=print">Print</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=excel">Excel</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=json">JSON</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=csv">CSV</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=print">Print</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=excel">Excel</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=json">JSON</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=csv">CSV</a>
                                             </div>
                                         </div>
                                     </div>
@@ -186,24 +172,13 @@ function badge($text, $color) {
     <?php echo $user['status'] == 1 ? badge('Aktif', 'success') : badge('Tidak Aktif', 'danger'); ?>
   </td>
   <td><?= $user['nomor_telepon'] ? '0' . $user['nomor_telepon'] : '-'; ?></td>
-  <td>
-    <?php 
-      $ppids = getUserPPID($koneksi, $user['nip']);
-      if (count($ppids) > 0) {
-        foreach ($ppids as $ppid) {
-          echo "<span class='mr-2 mb-2'>" . htmlspecialchars($ppid) . "</span>";
-        }
-      } else {
-        echo '-';
-      }
-    ?>
-  </td>
+  <td><?= htmlspecialchars($user['nama_ppid'] ?? '-'); ?></td>
   <td>
     <?php 
       $haloPSTs = getUserHaloPST($koneksi, $user['nip']);
       if (count($haloPSTs) > 0) {
         foreach ($haloPSTs as $haloPST) {
-          echo "<span class='mr-2 mb-2'>" . htmlspecialchars($haloPST) . "</span>";
+          echo "<span class='badge bg-primary mr-2 mb-2'>" . htmlspecialchars($haloPST) . "</span>";
         }
       } else {
         echo '-';

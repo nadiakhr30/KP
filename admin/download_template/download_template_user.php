@@ -58,15 +58,14 @@ for ($col = 'A'; $col <= 'K'; $col++) {
 
 // Add example rows (you can customize these)
 $exampleData = [
-    ['19850315', 'Budi Santoso', 'budi@bps.go.id', 'password123', 1, '081234567890', 1, 2, 1, 1, '1,2,3'],
-    ['19880620', 'Siti Nurhaliza', 'siti@bps.go.id', 'password456', 1, '082345678901', 2, 2, 1, 2, '2,4'],
-    ['19920410', 'Ahmad Wijaya', 'ahmad@bps.go.id', 'password789', 1, '083456789012', 3, 2, 2, 1, '3,5,6'],
+    ['19850315', 'Budi Santoso', 'budi@bps.go.id', 'password123', 1, '081234567890', 1, 2, 1, '1,2', '1,2,3'],
+    ['19880620', 'Siti Nurhaliza', 'siti@bps.go.id', 'password456', 1, '082345678901', 2, 2, 1, '1,2', '2,4'],
+    ['19920410', 'Ahmad Wijaya', 'ahmad@bps.go.id', 'password789', 1, '083456789012', 3, 2, 2, '1', '3,5,6'],
 ];
 
 $row = 2;
 foreach ($exampleData as $data) {
     $sheet->fromArray($data, NULL, 'A' . $row);
-    
     // Style data rows
     $dataStyle = [
         'alignment' => [
@@ -79,25 +78,19 @@ foreach ($exampleData as $data) {
             ]
         ]
     ];
-    
     for ($col = 'A'; $col <= 'K'; $col++) {
         $sheet->getStyle($col . $row)->applyFromArray($dataStyle);
     }
-    
     $row++;
 }
-
 // Freeze header row
 $sheet->freezePane('A2');
-
 // Create writer and output file
 $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-
 // Set headers for download
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Content-Disposition: attachment; filename="Template_Import_User_' . date('Y-m-d') . '.xlsx"');
 header('Cache-Control: max-age=0');
-
 $writer->save('php://output');
 exit;
 ?>

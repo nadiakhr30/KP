@@ -29,13 +29,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_FILES["excelFile"]) && !iss
     $id_jabatan = isset($_POST["id_jabatan"]) ? (int)$_POST["id_jabatan"] : "";
     $id_role = isset($_POST["id_role"]) ? (int)$_POST["id_role"] : "";
     $id_ppid = isset($_POST["id_ppid"]) ? (int)$_POST["id_ppid"] : "";
-    $id_halo_pst = isset($_POST["id_halo_pst"]) ? (int)$_POST["id_halo_pst"] : "";
+    $halo_pst_str = trim($_POST["halo_pst"] ?? "");
+    $halo_pst = !empty($halo_pst_str) ? array_map('intval', explode(',', $halo_pst_str)) : [];
     $skills_str = trim($_POST["skills"] ?? "");
     $skills = !empty($skills_str) ? array_map('intval', explode(',', $skills_str)) : [];
     
     // Validate required input
-    if (empty($nip) || empty($nama) || empty($password) || empty($email) || empty($status) || empty($id_jabatan) || empty($id_role) || empty($id_ppid) || empty($id_halo_pst)) {
-        $error = "Semua field harus diisi!";
+    if (empty($nip) || empty($nama) || empty($password) || empty($email) || $status === "" || empty($id_jabatan) || empty($id_role) || empty($id_ppid)) {
+        $error = "Semua field wajib diisi kecuali skill. Pastikan Halo PST dipilih minimal satu.";
+    } else if (count($halo_pst) < 1) {
+        $error = "Halo PST harus dipilih minimal satu!";
     } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Format email tidak valid!";
     } else if (!empty($nomor_telepon) && !is_numeric($nomor_telepon)) {
@@ -50,51 +53,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_FILES["excelFile"]) && !iss
         } else {
             // Hash password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            
-            // Insert into database
-            $query = "INSERT INTO user (nip, nama, password, email, status, nomor_telepon, id_jabatan, id_role) 
-                      VALUES (
-                        '" . mysqli_real_escape_string($koneksi, $nip) . "',
-                        '" . mysqli_real_escape_string($koneksi, $nama) . "',
-                        '" . mysqli_real_escape_string($koneksi, $hashed_password) . "',
-                        '" . mysqli_real_escape_string($koneksi, $email) . "',
-                        " . $status . ",
-                        " . (!empty($nomor_telepon) ? "'" . mysqli_real_escape_string($koneksi, $nomor_telepon) . "'" : "NULL") . ",
-                        " . $id_jabatan . ",
-                        " . $id_role . "
-                      )";
-            
-            if (mysqli_query($koneksi, $query)) {
-                // Insert into user_ppid
-                $insert_ppid_query = "INSERT INTO user_ppid (id_ppid, nip) VALUES (" . $id_ppid . ", '" . mysqli_real_escape_string($koneksi, $nip) . "')";
-                
-                if (!mysqli_query($koneksi, $insert_ppid_query)) {
-                    $error = "Gagal menambahkan data PPID: " . mysqli_error($koneksi);
-                } else {
-                    // Insert into user_halo_pst
-                    $insert_halo_pst_query = "INSERT INTO user_halo_pst (id_halo_pst, nip) VALUES (" . $id_halo_pst . ", '" . mysqli_real_escape_string($koneksi, $nip) . "')";
-                    
+
+            // Insert into user table
+            $insertUser = "INSERT INTO user (nip, nama, password, email, foto_profil, status, nomor_telepon, id_jabatan, id_role, id_ppid) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', '" . mysqli_real_escape_string($koneksi, $nama) . "', '" . mysqli_real_escape_string($koneksi, $hashed_password) . "', '" . mysqli_real_escape_string($koneksi, $email) . "', NULL, " . (int)$status . ", " . (!empty($nomor_telepon) ? "'" . mysqli_real_escape_string($koneksi, $nomor_telepon) . "'" : "NULL") . ", " . (int)$id_jabatan . ", " . (int)$id_role . ", " . (int)$id_ppid . ")";
+
+            if (mysqli_query($koneksi, $insertUser)) {
+                // Insert required Halo PST entries (multiple)
+                $hp_ok = true;
+                foreach ($halo_pst as $id_halo_pst) {
+                    $id_halo_pst = (int)$id_halo_pst;
+                    $insert_halo_pst_query = "INSERT INTO user_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_halo_pst . ")";
                     if (!mysqli_query($koneksi, $insert_halo_pst_query)) {
                         $error = "Gagal menambahkan data Halo PST: " . mysqli_error($koneksi);
-                    } else {
-                        // Insert into user_skill
-                        $skills_insert_success = true;
+                        $hp_ok = false;
+                        break;
+                    }
+                }
+
+                if ($hp_ok) {
+                    // Insert optional skills
+                    if (!empty($skills)) {
                         foreach ($skills as $id_skill) {
-                            $insert_skill_query = "INSERT INTO user_skill (id_skill, nip) VALUES (" . $id_skill . ", '" . mysqli_real_escape_string($koneksi, $nip) . "')";
-                            
+                            $id_skill = (int)$id_skill;
+                            $insert_skill_query = "INSERT INTO user_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_skill . ")";
                             if (!mysqli_query($koneksi, $insert_skill_query)) {
                                 $error = "Gagal menambahkan data skill: " . mysqli_error($koneksi);
-                                $skills_insert_success = false;
+                                $hp_ok = false;
                                 break;
                             }
                         }
-                        
-                        if ($skills_insert_success) {
-                            $success = "User berhasil ditambahkan!";
-                            // Redirect after 1 second
-                            header("Refresh: 1; url=../manajemen_user.php");
-                        }
                     }
+                }
+
+                if ($hp_ok && empty($error)) {
+                    $success = "User berhasil ditambahkan!";
+                    header("Refresh: 1; url=../manajemen_user.php");
                 }
             } else {
                 $error = "Gagal menambahkan user: " . mysqli_error($koneksi);
@@ -102,7 +95,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_FILES["excelFile"]) && !iss
         }
     }
 }
-
 // ==================== IMPORT SECTION ====================
 // Handle file upload
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["excelFile"])) {
@@ -146,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["excelFile"])) {
                         'id_jabatan' => trim($row[6] ?? ''),
                         'id_role' => trim($row[7] ?? ''),
                         'id_ppid' => trim($row[8] ?? ''),
-                        'id_halo_pst' => trim($row[9] ?? ''),
+                        'halo_pst' => trim($row[9] ?? ''),
                         'skills' => trim($row[10] ?? '')
                     ];
                 }
@@ -193,7 +185,7 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
             $hashed_password = password_hash($user['password'], PASSWORD_DEFAULT);
             
             // Insert into user table
-            $insertUser = "INSERT INTO user (nip, nama, email, password, status, nomor_telepon, id_jabatan, id_role) 
+            $insertUser = "INSERT INTO user (nip, nama, email, password, status, nomor_telepon, id_jabatan, id_role, id_ppid) 
                           VALUES (
                             '" . mysqli_real_escape_string($koneksi, $user['nip']) . "',
                             '" . mysqli_real_escape_string($koneksi, $user['nama']) . "',
@@ -202,31 +194,35 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                             " . (int)$user['status'] . ",
                             " . (!empty($user['nomor_telepon']) ? "'" . mysqli_real_escape_string($koneksi, $user['nomor_telepon']) . "'" : "NULL") . ",
                             " . (int)$user['id_jabatan'] . ",
-                            " . (int)$user['id_role'] . "
+                            " . (int)$user['id_role'] . ",
+                            " . (int)$user['id_ppid'] . "
                           )";
-            
             if (mysqli_query($koneksi, $insertUser)) {
-                // Insert into user_ppid
-                if (!empty($user['id_ppid'])) {
-                    $insertPPID = "INSERT INTO user_ppid (id_ppid, nip) VALUES (" . (int)$user['id_ppid'] . ", '" . mysqli_real_escape_string($koneksi, $user['nip']) . "')";
-                    mysqli_query($koneksi, $insertPPID);
+                // Halo PST is required for import as well
+                if (empty($user['halo_pst'])) {
+                    $errorCount++;
+                    $errors[] = "Baris " . ($index + 2) . ": Halo PST harus dipilih minimal satu!";
+                    // Remove inserted user to keep data consistent
+                    mysqli_query($koneksi, "DELETE FROM user WHERE nip = '" . mysqli_real_escape_string($koneksi, $user['nip']) . "'");
+                    continue;
                 }
-                
-                // Insert into user_halo_pst
-                if (!empty($user['id_halo_pst'])) {
-                    $insertHaloPST = "INSERT INTO user_halo_pst (id_halo_pst, nip) VALUES (" . (int)$user['id_halo_pst'] . ", '" . mysqli_real_escape_string($koneksi, $user['nip']) . "')";
+
+                // Insert into user_halo_pst (nip, id_halo_pst)
+                $halopstIds = array_filter(array_map('intval', explode(',', $user['halo_pst'])));
+                foreach ($halopstIds as $halopstId) {
+                    $insertHaloPST = "INSERT INTO user_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $user['nip']) . "', " . $halopstId . ")";
                     mysqli_query($koneksi, $insertHaloPST);
                 }
-                
-                // Insert skills
+
+                // Insert skills (optional)
                 if (!empty($user['skills'])) {
                     $skillIds = array_filter(array_map('intval', explode(',', $user['skills'])));
                     foreach ($skillIds as $skillId) {
-                        $insertSkill = "INSERT INTO user_skill (id_skill, nip) VALUES (" . $skillId . ", '" . mysqli_real_escape_string($koneksi, $user['nip']) . "')";
+                        $insertSkill = "INSERT INTO user_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $user['nip']) . "', " . $skillId . ")";
                         mysqli_query($koneksi, $insertSkill);
                     }
                 }
-                
+
                 $successCount++;
             } else {
                 $errorCount++;
@@ -336,7 +332,7 @@ if ($skill_result) {
             border-color: transparent;
             color: #007bff;
         }
-        .skill-badge {
+        .skill-badge, .halo-pst-badge {
             display: inline-block;
             margin: 5px;
             padding: 8px 12px;
@@ -345,15 +341,15 @@ if ($skill_result) {
             border-radius: 20px;
             font-size: 14px;
         }
-        .skill-badge .remove-skill {
+        .skill-badge .remove-skill, .halo-pst-badge .remove-skill {
             cursor: pointer;
             margin-left: 8px;
             font-weight: bold;
         }
-        .skill-badge .remove-skill:hover {
+        .skill-badge .remove-skill:hover, .halo-pst-badge .remove-halo-pst:hover {
             color: #ffcccc;
         }
-        #selected-skills {
+        #selected-skills, #selected-halo-pst {
             min-height: 50px;
             padding: 10px;
             background-color: #f8f9fa;
@@ -564,18 +560,23 @@ if ($skill_result) {
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
+                                </div>
 
-                                    <div class="form-group col-md-6">
-                                        <label for="id_halo_pst">Halo PST Team <span class="text-danger">*</span></label>
-                                        <select class="form-control" id="id_halo_pst" name="id_halo_pst" required>
-                                            <option value="">-- Pilih Halo PST Team --</option>
-                                            <?php foreach ($halo_pst_data as $h): ?>
-                                                <option value="<?php echo $h['id_halo_pst']; ?>" <?php echo isset($_POST["id_halo_pst"]) && $_POST["id_halo_pst"] == $h['id_halo_pst'] ? 'selected' : ''; ?>>
-                                                    <?php echo htmlspecialchars($h['nama_halo_pst']); ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
+                                <div class="form-group">
+                                    <label for="skill_select">Halo PST Team <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="halo_pst_select">
+                                        <option value="">-- Pilih Tim --</option>
+                                        <?php foreach ($halo_pst_data as $h): ?>
+                                            <option value="<?php echo $h['id_halo_pst']; ?>" data-name="<?php echo htmlspecialchars($h['nama_halo_pst']); ?>">
+                                                <?php echo htmlspecialchars($h['nama_halo_pst']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <div id="selected-halo-pst"></div>
+                                    <input type="hidden" id="halo_pst_input" name="halo_pst" value="">
                                 </div>
 
                                 <div class="form-group">
@@ -856,6 +857,40 @@ if ($skill_result) {
                 submitBtn.disabled = !this.checked;
             });
         }
+
+        // Handle halo pst for input tab
+        let selectedHaloPSTs = {};
+
+        const halopstSelect = document.getElementById('halo_pst_select');
+        if (halopstSelect) {
+            halopstSelect.addEventListener('change', function() {
+                const halopstId = this.value;
+                const halopstName = this.options[this.selectedIndex].getAttribute('data-name');
+                if (halopstId && !selectedHaloPSTs[halopstId]) {
+                    selectedHaloPSTs[halopstId] = halopstName;
+                    updateHaloPSTDisplay();
+                    this.value = '';
+                }
+            });
+        }
+        function updateHaloPSTDisplay() {
+            const container = document.getElementById('selected-halo-pst');
+            const input = document.getElementById('halo_pst_input');
+            container.innerHTML = '';
+            const halopstIds = Object.keys(selectedHaloPSTs);
+            halopstIds.forEach(halopstId => {
+                const halopstName = selectedHaloPSTs[halopstId];
+                const badge = document.createElement('span');
+                badge.className = 'halo-pst-badge';
+                badge.innerHTML = halopstName + ' <span class="remove-halo-pst" onclick="removeHaloPST(' + halopstId + ')">×</span>';
+                container.appendChild(badge);
+            });
+            input.value = halopstIds.join(',');
+        }
+        window.removeHaloPST = function(halopstId) {
+            delete selectedHaloPSTs[halopstId];
+            updateHaloPSTDisplay();
+        };
 
         // Handle skills for input tab
         let selectedSkills = {};

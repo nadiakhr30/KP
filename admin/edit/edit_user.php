@@ -14,10 +14,11 @@ $nip = isset($_GET['nip']) ? mysqli_real_escape_string($koneksi, $_GET['nip']) :
 
 // Get user data
 $qUser = mysqli_query($koneksi, "
-    SELECT u.*, j.nama_jabatan, r.nama_role
+    SELECT u.*, j.nama_jabatan, r.nama_role, p.nama_ppid
     FROM user u
     LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
     LEFT JOIN role r ON u.id_role = r.id_role
+    LEFT JOIN ppid p ON u.id_ppid = p.id_ppid
     WHERE u.nip = '$nip'
 ");
 
@@ -58,14 +59,7 @@ if (mysqli_num_rows($qUser) == 0) {
         $skills[] = $row;
     }
 
-    // Get user's current PPID, Halo PST, and Skills
-    $qUserPPID = mysqli_query($koneksi, "SELECT id_ppid FROM user_ppid WHERE nip = '$nip'");
-    $userPPIDs = [];
-    while ($row = mysqli_fetch_assoc($qUserPPID)) {
-        $userPPIDs[] = $row['id_ppid'];
-    }
-
-    $qUserHaloPST = mysqli_query($koneksi, "SELECT id_halo_pst FROM user_halo_pst WHERE nip = '$nip'");
+    $qUserHaloPST = mysqli_query($koneksi, "SELECT id_halo_pst FROM user_halo_pst WHERE nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'");
     $userHaloPSTs = [];
     while ($row = mysqli_fetch_assoc($qUserHaloPST)) {
         $userHaloPSTs[] = $row['id_halo_pst'];
@@ -84,11 +78,14 @@ if (mysqli_num_rows($qUser) == 0) {
         $nomor_telepon = mysqli_real_escape_string($koneksi, trim($_POST['nomor_telepon'] ?? ''));
         $id_jabatan = (int)$_POST['id_jabatan'];
         $id_role = (int)$_POST['id_role'];
+        $id_ppid = (int)$_POST['id_ppid'];
         $status = (int)$_POST['status'];
 
         // Validation
         if ($nama == '' || $email == '') {
             $error = "Nama dan Email wajib diisi!";
+        } elseif (empty($_POST['id_halo_pst'])) {
+            $error = "Halo PST harus dipilih minimal satu!";
         } else {
             // Update user data
             $update = mysqli_query($koneksi, "
@@ -98,31 +95,27 @@ if (mysqli_num_rows($qUser) == 0) {
                     nomor_telepon = " . (!empty($nomor_telepon) ? "'$nomor_telepon'" : "NULL") . ",
                     id_jabatan = $id_jabatan,
                     id_role = $id_role,
+                    id_ppid = $id_ppid,
                     status = $status
                 WHERE nip = '$nip'
             ");
 
             if ($update) {
-                // Update PPID
-                mysqli_query($koneksi, "DELETE FROM user_ppid WHERE nip = '$nip'");
-                if (!empty($_POST['id_ppid'])) {
-                    $id_ppid = (int)$_POST['id_ppid'];
-                    mysqli_query($koneksi, "INSERT INTO user_ppid (id_ppid, nip) VALUES ($id_ppid, '$nip')");
+                // Update Halo PST (required, multiple allowed)
+                mysqli_query($koneksi, "DELETE FROM user_halo_pst WHERE nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'");
+                if (!empty($_POST['id_halo_pst']) && is_array($_POST['id_halo_pst'])) {
+                    foreach ($_POST['id_halo_pst'] as $id_halo_pst) {
+                        $id_halo_pst = (int)$id_halo_pst;
+                        mysqli_query($koneksi, "INSERT INTO user_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', $id_halo_pst)");
+                    }
                 }
 
-                // Update Halo PST
-                mysqli_query($koneksi, "DELETE FROM user_halo_pst WHERE nip = '$nip'");
-                if (!empty($_POST['id_halo_pst'])) {
-                    $id_halo_pst = (int)$_POST['id_halo_pst'];
-                    mysqli_query($koneksi, "INSERT INTO user_halo_pst (id_halo_pst, nip) VALUES ($id_halo_pst, '$nip')");
-                }
-
-                // Update Skills
-                mysqli_query($koneksi, "DELETE FROM user_skill WHERE nip = '$nip'");
-                if (!empty($_POST['id_skill'])) {
+                // Update Skills (optional, multiple allowed)
+                mysqli_query($koneksi, "DELETE FROM user_skill WHERE nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'");
+                if (!empty($_POST['id_skill']) && is_array($_POST['id_skill'])) {
                     foreach ($_POST['id_skill'] as $id_skill) {
                         $id_skill = (int)$id_skill;
-                        mysqli_query($koneksi, "INSERT INTO user_skill (id_skill, nip) VALUES ($id_skill, '$nip')");
+                        mysqli_query($koneksi, "INSERT INTO user_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', $id_skill)");
                     }
                 }
 
@@ -186,18 +179,15 @@ if (mysqli_num_rows($qUser) == 0) {
                             <label>Nama Lengkap <span class="text-danger">*</span></label>
                             <input type="text" name="nama" class="form-control" required value="<?= htmlspecialchars($user['nama']); ?>">
                         </div>
-
                         <div class="form-group">
                             <label>Email <span class="text-danger">*</span></label>
                             <input type="email" name="email" class="form-control" required value="<?= htmlspecialchars($user['email']); ?>">
                         </div>
-
                         <div class="form-group">
                             <label>Nomor Telepon</label>
                             <input type="text" name="nomor_telepon" class="form-control" value="<?= htmlspecialchars($user['nomor_telepon'] ?? ''); ?>">
                             <small class="text-muted">Tanpa 0 di depan, atau kosongkan jika tidak ada</small>
                         </div>
-
                         <div class="form-group">
                             <label>Jabatan <span class="text-danger">*</span></label>
                             <select name="id_jabatan" class="form-control" required>
@@ -209,7 +199,6 @@ if (mysqli_num_rows($qUser) == 0) {
                                 <?php endforeach; ?>
                             </select>
                         </div>
-
                         <div class="form-group">
                             <label>Role <span class="text-danger">*</span></label>
                             <select name="id_role" class="form-control" required>
@@ -221,7 +210,6 @@ if (mysqli_num_rows($qUser) == 0) {
                                 <?php endforeach; ?>
                             </select>
                         </div>
-
                         <div class="form-group">
                             <label>Status <span class="text-danger">*</span></label>
                             <select name="status" class="form-control" required>
@@ -229,29 +217,31 @@ if (mysqli_num_rows($qUser) == 0) {
                                 <option value="0" <?= $user['status'] == 0 ? 'selected' : ''; ?>>Tidak Aktif</option>
                             </select>
                         </div>
-
                         <div class="form-group">
                             <label>PPID</label>
                             <select name="id_ppid" class="form-control">
                                 <option value="">-- Pilih PPID --</option>
                                 <?php foreach ($ppids as $ppid) : ?>
-                                    <option value="<?= $ppid['id_ppid']; ?>" <?= in_array($ppid['id_ppid'], $userPPIDs) ? 'selected' : ''; ?>>
+                                    <option value="<?= $ppid['id_ppid']; ?>" <?= ($user['id_ppid'] == $ppid['id_ppid']) ? 'selected' : ''; ?>>
                                         <?= htmlspecialchars($ppid['nama_ppid']); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-
                         <div class="form-group">
                             <label>Halo PST</label>
-                            <select name="id_halo_pst" class="form-control">
-                                <option value="">-- Pilih Halo PST --</option>
+                            <div class="border p-3" style="max-height: 200px; overflow-y: auto;">
                                 <?php foreach ($haloPSTs as $haloPST) : ?>
-                                    <option value="<?= $haloPST['id_halo_pst']; ?>" <?= in_array($haloPST['id_halo_pst'], $userHaloPSTs) ? 'selected' : ''; ?>>
-                                        <?= htmlspecialchars($haloPST['nama_halo_pst']); ?>
-                                    </option>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="haloPST<?= $haloPST['id_halo_pst']; ?>" 
+                                               name="id_halo_pst[]" value="<?= $haloPST['id_halo_pst']; ?>"
+                                               <?= in_array($haloPST['id_halo_pst'], $userHaloPSTs) ? 'checked' : ''; ?>>
+                                        <label class="custom-control-label" for="haloPST<?= $haloPST['id_halo_pst']; ?>">
+                                            <?= htmlspecialchars($haloPST['nama_halo_pst']); ?>
+                                        </label>
+                                    </div>
                                 <?php endforeach; ?>
-                            </select>
+                            </div>
                         </div>
 
                         <div class="form-group">

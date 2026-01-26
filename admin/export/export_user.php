@@ -1,7 +1,7 @@
 <?php
 ob_start();
 session_start();
-include_once("../koneksi.php");
+include_once("../../koneksi.php");
 
 if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
     header('Location: ../index.php');
@@ -24,10 +24,12 @@ $qUser = mysqli_query($koneksi, "
         u.status,
         u.nomor_telepon,
         j.nama_jabatan,
-        r.nama_role
+        r.nama_role,
+        p.nama_ppid
     FROM user u
     LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
     LEFT JOIN role r ON u.id_role = r.id_role
+    LEFT JOIN ppid p ON u.id_ppid = p.id_ppid
     ORDER BY u.nama
 ");
 $dataUsers = [];
@@ -41,7 +43,7 @@ function getUserSkills($koneksi, $nip) {
         SELECT s.nama_skill
         FROM user_skill us
         JOIN skill s ON us.id_skill = s.id_skill
-        WHERE us.nip = " . (int)$nip . "
+        WHERE us.nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'
         ORDER BY s.nama_skill
     ");
     $skills = [];
@@ -51,29 +53,13 @@ function getUserSkills($koneksi, $nip) {
     return implode(', ', $skills);
 }
 
-// Get PPID for each user
-function getUserPPID($koneksi, $nip) {
-    $qPPID = mysqli_query($koneksi, "
-        SELECT p.nama_ppid
-        FROM user_ppid up
-        JOIN ppid p ON up.id_ppid = p.id_ppid
-        WHERE up.nip = " . (int)$nip . "
-        ORDER BY p.nama_ppid
-    ");
-    $ppids = [];
-    while ($row = mysqli_fetch_assoc($qPPID)) {
-        $ppids[] = $row['nama_ppid'];
-    }
-    return implode(', ', $ppids);
-}
-
 // Get Halo PST for each user
 function getUserHaloPST($koneksi, $nip) {
     $qHaloPST = mysqli_query($koneksi, "
         SELECT hp.nama_halo_pst
         FROM user_halo_pst uhp
         JOIN halo_pst hp ON uhp.id_halo_pst = hp.id_halo_pst
-        WHERE uhp.nip = " . (int)$nip . "
+        WHERE uhp.nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'
         ORDER BY hp.nama_halo_pst
     ");
     $haloPSTs = [];
@@ -147,7 +133,7 @@ if ($format == 'print') {
                     <td><?= htmlspecialchars($user['nama_role'] ?? '-'); ?></td>
                     <td><?= $user['status'] == 1 ? 'Aktif' : 'Tidak Aktif'; ?></td>
                     <td><?= $user['nomor_telepon'] ? '0' . $user['nomor_telepon'] : '-'; ?></td>
-                    <td><?= htmlspecialchars(getUserPPID($koneksi, $user['nip'])); ?></td>
+                    <td><?= htmlspecialchars($user['nama_ppid']); ?></td>
                     <td><?= htmlspecialchars(getUserHaloPST($koneksi, $user['nip'])); ?></td>
                     <td><?= htmlspecialchars(getUserSkills($koneksi, $user['nip'])); ?></td>
                 </tr>
@@ -207,15 +193,9 @@ else if ($format == 'excel') {
         $sheet->setCellValue("F$row", $user['nama_role'] ?? '-');
         $sheet->setCellValue("G$row", $user['status'] == 1 ? 'Aktif' : 'Tidak Aktif');
         $sheet->setCellValue("H$row", $user['nomor_telepon'] ? '0' . $user['nomor_telepon'] : '-');
-        $sheet->setCellValue("I$row", getUserPPID($koneksi, $user['nip']));
+        $sheet->setCellValue("I$row", $user['nama_ppid']);
         $sheet->setCellValue("J$row", getUserHaloPST($koneksi, $user['nip']));
         $sheet->setCellValue("K$row", getUserSkills($koneksi, $user['nip']));
-
-        // Alternate row coloring
-        if ($index % 2 == 0) {
-            $rowStyle = ['fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => 'F9F9F9']]];
-            $sheet->getStyle("A$row:K$row")->applyFromArray($rowStyle);
-        }
         $row++;
     }
 
@@ -248,7 +228,7 @@ else if ($format == 'json') {
             'role' => $user['nama_role'] ?? null,
             'status' => $user['status'] == 1 ? 'Aktif' : 'Tidak Aktif',
             'nomor_telepon' => $user['nomor_telepon'] ? '0' . $user['nomor_telepon'] : null,
-            'ppid' => getUserPPID($koneksi, $user['nip']),
+            'ppid' => $user['nama_ppid'],
             'halo_pst' => getUserHaloPST($koneksi, $user['nip']),
             'skills' => getUserSkills($koneksi, $user['nip'])
         ];
@@ -291,7 +271,7 @@ else if ($format == 'csv') {
             $user['nama_role'] ?? '-',
             $user['status'] == 1 ? 'Aktif' : 'Tidak Aktif',
             $user['nomor_telepon'] ? '0' . $user['nomor_telepon'] : '-',
-            getUserPPID($koneksi, $user['nip']),
+            $user['nama_ppid'],
             getUserHaloPST($koneksi, $user['nip']),
             getUserSkills($koneksi, $user['nip'])
         ], $delim);
