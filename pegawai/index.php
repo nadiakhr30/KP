@@ -254,7 +254,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
               <i class="bi bi-diagram-3"></i>
               <span>Struktur Humas</span>
             </a>
-            <a href="#" class="overlay-item">
+            <a href="jadwal_konten.php" class="overlay-item">
               <i class="bi bi-calendar-event"></i>
               <span>Jadwal Konten Humas</span>
             </a>
