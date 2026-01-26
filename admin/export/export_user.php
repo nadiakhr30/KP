@@ -78,14 +78,20 @@ if ($format == 'print') {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Laporan Data User</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins&family=Jost&display=swap">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link rel="stylesheet" href="../assets/css/style.css">
+        <link rel="stylesheet" href="../assets/css/custom.css">
         <style>
             @media print {
                 body { margin: 0; padding: 20px; }
                 .no-print { display: none; }
                 table { font-size: 11px; }
             }
-            body { font-family: Arial, sans-serif; }
+            body { font-family: Arial, sans-serif; padding: 40px; }
             h2 { text-align: center; margin-bottom: 20px; margin-top: 20px; }
             .header-info { text-align: center; margin-bottom: 20px; }
             table { width: 100%; border-collapse: collapse; }
@@ -102,6 +108,7 @@ if ($format == 'print') {
 
         <div class="header-info">
             <h2>Laporan Data User Sistem Kehumasan</h2>
+            <h2>Badan Pusat Statistik Bangkalan</h2>
             <p>Tanggal Cetak: <?= date('d-m-Y H:i:s'); ?></p>
             <p>Total User: <?= count($dataUsers); ?></p>
         </div>
