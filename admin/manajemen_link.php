@@ -55,100 +55,21 @@ while ($row = mysqli_fetch_assoc($qLink)) {
                 <div class="page-body">
                     <ul class="nav nav-tabs tabs card-block" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#table" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                            <a class="nav-link active" data-toggle="tab" href="#card" role="tab"><i class="ti-layout-grid2"></i> Card</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#card" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                            <a class="nav-link" data-toggle="tab" href="#table" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
                         </li>
                     </ul>
                     <div class="tab-content tabs card">
-                        <div class="tab-pane active" id="table" role="tabpanel">
-                            <div class="card-block">
-                                <div class="row m-b-10">
-                                    <div class="col-6">
-                                        <div class="dropdown-info dropdown open">
-                                            <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
-                                            <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="align-items-right" style="float: right;">
-                                            <a href="tambah/tambah_link.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="dt-responsive table-responsive">
-                                    <table id="order-table" class="table table-striped table-bordered nowrap">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Nama Link</th>
-                                                <th>Gambar</th>
-                                                <th>URL</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-<?php if (count($dataLinks) === 0): ?>
-<tr>
-  <td colspan="5" class="text-center">Tidak ada data link tersedia.</td>
-</tr>
-<?php else: ?>
-<?php foreach ($dataLinks as $link) : ?>
-<tr>
-  <td><?= $link['id_link']; ?></td>
-  <td><?= htmlspecialchars($link['nama_link']); ?></td>
-  <td>
-    <?php if ($link['gambar']) : ?>
-      <a href="../uploads/<?= htmlspecialchars($link['gambar']); ?>" class="glightbox" data-gallery="gallery">
-        <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: inline-block;">
-          <img src="../uploads/<?= htmlspecialchars($link['gambar']); ?>" style="width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer;">
-        </div>
-      </a>
-    <?php else : ?>
-      <span class="badge bg-secondary">-</span>
-    <?php endif; ?>
-  </td>
-  <td><?= htmlspecialchars($link['link']); ?></td>
-  <td>
-    <a href="edit/edit_link.php?id=<?= $link['id_link']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
-      <i class="ti-pencil text-dark"></i>
-    </a>
-    <button type="button" 
-            class="btn waves-effect waves-light btn-danger btn-icon"
-            onclick="deleteLink(<?= $link['id_link']; ?>, '<?= htmlspecialchars($link['nama_link']); ?>')"
-            title="Hapus">
-       <i class="ti-trash text-dark"></i>
-    </button>
-  </td>
-</tr>
-<?php endforeach; ?>
-<?php endif; ?>
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Nama Link</th>
-                                                <th>Gambar</th>
-                                                <th>Link</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane p-5" id="card" role="tabpanel">
+                        <div class="tab-pane p-5 active" id="card" role="tabpanel">
                             <div class="row m-b-10">
                                 <div class="col-6">
                                     <div class="dropdown-info dropdown open">
                                         <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak2" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                         <div class="dropdown-menu" aria-labelledby="cetak2" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                            <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                            <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export/export_link.php?format=print">Print</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export/export_link.php?format=excel">Excel</a>
                                         </div>
                                     </div>
                                 </div>
@@ -192,6 +113,85 @@ while ($row = mysqli_fetch_assoc($qLink)) {
                                 </div>
                                 <?php endforeach; ?>
                                 <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="tab-pane p-4" id="table" role="tabpanel">
+                            <div class="card-block">
+                                <div class="row m-b-10">
+                                    <div class="col-6">
+                                        <div class="dropdown-info dropdown open">
+                                            <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
+                                            <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                                <a class="dropdown-item waves-light waves-effect" href="export/export_link.php?format=print">Print</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export/export_link.php?format=excel">Excel</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="align-items-right" style="float: right;">
+                                            <a href="tambah/tambah_link.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="dt-responsive table-responsive">
+                                    <table id="order-table" class="table table-striped table-bordered nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Nama Link</th>
+                                                <th>Gambar</th>
+                                                <th>URL</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php if (count($dataLinks) === 0): ?>
+                                            <tr>
+                                              <td colspan="5" class="text-center">Tidak ada data link tersedia.</td>
+                                            </tr>
+                                            <?php else: ?>
+                                            <?php foreach ($dataLinks as $link) : ?>
+                                            <tr>
+                                              <td><?= $link['id_link']; ?></td>
+                                              <td><?= htmlspecialchars($link['nama_link']); ?></td>
+                                              <td>
+                                                <?php if ($link['gambar']) : ?>
+                                                  <a href="../uploads/<?= htmlspecialchars($link['gambar']); ?>" class="glightbox" data-gallery="gallery">
+                                                    <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: inline-block;">
+                                                      <img src="../uploads/<?= htmlspecialchars($link['gambar']); ?>" style="width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer;">
+                                                    </div>
+                                                  </a>
+                                                <?php else : ?>
+                                                  <span class="badge bg-secondary">-</span>
+                                                <?php endif; ?>
+                                              </td>
+                                              <td><?= htmlspecialchars($link['link']); ?></td>
+                                              <td>
+                                                <a href="edit/edit_link.php?id=<?= $link['id_link']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                  <i class="ti-pencil text-dark"></i>
+                                                </a>
+                                                <button type="button" 
+                                                        class="btn waves-effect waves-light btn-danger btn-icon"
+                                                        onclick="deleteLink(<?= $link['id_link']; ?>, '<?= htmlspecialchars($link['nama_link']); ?>')"
+                                                        title="Hapus">
+                                                   <i class="ti-trash text-dark"></i>
+                                                </button>
+                                              </td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                            <?php endif; ?>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Nama Link</th>
+                                                <th>Gambar</th>
+                                                <th>Link</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
