@@ -101,22 +101,12 @@ if ($format == 'print') {
                 font-size: 13px;
                 word-break: break-all;
             }
-            .no-image-placeholder {
-                width: 100%;
-                height: 200px;
-                background-color: #f0f0f0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #999;
-                font-size: 14px;
-            }
         </style>
     </head>
     <body>
         <div class="no-print d-flex justify-content-between mb-4">
-            <button class="btn btn-secondary btn-icon-l" onclick="window.history.back()"><i class="fas fa-arrow-left"></i></button>
-            <button class="btn btn-primary btn-icon-l" onclick="window.print()"><i class="fas fa-print"></i></button>
+            <button class="btn btn-secondary btn-icon-l" onclick="window.history.back()"><i class="no-print fas fa-arrow-left"></i></button>
+            <button class="btn btn-primary btn-icon-l" onclick="window.print()"><i class="no-print fas fa-print"></i></button>
         </div>
         <div class="header-info">
             <h2>Laporan Data Link Sistem Kehumasan</h2>

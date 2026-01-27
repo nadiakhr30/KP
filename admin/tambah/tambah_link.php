@@ -36,29 +36,22 @@ if (isset($_POST['simpan'])) {
         $status  = 'error';
         $message = 'Nama link dan URL wajib diisi!';
     } else {
-
         $gambar = '';
-
         // upload gambar (opsional)
         if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] == 0) {
-
             $ext = pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION);
             $namaFileBaru = uniqid() . '.' . $ext;
-
             move_uploaded_file(
                 $_FILES['gambar']['tmp_name'],
-                'assets/img/steps/' . $namaFileBaru
+                '../../uploads/' . $namaFileBaru
             );
-
             $gambar = $namaFileBaru;
         }
-
         // simpan ke database
         $simpan = mysqli_query($koneksi, "
             INSERT INTO link (nama_link, gambar, link)
             VALUES ('$nama_link', '$gambar', '$link_web')
         ");
-
         if ($simpan) {
             $status  = 'success';
             $message = 'Link berhasil ditambahkan!';
@@ -73,7 +66,6 @@ if (isset($_POST['simpan'])) {
 // Handle file upload untuk import
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["excelFile"])) {
     $file = $_FILES["excelFile"];
-    
     // Validate file
     if ($file["error"] !== UPLOAD_ERR_OK) {
         $status = "error";
@@ -90,27 +82,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["excelFile"])) {
             // Process the file
             $inputFileName = $file["tmp_name"];
             require '../../vendor/autoload.php';
-            
             try {
                 $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($inputFileName);
                 $worksheet = $spreadsheet->getActiveSheet();
                 $rows = $worksheet->toArray();
-                
                 // Skip header row and validate data
                 for ($i = 1; $i < count($rows); $i++) {
                     $row = $rows[$i];
-                    
                     // Check if row is empty
                     if (empty($row[0]) && empty($row[1])) {
                         continue;
                     }
-                    
                     $previewData[] = [
                         'nama_link' => trim($row[0] ?? ''),
                         'link' => trim($row[1] ?? '')
                     ];
                 }
-                
                 if (count($previewData) > 0) {
                     $fileUploaded = true;
                 } else {
@@ -124,16 +111,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["excelFile"])) {
         }
     }
 }
-
 // Handle data submission from preview
 if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
     $data = json_decode($_POST["preview_data"], true);
-    
     if ($data && is_array($data)) {
         $successCount = 0;
         $errorCount = 0;
         $errors = [];
-        
         foreach ($data as $index => $link) {
             // Validate required fields
             if (empty($link['nama_link']) || empty($link['link'])) {
@@ -141,14 +125,12 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                 $errors[] = "Baris " . ($index + 2) . ": Nama Link dan URL wajib diisi!";
                 continue;
             }
-            
             // Insert into link table
             $insertLink = "INSERT INTO link (nama_link, link) 
                           VALUES (
                             '" . mysqli_real_escape_string($koneksi, $link['nama_link']) . "',
                             '" . mysqli_real_escape_string($koneksi, $link['link']) . "'
                           )";
-            
             if (mysqli_query($koneksi, $insertLink)) {
                 $successCount++;
             } else {
@@ -156,14 +138,13 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                 $errors[] = "Baris " . ($index + 2) . ": Gagal menambahkan link!";
             }
         }
-        
         if ($successCount > 0) {
             $status = "success";
             $message = "Berhasil menambahkan $successCount link!";
             $previewData = [];
             $fileUploaded = false;
+            header("Refresh: 1; url=../manajemen_link.php");
         }
-        
         if ($errorCount > 0) {
             $status = "error";
             $message = "Gagal menambahkan $errorCount link. " . implode(" ", $errors);
@@ -171,17 +152,19 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <title>Tambah Link</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Bootstrap -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins&family=Jost&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
     <style>
         .nav-tabs .nav-link {
             color: #495057;
@@ -238,18 +221,13 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
         }
     </style>
 </head>
-
-<body>
-
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="col-md-8 my-5">
+            <div class="card">
+                <div class="card-header">
                     <h5 class="mb-0">Tambah Link Website</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body px-5">
                     <!-- Tab Navigation -->
                     <ul class="nav nav-tabs md-tabs" role="tablist">
                         <li class="nav-item">
@@ -271,72 +249,60 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
                     <?php endif; ?>
-
                     <?php if ($status == 'success'): ?>
                         <div class="alert alert-success alert-dismissible fade show">
                             <?= htmlspecialchars($message) ?>
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
                     <?php endif; ?>
-
                     <!-- Tab Content -->
                     <div class="tab-content">
                         <!-- Input Manual Tab -->
-                        <div class="tab-pane fade <?php echo $activeTab === 'input' ? 'show active' : ''; ?>" id="input-pane" role="tabpanel">
+                        <div class="tab-pane m-t-15 fade <?php echo $activeTab === 'input' ? 'show active' : ''; ?>" id="input-pane" role="tabpanel">
                             <form method="POST" enctype="multipart/form-data">
-
                                 <div class="form-group">
-                                    <label>Upload Gambar (Opsional)</label>
-                                    <div class="text-center" style="margin-bottom: 15px;">
-                                        <div id="gambarPreview" style="display: none; text-align: center; width: 120px; height: 120px; margin: 0 auto 15px;">
-                                            <img id="previewImg" src="" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">
+                                    <div class="image-upload-container">
+                                        <div class="image-preview-circle">
+                                            <img id="previewImg" src="../../images/no.jpg" alt="Preview">
                                         </div>
+                                        <div class="custom-file-upload">
+                                            <input type="file" id="gambarInput" name="gambar" accept="image/*">
+                                            <label for="gambarInput" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-cloud-upload-alt"></i> Tambah Gambar
+                                            </label>
+                                        </div>
+                                        <div id="uploadedFilename" class="uploaded-filename mt-0"></div>
                                     </div>
-                                    <div class="mb-3">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6 px-5">
+                                        <label>Nama Instansi / Website <span class="text-danger">*</span></label>
                                         <input
-                                            type="file"
-                                            name="gambar"
+                                            type="text"
+                                            name="nama_link"
                                             class="form-control"
-                                            id="gambarInput"
-                                            accept="image/*"
+                                            required
+                                            value="<?= isset($_POST['nama_link']) ? htmlspecialchars($_POST['nama_link']) : '' ?>"
                                         >
-                                        <small class="text-muted">
-                                            Jika tidak upload, gambar akan dikosongkan
-                                        </small>
+                                    </div>
+                                    <div class="form-group col-md-6 px-5">
+                                        <label>Link Website <span class="text-danger">*</span></label>
+                                        <input
+                                            type="url"
+                                            name="link"
+                                            class="form-control"
+                                            required
+                                            value="<?= isset($_POST['link']) ? htmlspecialchars($_POST['link']) : '' ?>"
+                                        >
                                     </div>
                                 </div>
-
-                                <div class="form-group">
-                                    <label>Nama Instansi / Website <span class="text-danger">*</span></label>
-                                    <input
-                                        type="text"
-                                        name="nama_link"
-                                        class="form-control"
-                                        required
-                                        value="<?= isset($_POST['nama_link']) ? htmlspecialchars($_POST['nama_link']) : '' ?>"
-                                    >
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Link Website <span class="text-danger">*</span></label>
-                                    <input
-                                        type="url"
-                                        name="link"
-                                        class="form-control"
-                                        required
-                                        value="<?= isset($_POST['link']) ? htmlspecialchars($_POST['link']) : '' ?>"
-                                    >
-                                </div>
-
                                 <div class="form-group d-flex justify-content-between mt-4">
-                                    <a href="../manajemen_link.php" class="btn btn-secondary">Batal</a>
-
-                                    <button type="submit" name="simpan" class="btn btn-primary">Simpan</button>
+                                    <a href="../manajemen_link.php" class="btn btn-secondary btn-icon-l"><i class="fas fa-arrow-left"></i></a>
+                                    <button type="submit" name="simpan" class="btn btn-primary btn-icon-l"><i class="fas fa-save"></i></button>
                                 </div>
 
                             </form>
                         </div>
-
                         <!-- Import Tab -->
                         <div class="tab-pane fade <?php echo $activeTab === 'import' ? 'show active' : ''; ?>" id="import-pane" role="tabpanel">
                             <!-- Template Information -->
@@ -355,7 +321,6 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                                     </a>
                                 </p>
                             </div>
-
                             <?php if (!$fileUploaded): ?>
                             <!-- Upload Section -->
                             <form method="POST" enctype="multipart/form-data" id="uploadForm">
@@ -369,9 +334,8 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                                         <input type="file" id="fileInput" name="excelFile" accept=".xlsx,.xls" style="display: none;">
                                     </div>
                                 </div>
-                                <a href="../manajemen_link.php" class="btn btn-secondary">Batal</a>
+                                <a href="../manajemen_link.php" class="btn btn-secondary btn-icon-l"><i class="fas fa-arrow-left"></i></a>
                             </form>
-
                             <!-- Upload Progress Section -->
                             <div class="upload-progress" id="uploadProgress">
                                 <h5 class="mb-3">Mengupload File...</h5>
@@ -386,7 +350,6 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                                     </div>
                                 </div>
                             </div>
-
                             <?php else: ?>
                             <!-- Preview Section -->
                             <h5 class="mt-4 mb-3">Preview Data (<?php echo count($previewData); ?> Link)</h5>
@@ -414,7 +377,6 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                                     </tbody>
                                 </table>
                             </div>
-
                             <!-- Submit Form -->
                             <form method="POST" class="mt-4">
                                 <input type="hidden" name="preview_data" value="<?php echo htmlspecialchars(json_encode($previewData)); ?>">
@@ -426,10 +388,10 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                                         </label>
                                     </div>
                                 </div>
-                                <button type="submit" name="submit_data" class="btn btn-success" id="submitBtn" disabled>
-                                    <i class="fa fa-save"></i> Import Data
-                                </button>
-                                <a href="tambah_link.php" class="btn btn-secondary">Batal</a>
+                                <div class="form-group mt-4 d-flex justify-content-between">
+                                    <a href="../manajemen_link.php" class="btn btn-secondary btn-icon-l"><i class="fas fa-arrow-left"></i></a>
+                                    <button type="submit" id="submitBtn" name="submit_data" class="btn btn-success btn-icon-l" disabled><i class="fas fa-save"></i></button>
+                                </div>
                             </form>
                             <?php endif; ?>
                         </div>
@@ -441,7 +403,6 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
         </div>
     </div>
 </div>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -453,7 +414,6 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
         const confirmCheckbox = document.getElementById('confirmCheckbox');
         const submitBtn = document.getElementById('submitBtn');
         const gambarInput = document.getElementById('gambarInput');
-
         // Image preview for input tab
         if (gambarInput) {
             gambarInput.addEventListener('change', function(e) {
@@ -462,38 +422,37 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                     const reader = new FileReader();
                     reader.onload = function(event) {
                         document.getElementById('previewImg').src = event.target.result;
-                        document.getElementById('gambarPreview').style.display = 'block';
                     };
                     reader.readAsDataURL(file);
+                    // Show filename
+                    const filenameDisplay = document.getElementById('uploadedFilename');
+                    filenameDisplay.textContent = file.name;
+                    filenameDisplay.classList.add('show');
                 } else {
-                    document.getElementById('gambarPreview').style.display = 'none';
+                    document.getElementById('previewImg').src = '../../images/no.jpg';
+                    const filenameDisplay = document.getElementById('uploadedFilename');
+                    filenameDisplay.classList.remove('show');
                 }
             });
         }
-
         // Handle upload section
         if (dropzone && fileInput && uploadForm) {
             // Drag and drop handlers
             dropzone.addEventListener('click', () => fileInput.click());
-
             dropzone.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 dropzone.classList.add('dragover');
             });
-
             dropzone.addEventListener('dragleave', () => {
                 dropzone.classList.remove('dragover');
             });
-
             dropzone.addEventListener('drop', (e) => {
                 e.preventDefault();
                 dropzone.classList.remove('dragover');
                 fileInput.files = e.dataTransfer.files;
                 handleFileSelect();
             });
-
             fileInput.addEventListener('change', handleFileSelect);
-
             function handleFileSelect() {
                 if (fileInput.files.length > 0) {
                     // Show loading progress
@@ -507,7 +466,6 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                 }
             }
         }
-
         // Handle preview section checkbox
         if (confirmCheckbox && submitBtn) {
             confirmCheckbox.addEventListener('change', function() {

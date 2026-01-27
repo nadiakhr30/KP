@@ -207,39 +207,31 @@ ob_start();
 <!-- Lightbox Library -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
 <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Delete Modal with Artistic Design -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-            <div class="modal-header border-0" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: 15px 15px 0 0;">
-                <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
-                    <i class="ti-trash" style="font-size: 24px; color: white;"></i>
-                    <h5 class="modal-title" id="deleteModalLabel" style="color: white; margin: 0; font-weight: 700;">Konfirmasi Hapus</h5>
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 400px; display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; background: #fcf2f2; border-left: 5px solid #e74c3c;">
+            <div class="modal-body" style="padding: 40px 30px; text-align: center;">
+                <div style="margin-bottom: 20px;">
+                    <i class="ti-alert" style="font-size: 56px; color: #e74c3c;"></i>
                 </div>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 1;">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" style="padding: 30px;">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <i class="ti-alert" style="font-size: 48px; color: #e74c3c;"></i>
-                </div>
-                <p style="font-size: 16px; color: #2c3e50; margin: 15px 0;">Apakah Anda yakin ingin menghapus link</p>
-                <p style="font-size: 18px; color: #e74c3c; font-weight: 700; margin: 15px 0;"><strong id="deleteLinkName"></strong>?</p>
-                <p style="color: #7f8c8d; font-size: 14px; margin: 15px 0;">
-                    <i class="ti-alert-alt" style="margin-right: 8px;"></i>
+                <h5 style="color: #2c3e50; font-weight: 700; font-size: 18px; margin-bottom: 10px;">Konfirmasi Hapus</h5>
+                <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 20px;">Apakah Anda yakin ingin menghapus link <strong id="deleteLinkName"></strong>?</p>
+                <p style="color: #e74c3c; font-size: 12px; margin-top: 20px; margin-bottom: 30px;">
+                    <i class="ti-alert-alt" style="margin-right: 6px;"></i>
                     Tindakan ini tidak dapat dibatalkan.
                 </p>
                 <input type="hidden" id="deleteLinkId" value="">
-            </div>
-            <div class="modal-footer border-0" style="padding: 20px 30px; background: rgba(0, 0, 0, 0.02);">
-                <button type="button" class="btn" data-dismiss="modal" style="background: #95a5a6; color: white; border-radius: 8px; padding: 8px 20px; font-weight: 500;">
-                    <i class="ti-close" style="margin-right: 5px;"></i> Batal
-                </button>
-                <button type="button" class="btn" id="confirmDelete" style="background: #e74c3c; color: white; border-radius: 8px; padding: 8px 20px; font-weight: 500;">
-                    <i class="ti-trash" style="margin-right: 5px;"></i> Hapus
-                </button>
+                <div style="display: flex; justify-content: center; gap: 15px;">
+                    <button type="button" class="btn btn-secondary btn-icon waves-effect waves-light" data-dismiss="modal" title="Batal">
+                        <i class="ti-close"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-icon waves-effect waves-light" id="confirmDelete" title="Hapus">
+                        <i class="ti-trash"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -265,6 +257,10 @@ window.addEventListener('load', function() {
             confirmButtonText: 'OK',
             allowOutsideClick: false,
             allowEscapeKey: false
+        }).then((result) => {
+            if (result.isConfirmed && '<?= $status ?>' === 'success') {
+                location.reload();
+            }
         });
         <?php
         unset($_SESSION['delete_status']);
@@ -274,19 +270,37 @@ window.addEventListener('load', function() {
 });
 
 function deleteLink(id, namaLink) {
-        document.getElementById('deleteLinkId').value = id;
-        document.getElementById('deleteLinkName').textContent = namaLink;
-        $('#deleteModal').modal('show');
-    }
-    
-    document.getElementById('confirmDelete').addEventListener('click', function() {
-        const id = document.getElementById('deleteLinkId').value;
-        window.location.href = 'hapus/hapus_link.php?id=' + id;
-    });
-    
-    const lightbox = GLightbox({
-        selector: '.glightbox'
-    });
+    document.getElementById('deleteLinkId').value = id;
+    document.getElementById('deleteLinkName').textContent = namaLink;
+    $('#deleteModal').modal('show');
+}
+document.getElementById('confirmDelete').addEventListener('click', function() {
+    const id = document.getElementById('deleteLinkId').value;
+    const namaLink = document.getElementById('deleteLinkName').textContent;
+
+    // Close the modal first
+    $('#deleteModal').modal('hide');
+    // Perform deletion
+    fetch('hapus/hapus_link.php?id=' + id)
+        .then(response => response.text())
+        .then(data => {
+            // Redirect to refresh page and show the session-based alert
+            window.location.href = 'manajemen_link.php';
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: 'Terjadi kesalahan saat menghapus data',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'OK'
+            });
+        });
+});
+
+const lightbox = GLightbox({
+    selector: '.glightbox'
+});
 </script>
 <?php
 $script = ob_get_clean();

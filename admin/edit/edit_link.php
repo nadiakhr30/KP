@@ -73,17 +73,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <title>Edit Link</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins&family=Jost&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
 </head>
-<body>
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="col-md-8 my-5">
+            <div class="card">
+                <div class="card-header">
                     <h5 class="mb-0">Edit Link</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body px-5">
                     <?php if ($error): ?>
                         <div class="alert alert-danger alert-dismissible fade show">
                             <?= htmlspecialchars($error) ?>
@@ -100,35 +104,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <form method="POST" enctype="multipart/form-data">
                         <div class="form-group">
-                            <label>Gambar</label>
-                            <div class="text-center" style="margin-bottom: 15px;">
-                                <div id="gambarPreview" style="width: 120px; height: 120px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
+                            <div class="image-upload-container">
+                                <div class="image-preview-circle">
                                     <?php if ($data['gambar']): ?>
-                                        <img id="previewImg" src="../../uploads/<?= htmlspecialchars($data['gambar']); ?>" alt="Preview" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">
+                                        <img id="previewImg" src="../../uploads/<?= htmlspecialchars($data['gambar']); ?>" alt="Preview">
                                     <?php else: ?>
-                                        <img id="previewImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect fill='%23ddd' width='120' height='120'/%3E%3Ctext x='50%' y='50%' text-anchor='middle' dy='.3em' fill='%23999' font-size='14'%3ENo Image%3C/text%3E%3C/svg%3E" alt="Preview" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block;">
+                                        <img id="previewImg" src="../../images/no.jpg" alt="Preview">
                                     <?php endif; ?>
                                 </div>
+                                <div class="custom-file-upload">
+                                    <input type="file" id="gambarInput" name="gambar" accept="image/*">
+                                    <label for="gambarInput" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-cloud-upload-alt"></i> Tambah Gambar
+                                    </label>
+                                </div>
+                                <div id="uploadedFilename" class="uploaded-filename"><?php echo $data['gambar'] ? $data['gambar'] : ''; ?></div>
                             </div>
-                            <input type="file" id="gambarInput" name="gambar" class="form-control" accept="image/*">
-                            <small class="text-muted">Biarkan kosong untuk tidak mengubah gambar</small>
                         </div>
-
-                        <div class="form-group">
-                            <label>Nama Link <span class="text-danger">*</span></label>
-                            <input type="text" name="nama_link" class="form-control" required 
-                                   value="<?= htmlspecialchars($data['nama_link']) ?>">
+                        <div class="form-row">
+                            <div class="form-group col-md-6 px-5">
+                                <label>Nama Link <span class="text-danger">*</span></label>
+                                <input type="text" name="nama_link" class="form-control" required 
+                                       value="<?= htmlspecialchars($data['nama_link']) ?>">
+                            </div>
+                            <div class="form-group col-md-6 px-5">
+                                <label>Link Website <span class="text-danger">*</span></label>
+                                <input type="url" name="link" class="form-control" required 
+                                       value="<?= htmlspecialchars($data['link']) ?>">
+                            </div>
                         </div>
-
-                        <div class="form-group">
-                            <label>Link Website <span class="text-danger">*</span></label>
-                            <input type="url" name="link" class="form-control" required 
-                                   value="<?= htmlspecialchars($data['link']) ?>">
-                        </div>
-
                         <div class="form-group d-flex justify-content-between mt-4">
-                            <a href="../manajemen_link.php" class="btn btn-secondary">Batal</a>
-                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                            <a href="../manajemen_link.php" class="btn btn-secondary btn-icon-l"><i class="fas fa-arrow-left"></i></a>
+                            <button type="submit" class="btn btn-primary btn-icon-l"><i class="fas fa-save"></i></button>
                         </div>
                     </form>
                 </div>
@@ -148,6 +155,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 document.getElementById('previewImg').src = event.target.result;
             };
             reader.readAsDataURL(file);
+            
+            // Show filename
+            const filenameDisplay = document.getElementById('uploadedFilename');
+            filenameDisplay.textContent = file.name;
+            filenameDisplay.classList.add('show');
+        } else {
+            document.getElementById('previewImg').src = '../assets/images/avatar-blank.jpg';
+            const filenameDisplay = document.getElementById('uploadedFilename');
+            filenameDisplay.classList.remove('show');
         }
     });
 </script>

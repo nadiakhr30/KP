@@ -102,17 +102,15 @@ if ($format == 'print') {
     </head>
     <body>
         <div class="no-print d-flex justify-content-between">
-            <button class="btn btn-secondary btn-icon-l" onclick="window.history.back()"><i class="fas fa-arrow-left"></i></button>
-            <button class="btn btn-primary btn-icon-l" onclick="window.print()"><i class="fas fa-print"></i></button>
+            <button class="btn btn-secondary btn-icon-l" onclick="window.history.back()"><i class="no-print fas fa-arrow-left"></i></button>
+            <button class="btn btn-primary btn-icon-l" onclick="window.print()"><i class="no-print fas fa-print"></i></button>
         </div>
-
         <div class="header-info">
             <h2>Laporan Data User Sistem Kehumasan</h2>
             <h2>Badan Pusat Statistik Bangkalan</h2>
             <p>Tanggal Cetak: <?= date('d-m-Y H:i:s'); ?></p>
             <p>Total User: <?= count($dataUsers); ?></p>
         </div>
-
         <table>
             <thead>
                 <tr>
@@ -155,13 +153,11 @@ if ($format == 'print') {
     <?php
     exit();
 }
-
 // EXCEL FORMAT
 else if ($format == 'excel') {
     $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
     $sheet->setTitle('Data User');
-
     // Set column widths
     $sheet->getColumnDimension('A')->setWidth(5);
     $sheet->getColumnDimension('B')->setWidth(15);
@@ -174,11 +170,9 @@ else if ($format == 'excel') {
     $sheet->getColumnDimension('I')->setWidth(25);
     $sheet->getColumnDimension('J')->setWidth(25);
     $sheet->getColumnDimension('K')->setWidth(30);
-
     // Add headers
     $headers = ['No', 'NIP', 'Nama', 'Email', 'Jabatan', 'Role', 'Status', 'Nomor Telepon', 'PPID', 'Halo PST', 'Skills'];
     $sheet->fromArray($headers, NULL, 'A1');
-
     // Style headers
     $headerStyle = [
         'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 12],
@@ -187,7 +181,6 @@ else if ($format == 'excel') {
     ];
     $sheet->getStyle('A1:K1')->applyFromArray($headerStyle);
     $sheet->getRowDimension(1)->setRowHeight(25);
-
     // Add data
     $row = 2;
     foreach ($dataUsers as $index => $user) {
@@ -204,23 +197,19 @@ else if ($format == 'excel') {
         $sheet->setCellValue("K$row", getUserSkills($koneksi, $user['nip']));
         $row++;
     }
-
     // Add summary
     $row += 2;
     $sheet->setCellValue("A$row", "Total User:");
     $sheet->setCellValue("B$row", count($dataUsers));
     $sheet->getStyle("A$row")->getFont()->setBold(true);
     $sheet->getStyle("B$row")->getFont()->setBold(true);
-
     $filename = 'Laporan_User_' . date('Y-m-d_H-i-s') . '.xlsx';
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment;filename="' . $filename . '"');
-
     $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
     $writer->save('php://output');
     exit();
 }
-
 // JSON FORMAT
 else if ($format == 'json') {
     $jsonData = [];
