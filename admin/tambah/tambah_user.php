@@ -332,30 +332,6 @@ if ($skill_result) {
             border-color: transparent;
             color: #007bff;
         }
-        .skill-badge, .halo-pst-badge {
-            display: inline-block;
-            margin: 5px;
-            padding: 8px 12px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-        .skill-badge .remove-skill, .halo-pst-badge .remove-skill {
-            cursor: pointer;
-            margin-left: 8px;
-            font-weight: bold;
-        }
-        .skill-badge .remove-skill:hover, .halo-pst-badge .remove-halo-pst:hover {
-            color: #ffcccc;
-        }
-        #selected-skills, #selected-halo-pst {
-            min-height: 50px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-        }
         .dropzone {
             border: 2px dashed #007bff;
             border-radius: 8px;
@@ -398,12 +374,12 @@ if ($skill_result) {
     </style>
 </head>
 <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
-        <div class="col-md-10">
+        <div class="col-md-8 my-5">
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">Tambah User</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body px-5">
                     <!-- Tab Navigation -->
                     <ul class="nav nav-tabs md-tabs" role="tablist">
                         <li class="nav-item">
@@ -440,9 +416,8 @@ if ($skill_result) {
                         <div class="tab-pane m-t-10 fade <?php echo $activeTab === 'input' ? 'show active' : ''; ?>" id="input-pane" role="tabpanel">
                             <form method="POST" action="">
                                 <input type="hidden" name="tab" value="input">
-
                                 <div class="form-row">
-                                    <div class="form-group col-md-6">
+                                    <div class="form-group col-md-6 px-5">
                                         <label for="nip">NIP <span class="text-danger">*</span></label>
                                         <input 
                                             type="number" 
@@ -454,8 +429,21 @@ if ($skill_result) {
                                             value="<?php echo isset($_POST["nip"]) ? htmlspecialchars($_POST["nip"]) : ''; ?>"
                                         >
                                     </div>
-                                    
-                                    <div class="form-group col-md-6">
+                                    <div class="form-group col-md-6 px-5">
+                                        <label for="id_jabatan">Jabatan <span class="text-danger">*</span></label>
+                                        <select class="form-control" id="id_jabatan" name="id_jabatan" required>
+                                            <option value="">-- Pilih Jabatan --</option>
+                                            <?php foreach ($jabatan_data as $jab): ?>
+                                                <option value="<?php echo $jab['id_jabatan']; ?>" <?php echo isset($_POST["id_jabatan"]) && $_POST["id_jabatan"] == $jab['id_jabatan'] ? 'selected' : ''; ?>>
+                                                    <?php echo htmlspecialchars($jab['nama_jabatan']); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6 px-5">
                                         <label for="nama">Nama <span class="text-danger">*</span></label>
                                         <input 
                                             type="text" 
@@ -468,10 +456,42 @@ if ($skill_result) {
                                             value="<?php echo isset($_POST["nama"]) ? htmlspecialchars($_POST["nama"]) : ''; ?>"
                                         >
                                     </div>
+                                    <div class="form-group col-md-6 px-5">
+                                        <label for="id_ppid">PPID Team <span class="text-danger">*</span></label>
+                                        <select class="form-control" id="id_ppid" name="id_ppid" required>
+                                            <option value="">-- Pilih PPID Team --</option>
+                                            <?php foreach ($ppid_data as $p): ?>
+                                                <option value="<?php echo $p['id_ppid']; ?>" <?php echo isset($_POST["id_ppid"]) && $_POST["id_ppid"] == $p['id_ppid'] ? 'selected' : ''; ?>>
+                                                    <?php echo htmlspecialchars($p['nama_ppid']); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6 px-5">
+                                        <label for="nomor_telepon">Nomor Telepon</label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control" 
+                                            id="nomor_telepon" 
+                                            name="nomor_telepon"
+                                            placeholder="Masukkan nomor telepon (opsional)"
+                                            value="<?php echo isset($_POST["nomor_telepon"]) ? htmlspecialchars($_POST["nomor_telepon"]) : ''; ?>"
+                                        >
+                                    </div>
+                                    <div class="form-group col-md-6 px-5">
+                                        <label for="status">Status <span class="text-danger">*</span></label>
+                                        <select class="form-control" id="status" name="status" required>
+                                            <option value="">-- Pilih Status --</option>
+                                            <option value="1" <?php echo isset($_POST["status"]) && $_POST["status"] == '1' ? 'selected' : ''; ?>>Aktif</option>
+                                            <option value="0" <?php echo isset($_POST["status"]) && $_POST["status"] == '0' ? 'selected' : ''; ?>>Tidak Aktif</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div class="form-row">
-                                    <div class="form-group col-md-6">
+                                    <div class="form-group col-md-6 px-5">
                                         <label for="email">Email <span class="text-danger">*</span></label>
                                         <input 
                                             type="email" 
@@ -484,58 +504,7 @@ if ($skill_result) {
                                             value="<?php echo isset($_POST["email"]) ? htmlspecialchars($_POST["email"]) : ''; ?>"
                                         >
                                     </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="password">Password <span class="text-danger">*</span></label>
-                                        <input 
-                                            type="password" 
-                                            class="form-control" 
-                                            id="password" 
-                                            name="password"
-                                            placeholder="Masukkan password"
-                                            required
-                                            maxlength="255"
-                                        >
-                                    </div>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="nomor_telepon">Nomor Telepon</label>
-                                        <input 
-                                            type="text" 
-                                            class="form-control" 
-                                            id="nomor_telepon" 
-                                            name="nomor_telepon"
-                                            placeholder="Masukkan nomor telepon (opsional)"
-                                            value="<?php echo isset($_POST["nomor_telepon"]) ? htmlspecialchars($_POST["nomor_telepon"]) : ''; ?>"
-                                        >
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="status">Status <span class="text-danger">*</span></label>
-                                        <select class="form-control" id="status" name="status" required>
-                                            <option value="">-- Pilih Status --</option>
-                                            <option value="1" <?php echo isset($_POST["status"]) && $_POST["status"] == '1' ? 'selected' : ''; ?>>Aktif</option>
-                                            <option value="0" <?php echo isset($_POST["status"]) && $_POST["status"] == '0' ? 'selected' : ''; ?>>Tidak Aktif</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="id_jabatan">Jabatan <span class="text-danger">*</span></label>
-                                        <select class="form-control" id="id_jabatan" name="id_jabatan" required>
-                                            <option value="">-- Pilih Jabatan --</option>
-                                            <?php foreach ($jabatan_data as $jab): ?>
-                                                <option value="<?php echo $jab['id_jabatan']; ?>" <?php echo isset($_POST["id_jabatan"]) && $_POST["id_jabatan"] == $jab['id_jabatan'] ? 'selected' : ''; ?>>
-                                                    <?php echo htmlspecialchars($jab['nama_jabatan']); ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group col-md-6">
+                                    <div class="form-group col-md-6 px-5">
                                         <label for="id_role">Role <span class="text-danger">*</span></label>
                                         <select class="form-control" id="id_role" name="id_role" required>
                                             <option value="">-- Pilih Role --</option>
@@ -549,66 +518,76 @@ if ($skill_result) {
                                 </div>
 
                                 <div class="form-row">
-                                    <div class="form-group col-md-6">
-                                        <label for="id_ppid">PPID Team <span class="text-danger">*</span></label>
-                                        <select class="form-control" id="id_ppid" name="id_ppid" required>
-                                            <option value="">-- Pilih PPID Team --</option>
-                                            <?php foreach ($ppid_data as $p): ?>
-                                                <option value="<?php echo $p['id_ppid']; ?>" <?php echo isset($_POST["id_ppid"]) && $_POST["id_ppid"] == $p['id_ppid'] ? 'selected' : ''; ?>>
-                                                    <?php echo htmlspecialchars($p['nama_ppid']); ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
+                                    <div class="form-group col-md-6 px-5">
+                                        <label for="password">Password <span class="text-danger">*</span></label>
+                                        <input 
+                                            type="password" 
+                                            class="form-control" 
+                                            id="password" 
+                                            name="password"
+                                            placeholder="Masukkan password"
+                                            required
+                                            maxlength="255"
+                                        >
                                     </div>
                                 </div>
-
-                                <div class="form-group">
-                                    <label for="skill_select">Halo PST Team <span class="text-danger">*</span></label>
-                                    <select class="form-control" id="halo_pst_select">
-                                        <option value="">-- Pilih Tim --</option>
-                                        <?php foreach ($halo_pst_data as $h): ?>
-                                            <option value="<?php echo $h['id_halo_pst']; ?>" data-name="<?php echo htmlspecialchars($h['nama_halo_pst']); ?>">
-                                                <?php echo htmlspecialchars($h['nama_halo_pst']); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
+                                <div class="form-row">
+                                    <div class="col-md-6 px-5">
+                                        <div class="form-group">
+                                            <label>Halo PST Team <span class="text-danger">*</span></label>
+                                            <div class="checkbox-group">
+                                                <?php foreach ($halo_pst_data as $h): ?>
+                                                    <input type="checkbox" class="hidden-checkbox halo-pst-checkbox" 
+                                                           id="haloPST<?= $h['id_halo_pst']; ?>" 
+                                                           name="halo_pst_check" value="<?= $h['id_halo_pst']; ?>"
+                                                           data-button="haloPSTBtn<?= $h['id_halo_pst']; ?>">
+                                                    <button type="button" class="btn-checkbox halo-pst-btn" 
+                                                            id="haloPSTBtn<?= $h['id_halo_pst']; ?>" 
+                                                            data-checkbox="haloPST<?= $h['id_halo_pst']; ?>"
+                                                            data-id="<?= $h['id_halo_pst']; ?>"
+                                                            data-name="<?= htmlspecialchars($h['nama_halo_pst']); ?>">
+                                                        <?= htmlspecialchars($h['nama_halo_pst']); ?>
+                                                    </button>
+                                                <?php endforeach; ?>
+                                            </div>
+                                            <input type="hidden" id="halo_pst_input" name="halo_pst" value="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 px-5">
+                                        <div class="form-group">
+                                            <label>Skills</label>
+                                            <div class="checkbox-group">
+                                                <?php foreach ($skill_data as $s): ?>
+                                                    <input type="checkbox" class="hidden-checkbox skill-checkbox" 
+                                                           id="skill<?= $s['id_skill']; ?>" 
+                                                           name="skill_check" value="<?= $s['id_skill']; ?>"
+                                                           data-button="skillBtn<?= $s['id_skill']; ?>">
+                                                    <button type="button" class="btn-checkbox skill-btn" 
+                                                            id="skillBtn<?= $s['id_skill']; ?>" 
+                                                            data-checkbox="skill<?= $s['id_skill']; ?>"
+                                                            data-id="<?= $s['id_skill']; ?>"
+                                                            data-name="<?= htmlspecialchars($s['nama_skill']); ?>">
+                                                        <?= htmlspecialchars($s['nama_skill']); ?>
+                                                    </button>
+                                                <?php endforeach; ?>
+                                            </div>
+                                            <input type="hidden" id="skills_input" name="skills" value="">
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <div class="form-group">
-                                    <div id="selected-halo-pst"></div>
-                                    <input type="hidden" id="halo_pst_input" name="halo_pst" value="">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="skill_select">Skills</label>
-                                    <select class="form-control" id="skill_select">
-                                        <option value="">-- Pilih Skill --</option>
-                                        <?php foreach ($skill_data as $s): ?>
-                                            <option value="<?php echo $s['id_skill']; ?>" data-name="<?php echo htmlspecialchars($s['nama_skill']); ?>">
-                                                <?php echo htmlspecialchars($s['nama_skill']); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <div id="selected-skills"></div>
-                                    <input type="hidden" id="skills_input" name="skills" value="">
-                                </div>
-                                
                                 <div class="form-group mt-4 d-flex justify-content-between">
-                                    <a href="../manajemen_user.php" class="btn btn-secondary mr-2">
-                                        Batal
+                                    <a href="../manajemen_user.php" class="btn btn-secondary btn-icon-l mr-2">
+                                        <div class="fas fa-arrow-left"></div>
                                     </a>
-                                    <button type="submit" class="btn btn-primary">
-                                        Simpan
+                                    <button type="submit" class="btn btn-primary btn-icon-l">
+                                        <div class="fas fa-save"></div>
                                     </button>
                                 </div>
                             </form>
                         </div>
 
                         <!-- Import Tab -->
-                        <div class="tab-pane fade <?php echo $activeTab === 'import' ? 'show active' : ''; ?>" id="import-pane" role="tabpanel">
+                        <div class="tab-pane px-5 fade <?php echo $activeTab === 'import' ? 'show active' : ''; ?>" id="import-pane" role="tabpanel">
                             <!-- Template Information -->
                             <div class="template-info">
                                 <h6 class="mb-2"><i class="fas fa-info-circle"></i> Format Excel yang Dibutuhkan</h6>
@@ -704,7 +683,7 @@ if ($skill_result) {
                                         <input type="file" id="fileInput" name="excelFile" accept=".xlsx,.xls" style="display: none;">
                                     </div>
                                 </div>
-                                <a href="../manajemen_user.php" class="btn btn-secondary">Batal</a>
+                                <a href="../manajemen_user.php" class="btn btn-secondary btn-icon-l mb-3"><i class="fas fa-arrow-left"></i></a>
                             </form>
 
                             <!-- Upload Progress Section -->
@@ -756,7 +735,22 @@ if ($skill_result) {
                                             <td><?php echo htmlspecialchars($role[$user['id_role']] ?? '-'); ?></td>
                                             <td><?php echo $user['status'] == 1 ? '<span class="badge badge-success">Aktif</span>' : '<span class="badge badge-danger">Tidak Aktif</span>'; ?></td>
                                             <td><?php echo htmlspecialchars($ppid[$user['id_ppid']] ?? '-'); ?></td>
-                                            <td><?php echo htmlspecialchars($haloPST[$user['id_halo_pst']] ?? '-'); ?></td>
+                                            <td>
+                                                <?php 
+                                                if (!empty($user['halo_pst'])) {
+                                                    $haloPSTIds = array_filter(array_map('intval', explode(',', $user['halo_pst'])));
+                                                    $haloPSTNames = [];
+                                                    foreach ($haloPSTIds as $haloPSTId) {
+                                                        if (isset($haloPST[$haloPSTId])) {
+                                                            $haloPSTNames[] = htmlspecialchars($haloPST[$haloPSTId]);
+                                                        }
+                                                    }
+                                                    echo implode(', ', $haloPSTNames) ?: '-';
+                                                } else {
+                                                    echo '-';
+                                                }
+                                                ?>
+                                            </td>
                                             <td>
                                                 <?php 
                                                 if (!empty($user['skills'])) {
@@ -790,10 +784,14 @@ if ($skill_result) {
                                         </label>
                                     </div>
                                 </div>
-                                <button type="submit" name="submit_data" class="btn btn-success" id="submitBtn" disabled>
-                                    <i class="fas fa-save"></i> Import Data
-                                </button>
-                                <a href="tambah_user.php" class="btn btn-secondary">Batal</a>
+                                <div class="form-group mt-4 d-flex justify-content-between">
+                                    <a href="tambah_user.php" class="btn btn-secondary btn-icon-l mr-2">
+                                        <div class="fas fa-times"></div>
+                                    </a>
+                                    <button type="submit" name="submit_data" class="btn btn-icon-l btn-success" id="submitBtn" disabled>
+                                        <i class="fas fa-save"></i>
+                                    </button>
+                                </div>
                             </form>
                             <?php endif; ?>
                         </div>
@@ -858,79 +856,61 @@ if ($skill_result) {
             });
         }
 
-        // Handle halo pst for input tab
+        // Handle halo pst button checkboxes
         let selectedHaloPSTs = {};
 
-        const halopstSelect = document.getElementById('halo_pst_select');
-        if (halopstSelect) {
-            halopstSelect.addEventListener('change', function() {
-                const halopstId = this.value;
-                const halopstName = this.options[this.selectedIndex].getAttribute('data-name');
-                if (halopstId && !selectedHaloPSTs[halopstId]) {
+        document.querySelectorAll('.halo-pst-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const checkboxId = this.dataset.checkbox;
+                const checkbox = document.getElementById(checkboxId);
+                const halopstId = this.dataset.id;
+                const halopstName = this.dataset.name;
+                
+                checkbox.checked = !checkbox.checked;
+                this.classList.toggle('active');
+                
+                if (checkbox.checked) {
                     selectedHaloPSTs[halopstId] = halopstName;
-                    updateHaloPSTDisplay();
-                    this.value = '';
+                } else {
+                    delete selectedHaloPSTs[halopstId];
                 }
+                updateHaloPSTInput();
             });
-        }
-        function updateHaloPSTDisplay() {
-            const container = document.getElementById('selected-halo-pst');
-            const input = document.getElementById('halo_pst_input');
-            container.innerHTML = '';
-            const halopstIds = Object.keys(selectedHaloPSTs);
-            halopstIds.forEach(halopstId => {
-                const halopstName = selectedHaloPSTs[halopstId];
-                const badge = document.createElement('span');
-                badge.className = 'halo-pst-badge';
-                badge.innerHTML = halopstName + ' <span class="remove-halo-pst" onclick="removeHaloPST(' + halopstId + ')">×</span>';
-                container.appendChild(badge);
-            });
-            input.value = halopstIds.join(',');
-        }
-        window.removeHaloPST = function(halopstId) {
-            delete selectedHaloPSTs[halopstId];
-            updateHaloPSTDisplay();
-        };
+        });
 
-        // Handle skills for input tab
+        function updateHaloPSTInput() {
+            const input = document.getElementById('halo_pst_input');
+            input.value = Object.keys(selectedHaloPSTs).join(',');
+        }
+
+        // Handle skills button checkboxes
         let selectedSkills = {};
 
-        const skillSelect = document.getElementById('skill_select');
-        if (skillSelect) {
-            skillSelect.addEventListener('change', function() {
-                const skillId = this.value;
-                const skillName = this.options[this.selectedIndex].getAttribute('data-name');
-
-                if (skillId && !selectedSkills[skillId]) {
+        document.querySelectorAll('.skill-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const checkboxId = this.dataset.checkbox;
+                const checkbox = document.getElementById(checkboxId);
+                const skillId = this.dataset.id;
+                const skillName = this.dataset.name;
+                
+                checkbox.checked = !checkbox.checked;
+                this.classList.toggle('active');
+                
+                if (checkbox.checked) {
                     selectedSkills[skillId] = skillName;
-                    updateSkillDisplay();
-                    this.value = '';
+                } else {
+                    delete selectedSkills[skillId];
                 }
+                updateSkillInput();
             });
-        }
+        });
 
-        function updateSkillDisplay() {
-            const container = document.getElementById('selected-skills');
+        function updateSkillInput() {
             const input = document.getElementById('skills_input');
-
-            container.innerHTML = '';
-            const skillIds = Object.keys(selectedSkills);
-
-            skillIds.forEach(skillId => {
-                const skillName = selectedSkills[skillId];
-                const badge = document.createElement('span');
-                badge.className = 'skill-badge';
-                badge.innerHTML = skillName + ' <span class="remove-skill" onclick="removeSkill(' + skillId + ')">×</span>';
-                container.appendChild(badge);
-            });
-
-            input.value = skillIds.join(',');
+            input.value = Object.keys(selectedSkills).join(',');
         }
-
-        window.removeSkill = function(skillId) {
-            delete selectedSkills[skillId];
-            updateSkillDisplay();
-        };
     });
 </script>
 

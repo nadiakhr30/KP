@@ -101,152 +101,29 @@ function badge($text, $color) {
                 <div class="page-body">
                     <ul class="nav nav-tabs tabs card-block" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#table" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                            <a class="nav-link active" data-toggle="tab" href="#card" role="tab"><i class="ti-layout-grid2"></i> Card</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#card" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                            <a class="nav-link" data-toggle="tab" href="#table" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
                         </li>
                     </ul>
                     <div class="tab-content tabs card">
-                        <div class="tab-pane active" id="table" role="tabpanel">
-                            <div class="card-block">
-                                <div class="row m-b-5">
-                                    <div class="col-6">
-                                        <div class="dropdown-info dropdown open">
-                                            <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
-                                            <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=print">Print</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=excel">Excel</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=json">JSON</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=csv">CSV</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="align-items-right" style="float: right;">
-                                            <a href="tambah/tambah_user.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="dt-responsive table-responsive">
-                                    <table id="order-table" class="table table-striped table-bordered nowrap">
-                                        <thead>
-                                            <tr>
-                                                <th>NIP</th>
-                                                <th>Nama Lengkap</th>
-                                                <th>Email</th>
-                                                <th>Jabatan</th>
-                                                <th>Role</th>
-                                                <th>Foto Profil</th>
-                                                <th>Status</th>
-                                                <th>Nomor Telepon</th>
-                                                <th>PPID</th>
-                                                <th>Halo PST</th>
-                                                <th>Skills</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-<?php if (count($dataUsers) === 0): ?>
-<tr>
-  <td colspan="12" class="text-center">Tidak ada data user tersedia.</td>
-</tr>
-<?php else: ?>
-<?php foreach ($dataUsers as $user) : ?>
-<tr>
-  <td><?= $user['nip']; ?></td>
-  <td><?= htmlspecialchars($user['nama']); ?></td>
-  <td><?= htmlspecialchars($user['email']); ?></td>
-  <td><?= htmlspecialchars($user['nama_jabatan'] ?? '-'); ?></td>
-  <td><?= htmlspecialchars($user['nama_role'] ?? '-'); ?></td>
-  <td>
-    <?php if ($user['foto_profil']) : ?>
-      <a href="../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" class="glightbox" data-gallery="gallery"  style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: inline-block;">
-        <img src="../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" class="avatar-img" style="cursor: pointer;">
-      </a>
-    <?php else : ?>
-      <span class="badge bg-secondary">-</span>
-    <?php endif; ?>
-  </td>
-  <td>
-    <?php echo $user['status'] == 1 ? badge('Aktif', 'success') : badge('Tidak Aktif', 'danger'); ?>
-  </td>
-  <td><?= $user['nomor_telepon'] ? '0' . $user['nomor_telepon'] : '-'; ?></td>
-  <td><?= htmlspecialchars($user['nama_ppid'] ?? '-'); ?></td>
-  <td>
-    <?php 
-      $haloPSTs = getUserHaloPST($koneksi, $user['nip']);
-      if (count($haloPSTs) > 0) {
-        foreach ($haloPSTs as $haloPST) {
-          echo "<span class='badge bg-primary mr-2 mb-2'>" . htmlspecialchars($haloPST) . "</span>";
-        }
-      } else {
-        echo '-';
-      }
-    ?>
-  </td>
-  <td>
-    <?php 
-      $skills = getUserSkills($koneksi, $user['nip']);
-      if (count($skills) > 0) {
-        foreach ($skills as $skill) {
-          echo "<span class='badge bg-info mr-2 mb-2'>" . htmlspecialchars($skill) . "</span>";
-        }
-      } else {
-        echo '-';
-      }
-    ?>
-  </td>
-  <td>
-    <a href="edit/edit_user.php?nip=<?= $user['nip']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
-      <i class="ti-pencil text-dark"></i>
-    </a>
-    <a href="hapus/hapus_user.php?nip=<?= $user['nip']; ?>" class="btn waves-effect waves-light btn-danger btn-icon"><i class="ti-trash"></i></a>
-  </td>
-</tr>
-<?php endforeach; ?>
-<?php endif; ?>
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th>NIP</th>
-                                                <th>Nama Lengkap</th>
-                                                <th>Email</th>
-                                                <th>Jabatan</th>
-                                                <th>Role</th>
-                                                <th>Foto Profil</th>
-                                                <th>Status</th>
-                                                <th>Nomor Telepon</th>
-                                                <th>PPID</th>
-                                                <th>Halo PST</th>
-                                                <th>Skills</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane p-5" id="card" role="tabpanel">
+                        <div class="tab-pane p-5 active" id="card" role="tabpanel">
                             <div class="row m-b-10">
                                 <div class="col-6">
                                     <div class="dropdown-info dropdown open">
                                         <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak2" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                         <div class="dropdown-menu" aria-labelledby="cetak2" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                            <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=print">Print</a>
-                                            <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=excel">Excel</a>
-                                            <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=json">JSON</a>
-                                            <a class="dropdown-item waves-light waves-effect" href="export_user.php?format=csv">CSV</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=print">Print</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=excel">Excel</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=json">JSON</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=csv">CSV</a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="dropdown-success dropdown open align-items-right" style="float: right;">
-                                        <button class="btn btn-success dropdown-toggle waves-effect waves-light" type="button" id="tambah2" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Tambah</button>
-                                        <div class="dropdown-menu" aria-labelledby="tambah2" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                            <a class="dropdown-item waves-light waves-effect" href="tambah/tambah_user_input.php">Input Data</a>
-                                            <a class="dropdown-item waves-light waves-effect" href="tambah/tambah_user_import.php">Import Data</a>
-                                        </div>
+                                    <div class="align-items-right" style="float: right;">
+                                        <a href="tambah/tambah_user.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
                                     </div>
                                 </div>
                             </div>
@@ -300,7 +177,124 @@ function badge($text, $color) {
                                 <?php endif; ?>
                             </div>
                         </div>
-                    </div>
+                        <div class="tab-pane p-4" id="table" role="tabpanel">
+                            <div class="card-block">
+                                <div class="row m-b-5">
+                                    <div class="col-6">
+                                        <div class="dropdown-info dropdown open">
+                                            <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
+                                            <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                                <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=print">Print</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=excel">Excel</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=json">JSON</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export/export_user.php?format=csv">CSV</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="align-items-right" style="float: right;">
+                                            <a href="tambah/tambah_user.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="dt-responsive table-responsive">
+                                    <table id="order-table" class="table table-striped table-bordered nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th>NIP</th>
+                                                <th>Nama Lengkap</th>
+                                                <th>Email</th>
+                                                <th>Jabatan</th>
+                                                <th>Role</th>
+                                                <th>Foto Profil</th>
+                                                <th>Status</th>
+                                                <th>Nomor Telepon</th>
+                                                <th>PPID</th>
+                                                <th>Halo PST</th>
+                                                <th>Skills</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php if (count($dataUsers) === 0): ?>
+                                            <tr>
+                                              <td colspan="12" class="text-center">Tidak ada data user tersedia.</td>
+                                            </tr>
+                                            <?php else: ?>
+                                            <?php foreach ($dataUsers as $user) : ?>
+                                            <tr>
+                                              <td><?= $user['nip']; ?></td>
+                                              <td><?= htmlspecialchars($user['nama']); ?></td>
+                                              <td><?= htmlspecialchars($user['email']); ?></td>
+                                              <td><?= htmlspecialchars($user['nama_jabatan'] ?? '-'); ?></td>
+                                              <td><?= htmlspecialchars($user['nama_role'] ?? '-'); ?></td>
+                                              <td>
+                                                <?php if ($user['foto_profil']) : ?>
+                                                  <a href="../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" class="glightbox" data-gallery="gallery"  style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: inline-block;">
+                                                    <img src="../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" class="avatar-img" style="cursor: pointer;">
+                                                  </a>
+                                                <?php else : ?>
+                                                  <span class="badge bg-secondary">-</span>
+                                                <?php endif; ?>
+                                              </td>
+                                              <td>
+                                                <?php echo $user['status'] == 1 ? badge('Aktif', 'success') : badge('Tidak Aktif', 'danger'); ?>
+                                              </td>
+                                              <td><?= $user['nomor_telepon'] ? '0' . $user['nomor_telepon'] : '-'; ?></td>
+                                              <td><?= htmlspecialchars($user['nama_ppid'] ?? '-'); ?></td>
+                                              <td>
+                                                <?php 
+                                                  $haloPSTs = getUserHaloPST($koneksi, $user['nip']);
+                                                  if (count($haloPSTs) > 0) {
+                                                    foreach ($haloPSTs as $haloPST) {
+                                                      echo "<span class='badge bg-primary mr-2 mb-2'>" . htmlspecialchars($haloPST) . "</span>";
+                                                    }
+                                                  } else {
+                                                    echo '-';
+                                                  }
+                                                ?>
+                                              </td>
+                                              <td>
+                                                <?php 
+                                                  $skills = getUserSkills($koneksi, $user['nip']);
+                                                  if (count($skills) > 0) {
+                                                    foreach ($skills as $skill) {
+                                                      echo "<span class='badge bg-info mr-2 mb-2'>" . htmlspecialchars($skill) . "</span>";
+                                                    }
+                                                  } else {
+                                                    echo '-';
+                                                  }
+                                                ?>
+                                              </td>
+                                              <td>
+                                                <a href="edit/edit_user.php?nip=<?= $user['nip']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                  <i class="ti-pencil text-dark"></i>
+                                                </a>
+                                                <a href="hapus/hapus_user.php?nip=<?= $user['nip']; ?>" class="btn waves-effect waves-light btn-danger btn-icon"><i class="ti-trash"></i></a>
+                                              </td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                            <?php endif; ?>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>NIP</th>
+                                                <th>Nama Lengkap</th>
+                                                <th>Email</th>
+                                                <th>Jabatan</th>
+                                                <th>Role</th>
+                                                <th>Foto Profil</th>
+                                                <th>Status</th>
+                                                <th>Nomor Telepon</th>
+                                                <th>PPID</th>
+                                                <th>Halo PST</th>
+                                                <th>Skills</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                            </div>
+                        </div>
                 </div>
             </div>
         </div>

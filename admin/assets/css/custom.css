@@ -538,3 +538,27 @@
     object-fit: cover;
     display: block;
 }
+.btn-checkbox {
+    border: 2px solid #dee2e6;
+    background-color: #fff;
+    color: #495057;
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+    font-size: 14px;
+}
+.btn-checkbox:hover {
+    border-color: #007bff;
+    background-color: #f0f7ff;
+}
+.btn-checkbox.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+.hidden-checkbox {
+    display: none;
+}

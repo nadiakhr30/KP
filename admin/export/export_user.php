@@ -12,7 +12,7 @@ $format = isset($_GET['format']) ? $_GET['format'] : 'print';
 
 // Load PhpSpreadsheet if needed
 if ($format == 'excel') {
-    require '../vendor/autoload.php';
+    require '../../vendor/autoload.php';
 }
 
 // Get all users data
@@ -50,7 +50,7 @@ function getUserSkills($koneksi, $nip) {
     while ($row = mysqli_fetch_assoc($qSkill)) {
         $skills[] = $row['nama_skill'];
     }
-    return implode(', ', $skills);
+    return !empty($skills) ? implode(', ', $skills) : '-';
 }
 
 // Get Halo PST for each user
@@ -66,7 +66,7 @@ function getUserHaloPST($koneksi, $nip) {
     while ($row = mysqli_fetch_assoc($qHaloPST)) {
         $haloPSTs[] = $row['nama_halo_pst'];
     }
-    return implode(', ', $haloPSTs);
+    return !empty($haloPSTs) ? implode(', ', $haloPSTs) : '-';
 }
 
 // PRINT FORMAT
@@ -91,7 +91,7 @@ if ($format == 'print') {
                 .no-print { display: none; }
                 table { font-size: 11px; }
             }
-            body { font-family: Arial, sans-serif; padding: 40px; }
+            body {padding: 40px; }
             h2 { text-align: center; margin-bottom: 20px; margin-top: 20px; }
             .header-info { text-align: center; margin-bottom: 20px; }
             table { width: 100%; border-collapse: collapse; }
@@ -101,9 +101,9 @@ if ($format == 'print') {
         </style>
     </head>
     <body>
-        <div class="no-print m-5">
-            <button class="btn btn-primary" onclick="window.print()">Cetak</button>
-            <button class="btn btn-secondary" onclick="window.history.back()">Kembali</button>
+        <div class="no-print d-flex justify-content-between">
+            <button class="btn btn-secondary btn-icon-l" onclick="window.history.back()"><i class="fas fa-arrow-left"></i></button>
+            <button class="btn btn-primary btn-icon-l" onclick="window.print()"><i class="fas fa-print"></i></button>
         </div>
 
         <div class="header-info">
@@ -147,7 +147,6 @@ if ($format == 'print') {
                 <?php endforeach; ?>
             </tbody>
         </table>
-
         <div class="mt-5" style="text-align: center; font-size: 12px;">
             <p>Laporan ini digenerate otomatis pada <?= date('d-m-Y H:i:s'); ?></p>
         </div>

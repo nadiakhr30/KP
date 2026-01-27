@@ -18,6 +18,8 @@ if (mysqli_num_rows($qUser) == 0) {
 }
 $user = mysqli_fetch_assoc($qUser);
 // Handle deletion
+$deleteSuccess = false;
+$deleteError = '';
 if (isset($_POST['konfirmasi_hapus'])) {
     // Delete user from all related tables
     mysqli_query($koneksi, "DELETE FROM user_skill WHERE nip = '$nip'");
@@ -25,10 +27,9 @@ if (isset($_POST['konfirmasi_hapus'])) {
     // Delete user
     $delete = mysqli_query($koneksi, "DELETE FROM user WHERE nip = '$nip'");
     if ($delete) {
-        $success = "User berhasil dihapus!";
-        header("Refresh: 2; url=../manajemen_user.php");
+        $deleteSuccess = true;
     } else {
-        $error = "Gagal menghapus user! " . mysqli_error($koneksi);
+        $deleteError = "Gagal menghapus user! " . mysqli_error($koneksi);
     }
 }
 ?>
@@ -45,15 +46,13 @@ if (isset($_POST['konfirmasi_hapus'])) {
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/custom.css">
 </head>
-<body>
-<div class="container mt-5 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-danger text-white">
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;>
+        <div class="col-md-8 my-5">
+            <div class="card">
+                <div class="card-header">
                     <h5 class="mb-0">Konfirmasi Hapus User</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body px-5">
                     <?php if ($error) : ?>
                         <div class="alert alert-danger alert-dismissible fade show">
                             <?= htmlspecialchars($error) ?>
@@ -66,7 +65,7 @@ if (isset($_POST['konfirmasi_hapus'])) {
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
                     <?php endif; ?>
-                    <div class="alert alert-warning">
+                    <div class="alert alert-danger">
                         <h6 class="alert-heading"><i class="fa fa-exclamation-triangle"></i> Peringatan</h6>
                         <p>Anda akan menghapus user berikut. Tindakan ini <strong>TIDAK DAPAT DIBATALKAN</strong>!</p>
                     </div>
@@ -98,12 +97,10 @@ if (isset($_POST['konfirmasi_hapus'])) {
                                 </label>
                             </div>
                         </div>
-
                         <div class="form-group d-flex justify-content-between">
                             <a href="../manajemen_user.php" class="btn btn-secondary">
-                                <i class="fa fa-arrow-left"></i> Kembali
+                                <i class="fa fa-arrow-left"></i>
                             </a>
-
                             <button type="submit" name="konfirmasi_hapus" class="btn btn-danger" id="deleteBtn" disabled>
                                 <i class="fa fa-trash"></i> Ya, Hapus User
                             </button>
@@ -117,11 +114,32 @@ if (isset($_POST['konfirmasi_hapus'])) {
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     document.getElementById('konfirmasi').addEventListener('change', function() {
         document.getElementById('deleteBtn').disabled = !this.checked;
     });
+
+    <?php if ($deleteSuccess): ?>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: 'User berhasil dihapus!',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    }).then((result) => {
+        window.location.href = '../manajemen_user.php';
+    });
+    <?php elseif ($deleteError): ?>
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: '<?= addslashes($deleteError) ?>',
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'OK'
+    });
+    <?php endif; ?>
 </script>
 
 </body>

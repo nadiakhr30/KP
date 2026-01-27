@@ -246,7 +246,34 @@ ob_start();
 </div>
 
 <script>
-    function deleteLink(id, namaLink) {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// Handle delete notifications from session
+window.addEventListener('load', function() {
+    <?php
+    if (isset($_SESSION['delete_status'])) {
+        $status = $_SESSION['delete_status'];
+        $message = $_SESSION['delete_message'];
+        $icon = ($status === 'success') ? 'success' : 'error';
+        $title = ($status === 'success') ? 'Berhasil!' : 'Gagal!';
+        ?>
+        Swal.fire({
+            icon: '<?= $icon ?>',
+            title: '<?= $title ?>',
+            text: '<?= addslashes($message) ?>',
+            confirmButtonColor: '<?= ($status === 'success') ? '#3085d6' : '#d33' ?>',
+            confirmButtonText: 'OK',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        });
+        <?php
+        unset($_SESSION['delete_status']);
+        unset($_SESSION['delete_message']);
+    }
+    ?>
+});
+
+function deleteLink(id, namaLink) {
         document.getElementById('deleteLinkId').value = id;
         document.getElementById('deleteLinkName').textContent = namaLink;
         $('#deleteModal').modal('show');
