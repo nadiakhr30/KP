@@ -188,7 +188,7 @@ ob_start();
                                         <div class="card-block">
                                             <div style="margin-bottom: 15px;">
                                                 <?php
-                                                    $statusClass = 'secondary';
+                                                    $statusClass = 'danger';
                                                     $statusText = 'Belum Dikerjakan';
                                                     if ($jadwal['status'] == 1) {
                                                         $statusClass = 'warning';
@@ -207,8 +207,8 @@ ob_start();
                                             <p class="text-muted mb-2"><strong>Target Rilis:</strong> <?= date('d-m-Y', strtotime($jadwal['tanggal_rilis'])) ?></p>
                                             <p class="text-muted mb-3"><strong>PIC:</strong> <?= htmlspecialchars($jadwal['pic_info'] ?? '-') ?></p>
                                             <div style="display: flex; gap: 8px;">
-                                                <a href="#" class="btn btn-sm btn-warning waves-effect waves-light"><i class="ti-pencil"></i> Edit</a>
-                                                <a href="#" class="btn btn-sm btn-danger waves-effect waves-light"><i class="ti-trash"></i> Hapus</a>
+                                                <a href="edit/edit_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-sm btn-warning waves-effect waves-light"><i class="ti-pencil"></i> Edit</a>
+                                                <a href="hapus/hapus_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-sm btn-danger waves-effect waves-light" onclick="return confirm('Yakin ingin menghapus?');"><i class="ti-trash"></i> Hapus</a>
                                             </div>
                                         </div>
                                     </div>
@@ -282,8 +282,8 @@ ob_start();
                                                     <span class="badge bg-<?= $statusClass ?>"><?= $statusText ?></span>
                                                 </td>
                                                 <td>
-                                                    <a href="#" class="btn btn-sm btn-warning waves-effect waves-light"><i class="ti-pencil"></i></a>
-                                                    <a href="#" class="btn btn-sm btn-danger waves-effect waves-light"><i class="ti-trash"></i></a>
+                                                    <a href="edit/edit_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-sm btn-warning waves-effect waves-light"><i class="ti-pencil"></i></a>
+                                                    <a href="hapus/hapus_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-sm btn-danger waves-effect waves-light" onclick="return confirm('Yakin ingin menghapus?');"><i class="ti-trash"></i></a>
                                                 </td>
                                             </tr>
                                             <?php endforeach; ?>
@@ -313,129 +313,209 @@ ob_start();
     </div>
 </div>
 
+<!-- Modal for Jadwal Details (Bootstrap Modal) -->
+<div class="modal fade" id="jadwalModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalJudulKegiatan">-</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p><strong>Topik:</strong> <span id="modalTopik">-</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Tim:</strong> <span id="modalTim">-</span></p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p><strong>Tanggal Penugasan:</strong> <span id="modalTanggalPenugasan">-</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Target Rilis:</strong> <span id="modalTargetRilis">-</span></p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <p><strong>Status:</strong> <span id="modalStatus">-</span></p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <p><strong>PIC:</strong></p>
+                        <div id="modalPIC" style="margin-left: 15px;">-</div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <p><strong>Keterangan:</strong></p>
+                        <div id="modalKeterangan" style="margin-left: 15px;">-</div>
+                    </div>
+                </div>
+                <div class="row mb-3" id="rowDokumentasi" style="display: none;">
+                    <div class="col-12">
+                        <p><strong>Dokumentasi:</strong> <span id="modalDokumentasi">-</span></p>
+                    </div>
+                </div>
+                <div class="row mb-3" id="rowLink" style="display: none;">
+                    <div class="col-12">
+                        <p><strong>Link Publikasi:</strong> <span id="modalLinks">-</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
-$pageContent = ob_get_clean();
-
-// Include layout function
-include_once("layout.php");
-
-// JavaScript for calendar and table
-$script = '
-<script src="assets/pages/data-table/js/jquery.dataTables.min.js"></script>
-<script src="bower_components/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="assets/pages/data-table/extensions/buttons/js/dataTables.buttons.min.js"></script>
-<script src="assets/pages/data-table/extensions/buttons/js/buttons.html5.min.js"></script>
-<script src="assets/pages/data-table/extensions/buttons/js/buttons.print.min.js"></script>
-<script src="assets/pages/data-table/extensions/buttons/js/buttons.colVis.min.js"></script>
-<script src="bower_components/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+$content = ob_get_clean();
+ob_start();
+?>
 <script>
-$(function() {
-    // Initialize DataTable - destroy if already exists
-    var table = $("#order-table");
-    if ($.fn.DataTable.isDataTable(table)) {
-        table.DataTable().destroy();
-    }
-    table.DataTable({
-        "pageLength": 10,
-        "ordering": true,
-        "searching": true,
-        "lengthChange": true
-    });
-});
-
-// Modal for event details
+// Modal for event details (Bootstrap Modal version)
 function showEventDetail(eventData) {
-    let statusText = "-";
-    let statusClass = "secondary";
+    let statusText = '-';
+    let statusClass = 'danger';
     switch (String(eventData.status)) {
-        case "0":
-            statusText = "Belum Dikerjakan";
-            statusClass = "danger";
+        case '0':
+            statusText = 'Belum Dikerjakan';
+            statusClass = 'danger';
             break;
-        case "1":
-            statusText = "Sedang Dikerjakan";
-            statusClass = "warning";
+        case '1':
+            statusText = 'Sedang Dikerjakan';
+            statusClass = 'warning';
             break;
-        case "2":
-            statusText = "Selesai";
-            statusClass = "success";
+        case '2':
+            statusText = 'Selesai';
+            statusClass = 'success';
             break;
         default:
-            statusText = "Tidak Diketahui";
+            statusText = 'Tidak Diketahui';
     }
     
-    let picHtml = "-";
+    // Set modal header title
+    document.getElementById('modalJudulKegiatan').innerText = eventData.title || '-';
+    
+    // Set topik
+    document.getElementById('modalTopik').innerText = eventData.topik || '-';
+    
+    // Set tanggal penugasan
+    document.getElementById('modalTanggalPenugasan').innerText = 
+        eventData.tanggal_penugasan 
+            ? new Date(eventData.tanggal_penugasan).toLocaleDateString('id-ID') 
+            : '-';
+    
+    // Set target rilis
+    document.getElementById('modalTargetRilis').innerText = 
+        eventData.start 
+            ? new Date(eventData.start).toLocaleDateString('id-ID') 
+            : '-';
+    
+    // Set tim
+    document.getElementById('modalTim').innerText = eventData.tim || '-';
+    
+    // Set status
+    document.getElementById('modalStatus').innerHTML = 
+        `<span class="badge bg-${statusClass}">${statusText}</span>`;
+    
+    // Set PIC data
+    let picHtml = '-';
     const picData = eventData.pic_data || {};
     if (Object.keys(picData).length > 0) {
-        picHtml = "";
+        picHtml = '<ul style="margin-bottom: 0; padding-left: 20px;">';
         for (const [jenis, nama] of Object.entries(picData)) {
-            picHtml += `<b>${jenis}:</b> ${nama}<br>`;
+            picHtml += `<li><b>${jenis}:</b> ${nama}</li>`;
         }
+        picHtml += '</ul>';
     }
+    document.getElementById('modalPIC').innerHTML = picHtml;
     
-    let dokumentasiHtml = "";
+    // Set keterangan
+    document.getElementById('modalKeterangan').innerHTML = eventData.keterangan || '-';
+    
+    // Set dokumentasi
     if (eventData.dokumentasi) {
-        dokumentasiHtml = `<p><strong>Dokumentasi:</strong> <a href="${eventData.dokumentasi}" target="_blank" class="link-primary">Lihat Dokumentasi</a></p>`;
+        document.getElementById('rowDokumentasi').style.display = '';
+        document.getElementById('modalDokumentasi').innerHTML = 
+            `<a href="${eventData.dokumentasi}" target="_blank" class="link-primary">Lihat Dokumentasi</a>`;
+    } else {
+        document.getElementById('rowDokumentasi').style.display = 'none';
     }
     
-    let html = `
-        <div style="text-align: left;">
-            <p><strong>Topik:</strong> ${eventData.topik || "-"}</p>
-            <p><strong>Tanggal Penugasan:</strong> ${eventData.tanggal_penugasan ? new Date(eventData.tanggal_penugasan).toLocaleDateString("id-ID") : "-"}</p>
-            <p><strong>Target Rilis:</strong> ${new Date(eventData.start).toLocaleDateString("id-ID")}</p>
-            <p><strong>Tim:</strong> ${eventData.tim || "-"}</p>
-            <p><strong>Status:</strong> <span class="badge bg-${statusClass}">${statusText}</span></p>
-            <p><strong>PIC:</strong><br>${picHtml}</p>
-            <p><strong>Keterangan:</strong><br>${eventData.keterangan || "-"}</p>
-            ${dokumentasiHtml}
-        </div>
-    `;
+    // Set link publikasi
+    let links = [];
+    function renderLink(label, url) {
+        if (!url) return;
+        if (url === '-') {
+            links.push(`<span class="text-muted">${label}</span>`);
+            return;
+        }
+        links.push(`<a href="${url}" target="_blank" class="link-primary">${label}</a>`);
+    }
+    renderLink('<i class="ti-instagram"></i>', eventData.link_instagram);
+    renderLink('<i class="ti-facebook"></i>', eventData.link_facebook);
+    renderLink('<i class="ti-youtube"></i>', eventData.link_youtube);
+    renderLink('<i class="ti-world"></i>', eventData.link_website);
     
-    Swal.fire({
-        title: eventData.title,
-        html: html,
-        icon: "info",
-        width: "600px",
-        confirmButtonText: "Tutup"
-    });
+    if (links.length > 0) {
+        document.getElementById('rowLink').style.display = '';
+        document.getElementById('modalLinks').innerHTML = links.join(' | ');
+    } else {
+        document.getElementById('rowLink').style.display = 'none';
+    }
+    
+    new bootstrap.Modal(document.getElementById('jadwalModal')).show();
 }
 
 // Calendar - Only initialize if FullCalendar library loaded successfully
-document.addEventListener("DOMContentLoaded", function () {
+var calendarInstance = null;
+document.addEventListener('DOMContentLoaded', function () {
     // Check if FullCalendar is available
-    if (typeof FullCalendar === "undefined" || window.FULLCALENDAR_DISABLED) {
-        console.warn("FullCalendar not available - skipping calendar initialization");
+    if (typeof FullCalendar === 'undefined' || window.FULLCALENDAR_DISABLED) {
+        console.warn('FullCalendar not available - skipping calendar initialization');
         return;
     }
 
-    var calendar = new FullCalendar.Calendar(
-        document.getElementById("calendar"),
+    // Only initialize once
+    if (calendarInstance) return;
+
+    calendarInstance = new FullCalendar.Calendar(
+        document.getElementById('calendar'),
         {
-            initialView: "dayGridMonth",
+            initialView: 'dayGridMonth',
             headerToolbar: {
-                left: "prev,next today",
-                center: "title",
-                right: "dayGridMonth,timeGridWeek,timeGridDay"
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,listMonth,timeGridWeek,timeGridDay'
             },
-            height: "auto",
-            locale: "id",
-            events: ' . json_encode($jadwalkalender) . ',
+            height: 'auto',
+            locale: 'id',
+            events: " . json_encode($jadwalkalender) . ",
             eventClick: function(info) {
                 info.jsEvent.preventDefault();
                 const eventData = {
                     title: info.event.title,
                     start: info.event.start,
+                    id: info.event.id,
                     ...info.event.extendedProps
                 };
                 showEventDetail(eventData);
             }
         }
     );
-    calendar.render();
+    calendarInstance.render();
 });
 </script>
-';
-
-renderLayout($pageContent, $script);
+<!-- Bootstrap with CDN Fallback Error Handling -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" onerror="console.warn('Bootstrap CDN failed to load')"></script>
+<?php
+$script = ob_get_clean();
+include 'layout.php';
+renderLayout($content, $script);
 ?>
