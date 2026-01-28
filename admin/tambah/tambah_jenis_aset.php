@@ -42,12 +42,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="../assets/css/custom.css">
 </head>
 <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
-    <div class="col-md-6">
+    <div class="col-md-4 my-5">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="mb-0">Tambah Jenis Aset</h4>
+                        <h5 class="mb-0">Tambah Jenis Aset</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body px-5">
                         <?php if ($error): ?>
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <?php echo htmlspecialchars($error); ?>
@@ -80,14 +80,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     value="<?php echo isset($_POST["nama_jenis_aset"]) ? htmlspecialchars($_POST["nama_jenis_aset"]) : ''; ?>"
                                 >
                             </div>
-                            
-                            <div class="form-group mt-4">
-                                <button type="submit" class="btn btn-primary mr-2">
-                                    Simpan
-                                </button>
-                                <a href="../manajemen_data_lainnya.php" class="btn btn-secondary">
-                                    Batal
-                                </a>
+                            <div class="form-group mt-4 d-flex justify-content-between">
+                                <a href="../manajemen_data_lainnya.php" class="btn btn-secondary btn-icon-l"><i class="fas fa-arrow-left"></i></a>
+                                <button type="submit" class="btn btn-primary btn-icon-l"><i class="fas fa-save"></i></button>
                             </div>
                         </form>
                     </div>

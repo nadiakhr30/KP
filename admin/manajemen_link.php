@@ -238,8 +238,6 @@ ob_start();
 </div>
 
 <script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
 // Handle delete notifications from session
 window.addEventListener('load', function() {
     <?php
@@ -256,7 +254,12 @@ window.addEventListener('load', function() {
             confirmButtonColor: '<?= ($status === 'success') ? '#3085d6' : '#d33' ?>',
             confirmButtonText: 'OK',
             allowOutsideClick: false,
-            allowEscapeKey: false
+            allowEscapeKey: false,
+            customClass: {
+                container: 'swal-container-custom',
+                popup: 'swal-popup-custom',
+                confirmButton: 'swal-confirm-button-custom'
+            }
         }).then((result) => {
             if (result.isConfirmed && '<?= $status ?>' === 'success') {
                 location.reload();
@@ -274,34 +277,85 @@ function deleteLink(id, namaLink) {
     document.getElementById('deleteLinkName').textContent = namaLink;
     $('#deleteModal').modal('show');
 }
-document.getElementById('confirmDelete').addEventListener('click', function() {
-    const id = document.getElementById('deleteLinkId').value;
-    const namaLink = document.getElementById('deleteLinkName').textContent;
 
-    // Close the modal first
-    $('#deleteModal').modal('hide');
-    // Perform deletion
-    fetch('hapus/hapus_link.php?id=' + id)
-        .then(response => response.text())
-        .then(data => {
-            // Redirect to refresh page and show the session-based alert
-            window.location.href = 'manajemen_link.php';
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: 'Terjadi kesalahan saat menghapus data',
-                confirmButtonColor: '#d33',
-                confirmButtonText: 'OK'
-            });
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmDeleteBtn = document.getElementById('confirmDelete');
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function() {
+            const id = document.getElementById('deleteLinkId').value;
+            const namaLink = document.getElementById('deleteLinkName').textContent;
+
+            // Close the modal first
+            $('#deleteModal').modal('hide');
+            
+            // Perform deletion
+            fetch('hapus/hapus_link.php?id=' + id)
+                .then(response => response.json())
+                .then(data => {
+                    // Show alert based on response
+                    Swal.fire({
+                        icon: data.status === 'success' ? 'success' : 'error',
+                        title: data.status === 'success' ? 'Berhasil!' : 'Gagal!',
+                        text: data.message,
+                        confirmButtonColor: data.status === 'success' ? '#3085d6' : '#d33',
+                        confirmButtonText: 'OK',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        customClass: {
+                            container: 'swal-container-custom',
+                            popup: 'swal-popup-custom',
+                            confirmButton: 'swal-confirm-button-custom'
+                        }
+                    }).then((result) => {
+                        // Reload page only on success
+                        if (result.isConfirmed && data.status === 'success') {
+                            location.reload();
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat menghapus data',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            container: 'swal-container-custom',
+                            popup: 'swal-popup-custom',
+                            confirmButton: 'swal-confirm-button-custom'
+                        }
+                    });
+                });
         });
+    }
 });
 
 const lightbox = GLightbox({
     selector: '.glightbox'
 });
 </script>
+<style>
+.swal-popup-custom {
+    border-radius: 15px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+}
+
+.swal-confirm-button-custom {
+    border-radius: 8px !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.swal-confirm-button-custom:focus,
+.swal-confirm-button-custom:active,
+.swal-confirm-button-custom:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+</style>
 <?php
 $script = ob_get_clean();
 include 'layout.php';

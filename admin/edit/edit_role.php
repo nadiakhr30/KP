@@ -50,17 +50,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <title>Edit Role</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins&family=Jost&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
 </head>
-<body>
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="col-md-4 my-5">
             <div class="card shadow">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header">
                     <h5 class="mb-0">Edit Role</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body px-5">
                     <?php if ($error): ?>
                         <div class="alert alert-danger alert-dismissible fade show">
                             <?= htmlspecialchars($error) ?>
@@ -79,9 +83,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <input type="text" name="nama_role" class="form-control" required 
                                    value="<?= htmlspecialchars($data['nama_role']) ?>">
                         </div>
-                        <div class="form-group d-flex justify-content-between mt-4">
-                            <a href="../manajemen_data_lainnya.php" class="btn btn-secondary">Batal</a>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        <div class="form-group mt-4 d-flex justify-content-between">
+                            <a href="../manajemen_data_lainnya.php" class="btn btn-secondary btn-icon-l"><i class="fas fa-arrow-left"></i></a>
+                            <button type="submit" class="btn btn-primary btn-icon-l"><i class="fas fa-save"></i></button>
                         </div>
                     </form>
                 </div>

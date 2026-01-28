@@ -2,17 +2,19 @@
 session_start();
 include_once("../../koneksi.php");
 
+header('Content-Type: application/json');
+
 if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
-    header('Location: ../../index.php');
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'Anda tidak memiliki akses']);
     exit();
 }
 
 $id_sub_jenis = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if ($id_sub_jenis <= 0) {
-    $_SESSION['delete_status'] = 'error';
-    $_SESSION['delete_message'] = 'ID tidak valid';
-    header('Location: ../manajemen_data_lainnya.php');
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'ID tidak valid']);
     exit();
 }
 
@@ -21,20 +23,18 @@ $result = mysqli_query($koneksi, $query);
 $data = mysqli_fetch_assoc($result);
 
 if (!$data) {
-    $_SESSION['delete_status'] = 'error';
-    $_SESSION['delete_message'] = 'Data tidak ditemukan';
-    header('Location: ../manajemen_data_lainnya.php');
+    http_response_code(404);
+    echo json_encode(['status' => 'error', 'message' => 'Data tidak ditemukan']);
     exit();
 }
 
 $deleteQuery = "DELETE FROM sub_jenis WHERE id_sub_jenis = $id_sub_jenis";
 
 if (mysqli_query($koneksi, $deleteQuery)) {
-    $_SESSION['delete_status'] = 'success';
-    $_SESSION['delete_message'] = 'Data berhasil dihapus!';
+    http_response_code(200);
+    echo json_encode(['status' => 'success', 'message' => 'Data berhasil dihapus!']);
 } else {
-    $_SESSION['delete_status'] = 'error';
-    $_SESSION['delete_message'] = 'Gagal menghapus data!';
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus data: ' . mysqli_error($koneksi)]);
 }
-header('Location: ../manajemen_data_lainnya.php');
 exit();

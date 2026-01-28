@@ -26,8 +26,23 @@ global $user;
     <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="assets/css/custom.css">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
+    <!-- FullCalendar with CDN Fallback & Error Handling -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet" onerror="this.style.display='none'">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script>
+    window.FULLCALENDAR_CHECK = setTimeout(function() {
+        if (typeof FullCalendar === 'undefined') {
+            console.warn('FullCalendar CDN failed to load - calendar feature disabled');
+            window.FULLCALENDAR_DISABLED = true;
+            var calendarEl = document.getElementById('calendar');
+            if (calendarEl) {
+                calendarEl.innerHTML = '<div class="alert alert-warning m-3"><strong>Calendar unavailable</strong> - CDN connection failed. Please refresh the page or check your internet connection.</div>';
+            }
+        } else {
+            clearTimeout(window.FULLCALENDAR_CHECK);
+        }
+    }, 3000);
+    </script>
     <link rel="stylesheet" type="text/css" href="assets/geo/jquery-jvectormap-2.0.2.css">
     <link rel="stylesheet" type="text/css" href="bower_components/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="assets/pages/data-table/css/buttons.dataTables.min.css">
@@ -214,14 +229,14 @@ global $user;
                           <div class="pcoded-navigation-label" data-i18n="nav.category.workspace">RUANG HUMAS</div>
                           <ul class="pcoded-item pcoded-left-item">
                               <li class=" ">
-                                  <a href="#" class="waves-effect waves-dark">
+                                  <a href="struktur_humas.php" class="waves-effect waves-dark">
                                       <span class="pcoded-micon"><i class="ti-layers-alt"></i><b>D</b></span>
                                       <span class="pcoded-mtext" data-i18n="menu.struktur-humas">Struktur Humas</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                               </li>
                               <li class=" ">
-                                  <a href="#" class="waves-effect waves-dark">
+                                  <a href="jadwal_konten_humas.php" class="waves-effect waves-dark">
                                       <span class="pcoded-micon"><i class="ti-calendar"></i><b>FC</b></span>
                                       <span class="pcoded-mtext" data-i18n="menu.jadwal-konten">Jadwal Konten Humas</span>
                                       <span class="pcoded-mcaret"></span>

@@ -42,55 +42,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="../assets/css/custom.css">
 </head>
 <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
-    <div class="col-md-6">
+    <div class="col-md-4 my-5">
         <div class="card">
             <div class="card-header">
-                <h4 class="mb-0">Tambah Halo PST</h4>
+                <h5 class="mb-0">Tambah Halo PST</h5>
             </div>
-                    <div class="card-body">
-                        <?php if ($error): ?>
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <?php echo htmlspecialchars($error); ?>
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        <?php endif; ?>
-                        
-                        <?php if ($success): ?>
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <?php echo htmlspecialchars($success); ?>
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        <?php endif; ?>
-                        
-                        <form method="POST" action="">
-                            <div class="form-group">
-                                <label for="nama_halo_pst">Nama Halo PST <span class="text-danger">*</span></label>
-                                <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    id="nama_halo_pst" 
-                                    name="nama_halo_pst"
-                                    placeholder="Masukkan nama Halo PST"
-                                    required
-                                    maxlength="255"
-                                    value="<?php echo isset($_POST["nama_halo_pst"]) ? htmlspecialchars($_POST["nama_halo_pst"]) : ''; ?>"
-                                >
-                            </div>
-                            
-                            <div class="form-group mt-4">
-                                <button type="submit" class="btn btn-primary mr-2">
-                                    Simpan
-                                </button>
-                                <a href="../manajemen_data_lainnya.php" class="btn btn-secondary">
-                                    Batal
-                                </a>
-                            </div>
-                        </form>
+            <div class="card-body px-5">
+                <?php if ($error): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?php echo htmlspecialchars($error); ?>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
+                <?php endif; ?>
+                <?php if ($success): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <?php echo htmlspecialchars($success); ?>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                <?php endif; ?>
+                <form method="POST" action="">
+                    <div class="form-group">
+                        <label for="nama_halo_pst">Nama Halo PST <span class="text-danger">*</span></label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="nama_halo_pst" 
+                            name="nama_halo_pst"
+                            placeholder="Masukkan nama Halo PST"
+                            required
+                            maxlength="255"
+                            value="<?php echo isset($_POST["nama_halo_pst"]) ? htmlspecialchars($_POST["nama_halo_pst"]) : ''; ?>"
+                        >
+                    </div>
+                    <div class="form-group mt-4 d-flex justify-content-between">
+                        <a href="../manajemen_data_lainnya.php" class="btn btn-secondary btn-icon-l"><i class="fas fa-arrow-left"></i></a>
+                        <button type="submit" class="btn btn-primary btn-icon-l"><i class="fas fa-save"></i></button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </body>

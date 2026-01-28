@@ -87,23 +87,57 @@ if ($format == 'print') {
         <link rel="stylesheet" href="../assets/css/custom.css">
         <style>
             @media print {
-                body { margin: 0; padding: 20px; }
-                .no-print { display: none; }
-                table { font-size: 11px; }
+                .no-print {
+                    display: none;
+                }
             }
-            body {padding: 40px; }
-            h2 { text-align: center; margin-bottom: 20px; margin-top: 20px; }
-            .header-info { text-align: center; margin-bottom: 20px; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
-            th { background-color: #007bff; color: white; font-weight: bold; }
-            tr:nth-child(even) { background-color: #f9f9f9; }
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: #f5f5f5;
+                padding: 80px;
+            }
+            .header-info {
+                text-align: center;
+                margin-bottom: 30px;
+                border-bottom: 3px solid #000000;
+                padding-bottom: 15px;
+            }
+            .header-info h2 {
+                margin: 5px 0;
+                font-weight: 700;
+                color: #2c3e50;
+            }
+            .header-info p {
+                margin: 3px 0;
+                color: #7f8c8d;
+                font-size: 14px;
+            }
+            table {
+                background: white;
+                border-collapse: collapse;
+            }
+            th {
+                background-color: #007bff;
+                color: white;
+                font-weight: 600;
+                padding: 12px;
+                text-align: left;
+            }
+            td {
+                padding: 10px 12px;
+                border-bottom: 1px solid #ddd;
+                color: #666;
+                font-size: 13px;
+            }
+            tr:hover {
+                background-color: #f9f9f9;
+            }
         </style>
     </head>
     <body>
         <div class="no-print d-flex justify-content-between">
-            <button class="btn btn-secondary btn-icon-l" onclick="window.history.back()"><i class="no-print fas fa-arrow-left"></i></button>
-            <button class="btn btn-primary btn-icon-l" onclick="window.print()"><i class="no-print fas fa-print"></i></button>
+            <button class="no-print btn btn-secondary btn-icon-l" onclick="window.history.back()"><i class="no-print fas fa-arrow-left"></i></button>
+            <button class="no-print btn btn-primary btn-icon-l" onclick="window.print()"><i class="no-print fas fa-print"></i></button>
         </div>
         <div class="header-info">
             <h2>Laporan Data User Sistem Kehumasan</h2>
@@ -111,7 +145,7 @@ if ($format == 'print') {
             <p>Tanggal Cetak: <?= date('d-m-Y H:i:s'); ?></p>
             <p>Total User: <?= count($dataUsers); ?></p>
         </div>
-        <table>
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th style="width: 5%;">No</th>

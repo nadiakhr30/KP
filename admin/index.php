@@ -450,8 +450,14 @@ new Chart(document.getElementById('statusChart'), {
   }
 });
 
-// Kalender
+// Kalender - Only initialize if FullCalendar library loaded successfully
 document.addEventListener('DOMContentLoaded', function () {
+  // Check if FullCalendar is available before initializing
+  if (typeof FullCalendar === 'undefined' || window.FULLCALENDAR_DISABLED) {
+    console.warn('FullCalendar not available - skipping calendar initialization');
+    return;
+  }
+
   var calendar = new FullCalendar.Calendar(
     document.getElementById('calendar'),
     {
@@ -628,7 +634,8 @@ $('#map-bangkalan').vectorMap({
 });
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap with CDN Fallback Error Handling -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" onerror="console.warn('Bootstrap CDN failed to load')"></script>
 <?php
 $script = ob_get_clean();
 include 'layout.php';

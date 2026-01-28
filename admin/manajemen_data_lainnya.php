@@ -97,7 +97,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-header">
                             <div class="card-header-left">
                                 <h5>Halo PST</h5>
-                                <span>Data apa?</span>
+                                <span>Data ini berisi kategori Halo PST untuk mengelompokkan pengguna/aktivitas dalam sistem kehumasan PST.</span>
                             </div>
                             <div class="card-header-right">
                                 <ul class="list-unstyled card-option">
@@ -112,23 +112,61 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-block">
                             <ul class="nav nav-tabs tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#tablehalopst" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                                    <a class="nav-link active" data-toggle="tab" href="#cardhalopst" role="tab"><i class="ti-layout-grid2"></i> Card</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#cardhalopst" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                                    <a class="nav-link" data-toggle="tab" href="#tablehalopst" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
                                 </li>
                             </ul>
                             <div class="tab-content tabs">
-                                <div class="tab-pane active" id="tablehalopst" role="tabpanel">
+                                <div class="tab-pane active" id="cardhalopst" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <a href="export/export_halo_pst.php?format=print" class="btn waves-effect waves-light btn-grd-info">Print</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_halo_pst.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row users-card p-3">
+                                        <?php if (count($dataHaloPSTs) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Halo PST tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
+                                        <?php foreach ($dataHaloPSTs as $halo) : ?>
+                                        <div class="col-lg-3 col-md-4">
+                                            <div class="card rounded-card user-card">
+                                                <div class="card-block">
+                                                    <div class="user-content">
+                                                        <h4><?= htmlspecialchars($halo['nama_halo_pst']); ?></h4>
+                                                        <a href="edit/edit_halo_pst.php?id=<?= $halo['id_halo_pst']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                          <i class="ti-pencil text-dark"></i>
+                                                        </a>
+                                                        <a href="hapus/hapus_halo_pst.php?id=<?= $halo['id_halo_pst']; ?>" 
+                                                           class="btn waves-effect waves-light btn-danger btn-icon"
+                                                           onclick="return confirmDelete('hapus/hapus_halo_pst.php?id=<?= $halo['id_halo_pst']; ?>')"
+                                                           title="Hapus">
+                                                           <i class="ti-trash text-dark"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tablehalopst" role="tabpanel">
                                     <div class="row m-b-10 m-t-10">
                                         <div class="col-6">
                                             <div class="dropdown-info dropdown open">
                                                 <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                                 <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_halo_pst.php?format=print">Print</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_halo_pst.php?format=excel">Excel</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -181,46 +219,6 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </table>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="cardhalopst" role="tabpanel">
-                                    <div class="row m-b-10 m-t-10">
-                                        <div class="col-6">
-                                            <a href="#" class="btn waves-effect waves-light btn-grd-info">Print</a>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="align-items-right" style="float: right;">
-                                                <a href="tambah/tambah_halo_pst.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row users-card p-3">
-                                        <?php if (count($dataHaloPSTs) === 0): ?>
-                                            <div class="col-12 text-center">
-                                                <p>Tidak ada data Halo PST tersedia.</p>
-                                            </div>
-                                        <?php else: ?>
-                                        <?php foreach ($dataHaloPSTs as $halo) : ?>
-                                        <div class="col-lg-3 col-md-4">
-                                            <div class="card rounded-card user-card">
-                                                <div class="card-block">
-                                                    <div class="user-content">
-                                                        <h4><?= htmlspecialchars($halo['nama_halo_pst']); ?></h4>
-                                                        <a href="edit/edit_halo_pst.php?id=<?= $halo['id_halo_pst']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
-                                                          <i class="ti-pencil text-dark"></i>
-                                                        </a>
-                                                        <a href="hapus/hapus_halo_pst.php?id=<?= $halo['id_halo_pst']; ?>" 
-                                                           class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirmDelete('hapus/hapus_halo_pst.php?id=<?= $halo['id_halo_pst']; ?>')"
-                                                           title="Hapus">
-                                                           <i class="ti-trash text-dark"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -228,7 +226,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-header">
                             <div class="card-header-left">
                                 <h5>Jabatan</h5>
-                                <span>Data apa?</span>
+                                <span>Data jabatan menyimpan informasi mengenai posisi atau kedudukan pengguna dalam instansi.</span>
                             </div>
                             <div class="card-header-right">
                                 <ul class="list-unstyled card-option">
@@ -243,23 +241,61 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-block">
                             <ul class="nav nav-tabs tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#tablejabatan" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                                    <a class="nav-link active" data-toggle="tab" href="#cardjabatan" role="tab"><i class="ti-layout-grid2"></i> Card</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#cardjabatan" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                                    <a class="nav-link" data-toggle="tab" href="#tablejabatan" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
                                 </li>
                             </ul>
                             <div class="tab-content tabs">
-                                <div class="tab-pane active" id="tablejabatan" role="tabpanel">
+                                <div class="tab-pane active" id="cardjabatan" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <a href="export/export_jabatan.php?format=print" class="btn waves-effect waves-light btn-grd-info">Print</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_jabatan.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row users-card p-3">
+                                        <?php if (count($dataJabatans) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Jabatan tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
+                                        <?php foreach ($dataJabatans as $jabatan) : ?>
+                                        <div class="col-lg-3 col-md-4">
+                                            <div class="card rounded-card user-card">
+                                                <div class="card-block">
+                                                    <div class="user-content">
+                                                        <h4><?= htmlspecialchars($jabatan['nama_jabatan']); ?></h4>
+                                                        <a href="edit/edit_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                          <i class="ti-pencil text-dark"></i>
+                                                        </a>
+                                                        <a href="hapus/hapus_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>" 
+                                                           class="btn waves-effect waves-light btn-danger btn-icon"
+                                                           onclick="return confirmDelete('hapus/hapus_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>')"
+                                                           title="Hapus">
+                                                           <i class="ti-trash text-dark"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tablejabatan" role="tabpanel">
                                     <div class="row m-b-10 m-t-10">
                                         <div class="col-6">
                                             <div class="dropdown-info dropdown open">
                                                 <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                                 <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_jabatan.php?format=print">Print</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_jabatan.php?format=excel">Excel</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -312,46 +348,6 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </table>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="cardjabatan" role="tabpanel">
-                                    <div class="row m-b-10 m-t-10">
-                                        <div class="col-6">
-                                            <a href="#" class="btn waves-effect waves-light btn-grd-info">Print</a>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="align-items-right" style="float: right;">
-                                                <a href="tambah/tambah_jabatan.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row users-card p-3">
-                                        <?php if (count($dataJabatans) === 0): ?>
-                                            <div class="col-12 text-center">
-                                                <p>Tidak ada data Jabatan tersedia.</p>
-                                            </div>
-                                        <?php else: ?>
-                                        <?php foreach ($dataJabatans as $jabatan) : ?>
-                                        <div class="col-lg-3 col-md-4">
-                                            <div class="card rounded-card user-card">
-                                                <div class="card-block">
-                                                    <div class="user-content">
-                                                        <h4><?= htmlspecialchars($jabatan['nama_jabatan']); ?></h4>
-                                                        <a href="edit/edit_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
-                                                          <i class="ti-pencil text-dark"></i>
-                                                        </a>
-                                                        <a href="hapus/hapus_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>" 
-                                                           class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirmDelete('hapus/hapus_jabatan.php?id=<?= $jabatan['id_jabatan']; ?>')"
-                                                           title="Hapus">
-                                                           <i class="ti-trash text-dark"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -359,7 +355,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-header">
                             <div class="card-header-left">
                                 <h5>Jenis</h5>
-                                <span>Data apa?</span>
+                                <span>Data jenis berisi kategori utama media yang digunakan dalam kegiatan kehumasan.</span>
                             </div>
                             <div class="card-header-right">
                                 <ul class="list-unstyled card-option">
@@ -374,23 +370,61 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-block">
                             <ul class="nav nav-tabs tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#tablejenis" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                                    <a class="nav-link active" data-toggle="tab" href="#cardjenis" role="tab"><i class="ti-layout-grid2"></i> Card</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#cardjenis" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                                    <a class="nav-link" data-toggle="tab" href="#tablejenis" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
                                 </li>
                             </ul>
                             <div class="tab-content tabs">
-                                <div class="tab-pane active" id="tablejenis" role="tabpanel">
+                                <div class="tab-pane active" id="cardjenis" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <a href="export/export_jenis.php?format=print" class="btn waves-effect waves-light btn-grd-info">Print</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_jenis.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row users-card p-3">
+                                        <?php if (count($dataJenises) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Jenis tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
+                                        <?php foreach ($dataJenises as $jenis) : ?>
+                                        <div class="col-lg-3 col-md-4">
+                                            <div class="card rounded-card user-card">
+                                                <div class="card-block">
+                                                    <div class="user-content">
+                                                        <h4><?= htmlspecialchars($jenis['nama_jenis']); ?></h4>
+                                                        <a href="edit/edit_jenis.php?id=<?= $jenis['id_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                          <i class="ti-pencil text-dark"></i>
+                                                        </a>
+                                                        <a href="hapus/hapus_jenis.php?id=<?= $jenis['id_jenis']; ?>" 
+                                                           class="btn waves-effect waves-light btn-danger btn-icon"
+                                                           onclick="return confirmDelete('hapus/hapus_jenis.php?id=<?= $jenis['id_jenis']; ?>')"
+                                                           title="Hapus">
+                                                           <i class="ti-trash text-dark"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tablejenis" role="tabpanel">
                                     <div class="row m-b-10 m-t-10">
                                         <div class="col-6">
                                             <div class="dropdown-info dropdown open">
                                                 <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                                 <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_jenis.php?format=print">Print</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_jenis.php?format=excel">Excel</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -443,46 +477,6 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </table>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="cardjenis" role="tabpanel">
-                                    <div class="row m-b-10 m-t-10">
-                                        <div class="col-6">
-                                            <a href="#" class="btn waves-effect waves-light btn-grd-info">Print</a>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="align-items-right" style="float: right;">
-                                                <a href="tambah/tambah_jenis.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row users-card p-3">
-                                        <?php if (count($dataJenises) === 0): ?>
-                                            <div class="col-12 text-center">
-                                                <p>Tidak ada data Jenis tersedia.</p>
-                                            </div>
-                                        <?php else: ?>
-                                        <?php foreach ($dataJenises as $jenis) : ?>
-                                        <div class="col-lg-3 col-md-4">
-                                            <div class="card rounded-card user-card">
-                                                <div class="card-block">
-                                                    <div class="user-content">
-                                                        <h4><?= htmlspecialchars($jenis['nama_jenis']); ?></h4>
-                                                        <a href="edit/edit_jenis.php?id=<?= $jenis['id_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
-                                                          <i class="ti-pencil text-dark"></i>
-                                                        </a>
-                                                        <a href="hapus/hapus_jenis.php?id=<?= $jenis['id_jenis']; ?>" 
-                                                           class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirmDelete('hapus/hapus_jenis.php?id=<?= $jenis['id_jenis']; ?>')"
-                                                           title="Hapus">
-                                                           <i class="ti-trash text-dark"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -490,7 +484,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-header">
                             <div class="card-header-left">
                                 <h5>Sub Jenis</h5>
-                                <span>Data apa?</span>
+                                <span>Sub jenis merupakan turunan dari jenis media, berisi detail platform atau bentuk spesifik dari media tersebut.</span>
                             </div>
                             <div class="card-header-right">
                                 <ul class="list-unstyled card-option">
@@ -505,23 +499,62 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-block">
                             <ul class="nav nav-tabs tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#tablesubjenis" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                                    <a class="nav-link active" data-toggle="tab" href="#cardsubjenis" role="tab"><i class="ti-layout-grid2"></i> Card</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#cardsubjenis" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                                    <a class="nav-link" data-toggle="tab" href="#tablesubjenis" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
                                 </li>
                             </ul>
                             <div class="tab-content tabs">
-                                <div class="tab-pane active" id="tablesubjenis" role="tabpanel">
+                                <div class="tab-pane active" id="cardsubjenis" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <a href="export/export_sub_jenis.php?format=print" class="btn waves-effect waves-light btn-grd-info">Print</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_sub_jenis.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row users-card p-3">
+                                        <?php if (count($dataSubJenises) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Sub Jenis tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
+                                        <?php foreach ($dataSubJenises as $subjenis) : ?>
+                                        <div class="col-lg-3 col-md-4">
+                                            <div class="card rounded-card user-card">
+                                                <div class="card-block">
+                                                    <div class="user-content">
+                                                        <h4><?= htmlspecialchars($subjenis['nama_sub_jenis']); ?></h4>
+                                                        <span><?= htmlspecialchars($subjenis['nama_jenis']); ?></span><br>
+                                                        <a href="edit/edit_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                          <i class="ti-pencil text-dark"></i>
+                                                        </a>
+                                                        <a href="hapus/hapus_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>" 
+                                                           class="btn waves-effect waves-light btn-danger btn-icon"
+                                                           onclick="return confirmDelete('hapus/hapus_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>')"
+                                                           title="Hapus">
+                                                           <i class="ti-trash text-dark"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tablesubjenis" role="tabpanel">
                                     <div class="row m-b-10 m-t-10">
                                         <div class="col-6">
                                             <div class="dropdown-info dropdown open">
                                                 <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                                 <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_sub_jenis.php?format=print">Print</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_sub_jenis.php?format=excel">Excel</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -577,47 +610,6 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </table>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="cardsubjenis" role="tabpanel">
-                                    <div class="row m-b-10 m-t-10">
-                                        <div class="col-6">
-                                            <a href="#" class="btn waves-effect waves-light btn-grd-info">Print</a>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="align-items-right" style="float: right;">
-                                                <a href="tambah/tambah_jenis.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row users-card p-3">
-                                        <?php if (count($dataSubJenises) === 0): ?>
-                                            <div class="col-12 text-center">
-                                                <p>Tidak ada data Sub Jenis tersedia.</p>
-                                            </div>
-                                        <?php else: ?>
-                                        <?php foreach ($dataSubJenises as $subjenis) : ?>
-                                        <div class="col-lg-3 col-md-4">
-                                            <div class="card rounded-card user-card">
-                                                <div class="card-block">
-                                                    <div class="user-content">
-                                                        <h4><?= htmlspecialchars($subjenis['nama_sub_jenis']); ?></h4>
-                                                        <span><?= htmlspecialchars($subjenis['nama_jenis']); ?></span><br>
-                                                        <a href="edit/edit_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
-                                                          <i class="ti-pencil text-dark"></i>
-                                                        </a>
-                                                        <a href="hapus/hapus_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>" 
-                                                           class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirmDelete('hapus/hapus_sub_jenis.php?id=<?= $subjenis['id_sub_jenis']; ?>')"
-                                                           title="Hapus">
-                                                           <i class="ti-trash text-dark"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -625,7 +617,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-header">
                             <div class="card-header-left">
                                 <h5>Jenis Aset</h5>
-                                <span>Data apa?</span>
+                                <span>Data jenis aset berisi informasi mengenai tipe aset kehumasan untuk membantu pengelolaan, pencarian, dan pelaporan aset secara sistematis.</span>
                             </div>
                             <div class="card-header-right">
                                 <ul class="list-unstyled card-option">
@@ -640,23 +632,61 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-block">
                             <ul class="nav nav-tabs tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#tablejenisaset" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                                    <a class="nav-link active" data-toggle="tab" href="#cardjenisaset" role="tab"><i class="ti-layout-grid2"></i> Card</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#cardjenisaset" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                                    <a class="nav-link" data-toggle="tab" href="#tablejenisaset" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
                                 </li>
                             </ul>
                             <div class="tab-content tabs">
-                                <div class="tab-pane active" id="tablejenisaset" role="tabpanel">
+                                <div class="tab-pane active" id="cardjenisaset" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <a href="export/export_jenis_aset.php?format=print" class="btn waves-effect waves-light btn-grd-info">Print</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_jenis_aset.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row users-card p-3">
+                                        <?php if (count($dataJenisAsets) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Jenis Aset tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
+                                        <?php foreach ($dataJenisAsets as $jenisaset) : ?>
+                                        <div class="col-lg-3 col-md-4">
+                                            <div class="card rounded-card user-card">
+                                                <div class="card-block">
+                                                    <div class="user-content">
+                                                        <h4><?= htmlspecialchars($jenisaset['nama_jenis_aset']); ?></h4>
+                                                        <a href="edit/edit_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                          <i class="ti-pencil text-dark"></i>
+                                                        </a>
+                                                        <a href="hapus/hapus_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>" 
+                                                           class="btn waves-effect waves-light btn-danger btn-icon"
+                                                           onclick="return confirmDelete('hapus/hapus_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>')"
+                                                           title="Hapus">
+                                                           <i class="ti-trash text-dark"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tablejenisaset" role="tabpanel">
                                     <div class="row m-b-10 m-t-10">
                                         <div class="col-6">
                                             <div class="dropdown-info dropdown open">
                                                 <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                                 <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_jenis_aset.php?format=print">Print</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_jenis_aset.php?format=excel">Excel</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -709,46 +739,6 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </table>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="cardjenisaset" role="tabpanel">
-                                    <div class="row m-b-10 m-t-10">
-                                        <div class="col-6">
-                                            <a href="#" class="btn waves-effect waves-light btn-grd-info">Print</a>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="align-items-right" style="float: right;">
-                                                <a href="tambah/tambah_jenis_aset.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row users-card p-3">
-                                        <?php if (count($dataJenisAsets) === 0): ?>
-                                            <div class="col-12 text-center">
-                                                <p>Tidak ada data Jenis Aset tersedia.</p>
-                                            </div>
-                                        <?php else: ?>
-                                        <?php foreach ($dataJenisAsets as $jenisaset) : ?>
-                                        <div class="col-lg-3 col-md-4">
-                                            <div class="card rounded-card user-card">
-                                                <div class="card-block">
-                                                    <div class="user-content">
-                                                        <h4><?= htmlspecialchars($jenisaset['nama_jenis_aset']); ?></h4>
-                                                        <a href="edit/edit_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
-                                                          <i class="ti-pencil text-dark"></i>
-                                                        </a>
-                                                        <a href="hapus/hapus_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>" 
-                                                           class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirmDelete('hapus/hapus_jenis_aset.php?id=<?= $jenisaset['id_jenis_aset']; ?>')"
-                                                           title="Hapus">
-                                                           <i class="ti-trash text-dark"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -756,7 +746,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-header">
                             <div class="card-header-left">
                                 <h5>Jenis PIC</h5>
-                                <span>Data apa?</span>
+                                <span>Jenis PIC menyimpan kategori peran penanggung jawab (Person In Charge) dalam suatu kegiatan.</span>
                             </div>
                             <div class="card-header-right">
                                 <ul class="list-unstyled card-option">
@@ -771,23 +761,61 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-block">
                             <ul class="nav nav-tabs tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#tablejenispic" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                                    <a class="nav-link active" data-toggle="tab" href="#cardjenispic" role="tab"><i class="ti-layout-grid2"></i> Card</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#cardjenispic" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                                    <a class="nav-link" data-toggle="tab" href="#tablejenispic" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
                                 </li>
                             </ul>
                             <div class="tab-content tabs">
-                                <div class="tab-pane active" id="tablejenispic" role="tabpanel">
+                                <div class="tab-pane active" id="cardjenispic" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <a href="export/export_jenis_pic.php?format=print" class="btn waves-effect waves-light btn-grd-info">Print</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_jenis_pic.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row users-card p-3">
+                                        <?php if (count($dataJenisPICs) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Jenis PIC tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
+                                        <?php foreach ($dataJenisPICs as $jenispic) : ?>
+                                        <div class="col-lg-3 col-md-4">
+                                            <div class="card rounded-card user-card">
+                                                <div class="card-block">
+                                                    <div class="user-content">
+                                                        <h4><?= htmlspecialchars($jenispic['nama_jenis_pic']); ?></h4>
+                                                        <a href="edit/edit_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                          <i class="ti-pencil text-dark"></i>
+                                                        </a>
+                                                        <a href="hapus/hapus_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>" 
+                                                           class="btn waves-effect waves-light btn-danger btn-icon"
+                                                           onclick="return confirmDelete('hapus/hapus_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>')"
+                                                           title="Hapus">
+                                                           <i class="ti-trash text-dark"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tablejenispic" role="tabpanel">
                                     <div class="row m-b-10 m-t-10">
                                         <div class="col-6">
                                             <div class="dropdown-info dropdown open">
                                                 <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                                 <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_jenis_pic.php?format=print">Print</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_jenis_pic.php?format=excel">Excel</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -840,46 +868,6 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </table>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="cardjenispic" role="tabpanel">
-                                    <div class="row m-b-10 m-t-10">
-                                        <div class="col-6">
-                                            <a href="#" class="btn waves-effect waves-light btn-grd-info">Print</a>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="align-items-right" style="float: right;">
-                                                <a href="tambah/tambah_jenis_pic.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row users-card p-3">
-                                        <?php if (count($dataJenisPICs) === 0): ?>
-                                            <div class="col-12 text-center">
-                                                <p>Tidak ada data Jenis PIC tersedia.</p>
-                                            </div>
-                                        <?php else: ?>
-                                        <?php foreach ($dataJenisPICs as $jenispic) : ?>
-                                        <div class="col-lg-3 col-md-4">
-                                            <div class="card rounded-card user-card">
-                                                <div class="card-block">
-                                                    <div class="user-content">
-                                                        <h4><?= htmlspecialchars($jenispic['nama_jenis_pic']); ?></h4>
-                                                        <a href="edit/edit_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
-                                                          <i class="ti-pencil text-dark"></i>
-                                                        </a>
-                                                        <a href="hapus/hapus_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>" 
-                                                           class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirmDelete('hapus/hapus_jenis_pic.php?id=<?= $jenispic['id_jenis_pic']; ?>')"
-                                                           title="Hapus">
-                                                           <i class="ti-trash text-dark"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -887,7 +875,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-header">
                             <div class="card-header-left">
                                 <h5>PPID</h5>
-                                <span>Data apa?</span>
+                                <span>Data PPID (Pejabat Pengelola Informasi dan Dokumentasi) berisi informasi unit atau peran PPID dalam instansi.</span>
                             </div>
                             <div class="card-header-right">
                                 <ul class="list-unstyled card-option">
@@ -902,23 +890,61 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-block">
                             <ul class="nav nav-tabs tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#tableppid" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                                    <a class="nav-link active" data-toggle="tab" href="#cardppid" role="tab"><i class="ti-layout-grid2"></i> Card</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#cardppid" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                                    <a class="nav-link" data-toggle="tab" href="#tableppid" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
                                 </li>
                             </ul>
                             <div class="tab-content tabs">
-                                <div class="tab-pane active" id="tableppid" role="tabpanel">
+                                <div class="tab-pane active" id="cardppid" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <a href="export/export_ppid.php?format=print" class="btn waves-effect waves-light btn-grd-info">Print</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_ppid.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row users-card p-3">
+                                        <?php if (count($dataPPIDs) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data PPID tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
+                                        <?php foreach ($dataPPIDs as $ppid) : ?>
+                                        <div class="col-lg-3 col-md-4">
+                                            <div class="card rounded-card user-card">
+                                                <div class="card-block">
+                                                    <div class="user-content">
+                                                        <h4><?= htmlspecialchars($ppid['nama_ppid']); ?></h4>
+                                                        <a href="edit/edit_ppid.php?id=<?= $ppid['id_ppid']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                          <i class="ti-pencil text-dark"></i>
+                                                        </a>
+                                                        <a href="hapus/hapus_ppid.php?id=<?= $ppid['id_ppid']; ?>" 
+                                                           class="btn waves-effect waves-light btn-danger btn-icon"
+                                                           onclick="return confirmDelete('hapus/hapus_ppid.php?id=<?= $ppid['id_ppid']; ?>')"
+                                                           title="Hapus">
+                                                           <i class="ti-trash text-dark"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tableppid" role="tabpanel">
                                     <div class="row m-b-10 m-t-10">
                                         <div class="col-6">
                                             <div class="dropdown-info dropdown open">
                                                 <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                                 <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_ppid.php?format=print">Print</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_ppid.php?format=excel">Excel</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -971,46 +997,6 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </table>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="cardppid" role="tabpanel">
-                                    <div class="row m-b-10 m-t-10">
-                                        <div class="col-6">
-                                            <a href="#" class="btn waves-effect waves-light btn-grd-info">Print</a>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="align-items-right" style="float: right;">
-                                                <a href="tambah/tambah_ppid.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row users-card p-3">
-                                        <?php if (count($dataPPIDs) === 0): ?>
-                                            <div class="col-12 text-center">
-                                                <p>Tidak ada data PPID tersedia.</p>
-                                            </div>
-                                        <?php else: ?>
-                                        <?php foreach ($dataPPIDs as $ppid) : ?>
-                                        <div class="col-lg-3 col-md-4">
-                                            <div class="card rounded-card user-card">
-                                                <div class="card-block">
-                                                    <div class="user-content">
-                                                        <h4><?= htmlspecialchars($ppid['nama_ppid']); ?></h4>
-                                                        <a href="edit/edit_ppid.php?id=<?= $ppid['id_ppid']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
-                                                          <i class="ti-pencil text-dark"></i>
-                                                        </a>
-                                                        <a href="hapus/hapus_ppid.php?id=<?= $ppid['id_ppid']; ?>" 
-                                                           class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirmDelete('hapus/hapus_ppid.php?id=<?= $ppid['id_ppid']; ?>')"
-                                                           title="Hapus">
-                                                           <i class="ti-trash text-dark"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1018,7 +1004,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-header">
                             <div class="card-header-left">
                                 <h5>Role</h5>
-                                <span>Data apa?</span>
+                                <span>Data role menyimpan hak akses pengguna dalam sistem.</span>
                             </div>
                             <div class="card-header-right">
                                 <ul class="list-unstyled card-option">
@@ -1033,23 +1019,61 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-block">
                             <ul class="nav nav-tabs tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#tablerole" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                                    <a class="nav-link active" data-toggle="tab" href="#cardrole" role="tab"><i class="ti-layout-grid2"></i> Card</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#cardrole" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                                    <a class="nav-link" data-toggle="tab" href="#tablerole" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
                                 </li>
                             </ul>
                             <div class="tab-content tabs">
-                                <div class="tab-pane active" id="tablerole" role="tabpanel">
+                                <div class="tab-pane active" id="cardrole" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <a href="export/export_role.php?format=print" class="btn waves-effect waves-light btn-grd-info">Print</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_role.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row users-card p-3">
+                                        <?php if (count($dataRoles) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Role tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
+                                        <?php foreach ($dataRoles as $role) : ?>
+                                        <div class="col-lg-3 col-md-4">
+                                            <div class="card rounded-card user-card">
+                                                <div class="card-block">
+                                                    <div class="user-content">
+                                                        <h4><?= htmlspecialchars($role['nama_role']); ?></h4>
+                                                        <a href="edit/edit_role.php?id=<?= $role['id_role']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                          <i class="ti-pencil text-dark"></i>
+                                                        </a>
+                                                        <a href="hapus/hapus_role.php?id=<?= $role['id_role']; ?>" 
+                                                           class="btn waves-effect waves-light btn-danger btn-icon"
+                                                           onclick="return confirmDelete('hapus/hapus_role.php?id=<?= $role['id_role']; ?>')"
+                                                           title="Hapus">
+                                                           <i class="ti-trash text-dark"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tablerole" role="tabpanel">
                                     <div class="row m-b-10 m-t-10">
                                         <div class="col-6">
                                             <div class="dropdown-info dropdown open">
                                                 <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                                 <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_role.php?format=print">Print</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_role.php?format=excel">Excel</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1102,46 +1126,6 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </table>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="cardrole" role="tabpanel">
-                                    <div class="row m-b-10 m-t-10">
-                                        <div class="col-6">
-                                            <a href="#" class="btn waves-effect waves-light btn-grd-info">Print</a>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="align-items-right" style="float: right;">
-                                                <a href="tambah/tambah_role.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row users-card p-3">
-                                        <?php if (count($dataRoles) === 0): ?>
-                                            <div class="col-12 text-center">
-                                                <p>Tidak ada data Role tersedia.</p>
-                                            </div>
-                                        <?php else: ?>
-                                        <?php foreach ($dataRoles as $role) : ?>
-                                        <div class="col-lg-3 col-md-4">
-                                            <div class="card rounded-card user-card">
-                                                <div class="card-block">
-                                                    <div class="user-content">
-                                                        <h4><?= htmlspecialchars($role['nama_role']); ?></h4>
-                                                        <a href="edit/edit_role.php?id=<?= $role['id_role']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
-                                                          <i class="ti-pencil text-dark"></i>
-                                                        </a>
-                                                        <a href="hapus/hapus_role.php?id=<?= $role['id_role']; ?>" 
-                                                           class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirmDelete('hapus/hapus_role.php?id=<?= $role['id_role']; ?>')"
-                                                           title="Hapus">
-                                                           <i class="ti-trash text-dark"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1149,7 +1133,7 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-header">
                             <div class="card-header-left">
                                 <h5>Skill</h5>
-                                <span>Data apa?</span>
+                                <span>Data skill berisi kemampuan atau keahlian pengguna.</span>
                             </div>
                             <div class="card-header-right">
                                 <ul class="list-unstyled card-option">
@@ -1164,23 +1148,61 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                         <div class="card-block">
                             <ul class="nav nav-tabs tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#tableskill" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                                    <a class="nav-link active" data-toggle="tab" href="#cardskill" role="tab"><i class="ti-layout-grid2"></i> Card</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#cardskill" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                                    <a class="nav-link" data-toggle="tab" href="#tableskill" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
                                 </li>
                             </ul>
                             <div class="tab-content tabs">
-                                <div class="tab-pane active" id="tableskill" role="tabpanel">
+                                <div class="tab-pane active" id="cardskill" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <a href="export/export_skill.php?format=print" class="btn waves-effect waves-light btn-grd-info">Print</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_skill.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row users-card p-3">
+                                        <?php if (count($dataSkills) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Skill tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
+                                        <?php foreach ($dataSkills as $skill) : ?>
+                                        <div class="col-lg-3 col-md-4">
+                                            <div class="card rounded-card user-card">
+                                                <div class="card-block">
+                                                    <div class="user-content">
+                                                        <h4><?= htmlspecialchars($skill['nama_skill']); ?></h4>
+                                                        <a href="edit/edit_skill.php?id=<?= $skill['id_skill']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                          <i class="ti-pencil text-dark"></i>
+                                                        </a>
+                                                        <a href="hapus/hapus_skill.php?id=<?= $skill['id_skill']; ?>" 
+                                                           class="btn waves-effect waves-light btn-danger btn-icon"
+                                                           onclick="return confirmDelete('hapus/hapus_skill.php?id=<?= $skill['id_skill']; ?>')"
+                                                           title="Hapus">
+                                                           <i class="ti-trash text-dark"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tableskill" role="tabpanel">
                                     <div class="row m-b-10 m-t-10">
                                         <div class="col-6">
                                             <div class="dropdown-info dropdown open">
                                                 <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                                 <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">JSON</a>
-                                                    <a class="dropdown-item waves-light waves-effect" href="#">CSV</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_skill.php?format=print">Print</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_skill.php?format=excel">Excel</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -1233,46 +1255,6 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                         </table>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="cardskill" role="tabpanel">
-                                    <div class="row m-b-10 m-t-10">
-                                        <div class="col-6">
-                                            <a href="#" class="btn waves-effect waves-light btn-grd-info">Print</a>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="align-items-right" style="float: right;">
-                                                <a href="tambah/tambah_skill.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row users-card p-3">
-                                        <?php if (count($dataSkills) === 0): ?>
-                                            <div class="col-12 text-center">
-                                                <p>Tidak ada data Skill tersedia.</p>
-                                            </div>
-                                        <?php else: ?>
-                                        <?php foreach ($dataSkills as $skill) : ?>
-                                        <div class="col-lg-3 col-md-4">
-                                            <div class="card rounded-card user-card">
-                                                <div class="card-block">
-                                                    <div class="user-content">
-                                                        <h4><?= htmlspecialchars($skill['nama_skill']); ?></h4>
-                                                        <a href="edit/edit_skill.php?id=<?= $skill['id_skill']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
-                                                          <i class="ti-pencil text-dark"></i>
-                                                        </a>
-                                                        <a href="hapus/hapus_skill.php?id=<?= $skill['id_skill']; ?>" 
-                                                           class="btn waves-effect waves-light btn-danger btn-icon"
-                                                           onclick="return confirmDelete('hapus/hapus_skill.php?id=<?= $skill['id_skill']; ?>')"
-                                                           title="Hapus">
-                                                           <i class="ti-trash text-dark"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1282,36 +1264,30 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
     </div>
 </div>
 
-<!-- Artistic Delete Modal -->
-<div class="modal fade" id="deleteDataModal" tabindex="-1" role="dialog" aria-labelledby="deleteDataModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-            <div class="modal-header border-0" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: 15px 15px 0 0;">
-                <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
-                    <i class="ti-trash" style="font-size: 24px; color: white;"></i>
-                    <h5 class="modal-title" id="deleteDataModalLabel" style="color: white; margin: 0; font-weight: 700;">Konfirmasi Hapus</h5>
+<!-- Delete Modal with Artistic Design -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 400px; display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; background: #fcf2f2; border-left: 5px solid #e74c3c;">
+            <div class="modal-body" style="padding: 40px 30px; text-align: center;">
+                <div style="margin-bottom: 20px;">
+                    <i class="ti-alert" style="font-size: 56px; color: #e74c3c;"></i>
                 </div>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 1;">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" style="padding: 30px;">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <i class="ti-alert" style="font-size: 48px; color: #e74c3c;"></i>
-                </div>
-                <p style="font-size: 16px; color: #2c3e50; margin: 15px 0;">Apakah Anda yakin ingin menghapus data ini?</p>
-                <p style="color: #7f8c8d; font-size: 14px; margin: 15px 0;">
-                    <i class="ti-alert-alt" style="margin-right: 8px;"></i>
+                <h5 style="color: #2c3e50; font-weight: 700; font-size: 18px; margin-bottom: 10px;">Konfirmasi Hapus</h5>
+                <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 20px;">Apakah Anda yakin ingin menghapus data <strong id="deleteDataName"></strong>?</p>
+                <p style="color: #e74c3c; font-size: 12px; margin-top: 20px; margin-bottom: 30px;">
+                    <i class="ti-alert-alt" style="margin-right: 6px;"></i>
                     Tindakan ini tidak dapat dibatalkan.
                 </p>
-            </div>
-            <div class="modal-footer border-0" style="padding: 20px 30px; background: rgba(0, 0, 0, 0.02);">
-                <button type="button" class="btn" data-dismiss="modal" style="background: #95a5a6; color: white; border-radius: 8px; padding: 8px 20px; font-weight: 500;">
-                    <i class="ti-close" style="margin-right: 5px;"></i> Batal
-                </button>
-                <a id="confirmDeleteLink" href="#" type="button" class="btn" style="background: #e74c3c; color: white; border-radius: 8px; padding: 8px 20px; font-weight: 500; text-decoration: none;">
-                    <i class="ti-trash" style="margin-right: 5px;"></i> Hapus
-                </a>
+                <input type="hidden" id="deleteDataId" value="">
+                <input type="hidden" id="deleteDataType" value="">
+                <div style="display: flex; justify-content: center; gap: 15px;">
+                    <button type="button" class="btn btn-secondary btn-icon waves-effect waves-light" data-dismiss="modal" title="Batal">
+                        <i class="ti-close"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-icon waves-effect waves-light" id="confirmDelete" title="Hapus">
+                        <i class="ti-trash"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1339,7 +1315,16 @@ window.addEventListener('load', function() {
             confirmButtonColor: '<?= ($status === 'success') ? '#3085d6' : '#d33' ?>',
             confirmButtonText: 'OK',
             allowOutsideClick: false,
-            allowEscapeKey: false
+            allowEscapeKey: false,
+            customClass: {
+                container: 'swal-container-custom',
+                popup: 'swal-popup-custom',
+                confirmButton: 'swal-confirm-button-custom'
+            }
+        }).then((result) => {
+            if (result.isConfirmed && '<?= $status ?>' === 'success') {
+                location.reload();
+            }
         });
         <?php
         unset($_SESSION['delete_status']);
@@ -1348,14 +1333,86 @@ window.addEventListener('load', function() {
     ?>
 });
 
-// Handle delete confirmations with artistic modal
 function confirmDelete(url) {
-    event.preventDefault();
-    document.getElementById('confirmDeleteLink').href = url;
-    $('#deleteDataModal').modal('show');
-    return false;
+    // Extract URL parameter to store
+    document.getElementById('confirmDelete').setAttribute('data-url', url);
+    $('#deleteModal').modal('show');
+    return false; // Prevent default link behavior
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmDeleteBtn = document.getElementById('confirmDelete');
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function() {
+            const url = this.getAttribute('data-url');
+
+            // Close the modal first
+            $('#deleteModal').modal('hide');
+            
+            // Perform deletion
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    // Show alert based on response
+                    Swal.fire({
+                        icon: data.status === 'success' ? 'success' : 'error',
+                        title: data.status === 'success' ? 'Berhasil!' : 'Gagal!',
+                        text: data.message,
+                        confirmButtonColor: data.status === 'success' ? '#3085d6' : '#d33',
+                        confirmButtonText: 'OK',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        customClass: {
+                            container: 'swal-container-custom',
+                            popup: 'swal-popup-custom',
+                            confirmButton: 'swal-confirm-button-custom'
+                        }
+                    }).then((result) => {
+                        // Reload page only on success
+                        if (result.isConfirmed && data.status === 'success') {
+                            location.reload();
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat menghapus data',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            container: 'swal-container-custom',
+                            popup: 'swal-popup-custom',
+                            confirmButton: 'swal-confirm-button-custom'
+                        }
+                    });
+                });
+        });
+    }
+});
 </script>
+<style>
+.swal-popup-custom {
+    border-radius: 15px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+}
+
+.swal-confirm-button-custom {
+    border-radius: 8px !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.swal-confirm-button-custom:focus,
+.swal-confirm-button-custom:active,
+.swal-confirm-button-custom:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+</style>
 <?php
 $script = ob_get_clean();
 include 'layout.php';
