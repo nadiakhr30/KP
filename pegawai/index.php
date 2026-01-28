@@ -250,7 +250,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
           <!-- Overlay -->
           <div class="humas-overlay">
-            <a href="#container section-title" class="overlay-item">
+            <a href="struktur_humas.php" class="overlay-item">
               <i class="bi bi-diagram-3"></i>
               <span>Struktur Humas</span>
             </a>
