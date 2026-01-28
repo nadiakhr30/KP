@@ -155,64 +155,114 @@ body {
   display: block;
 }
 
-/* ===== TAB 1: GALERI GAMBAR ===== */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+/* ===== TAB 1: CANVA ORGANIGRAM ===== */
+.organigram-container {
   background: #fff;
   border-radius: 0 12px 12px 12px;
-  padding: 28px;
   box-shadow: 0 4px 12px rgba(15,23,42,.04);
-}
-
-.gallery-card {
-  background: #fff;
-  border-radius: 14px;
   overflow: hidden;
-  border: 1px solid #e2e8f0;
-  transition: 0.25s ease;
+  display: flex;
+  flex-direction: column;
 }
 
-.gallery-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(15,23,42,.12);
-  border-color: #2563eb;
+.organigram-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 24px 28px;
+  border-bottom: 2px solid #f1f5f9;
+  background: linear-gradient(90deg, #fff 0%, #f8fafc 100%);
 }
 
-.gallery-img {
-  width: 100%;
-  height: 200px;
-  background: #f1f5f9;
+.organigram-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.organigram-title i {
+  color: #2563eb;
+  font-size: 20px;
+}
+
+.btn-canva-link {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.btn-canva-link:hover {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.btn-canva-link img {
+  width: 18px;
+  height: 18px;
+}
+
+.canva-wrapper {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #94a3b8;
-  font-size: 48px;
+  background: #f8fafc;
+  padding: 12px;
+  min-height: 600px;
 }
 
-.gallery-img img {
+.canva-frame {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  border: none;
+  border-radius: 8px;
+  min-height: 600px;
+  background: #fff;
 }
 
-.gallery-body {
-  padding: 16px;
+@media (max-width: 1024px) {
+  .canva-frame {
+    min-height: 550px;
+  }
+
+  .canva-wrapper {
+    min-height: 550px;
+  }
 }
 
-.gallery-body h4 {
-  margin: 0 0 8px 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #0f172a;
-}
+@media (max-width: 768px) {
+  .organigram-header {
+    padding: 16px 12px;
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-.gallery-body p {
-  margin: 0;
-  font-size: 13px;
-  color: #64748b;
-  line-height: 1.5;
+  .btn-edit-canva {
+    justify-content: center;
+  }
+
+  .canva-frame {
+    min-height: 500px;
+  }
+
+  .canva-wrapper {
+    min-height: 500px;
+    padding: 8px;
+  }
 }
 
 /* ===== TAB 2: FILTERING ===== */
@@ -372,8 +422,32 @@ body {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .gallery-grid, .filter-container, .results-grid {
+  .filter-container, .results-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .organigram-header {
+    padding: 16px 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .organigram-title {
+    font-size: 16px;
+  }
+
+  .btn-canva-link {
+    justify-content: center;
+  }
+
+  .canva-frame {
+    min-height: 500px;
+  }
+
+  .canva-wrapper {
+    min-height: 500px;
+    padding: 8px;
   }
   
   .tabs-container {
@@ -421,31 +495,22 @@ body {
     </button>
   </div>
 
-  <!-- ===== TAB 1: GALERI GAMBAR ===== -->
+  <!-- ===== TAB 1: CANVA ORGANIGRAM ===== -->
   <div id="tab-gallery" class="tab-content active">
-    <div class="gallery-grid">
-      <?php
-      // Ambil semua file gambar dari folder atau database
-      // Untuk sekarang kita gunakan struktur placeholder
-      $galleryItems = [
-        ['title' => 'Struktur Organisasi', 'desc' => 'Bagan lengkap struktur kehumasan'],
-        ['title' => 'Tim Kreatif', 'desc' => 'Divisi kreatif dan desain grafis'],
-        ['title' => 'Tim Media', 'desc' => 'Divisi media dan publikasi'],
-        ['title' => 'Tim Data', 'desc' => 'Divisi pengolahan data dan analisis'],
-      ];
-
-      foreach($galleryItems as $item):
-      ?>
-      <div class="gallery-card">
-        <div class="gallery-img">
-          <i class="bi bi-image"></i>
-        </div>
-        <div class="gallery-body">
-          <h4><?= $item['title'] ?></h4>
-          <p><?= $item['desc'] ?></p>
-        </div>
+    <div class="organigram-container">
+      <div class="organigram-header">
+        <h3 class="organigram-title">
+          <i class="bi bi-diagram-3"></i> Struktur Organisasi Kehumasan
+        </h3>
       </div>
-      <?php endforeach; ?>
+      <div class="canva-wrapper">
+        <iframe 
+          class="canva-frame"
+          src="https://www.canva.com/design/DAG_ftpWi2k/Zvddz08HAqisT44l2EM9lg/view?embed&mode=fullscreen" 
+          allowfullscreen
+          allow="autoplay">
+        </iframe>
+      </div>
     </div>
   </div>
 
