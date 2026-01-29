@@ -21,13 +21,9 @@ $qKalender = mysqli_query($koneksi, "
         j.tim,
         j.keterangan,
         j.status,
-        j.dokumentasi,
-        j.link_instagram,
-        j.link_facebook,
-        j.link_youtube,
-        j.link_website
+        j.dokumentasi
     FROM jadwal j
-    ORDER BY j.tanggal_rilis DESC
+    ORDER BY j.tanggal_penugasan DESC
 ");
 
 if (!$qKalender) {
@@ -45,6 +41,24 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
         WHERE p.id_jadwal = " . (int)$id_jadwal . "
         ORDER BY jp.nama_jenis_pic
     ");
+    
+    // Get links from jadwal_link
+    $qLinks = mysqli_query($koneksi, "
+        SELECT jl.id_jadwal_link, jl.id_jenis_link, jenis_link.nama_jenis_link, jl.link
+        FROM jadwal_link jl
+        JOIN jenis_link ON jl.id_jenis_link = jenis_link.id_jenis_link
+        WHERE jl.id_jadwal = " . (int)$id_jadwal
+    );
+    
+    $linksData = [];
+    if ($qLinks) {
+        while ($linkRow = mysqli_fetch_assoc($qLinks)) {
+            $linksData[$linkRow['nama_jenis_link']] = [
+                'id_jenis_link' => $linkRow['id_jenis_link'],
+                'link' => $linkRow['link'] ?: ''
+            ];
+        }
+    }
     
     $picData = [];
     $picNips = [];
@@ -87,10 +101,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
             'pic_display' => $picDisplay,
             'pic_data' => $picData,
             'dokumentasi' => $row['dokumentasi'],
-            'link_instagram' => $row['link_instagram'],
-            'link_facebook' => $row['link_facebook'],
-            'link_youtube' => $row['link_youtube'],
-            'link_website' => $row['link_website']
+            'links_data' => $linksData
         ]
     ];
 }
@@ -115,7 +126,63 @@ $qJadwalList = mysqli_query($koneksi, "
 ");
 $jadwalList = [];
 while ($row = mysqli_fetch_assoc($qJadwalList)) {
+    // Fetch detailed PIC data for this jadwal
+    $qDetailPic = mysqli_query($koneksi, "
+        SELECT jp.nama_jenis_pic, u.nama
+        FROM pic p
+        JOIN user u ON p.nip = u.nip
+        JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic
+        WHERE p.id_jadwal = " . (int)$row['id_jadwal'] . "
+        ORDER BY jp.nama_jenis_pic
+    ");
+    
+    $picDataDetail = [];
+    while ($picDetail = mysqli_fetch_assoc($qDetailPic)) {
+        $picDataDetail[$picDetail['nama_jenis_pic']] = $picDetail['nama'];
+    }
+    $row['pic_data_detail'] = $picDataDetail;
+    
+    // Fetch links for this jadwal
+    $qLinksDetail = mysqli_query($koneksi, "
+        SELECT jl.id_jenis_link, jenis_link.nama_jenis_link, jl.link
+        FROM jadwal_link jl
+        JOIN jenis_link ON jl.id_jenis_link = jenis_link.id_jenis_link
+        WHERE jl.id_jadwal = " . (int)$row['id_jadwal'] . "
+        ORDER BY jenis_link.nama_jenis_link
+    ");
+    
+    $linksDataDetail = [];
+    while ($linkDetail = mysqli_fetch_assoc($qLinksDetail)) {
+        $linksDataDetail[$linkDetail['nama_jenis_link']] = [
+            'id_jenis_link' => $linkDetail['id_jenis_link'],
+            'link' => $linkDetail['link'] ?: ''
+        ];
+    }
+    $row['links_data'] = $linksDataDetail;
+    
     $jadwalList[] = $row;
+}
+
+// Get all distinct PIC types for table columns
+$qPicTypes = mysqli_query($koneksi, "
+    SELECT DISTINCT nama_jenis_pic 
+    FROM jenis_pic 
+    ORDER BY nama_jenis_pic
+");
+$picTypes = [];
+while ($picType = mysqli_fetch_assoc($qPicTypes)) {
+    $picTypes[] = $picType['nama_jenis_pic'];
+}
+
+// Get all distinct link types for table columns
+$qLinkTypes = mysqli_query($koneksi, "
+    SELECT DISTINCT nama_jenis_link 
+    FROM jenis_link 
+    ORDER BY nama_jenis_link
+");
+$linkTypes = [];
+while ($linkType = mysqli_fetch_assoc($qLinkTypes)) {
+    $linkTypes[] = $linkType['nama_jenis_link'];
 }
 
 // Render with layout
@@ -220,10 +287,59 @@ ob_start();
                                             <p class="text-muted mb-2"><strong>Tim:</strong> <?= htmlspecialchars($jadwal['tim'] ?? '-') ?></p>
                                             <p class="text-muted mb-2"><strong>Tanggal Penugasan:</strong> <?= $jadwal['tanggal_penugasan'] ? date('d-m-Y', strtotime($jadwal['tanggal_penugasan'])) : '-' ?></p>
                                             <p class="text-muted mb-2"><strong>Target Rilis:</strong> <?= date('d-m-Y', strtotime($jadwal['tanggal_rilis'])) ?></p>
-                                            <p class="text-muted mb-3"><strong>PIC:</strong> <?= htmlspecialchars($jadwal['pic_info'] ?? '-') ?></p>
-                                            <div style="display: flex; gap: 8px;">
-                                                <a href="edit/edit_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-sm btn-warning waves-effect waves-light"><i class="ti-pencil"></i> Edit</a>
-                                                <a href="hapus/hapus_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-sm btn-danger waves-effect waves-light" onclick="return confirm('Yakin ingin menghapus?');"><i class="ti-trash"></i> Hapus</a>
+                                            <p class="text-muted mb-3"><strong>PIC:</strong>
+<?php if (!empty($jadwal['pic_data_detail'])): ?>
+    <span class="badge bg-info ms-2"
+          style="cursor: help;"
+          data-bs-toggle="tooltip"
+          data-bs-html="true"
+          title="<?php
+              $picTooltip = [];
+              foreach ($jadwal['pic_data_detail'] as $jenis => $nama) {
+                  $picTooltip[] = htmlspecialchars($jenis . ': ' . $nama);
+              }
+              echo $picTooltip ? implode('<br>', $picTooltip) : '-';
+          ?>">
+        <i class="ti-user"></i> <?= count($jadwal['pic_data_detail']) ?> PIC
+    </span>
+<?php else: ?>
+    <span class="text-muted">-</span>
+<?php endif; ?>
+                                            </p>
+                                            <p class="text-muted mb-3"><strong>Link Publikasi:</strong>
+<?php if (!empty($jadwal['links_data'])): ?>
+    <span class="badge bg-primary ms-2"
+          style="cursor: help;"
+          data-bs-toggle="tooltip"
+          data-bs-html="true"
+          title="<?php
+              $linkTooltip = [];
+              foreach ($jadwal['links_data'] as $jenis => $linkData) {
+                  $status = !empty($linkData['link']) ? 'Tersedia' : 'Tidak tersedia';
+                  $linkTooltip[] = htmlspecialchars($jenis . ': ' . $status);
+              }
+              echo implode('<br>', $linkTooltip);
+          ?>">
+        <i class="ti-world"></i> <?= count($jadwal['links_data']) ?> Link
+    </span>
+<?php else: ?>
+    <span class="text-muted">-</span>
+<?php endif; ?>
+                                            </p>
+                                            <p class="text-muted mb-3"><strong>Dokumentasi:</strong>
+<?php if (!empty($jadwal['dokumentasi'])): ?>
+    <span class="badge bg-success ms-2" style="cursor: help;" data-bs-toggle="tooltip" title="Dokumentasi tersedia">
+        <i class="ti-eye"></i> Ada
+    </span>
+<?php else: ?>
+    <span class="badge bg-secondary ms-2" style="cursor: help;" data-bs-toggle="tooltip" title="Dokumentasi tidak tersedia">
+        <i class="ti-eye"></i> Tidak ada
+    </span>
+<?php endif; ?>
+                                            </p>
+                                            <div style="display: flex; gap: 8px; justify-content: center;">
+                                                <a href="edit/edit_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-icon btn-warning waves-effect waves-light"><i class="ti-pencil text-dark"></i></a>
+                                                <a href="hapus/hapus_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-icon btn-danger waves-effect waves-light" onclick="return confirm('Yakin ingin menghapus?');"><i class="ti-trash text-dark"></i></a>
                                             </div>
                                         </div>
                                     </div>
@@ -248,7 +364,7 @@ ob_start();
                                     </div>
                                     <div class="col-6">
                                         <div class="align-items-right" style="float: right;">
-                                            <a href="#" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            <a href="tambah/tambah_jadwal.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
                                         </div>
                                     </div>
                                 </div>
@@ -262,7 +378,13 @@ ob_start();
                                                 <th>Tim</th>
                                                 <th>Tanggal Penugasan</th>
                                                 <th>Target Rilis</th>
-                                                <th>PIC</th>
+                                                <?php foreach ($picTypes as $picType): ?>
+                                                    <th>PIC <?= htmlspecialchars($picType) ?></th>
+                                                <?php endforeach; ?>
+                                                <?php foreach ($linkTypes as $linkType): ?>
+                                                    <th><?= htmlspecialchars($linkType) ?></th>
+                                                <?php endforeach; ?>
+                                                <th>Dokumentasi</th>
                                                 <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -270,7 +392,7 @@ ob_start();
                                         <tbody>
                                             <?php if (count($jadwalList) === 0): ?>
                                             <tr>
-                                                <td colspan="9" class="text-center">Tidak ada data jadwal tersedia.</td>
+                                                <td colspan="<?= 8 + count($picTypes) + count($linkTypes) ?>" class="text-center">Tidak ada data jadwal tersedia.</td>
                                             </tr>
                                             <?php else: ?>
                                             <?php foreach ($jadwalList as $jadwal): ?>
@@ -281,7 +403,40 @@ ob_start();
                                                 <td><?= htmlspecialchars($jadwal['tim'] ?? '-') ?></td>
                                                 <td><?= $jadwal['tanggal_penugasan'] ? date('d-m-Y', strtotime($jadwal['tanggal_penugasan'])) : '-' ?></td>
                                                 <td><?= date('d-m-Y', strtotime($jadwal['tanggal_rilis'])) ?></td>
-                                                <td><?= htmlspecialchars($jadwal['pic_info'] ?? '-') ?></td>
+                                                <?php foreach ($picTypes as $picType): ?>
+                                                    <td>
+                                                        <?= htmlspecialchars($jadwal['pic_data_detail'][$picType] ?? '-') ?>
+                                                    </td>
+                                                <?php endforeach; ?>
+                                                <?php foreach ($linkTypes as $linkType): ?>
+                                                    <td>
+                                                        <?php 
+                                                            $linkData = $jadwal['links_data'][$linkType] ?? null;
+                                                            if ($linkData && !empty($linkData['link'])):
+                                                        ?>
+                                                            <a href="<?= htmlspecialchars($linkData['link']) ?>" target="_blank" class="badge bg-primary text-decoration-none">
+                                                                <i class="ti-world"></i>
+                                                            </a>
+                                                        <?php elseif ($linkData): ?>
+                                                            <span class="badge bg-secondary">
+                                                                <i class="ti-world"></i>
+                                                            </span>
+                                                        <?php else: ?>
+                                                            <span class="text-muted">-</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                <?php endforeach; ?>
+                                                <td>
+                                                    <?php if (!empty($jadwal['dokumentasi'])): ?>
+                                                        <span class="badge bg-success">
+                                                            <i class="ti-eye"></i>
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-secondary">
+                                                            <i class="ti-eye"></i>
+                                                        </span>
+                                                    <?php endif; ?>
+                                                </td>
                                                 <td>
                                                     <?php
                                                         $statusClass = 'secondary';
@@ -297,8 +452,8 @@ ob_start();
                                                     <span class="badge bg-<?= $statusClass ?>"><?= $statusText ?></span>
                                                 </td>
                                                 <td>
-                                                    <a href="edit/edit_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-sm btn-warning waves-effect waves-light"><i class="ti-pencil"></i></a>
-                                                    <a href="hapus/hapus_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-sm btn-danger waves-effect waves-light" onclick="return confirm('Yakin ingin menghapus?');"><i class="ti-trash"></i></a>
+                                                    <a href="edit/edit_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-icon btn-warning waves-effect waves-light"><i class="ti-pencil text-dark"></i></a>
+                                                    <a href="hapus/hapus_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-icon btn-danger waves-effect waves-light" onclick="return confirm('Yakin ingin menghapus?');"><i class="ti-trash text-dark"></i></a>
                                                 </td>
                                             </tr>
                                             <?php endforeach; ?>
@@ -312,7 +467,13 @@ ob_start();
                                                 <th>Tim</th>
                                                 <th>Tanggal Penugasan</th>
                                                 <th>Target Rilis</th>
-                                                <th>PIC</th>
+                                                <?php foreach ($picTypes as $picType): ?>
+                                                    <th>PIC <?= htmlspecialchars($picType) ?></th>
+                                                <?php endforeach; ?>
+                                                <?php foreach ($linkTypes as $linkType): ?>
+                                                    <th><?= htmlspecialchars($linkType) ?></th>
+                                                <?php endforeach; ?>
+                                                <th>Dokumentasi</th>
                                                 <th>Status</th>
                                                 <th>Aksi</th>
                                             </tr>
@@ -343,64 +504,11 @@ ob_start();
                 <form id="editDetailForm">
                     <input type="hidden" id="editDetailId" name="id_jadwal" value="">
                     <!-- Dokumentasi -->
-                    <div class="form-group mb-4" id="docGroup" style="display: none;">
+                    <div class="form-group mb-4">
                         <label for="editDokumentasi" class="form-label"><small class="text-muted fw-600">Dokumentasi</small></label>
                         <input type="url" class="form-control form-control-edit" id="editDokumentasi" name="dokumentasi" placeholder="Paste link dokumentasi...">
                     </div>
-                    <div class="form-row">
-                        <!-- Instagram -->
-                        <div class="col-md-6 form-group mb-4" id="igGroup" style="display: none;">
-                            <label for="editInstagram" class="form-label">
-                                <small class="text-muted fw-600">Instagram</small>
-                           </label>
-                            <input 
-                                type="url" 
-                                class="form-control form-control-edit" 
-                                id="editInstagram" 
-                                name="link_instagram"
-                                placeholder="https://instagram.com/post/..."
-                            >
-                        </div>
-                        <!-- Facebook -->
-                        <div class="col-md-6 form-group mb-4" id="fbGroup" style="display: none;">
-                            <label for="editFacebook" class="form-label">
-                                <small class="text-muted fw-600">Facebook</small>
-                            </label>
-                            <input 
-                                type="url" 
-                                class="form-control form-control-edit" 
-                                id="editFacebook" 
-                            name="link_facebook"
-                            placeholder="https://facebook.com/post/..."
-                        >
-                    </div>
-                    <!-- YouTube -->
-                    <div class="col-md-6 form-group mb-4" id="ytGroup" style="display: none;">
-                        <label for="editYoutube" class="form-label">
-                            <small class="text-muted fw-600">YouTube</small>
-                        </label>
-                        <input 
-                            type="url" 
-                            class="form-control form-control-edit" 
-                            id="editYoutube" 
-                            name="link_youtube"
-                            placeholder="https://youtube.com/watch?v=..."
-                        >
-                    </div>
-                    <!-- Website -->
-                    <div class="col-md-6 form-group mb-0" id="webGroup" style="display: none;">
-                        <label for="editWebsite" class="form-label">
-                            <small class="text-muted fw-600">Website</small>
-                        </label>
-                        <input 
-                            type="url" 
-                            class="form-control form-control-edit" 
-                            id="editWebsite" 
-                            name="link_website"
-                            placeholder="https://website.com/..."
-                        >
-                    </div>
-                    </div>
+                    <div id="linksContainer"></div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -422,9 +530,9 @@ ob_start();
                 </div>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <button type="button" class="btn btn-sm btn-warning waves-effect waves-light btn-icon" id="editDetailBtn" style="display: none;" onclick="openEditDetailModalFromJadwal()">
-                        <i class="ti-pencil"></i>
+                        <i class="ti-pencil text-dark"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-danger waves-effect waves-light btn-icon" data-bs-dismiss="modal"><i class="fas fa-times"></i></button>
+                    <button type="button" class="btn btn-sm btn-danger waves-effect waves-light btn-icon" data-bs-dismiss="modal"><i class="fas fa-times text-dark"></i></button>
                 </div>
             </div>
             <div class="modal-body">
@@ -478,65 +586,13 @@ $content = ob_get_clean();
 ob_start();
 ?>
 <script>
-// Add custom styles for modals
-const style = document.createElement('style');
-style.textContent = `
-    .modal-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 1.5rem;
-    }
-    .modal-header .text-muted {
-        color: rgba(255, 255, 255, 0.7) !important;
-    }
-    .modal-header h5 {
-        font-weight: 500;
-        font-size: 0.9rem;
-    }
-    .modal-header h3 {
-        font-weight: 600;
-        font-size: 1.4rem;
-    }
-    .modal-body {
-        padding: 2rem;
-    }
-    .modal-body .row {
-        margin-bottom: 1.5rem;
-    }
-    .modal-body p {
-        margin: 0;
-    }
-    .modal-body small {
-        font-weight: 600;
-        letter-spacing: 0.3px;
-    }
-    .badge {
-        padding: 0.4rem 0.8rem;
-        font-weight: 500;
-        font-size: 0.85rem;
-    }
-    #modalPIC ul, #modalPIC ul li {
-        margin: 0;
-    }
-    #modalPIC ul li {
-        margin-bottom: 0.3rem;
-    }
-    .form-control-edit {
-        border-radius: 8px;
-        padding: 10px 12px;
-        font-size: 0.95rem;
-        border: 1.5px solid #e0e0e0;
-    }
-    .form-control-edit:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
-        background-color: #f8f9fa;
-    }
-`;
-document.head.appendChild(style);
-
-// Store current jadwal data
-let currentJadwalData = null;
+// Initialize tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
 
 // Open Edit Detail Modal from Jadwal Modal
 function openEditDetailModalFromJadwal() {
@@ -549,49 +605,35 @@ function openEditDetailModalFromJadwal() {
     fetch('get_jadwal_detail.php?id=' + currentJadwalData.id)
         .then(response => response.json())
         .then(data => {
-            // Show/hide fields based on whether they have content (bukan NULL, bukan empty string)
-            const docGroup = document.getElementById('docGroup');
-            const igGroup = document.getElementById('igGroup');
-            const fbGroup = document.getElementById('fbGroup');
-            const ytGroup = document.getElementById('ytGroup');
-            const webGroup = document.getElementById('webGroup');
-            
-            // Dokumentasi selalu ditampilkan
-            docGroup.style.display = 'block';
+            // Set dokumentasi
             document.getElementById('editDokumentasi').value = data.dokumentasi || '';
             
-            // Links ditampilkan jika ada value (selain NULL)
-            if (data.link_instagram !== null && data.link_instagram !== '') {
-                igGroup.style.display = 'block';
-                document.getElementById('editInstagram').value = data.link_instagram;
-            } else {
-                igGroup.style.display = 'none';
-                document.getElementById('editInstagram').value = '';
+            // Build links container dynamically
+            let linksHtml = '';
+            if (Object.keys(data.links).length > 0) {
+                linksHtml += '<div class="form-row">';
+                for (const [jenis, linkData] of Object.entries(data.links)) {
+                    const fieldName = 'link_' + jenis.toLowerCase().replace(' ', '_');
+                    linksHtml += `
+                        <div class="col-md-6 form-group mb-4">
+                            <label for="edit${jenis}" class="form-label">
+                                <small class="text-muted fw-600">${jenis}</small>
+                            </label>
+                            <input 
+                                type="url" 
+                                class="form-control form-control-edit" 
+                                id="edit${jenis}" 
+                                name="${fieldName}"
+                                data-jenis-link-id="${linkData.id_jenis_link}"
+                                placeholder="https://example.com/${jenis.toLowerCase()}..."
+                                value="${linkData.link || ''}"
+                            >
+                        </div>
+                    `;
+                }
+                linksHtml += '</div>';
             }
-            
-            if (data.link_facebook !== null && data.link_facebook !== '') {
-                fbGroup.style.display = 'block';
-                document.getElementById('editFacebook').value = data.link_facebook;
-            } else {
-                fbGroup.style.display = 'none';
-                document.getElementById('editFacebook').value = '';
-            }
-            
-            if (data.link_youtube !== null && data.link_youtube !== '') {
-                ytGroup.style.display = 'block';
-                document.getElementById('editYoutube').value = data.link_youtube;
-            } else {
-                ytGroup.style.display = 'none';
-                document.getElementById('editYoutube').value = '';
-            }
-            
-            if (data.link_website !== null && data.link_website !== '') {
-                webGroup.style.display = 'block';
-                document.getElementById('editWebsite').value = data.link_website;
-            } else {
-                webGroup.style.display = 'none';
-                document.getElementById('editWebsite').value = '';
-            }
+            document.getElementById('linksContainer').innerHTML = linksHtml;
         })
         .catch(error => {
             console.error('Error fetching data:', error);
@@ -606,15 +648,9 @@ function openEditDetailModalFromJadwal() {
 // Save Edit Detail
 function saveEditDetail() {
     const jadwalId = document.getElementById('editDetailId').value;
-    const formData = new FormData();
+    const form = document.getElementById('editDetailForm');
+    const formData = new FormData(form);
     formData.append('id_jadwal', jadwalId);
-    // Append semua field, tidak peduli visible atau tidak
-    // Sehingga backend bisa update semua field sekaligus
-    formData.append('dokumentasi', document.getElementById('editDokumentasi').value);
-    formData.append('link_instagram', document.getElementById('editInstagram').value);
-    formData.append('link_facebook', document.getElementById('editFacebook').value);
-    formData.append('link_youtube', document.getElementById('editYoutube').value);
-    formData.append('link_website', document.getElementById('editWebsite').value);
     
     fetch('update_jadwal_detail.php', {
         method: 'POST',
@@ -636,7 +672,6 @@ function saveEditDetail() {
     });
 }
 
-// Modal for event details (Bootstrap Modal version)
 function showEventDetail(eventData) {
     // Store current data untuk edit button
     currentJadwalData = eventData;
@@ -660,7 +695,6 @@ function showEventDetail(eventData) {
             statusText = 'Tidak Diketahui';
     }
     
-    // Show/hide edit button based on is_user_pic
     const editBtn = document.getElementById('editDetailBtn');
     if (eventData.is_user_pic) {
         editBtn.style.display = 'block';
@@ -725,29 +759,36 @@ function showEventDetail(eventData) {
     
     // Set link publikasi
     let links = [];
-    function renderLink(label, icon, url) {
-        if (!url) return false; // Jika NULL, jangan tampilkan
-        if (url === '-') {
-            // Jika "-", tampilkan icon tapi tidak aktif
+    const linksData = eventData.links_data || {};
+    
+    // Map icon untuk setiap jenis link
+    const linkIcons = {
+        'Instagram': 'ti-instagram',
+        'Facebook': 'ti-facebook',
+        'YouTube': 'ti-youtube',
+        'Website': 'ti-world'
+    };
+    
+    for (const [jenis, linkData] of Object.entries(linksData)) {
+        const url = linkData.link || '';
+        const icon = linkIcons[jenis] || 'ti-link';
+        
+        if (url) {
+            // Ada isi - icon aktif, bisa diklik
             links.push(
-                `<span style="color: #adb5bd; cursor: not-allowed; font-size: 20px;" title="Tidak tersedia">
+                `<a href="${url}" target="_blank" style="color: #007bff; text-decoration: none; font-size: 20px; cursor: pointer;" onmouseover="this.style.color='#0056b3'" onmouseout="this.style.color='#007bff'" title="Buka ${jenis} di tab baru">
+                  <i class="${icon}"></i>
+                </a>`
+            );
+        } else {
+            // Kosong - icon abu-abu, tidak aktif
+            links.push(
+                `<span style="color: #adb5bd; cursor: not-allowed; font-size: 20px;" title="${jenis} - Belum ada link">
                   <i class="${icon}"></i>
                 </span>`
             );
-            return true;
         }
-        // Jika ada isi, tampilkan icon aktif
-        links.push(
-            `<a href="${url}" target="_blank" style="color: #007bff; text-decoration: none; font-size: 20px; cursor: pointer;" onmouseover="this.style.color='#0056b3'" onmouseout="this.style.color='#007bff'" title="Buka di tab baru">
-              <i class="${icon}"></i>
-            </a>`
-        );
-        return true;
     }
-    renderLink('Instagram', 'ti-instagram', eventData.link_instagram);
-    renderLink('Facebook', 'ti-facebook', eventData.link_facebook);
-    renderLink('YouTube', 'ti-youtube', eventData.link_youtube);
-    renderLink('Website', 'ti-world', eventData.link_website);
     
     if (links.length > 0) {
         document.getElementById('rowLink').style.display = '';

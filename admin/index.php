@@ -49,11 +49,7 @@ $qKalender = mysqli_query($koneksi, "
     j.tim,
     j.keterangan,
     j.status,
-    j.dokumentasi,
-    j.link_instagram,
-    j.link_facebook,
-    j.link_youtube,
-    j.link_website
+    j.dokumentasi
   FROM jadwal j
   ORDER BY j.tanggal_rilis DESC
 ");
@@ -74,6 +70,25 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
   if ($qPic) {
     while ($pic = mysqli_fetch_assoc($qPic)) {
       $picData[$pic['nama_jenis_pic']] = $pic['nama'];
+    }
+  }
+  
+  // Get links for this jadwal from the new schema
+  $qLinks = mysqli_query($koneksi, "
+    SELECT jl.id_jenis_link, jjl.nama_jenis_link, jl.link
+    FROM jadwal_link jl
+    JOIN jenis_link jjl ON jl.id_jenis_link = jjl.id_jenis_link
+    WHERE jl.id_jadwal = " . (int)$id_jadwal . "
+    ORDER BY jjl.nama_jenis_link
+  ");
+  
+  $linksData = [];
+  if ($qLinks) {
+    while ($link = mysqli_fetch_assoc($qLinks)) {
+      $linksData[$link['nama_jenis_link']] = [
+        'id_jenis_link' => $link['id_jenis_link'],
+        'link' => $link['link']
+      ];
     }
   }
   
@@ -103,10 +118,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
       'pic_data' => $picData,
       'pic_display' => $picDisplay,
       'dokumentasi' => $row['dokumentasi'],
-      'link_instagram' => $row['link_instagram'],
-      'link_facebook' => $row['link_facebook'],
-      'link_youtube' => $row['link_youtube'],
-      'link_website' => $row['link_website']
+      'links_data' => $linksData
     ]
   ];
 }
@@ -586,29 +598,36 @@ document.addEventListener('DOMContentLoaded', function () {
         
         // Link publikasi
         let links = [];
-        function renderLink(label, icon, url) {
-          if (!url) return false; // Jika NULL, jangan tampilkan
-          if (url === '-') {
-            // Jika "-", tampilkan icon tapi tidak aktif
-            links.push(
-              `<span style="color: #adb5bd; cursor: not-allowed; font-size: 20px;" title="Tidak tersedia">
-                <i class="${icon}"></i>
-              </span>`
-            );
-            return true;
-          }
-          // Jika ada isi, tampilkan icon aktif
-          links.push(
-            `<a href="${url}" target="_blank" style="color: #007bff; text-decoration: none; font-size: 20px; cursor: pointer;" onmouseover="this.style.color='#0056b3'" onmouseout="this.style.color='#007bff'" title="Buka di tab baru">
-              <i class="${icon}"></i>
-            </a>`
-          );
-          return true;
+        const linksData = p.links_data || {};
+        
+        // Map icon untuk setiap jenis link
+        const linkIcons = {
+            'Instagram': 'ti-instagram',
+            'Facebook': 'ti-facebook',
+            'YouTube': 'ti-youtube',
+            'Website': 'ti-world'
+        };
+        
+        for (const [jenis, linkData] of Object.entries(linksData)) {
+            const url = linkData.link || '';
+            const icon = linkIcons[jenis] || 'ti-link';
+            
+            if (url) {
+                // Ada isi - icon aktif, bisa diklik
+                links.push(
+                    `<a href="${url}" target="_blank" style="color: #007bff; text-decoration: none; font-size: 20px; cursor: pointer;" onmouseover="this.style.color='#0056b3'" onmouseout="this.style.color='#007bff'" title="Buka ${jenis} di tab baru">
+                      <i class="${icon}"></i>
+                    </a>`
+                );
+            } else {
+                // Kosong - icon abu-abu, tidak aktif
+                links.push(
+                    `<span style="color: #adb5bd; cursor: not-allowed; font-size: 20px;" title="${jenis} - Belum ada link">
+                      <i class="${icon}"></i>
+                    </span>`
+                );
+            }
         }
-        renderLink('Instagram', 'ti-instagram', p.link_instagram);
-        renderLink('Facebook', 'ti-facebook', p.link_facebook);
-        renderLink('YouTube', 'ti-youtube', p.link_youtube);
-        renderLink('Website', 'ti-world', p.link_website);
         
         if (links.length > 0) {
           document.getElementById('rowLink').style.display = '';

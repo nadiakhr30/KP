@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     
     // Get current data
-    $query = "SELECT link_instagram, link_facebook, link_youtube, link_website, dokumentasi FROM jadwal WHERE id_jadwal = " . $id_jadwal;
+    $query = "SELECT dokumentasi FROM jadwal WHERE id_jadwal = " . $id_jadwal;
     $result = mysqli_query($koneksi, $query);
     
     if (!$result || mysqli_num_rows($result) == 0) {
@@ -20,85 +20,96 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $current = mysqli_fetch_assoc($result);
     
-    // Prepare update values - semua field selalu dikirim dari form
+    // Prepare dokumentasi update
     $dokumentasi = $_POST['dokumentasi'] ?? '';
-    $link_instagram = $_POST['link_instagram'] ?? '';
-    $link_facebook = $_POST['link_facebook'] ?? '';
-    $link_youtube = $_POST['link_youtube'] ?? '';
-    $link_website = $_POST['link_website'] ?? '';
-    
-    // Dokumentasi: empty = NULL, filled = URL
     $set_dokumentasi = empty($dokumentasi) ? "dokumentasi = NULL" : "dokumentasi = '" . mysqli_real_escape_string($koneksi, $dokumentasi) . "'";
     
-    // Links: empty = "-", filled = URL
-    $set_instagram = "link_instagram = " . (empty($link_instagram) ? "'-'" : "'" . mysqli_real_escape_string($koneksi, $link_instagram) . "'");
-    $set_facebook = "link_facebook = " . (empty($link_facebook) ? "'-'" : "'" . mysqli_real_escape_string($koneksi, $link_facebook) . "'");
-    $set_youtube = "link_youtube = " . (empty($link_youtube) ? "'-'" : "'" . mysqli_real_escape_string($koneksi, $link_youtube) . "'");
-    $set_website = "link_website = " . (empty($link_website) ? "'-'" : "'" . mysqli_real_escape_string($koneksi, $link_website) . "'");
+    $updates = [$set_dokumentasi];
     
-    $updates = [$set_dokumentasi, $set_instagram, $set_facebook, $set_youtube, $set_website];
-    
-    // Check if there are any actual changes
+    // Check if dokumentasi changed
     $has_changes = false;
-    if ($dokumentasi !== ($current['dokumentasi'] ?? '')) $has_changes = true;
-    if ($link_instagram !== ($current['link_instagram'] ?? '')) $has_changes = true;
-    if ($link_facebook !== ($current['link_facebook'] ?? '')) $has_changes = true;
-    if ($link_youtube !== ($current['link_youtube'] ?? '')) $has_changes = true;
-    if ($link_website !== ($current['link_website'] ?? '')) $has_changes = true;
+    if ($dokumentasi !== ($current['dokumentasi'] ?? '')) {
+        $has_changes = true;
+    }
+    
+    // Process links from jadwal_link
+    // Get available jenis_link
+    $queryJenis = "SELECT id_jenis_link, nama_jenis_link FROM jenis_link";
+    $resultJenis = mysqli_query($koneksi, $queryJenis);
+    
+    while ($jenisRow = mysqli_fetch_assoc($resultJenis)) {
+        $id_jenis_link = $jenisRow['id_jenis_link'];
+        $nama_jenis_link = $jenisRow['nama_jenis_link'];
+        $link_value = $_POST['link_' . strtolower(str_replace(' ', '_', $nama_jenis_link))] ?? $_POST['link_' . $id_jenis_link] ?? '';
+        
+        // Check if this link exists in jadwal_link
+        $queryCheck = "SELECT id_jadwal_link, link FROM jadwal_link WHERE id_jadwal = " . $id_jadwal . " AND id_jenis_link = " . $id_jenis_link;
+        $resultCheck = mysqli_query($koneksi, $queryCheck);
+        
+        if (mysqli_num_rows($resultCheck) > 0) {
+            // Link exists - update it (set to NULL if empty)
+            $linkRow = mysqli_fetch_assoc($resultCheck);
+            $currentLink = $linkRow['link'] ?? '';
+            
+            // Only update if value changed
+            if ($link_value !== $currentLink) {
+                $linkToSet = empty($link_value) ? "NULL" : "'" . mysqli_real_escape_string($koneksi, $link_value) . "'";
+                $queryUpdate = "UPDATE jadwal_link SET link = " . $linkToSet . " WHERE id_jadwal = " . $id_jadwal . " AND id_jenis_link = " . $id_jenis_link;
+                mysqli_query($koneksi, $queryUpdate);
+                $has_changes = true;
+            }
+        } else {
+            // Link doesn't exist - insert it (with NULL if empty, or with value if not empty)
+            if (!empty($link_value)) {
+                $queryInsert = "INSERT INTO jadwal_link (id_jadwal, id_jenis_link, link) VALUES (" . $id_jadwal . ", " . $id_jenis_link . ", '" . mysqli_real_escape_string($koneksi, $link_value) . "')";
+                mysqli_query($koneksi, $queryInsert);
+                $has_changes = true;
+            }
+        }
+    }
     
     if (!$has_changes) {
         echo json_encode(['success' => false, 'message' => 'Tidak ada perubahan']);
         exit;
     }
     
-    // Calculate new status based on final values in database
-    $query = "SELECT dokumentasi, link_instagram, link_facebook, link_youtube, link_website FROM jadwal WHERE id_jadwal = " . $id_jadwal;
-    $result = mysqli_query($koneksi, $query);
-    $final = mysqli_fetch_assoc($result);
+    // Update dokumentasi
+    $update_query = "UPDATE jadwal SET " . implode(", ", $updates) . " WHERE id_jadwal = " . $id_jadwal;
+    mysqli_query($koneksi, $update_query);
+    
+    // Calculate new status
+    $queryFinal = "SELECT dokumentasi FROM jadwal WHERE id_jadwal = " . $id_jadwal;
+    $resultFinal = mysqli_query($koneksi, $queryFinal);
+    $finalJadwal = mysqli_fetch_assoc($resultFinal);
+    
+    // Count total jadwal_link records
+    $queryTotalLinks = "SELECT COUNT(*) as total FROM jadwal_link WHERE id_jadwal = " . $id_jadwal;
+    $resultTotalLinks = mysqli_query($koneksi, $queryTotalLinks);
+    $totalLinks = mysqli_fetch_assoc($resultTotalLinks)['total'];
+    
+    // Count jadwal_link records with non-empty link
+    $queryFilledLinks = "SELECT COUNT(*) as filled FROM jadwal_link WHERE id_jadwal = " . $id_jadwal . " AND link IS NOT NULL AND link != ''";
+    $resultFilledLinks = mysqli_query($koneksi, $queryFilledLinks);
+    $filledLinks = mysqli_fetch_assoc($resultFilledLinks)['filled'];
     
     $new_status = 0;
     
-    // Final values
-    $doc = $final['dokumentasi'];
-    $ig = $final['link_instagram'];
-    $fb = $final['link_facebook'];
-    $yt = $final['link_youtube'];
-    $web = $final['link_website'];
+    $doc_filled = !empty($finalJadwal['dokumentasi']);
     
-    // Count berapa banyak link yang sudah terisi (bukan NULL dan bukan "-")
-    $filled_count = 0;
-    if (!empty($doc)) $filled_count++; // dokumentasi
-    if (!empty($ig) && $ig !== '-') $filled_count++;
-    if (!empty($fb) && $fb !== '-') $filled_count++;
-    if (!empty($yt) && $yt !== '-') $filled_count++;
-    if (!empty($web) && $web !== '-') $filled_count++;
-    
-    // Status 2: dokumentasi terisi AND semua link bukan NULL dan bukan "-" (4 links filled)
-    if (!empty($doc) && 
-        !empty($ig) && $ig !== '-' && 
-        !empty($fb) && $fb !== '-' && 
-        !empty($yt) && $yt !== '-' && 
-        !empty($web) && $web !== '-') {
+    // Status 2: dokumentasi filled AND all links filled
+    if ($doc_filled && $totalLinks > 0 && $filledLinks === $totalLinks) {
         $new_status = 2;
     } 
-    // Status 1: ada yang terisi (dokumentasi atau minimal 1 link terisi/placeholder "-")
-    else if (!empty($doc) || !empty($ig) || !empty($fb) || !empty($yt) || !empty($web)) {
+    // Status 1: dokumentasi filled OR at least one link filled
+    else if ($doc_filled || $filledLinks > 0) {
         $new_status = 1;
     }
-    // Status 0: semua kosong (hanya NULL)
-    else {
-        $new_status = 0;
-    }
+    // Status 0: nothing filled (default)
     
-    $updates[] = "status = " . $new_status;
+    $statusQuery = "UPDATE jadwal SET status = " . $new_status . " WHERE id_jadwal = " . $id_jadwal;
+    mysqli_query($koneksi, $statusQuery);
     
-    $update_query = "UPDATE jadwal SET " . implode(", ", $updates) . " WHERE id_jadwal = " . $id_jadwal;
-    
-    if (mysqli_query($koneksi, $update_query)) {
-        echo json_encode(['success' => true, 'message' => 'Data berhasil disimpan', 'new_status' => $new_status]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Gagal menyimpan data: ' . mysqli_error($koneksi)]);
-    }
+    echo json_encode(['success' => true, 'message' => 'Data berhasil disimpan', 'new_status' => $new_status]);
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
 }

@@ -691,11 +691,6 @@
         font-weight: 600;
         letter-spacing: 0.3px;
     }
-    .badge {
-        padding: 0.4rem 0.8rem;
-        font-weight: 500;
-        font-size: 0.85rem;
-    }
     #modalPIC ul, #modalPIC ul li {
         margin: 0;
     }

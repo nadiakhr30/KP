@@ -62,6 +62,12 @@ $dataSkills = [];
 while ($row = mysqli_fetch_assoc($qSkill)) {
     $dataSkills[] = $row;
 }
+// DATA Jenis Link
+$qJenisLink = mysqli_query($koneksi, "SELECT * FROM jenis_link");
+$dataJenisLinks = [];
+while ($row = mysqli_fetch_assoc($qJenisLink)) {
+    $dataJenisLinks[] = $row;
+}
 ?>
 <div class="pcoded-content">
     <div class="page-header">
@@ -1249,6 +1255,134 @@ while ($row = mysqli_fetch_assoc($qSkill)) {
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Skill</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-header-left">
+                                <h5>Jenis Link</h5>
+                                <span>Data jenis link berisi tipe-tipe publikasi yang tersedia (Instagram, Facebook, YouTube, Website, dll).</span>
+                            </div>
+                            <div class="card-header-right">
+                                <ul class="list-unstyled card-option">
+                                    <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                                    <li><i class="fa fa-window-maximize full-card"></i></li>
+                                    <li><i class="fa fa-minus minimize-card"></i></li>
+                                    <li><i class="fa fa-refresh reload-card"></i></li>
+                                    <li><i class="fa fa-trash close-card"></i></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-block">
+                            <ul class="nav nav-tabs tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#cardjenislink" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#tablejenislink" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content tabs">
+                                <div class="tab-pane active" id="cardjenislink" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <a href="export/export_jenis_link.php?format=print" class="btn waves-effect waves-light btn-grd-info">Print</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_jenis_link.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row m-t-20">
+                                        <?php if (count($dataJenisLinks) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Jenis Link tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
+                                        <?php foreach ($dataJenisLinks as $jenis_link): ?>
+                                        <div class="col-lg-3 col-md-4 mb-3">
+                                            <div class="card bg-light text-center">
+                                                <div class="card-block" style="padding: 30px;">
+                                                    <h5><?= htmlspecialchars($jenis_link['nama_jenis_link']); ?></h5>
+                                                    <div style="margin-top: 15px;">
+                                                        <a href="edit/edit_jenis_link.php?id=<?= $jenis_link['id_jenis_link']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
+                                                            <i class="ti-pencil text-dark"></i>
+                                                        </a>
+                                                        <a href="hapus/hapus_jenis_link.php?id=<?= $jenis_link['id_jenis_link']; ?>"
+                                                           class="btn waves-effect waves-light btn-danger btn-icon"
+                                                           onclick="return confirmDelete('hapus/hapus_jenis_link.php?id=<?= $jenis_link['id_jenis_link']; ?>')">
+                                                           <i class="ti-trash text-dark"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tablejenislink" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <div class="dropdown-info dropdown open">
+                                                <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
+                                                <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_jenis_link.php?format=print">Print</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_jenis_link.php?format=excel">Excel</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_jenis_link.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dt-responsive table-responsive">
+                                        <table id="order-table" class="table table-striped table-bordered nowrap">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Jenis Link</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (count($dataJenisLinks) === 0): ?>
+                                                    <tr>
+                                                      <td colspan="3" class="text-center">Tidak ada data Jenis Link tersedia.</td>
+                                                    </tr>
+                                                <?php else: ?>
+                                                <?php foreach ($dataJenisLinks as $jenis_link) : ?>
+                                                <tr>
+                                                  <td><?= $jenis_link['id_jenis_link']; ?></td>
+                                                  <td><?= htmlspecialchars($jenis_link['nama_jenis_link']); ?></td>
+                                                  <td>
+                                                    <a href="edit/edit_jenis_link.php?id=<?= $jenis_link['id_jenis_link']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
+                                                      <i class="ti-pencil text-dark"></i>
+                                                    </a>
+                                                    <a href="hapus/hapus_jenis_link.php?id=<?= $jenis_link['id_jenis_link']; ?>"
+                                                       class="btn waves-effect waves-light btn-danger btn-icon"
+                                                       onclick="return confirmDelete('hapus/hapus_jenis_link.php?id=<?= $jenis_link['id_jenis_link']; ?>')">
+                                                       <i class="ti-trash text-dark"></i>
+                                                    </a>
+                                                  </td>
+                                                </tr>
+                                                <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Jenis Link</th>
                                                     <th>Aksi</th>
                                                 </tr>
                                             </tfoot>

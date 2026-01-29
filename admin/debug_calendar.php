@@ -14,11 +14,7 @@ $qKalender = mysqli_query($koneksi, "
         j.tim,
         j.keterangan,
         j.status,
-        j.dokumentasi,
-        j.link_instagram,
-        j.link_facebook,
-        j.link_youtube,
-        j.link_website
+        j.dokumentasi
     FROM jadwal j
     ORDER BY j.tanggal_rilis DESC
 ");
@@ -50,6 +46,25 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
         }
     }
     
+    // Get links for this jadwal from the new schema
+    $qLinks = mysqli_query($koneksi, "
+        SELECT jl.id_jenis_link, jjl.nama_jenis_link, jl.link
+        FROM jadwal_link jl
+        JOIN jenis_link jjl ON jl.id_jenis_link = jjl.id_jenis_link
+        WHERE jl.id_jadwal = " . (int)$id_jadwal . "
+        ORDER BY jjl.nama_jenis_link
+    ");
+    
+    $linksData = [];
+    if ($qLinks) {
+        while ($link = mysqli_fetch_assoc($qLinks)) {
+            $linksData[$link['nama_jenis_link']] = [
+                'id_jenis_link' => $link['id_jenis_link'],
+                'link' => $link['link']
+            ];
+        }
+    }
+    
     // Set color based on status
     $color = match ($row['status']) {
         0 => '#e84118',
@@ -78,10 +93,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
             'pic_display' => $picDisplay,
             'pic_data' => $picData,
             'dokumentasi' => $row['dokumentasi'],
-            'link_instagram' => $row['link_instagram'],
-            'link_facebook' => $row['link_facebook'],
-            'link_youtube' => $row['link_youtube'],
-            'link_website' => $row['link_website']
+            'links_data' => $linksData
         ]
     ];
 }
