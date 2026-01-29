@@ -38,7 +38,7 @@ $jadwalkalender = [];
 while ($row = mysqli_fetch_assoc($qKalender)) {
     $id_jadwal = $row['id_jadwal'];
     $qPic = mysqli_query($koneksi, "
-        SELECT u.nama, jp.nama_jenis_pic
+        SELECT u.nip, u.nama, jp.nama_jenis_pic
         FROM pic p
         JOIN user u ON p.nip = u.nip
         JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic
@@ -47,11 +47,16 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     ");
     
     $picData = [];
+    $picNips = [];
     if ($qPic) {
         while ($pic = mysqli_fetch_assoc($qPic)) {
             $picData[$pic['nama_jenis_pic']] = $pic['nama'];
+            $picNips[] = $pic['nip'];
         }
     }
+    
+    // Check if current user is PIC of this jadwal
+    $isUserPic = isset($_SESSION['user']['nip']) && in_array($_SESSION['user']['nip'], $picNips);
     
     // Set color based on status
     $color = match ($row['status']) {
@@ -78,6 +83,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
             'tim' => $row['tim'],
             'status' => (int)$row['status'],
             'keterangan' => $row['keterangan'],
+            'is_user_pic' => $isUserPic,
             'pic_display' => $picDisplay,
             'pic_data' => $picData,
             'dokumentasi' => $row['dokumentasi'],
@@ -322,61 +328,146 @@ ob_start();
     </div>
 </div>
 
+<!-- Modal for Edit Detail (Dokumentasi & Link Media Sosial) -->
+<div class="modal fade" id="editDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <div>
+                    <h5 class="text-muted m-b-5">Edit Detail Link</h5>
+                    <h3 class="modal-title mb-0" id="editDetailTitle">-</h3>
+                </div>
+                <button type="button" class="btn btn-sm btn-danger btn-icon waves-effect waves-light" data-bs-dismiss="modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="editDetailForm">
+                    <input type="hidden" id="editDetailId" name="id_jadwal" value="">
+                    <!-- Dokumentasi -->
+                    <div class="form-group mb-4" id="docGroup" style="display: none;">
+                        <label for="editDokumentasi" class="form-label"><small class="text-muted fw-600">Dokumentasi</small></label>
+                        <input type="url" class="form-control form-control-edit" id="editDokumentasi" name="dokumentasi" placeholder="Paste link dokumentasi...">
+                    </div>
+                    <div class="form-row">
+                        <!-- Instagram -->
+                        <div class="col-md-6 form-group mb-4" id="igGroup" style="display: none;">
+                            <label for="editInstagram" class="form-label">
+                                <small class="text-muted fw-600">Instagram</small>
+                           </label>
+                            <input 
+                                type="url" 
+                                class="form-control form-control-edit" 
+                                id="editInstagram" 
+                                name="link_instagram"
+                                placeholder="https://instagram.com/post/..."
+                            >
+                        </div>
+                        <!-- Facebook -->
+                        <div class="col-md-6 form-group mb-4" id="fbGroup" style="display: none;">
+                            <label for="editFacebook" class="form-label">
+                                <small class="text-muted fw-600">Facebook</small>
+                            </label>
+                            <input 
+                                type="url" 
+                                class="form-control form-control-edit" 
+                                id="editFacebook" 
+                            name="link_facebook"
+                            placeholder="https://facebook.com/post/..."
+                        >
+                    </div>
+                    <!-- YouTube -->
+                    <div class="col-md-6 form-group mb-4" id="ytGroup" style="display: none;">
+                        <label for="editYoutube" class="form-label">
+                            <small class="text-muted fw-600">YouTube</small>
+                        </label>
+                        <input 
+                            type="url" 
+                            class="form-control form-control-edit" 
+                            id="editYoutube" 
+                            name="link_youtube"
+                            placeholder="https://youtube.com/watch?v=..."
+                        >
+                    </div>
+                    <!-- Website -->
+                    <div class="col-md-6 form-group mb-0" id="webGroup" style="display: none;">
+                        <label for="editWebsite" class="form-label">
+                            <small class="text-muted fw-600">Website</small>
+                        </label>
+                        <input 
+                            type="url" 
+                            class="form-control form-control-edit" 
+                            id="editWebsite" 
+                            name="link_website"
+                            placeholder="https://website.com/..."
+                        >
+                    </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary waves-effect waves-light btn-icon" data-bs-dismiss="modal"><i class="fas fa-arrow-left"></i></button>
+                <button type="button" class="btn btn-sm btn-primary btn-icon waves-effect waves-light" onclick="saveEditDetail()"><i class="fas fa-save"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal for Jadwal Details (Bootstrap Modal) -->
 <div class="modal fade" id="jadwalModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalJudulKegiatan">-</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header border-bottom">
+                <div>
+                    <h5 class="text-muted m-b-5" id="modalTopik">-</h5>
+                    <h3 class="modal-title mb-0" id="modalJudulKegiatan">-</h3>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button type="button" class="btn btn-sm btn-warning waves-effect waves-light btn-icon" id="editDetailBtn" style="display: none;" onclick="openEditDetailModalFromJadwal()">
+                        <i class="ti-pencil"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger waves-effect waves-light btn-icon" data-bs-dismiss="modal"><i class="fas fa-times"></i></button>
+                </div>
             </div>
             <div class="modal-body">
-                <div class="row mb-3">
+                <div class="row mb-md-3">
                     <div class="col-md-6">
-                        <p><strong>Topik:</strong> <span id="modalTopik">-</span></p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Tim:</strong> <span id="modalTim">-</span></p>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <p><strong>Tanggal Penugasan:</strong> <span id="modalTanggalPenugasan">-</span></p>
+                        <p class="m-b-5"><small class="text-muted">Tanggal Penugasan</small></p>
+                        <p class="m-b-0" id="modalTanggalPenugasan">-</p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>Target Rilis:</strong> <span id="modalTargetRilis">-</span></p>
+                        <p class="m-b-5"><small class="text-muted">Target Rilis</small></p>
+                        <p class="m-b-0" id="modalTargetRilis">-</p>
+                    </div>
+                </div>
+                <div class="row mb-md-3">
+                    <div class="col-md-6">
+                        <p class="m-b-5"><small class="text-muted">Tim</small></p>
+                        <p class="m-b-0" id="modalTim">-</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="m-b-5"><small class="text-muted">Status</small></p>
+                        <p class="m-b-0" id="modalStatus">-</p>
+                    </div>
+                </div>
+                <div class="row mb-md-3">
+                    <div class="col-md-6">
+                        <p class="m-b-5"><small class="text-muted">PIC (Person In Charge)</small></p>
+                        <div id="modalPIC" class="ps-3" style="margin-left: 10px;">-</div>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="m-b-5"><small class="text-muted">Keterangan</small></p>
+                        <div id="modalKeterangan" class="ps-3 text-secondary">-</div>
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-12">
-                        <p><strong>Status:</strong> <span id="modalStatus">-</span></p>
+                    <div class="col-md-6" id="rowDokumentasi" style="display:none">
+                        <p class="m-b-5"><small class="text-muted">Dokumentasi</small></p>
+                        <div id="modalDokumentasi"></div>
+                    </div>
+                    <div class="col-md-6" id="rowLink" style="display:none">
+                        <p class="m-b-5"><small class="text-muted">Link Publikasi</small></p>
+                        <div id="modalLinks"></div>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <p><strong>PIC:</strong></p>
-                        <div id="modalPIC" style="margin-left: 15px;">-</div>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <p><strong>Keterangan:</strong></p>
-                        <div id="modalKeterangan" style="margin-left: 15px;">-</div>
-                    </div>
-                </div>
-                <div class="row mb-3" id="rowDokumentasi" style="display: none;">
-                    <div class="col-12">
-                        <p><strong>Dokumentasi:</strong> <span id="modalDokumentasi">-</span></p>
-                    </div>
-                </div>
-                <div class="row mb-3" id="rowLink" style="display: none;">
-                    <div class="col-12">
-                        <p><strong>Link Publikasi:</strong> <span id="modalLinks">-</span></p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
@@ -387,8 +478,169 @@ $content = ob_get_clean();
 ob_start();
 ?>
 <script>
+// Add custom styles for modals
+const style = document.createElement('style');
+style.textContent = `
+    .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+    }
+    .modal-header .text-muted {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    .modal-header h5 {
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    .modal-header h3 {
+        font-weight: 600;
+        font-size: 1.4rem;
+    }
+    .modal-body {
+        padding: 2rem;
+    }
+    .modal-body .row {
+        margin-bottom: 1.5rem;
+    }
+    .modal-body p {
+        margin: 0;
+    }
+    .modal-body small {
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+    .badge {
+        padding: 0.4rem 0.8rem;
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+    #modalPIC ul, #modalPIC ul li {
+        margin: 0;
+    }
+    #modalPIC ul li {
+        margin-bottom: 0.3rem;
+    }
+    .form-control-edit {
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 0.95rem;
+        border: 1.5px solid #e0e0e0;
+    }
+    .form-control-edit:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+        background-color: #f8f9fa;
+    }
+`;
+document.head.appendChild(style);
+
+// Store current jadwal data
+let currentJadwalData = null;
+
+// Open Edit Detail Modal from Jadwal Modal
+function openEditDetailModalFromJadwal() {
+    if (!currentJadwalData) return;
+    
+    document.getElementById('editDetailId').value = currentJadwalData.id;
+    document.getElementById('editDetailTitle').innerText = currentJadwalData.title;
+    
+    // Fetch current data
+    fetch('get_jadwal_detail.php?id=' + currentJadwalData.id)
+        .then(response => response.json())
+        .then(data => {
+            // Show/hide fields based on whether they have content (bukan NULL, bukan empty string)
+            const docGroup = document.getElementById('docGroup');
+            const igGroup = document.getElementById('igGroup');
+            const fbGroup = document.getElementById('fbGroup');
+            const ytGroup = document.getElementById('ytGroup');
+            const webGroup = document.getElementById('webGroup');
+            
+            // Dokumentasi selalu ditampilkan
+            docGroup.style.display = 'block';
+            document.getElementById('editDokumentasi').value = data.dokumentasi || '';
+            
+            // Links ditampilkan jika ada value (selain NULL)
+            if (data.link_instagram !== null && data.link_instagram !== '') {
+                igGroup.style.display = 'block';
+                document.getElementById('editInstagram').value = data.link_instagram;
+            } else {
+                igGroup.style.display = 'none';
+                document.getElementById('editInstagram').value = '';
+            }
+            
+            if (data.link_facebook !== null && data.link_facebook !== '') {
+                fbGroup.style.display = 'block';
+                document.getElementById('editFacebook').value = data.link_facebook;
+            } else {
+                fbGroup.style.display = 'none';
+                document.getElementById('editFacebook').value = '';
+            }
+            
+            if (data.link_youtube !== null && data.link_youtube !== '') {
+                ytGroup.style.display = 'block';
+                document.getElementById('editYoutube').value = data.link_youtube;
+            } else {
+                ytGroup.style.display = 'none';
+                document.getElementById('editYoutube').value = '';
+            }
+            
+            if (data.link_website !== null && data.link_website !== '') {
+                webGroup.style.display = 'block';
+                document.getElementById('editWebsite').value = data.link_website;
+            } else {
+                webGroup.style.display = 'none';
+                document.getElementById('editWebsite').value = '';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            alert('Gagal memuat data');
+        });
+    
+    // Hide jadwal modal and show edit modal
+    bootstrap.Modal.getInstance(document.getElementById('jadwalModal')).hide();
+    new bootstrap.Modal(document.getElementById('editDetailModal')).show();
+}
+
+// Save Edit Detail
+function saveEditDetail() {
+    const jadwalId = document.getElementById('editDetailId').value;
+    const formData = new FormData();
+    formData.append('id_jadwal', jadwalId);
+    // Append semua field, tidak peduli visible atau tidak
+    // Sehingga backend bisa update semua field sekaligus
+    formData.append('dokumentasi', document.getElementById('editDokumentasi').value);
+    formData.append('link_instagram', document.getElementById('editInstagram').value);
+    formData.append('link_facebook', document.getElementById('editFacebook').value);
+    formData.append('link_youtube', document.getElementById('editYoutube').value);
+    formData.append('link_website', document.getElementById('editWebsite').value);
+    
+    fetch('update_jadwal_detail.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            bootstrap.Modal.getInstance(document.getElementById('editDetailModal')).hide();
+            // Refresh halaman
+            location.reload();
+        } else {
+            alert('Gagal menyimpan data: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat menyimpan data');
+    });
+}
+
 // Modal for event details (Bootstrap Modal version)
 function showEventDetail(eventData) {
+    // Store current data untuk edit button
+    currentJadwalData = eventData;
+    
     let statusText = '-';
     let statusClass = 'danger';
     switch (String(eventData.status)) {
@@ -408,10 +660,16 @@ function showEventDetail(eventData) {
             statusText = 'Tidak Diketahui';
     }
     
+    // Show/hide edit button based on is_user_pic
+    const editBtn = document.getElementById('editDetailBtn');
+    if (eventData.is_user_pic) {
+        editBtn.style.display = 'block';
+    } else {
+        editBtn.style.display = 'none';
+    }
+    
     // Set modal header title
     document.getElementById('modalJudulKegiatan').innerText = eventData.title || '-';
-    
-    // Set topik
     document.getElementById('modalTopik').innerText = eventData.topik || '-';
     
     // Set tanggal penugasan
@@ -434,47 +692,66 @@ function showEventDetail(eventData) {
         `<span class="badge bg-${statusClass}">${statusText}</span>`;
     
     // Set PIC data
-    let picHtml = '-';
+    let picHtml = '<span class="text-muted">-</span>';
     const picData = eventData.pic_data || {};
     if (Object.keys(picData).length > 0) {
-        picHtml = '<ul style="margin-bottom: 0; padding-left: 20px;">';
+        picHtml = '<ul style="margin: 0; padding-left: 20px;">';
         for (const [jenis, nama] of Object.entries(picData)) {
             picHtml += `<li><b>${jenis}:</b> ${nama}</li>`;
+
         }
         picHtml += '</ul>';
     }
     document.getElementById('modalPIC').innerHTML = picHtml;
     
     // Set keterangan
-    document.getElementById('modalKeterangan').innerHTML = eventData.keterangan || '-';
+    document.getElementById('modalKeterangan').innerHTML = eventData.keterangan || '<span class="text-muted">-</span>';
     
-    // Set dokumentasi
+    // Set dokumentasi - always show the row
+    document.getElementById('rowDokumentasi').style.display = '';
     if (eventData.dokumentasi) {
-        document.getElementById('rowDokumentasi').style.display = '';
+        // Ada isi - bisa di-klik
         document.getElementById('modalDokumentasi').innerHTML = 
-            `<a href="${eventData.dokumentasi}" target="_blank" class="link-primary">Lihat Dokumentasi</a>`;
+            `<a href="${eventData.dokumentasi}" target="_blank" style="color: #007bff; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+              <i class="ti-eye" style="font-size: 18px;"></i> Lihat Dokumentasi
+            </a>`;
     } else {
-        document.getElementById('rowDokumentasi').style.display = 'none';
+        // Kosong - icon abu-abu, tidak aktif
+        document.getElementById('modalDokumentasi').innerHTML = 
+            `<span style="color: #adb5bd; cursor: not-allowed; display: inline-flex; align-items: center; gap: 8px;">
+              <i class="ti-eye" style="font-size: 18px;"></i> Tidak ada dokumentasi
+            </span>`;
     }
     
     // Set link publikasi
     let links = [];
-    function renderLink(label, url) {
-        if (!url) return;
+    function renderLink(label, icon, url) {
+        if (!url) return false; // Jika NULL, jangan tampilkan
         if (url === '-') {
-            links.push(`<span class="text-muted">${label}</span>`);
-            return;
+            // Jika "-", tampilkan icon tapi tidak aktif
+            links.push(
+                `<span style="color: #adb5bd; cursor: not-allowed; font-size: 20px;" title="Tidak tersedia">
+                  <i class="${icon}"></i>
+                </span>`
+            );
+            return true;
         }
-        links.push(`<a href="${url}" target="_blank" class="link-primary">${label}</a>`);
+        // Jika ada isi, tampilkan icon aktif
+        links.push(
+            `<a href="${url}" target="_blank" style="color: #007bff; text-decoration: none; font-size: 20px; cursor: pointer;" onmouseover="this.style.color='#0056b3'" onmouseout="this.style.color='#007bff'" title="Buka di tab baru">
+              <i class="${icon}"></i>
+            </a>`
+        );
+        return true;
     }
-    renderLink('<i class="ti-instagram"></i>', eventData.link_instagram);
-    renderLink('<i class="ti-facebook"></i>', eventData.link_facebook);
-    renderLink('<i class="ti-youtube"></i>', eventData.link_youtube);
-    renderLink('<i class="ti-world"></i>', eventData.link_website);
+    renderLink('Instagram', 'ti-instagram', eventData.link_instagram);
+    renderLink('Facebook', 'ti-facebook', eventData.link_facebook);
+    renderLink('YouTube', 'ti-youtube', eventData.link_youtube);
+    renderLink('Website', 'ti-world', eventData.link_website);
     
     if (links.length > 0) {
         document.getElementById('rowLink').style.display = '';
-        document.getElementById('modalLinks').innerHTML = links.join(' | ');
+        document.getElementById('modalLinks').innerHTML = '<div style="display: flex; gap: 15px;">' + links.join('') + '</div>';
     } else {
         document.getElementById('rowLink').style.display = 'none';
     }

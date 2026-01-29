@@ -658,3 +658,47 @@
 .uploaded-filename.show {
     display: block;
 }
+.modal-content {
+  border-radius: 20px;
+}
+.modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 20px 20px 0 0;;
+    }
+    .modal-header .text-muted {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    .modal-header h5 {
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    .modal-header h3 {
+        font-weight: 600;
+        font-size: 1.4rem;
+    }
+    .modal-body {
+        padding: 2rem;
+    }
+    .modal-body .row {
+        margin-bottom: 1.5rem;
+    }
+    .modal-body p {
+        margin: 0;
+    }
+    .modal-body small {
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+    .badge {
+        padding: 0.4rem 0.8rem;
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+    #modalPIC ul, #modalPIC ul li {
+        margin: 0;
+    }
+    #modalPIC ul li {
+        margin-bottom: 0.3rem;
+    }

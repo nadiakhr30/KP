@@ -292,48 +292,56 @@ while ($r = mysqli_fetch_assoc($qTopPegawai)) {
                         <div class="modal fade" id="jadwalModal" tabindex="-1">
                           <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                             <div class="modal-content">
-                              <div class="modal-header">
+                              <div class="modal-header border-bottom">
                                 <div>
-                                  <h5 class="text-muted" id="modalTopik"></h5>
+                                  <h5 class="text-muted m-b-5" id="modalTopik"></h5>
                                   <h3 class="modal-title mb-0" id="modalJudul"></h3>
                                 </div>
-                                <button class="btn waves-effect waves-dark btn-danger btn-outline-danger btn-icon" aria-label="Close" data-bs-dismiss="modal"><i class="ti-close"></i></button>
+                                <button class="btn waves-effect waves-light btn-danger btn-icon" data-bs-dismiss="modal"><i class="fas fa-times"></i></button>
                               </div>
                               <div class="modal-body">
-                                <table class="table table-sm table-borderless">
-                                  <tr>
-                                    <td><b>Tanggal Penugasan</b></td>
-                                    <td id="modalTanggalPenugasan"></td>
-                                  </tr>
-                                  <tr>
-                                    <td><b>Target Rilis</b></td>
-                                    <td id="modalTargetRilis"></td>
-                                  </tr>
-                                  <tr>
-                                    <td><b>Tim</b></td>
-                                    <td id="modalTim"></td>
-                                  </tr>
-                                  <tr>
-                                    <td><b>Status</b></td>
-                                    <td id="modalStatus"></td>
-                                  </tr>
-                                  <tr>
-                                    <td><b>PIC</b></td>
-                                    <td id="modalPIC"></td>
-                                  </tr>
-                                  <tr>
-                                    <td><b>Keterangan</b></td>
-                                    <td id="modalKeterangan"></td>
-                                  </tr>
-                                  <tr id="rowDokumentasi" style="display:none">
-                                    <td><b>Dokumentasi</b></td>
-                                    <td id="modalDokumentasi"></td>
-                                  </tr>
-                                  <tr id="rowLink" style="display:none">
-                                    <td><b>Link Publikasi</b></td>
-                                    <td id="modalLinks"></td>
-                                  </tr>
-                                </table>
+                                <div class="row mb-3">
+                                  <div class="col-md-6">
+                                    <p class="m-b-5"><small class="text-muted">Tanggal Penugasan</small></p>
+                                    <p class="m-b-0" id="modalTanggalPenugasan"></p>
+                                  </div>
+                                  <div class="col-md-6">
+                                    <p class="m-b-5"><small class="text-muted">Target Rilis</small></p>
+                                    <p class="m-b-0" id="modalTargetRilis"></p>
+                                  </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                  <div class="col-md-6">
+                                    <p class="m-b-5"><small class="text-muted">Tim</small></p>
+                                    <p class="m-b-0" id="modalTim"></p>
+                                  </div>
+                                  <div class="col-md-6">
+                                    <p class="m-b-5"><small class="text-muted">Status</small></p>
+                                    <p class="m-b-0" id="modalStatus"></p>
+                                  </div>
+                                </div>
+                <div class="row mb-md-3">
+                    <div class="col-md-6">
+                        <p class="m-b-5"><small class="text-muted">PIC (Person In Charge)</small></p>
+                        <div id="modalPIC" class="ps-3" style="margin-left: 10px;">-</div>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="m-b-5"><small class="text-muted">Keterangan</small></p>
+                        <div id="modalKeterangan" class="ps-3 text-secondary">-</div>
+                    </div>
+                </div>
+                
+                <div class="row mb-md-3">
+                    <div class="col-md-6" id="rowDokumentasi" style="display:none">
+                        <p class="m-b-5"><small class="text-muted">Dokumentasi</small></p>
+                        <div id="modalDokumentasi"></div>
+                    </div>
+                    <div class="col-md-6" id="rowLink" style="display:none">
+                        <p class="m-b-5"><small class="text-muted">Link Publikasi</small></p>
+                        <div id="modalLinks"></div>
+                    </div>
+                </div>
                               </div>
                             </div>
                           </div>
@@ -413,8 +421,54 @@ $content = ob_get_clean();
 ob_start();
 ?>
 <script>
+  // Add custom styles for modal
+  const style = document.createElement('style');
+  style.textContent = `
+      .modal-header {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 1.5rem;
+      }
+      .modal-header .text-muted {
+          color: rgba(255, 255, 255, 0.7) !important;
+      }
+      .modal-header h5 {
+          font-weight: 500;
+          font-size: 0.9rem;
+      }
+      .modal-header h3 {
+          font-weight: 600;
+          font-size: 1.4rem;
+      }
+      .modal-body {
+          padding: 2rem;
+      }
+      .modal-body .row {
+          margin-bottom: 1.5rem;
+      }
+      .modal-body p {
+          margin: 0;
+      }
+      .modal-body small {
+          font-weight: 600;
+          letter-spacing: 0.3px;
+      }
+      .badge {
+          padding: 0.4rem 0.8rem;
+          font-weight: 500;
+          font-size: 0.85rem;
+      }
+      #modalPIC ul, #modalPIC ul li {
+          margin: 0;
+      }
+      #modalPIC ul li {
+          margin-bottom: 0.3rem;
+      }
+  `;
+  document.head.appendChild(style);
+
   // Chart Skill
-new Chart(document.getElementById('skillChart'), {
+  new Chart(document.getElementById('skillChart'), {
   type: 'bar',
   data: {
     labels: <?= json_encode($skillLabels) ?>,
@@ -501,45 +555,64 @@ document.addEventListener('DOMContentLoaded', function () {
         let picHtml = '';
         const picData = p.pic_data || {};
         if (Object.keys(picData).length > 0) {
+          picHtml = '<ul style="margin: 0; padding-left: 20px;">';
           for (const [jenis, nama] of Object.entries(picData)) {
-            picHtml += `<b>${jenis}:</b> ${nama}<br>`;
+            picHtml += `<li><b>${jenis}:</b> ${nama}</li>`;
           }
+          picHtml += '</ul>';
         } else {
-          picHtml = '-';
+          picHtml = '<span class="text-muted">-</span>';
         }
         document.getElementById('modalPIC').innerHTML = picHtml;
         
         document.getElementById('modalKeterangan').innerHTML =
-          p.keterangan ?? '-';
+          p.keterangan ?? '<span class="text-muted">-</span>';
         
-        // Dokumentasi
+        // Dokumentasi - always show the row
+        document.getElementById('rowDokumentasi').style.display = '';
         if (p.dokumentasi) {
-          document.getElementById('rowDokumentasi').style.display = '';
+          // Ada isi - bisa di-klik
           document.getElementById('modalDokumentasi').innerHTML = 
-            `<a href="${p.dokumentasi}" target="_blank" class="link-primary">Lihat Dokumentasi</a>`;
+            `<a href="${p.dokumentasi}" target="_blank" style="color: #007bff; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+              <i class="ti-eye" style="font-size: 18px;"></i> Lihat Dokumentasi
+            </a>`;
         } else {
-          document.getElementById('rowDokumentasi').style.display = 'none';
+          // Kosong - icon abu-abu, tidak aktif
+          document.getElementById('modalDokumentasi').innerHTML = 
+            `<span style="color: #adb5bd; cursor: not-allowed; display: inline-flex; align-items: center; gap: 8px;">
+              <i class="ti-eye" style="font-size: 18px;"></i> Tidak ada dokumentasi
+            </span>`;
         }
         
         // Link publikasi
         let links = [];
-        function renderLink(label, url) {
-          if (!url) return;
+        function renderLink(label, icon, url) {
+          if (!url) return false; // Jika NULL, jangan tampilkan
           if (url === '-') {
-            links.push(`<span class="text-muted">${label}</span>`);
-            return;
+            // Jika "-", tampilkan icon tapi tidak aktif
+            links.push(
+              `<span style="color: #adb5bd; cursor: not-allowed; font-size: 20px;" title="Tidak tersedia">
+                <i class="${icon}"></i>
+              </span>`
+            );
+            return true;
           }
+          // Jika ada isi, tampilkan icon aktif
           links.push(
-            `<a href="${url}" target="_blank" class="link-primary">${label}</a>`
+            `<a href="${url}" target="_blank" style="color: #007bff; text-decoration: none; font-size: 20px; cursor: pointer;" onmouseover="this.style.color='#0056b3'" onmouseout="this.style.color='#007bff'" title="Buka di tab baru">
+              <i class="${icon}"></i>
+            </a>`
           );
+          return true;
         }
-        renderLink('<i class="ti-instagram"></i>', p.link_instagram);
-        renderLink('<i class="ti-facebook"></i>', p.link_facebook);
-        renderLink('<i class="ti-youtube"></i>', p.link_youtube);
-        renderLink('<i class="ti-world"></i>', p.link_website);
+        renderLink('Instagram', 'ti-instagram', p.link_instagram);
+        renderLink('Facebook', 'ti-facebook', p.link_facebook);
+        renderLink('YouTube', 'ti-youtube', p.link_youtube);
+        renderLink('Website', 'ti-world', p.link_website);
+        
         if (links.length > 0) {
           document.getElementById('rowLink').style.display = '';
-          document.getElementById('modalLinks').innerHTML = links.join(' | ');
+          document.getElementById('modalLinks').innerHTML = '<div style="display: flex; gap: 15px;">' + links.join('') + '</div>';
         } else {
           document.getElementById('rowLink').style.display = 'none';
         }

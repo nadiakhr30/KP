@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             if ($pic_insert_success) {
                 $success = "Jadwal berhasil ditambahkan!";
-                header("Refresh: 1; url=../index.php");
+                header("Refresh: 1; url=../jadwal_konten_humas.php");
             }
         } else {
             $error = "Gagal menambahkan jadwal: " . mysqli_error($koneksi);
@@ -377,25 +377,12 @@ $link_options = [
         });
 
         function updateLinkDisplay() {
-            const container = document.getElementById('selected-links');
             const input = document.getElementById('links_input');
-
-            container.innerHTML = '';
             const linkKeys = Object.keys(selectedLinks);
-
-            if (linkKeys.length === 0) {
-                container.innerHTML = '<span class="text-muted">Belum ada link yang dipilih</span>';
-            } else {
-                linkKeys.forEach(linkKey => {
-                    const linkName = selectedLinks[linkKey];
-                    const badge = document.createElement('span');
-                    badge.className = 'link-badge';
-                    badge.innerHTML = linkName + ' <span class="remove-link" onclick="removeLink(\'' + linkKey + '\')">×</span>';
-                    container.appendChild(badge);
-                });
+            
+            if (input) {
+                input.value = linkKeys.join(',');
             }
-
-            input.value = linkKeys.join(',');
         }
 
         function removeLink(linkKey) {
