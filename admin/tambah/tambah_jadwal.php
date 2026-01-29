@@ -116,11 +116,17 @@ $link_options = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Jadwal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins&family=Jost&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/custom.css">
     <style>
         .link-badge {
             display: inline-block;
-            margin: 5px;
+            margin: 5px 5px 5px 0;
             padding: 8px 12px;
             background-color: #007bff;
             color: white;
@@ -135,24 +141,62 @@ $link_options = [
         .link-badge .remove-link:hover {
             color: #ffcccc;
         }
-        #selected-links {
-            min-height: 50px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
+        .pic-form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+        .pic-form-row .form-group {
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+        @media (max-width: 767.98px) {
+            .pic-form-row .form-group {
+                flex: 0 0 100%;
+                max-width: 100%;
+                padding-right: 0;
+                padding-left: 0;
+            }
+        }
+        @media (min-width: 768px) {
+            .pic-form-row .col-md-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+        .link-buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .link-btn {
+            border-width: 2px;
+            transition: all 0.3s ease;
+        }
+        .link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.25);
+        }
+        .link-btn.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .link-btn.active:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">Tambah Jadwal</h4>
-                    </div>
-                    <div class="card-body">
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+    <div class="col-md-8 my-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Tambah Jadwal</h5>
+            </div>
+            <div class="card-body px-5">
                         <?php if ($error): ?>
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <?php echo htmlspecialchars($error); ?>
@@ -253,15 +297,9 @@ $link_options = [
                                     rows="4"
                                 ><?php echo isset($_POST["keterangan"]) ? htmlspecialchars($_POST["keterangan"]) : ''; ?></textarea>
                             </div>
-
-                            <!-- PIC Selections -->
-                            <div class="card mb-3">
-                                <div class="card-header">
-                                    <h5 class="mb-0">PIC (Person In Charge) <span class="text-danger">*</span></h5>
-                                </div>
-                                <div class="card-body">
+                            <div class="pic-form-row">
                                     <?php foreach ($jenis_pic_data as $jenis): ?>
-                                        <div class="form-group">
+                                        <div class="form-group col-md-6">
                                             <label for="pic_<?php echo $jenis['id_jenis_pic']; ?>">
                                                 PIC <?php echo htmlspecialchars($jenis['nama_jenis_pic']); ?> <span class="text-danger">*</span>
                                             </label>
@@ -281,35 +319,29 @@ $link_options = [
                                             </select>
                                         </div>
                                     <?php endforeach; ?>
+                            </div>
+                            <!-- Link Selection -->
+                            <div class="form-group">
+                                <label>Pilih Link untuk Dipublikasikan</label>
+                                <div class="link-buttons-container mb-3">
+                                    <?php foreach ($link_options as $link_key => $link_name): ?>
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-outline-primary btn-sm link-btn me-2" 
+                                            data-link-key="<?php echo $link_key; ?>"
+                                            data-link-name="<?php echo htmlspecialchars($link_name); ?>"
+                                            style="margin-bottom: 8px;"
+                                        >
+                                            <?php echo htmlspecialchars($link_name); ?>
+                                        </button>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
 
-                            <!-- Link Selection -->
-                            <div class="form-group">
-                                <label for="link_select">Pilih Link untuk Dipublikasikan</label>
-                                <select class="form-control" id="link_select">
-                                    <option value="">-- Pilih Link --</option>
-                                    <?php foreach ($link_options as $link_key => $link_name): ?>
-                                        <option value="<?php echo $link_key; ?>">
-                                            <?php echo htmlspecialchars($link_name); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Link yang Dipilih</label>
-                                <div id="selected-links"></div>
-                                <input type="hidden" id="links_input" name="links" value="">
-                            </div>
-                            
-                            <div class="form-group mt-4">
-                                <button type="submit" class="btn btn-primary mr-2">
-                                    Simpan
-                                </button>
-                                <a href="../index.php" class="btn btn-secondary">
-                                    Batal
-                                </a>
+                            <input type="hidden" id="links_input" name="links" value="">
+                            <div class="form-group mt-4 d-flex justify-content-between">
+                                <a href="../manajemen_data_lainnya.php" class="btn btn-secondary btn-icon-l"><i class="fas fa-arrow-left"></i></a>
+                                <button type="submit" class="btn btn-primary btn-icon-l"><i class="fas fa-save"></i></button>
                             </div>
                         </form>
                     </div>
@@ -323,15 +355,25 @@ $link_options = [
     <script>
         let selectedLinks = {};
 
-        document.getElementById('link_select').addEventListener('change', function() {
-            const linkKey = this.value;
-            const linkName = this.options[this.selectedIndex].text;
+        // Handle link button clicks
+        document.querySelectorAll('.link-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const linkKey = this.dataset.linkKey;
+                const linkName = this.dataset.linkName;
 
-            if (linkKey && !selectedLinks[linkKey]) {
-                selectedLinks[linkKey] = linkName;
+                if (selectedLinks[linkKey]) {
+                    // Remove if already selected
+                    delete selectedLinks[linkKey];
+                    this.classList.remove('active');
+                } else {
+                    // Add if not selected
+                    selectedLinks[linkKey] = linkName;
+                    this.classList.add('active');
+                }
+
                 updateLinkDisplay();
-                this.value = '';
-            }
+            });
         });
 
         function updateLinkDisplay() {
@@ -341,21 +383,37 @@ $link_options = [
             container.innerHTML = '';
             const linkKeys = Object.keys(selectedLinks);
 
-            linkKeys.forEach(linkKey => {
-                const linkName = selectedLinks[linkKey];
-                const badge = document.createElement('span');
-                badge.className = 'link-badge';
-                badge.innerHTML = linkName + ' <span class="remove-link" onclick="removeLink(\'' + linkKey + '\')">×</span>';
-                container.appendChild(badge);
-            });
+            if (linkKeys.length === 0) {
+                container.innerHTML = '<span class="text-muted">Belum ada link yang dipilih</span>';
+            } else {
+                linkKeys.forEach(linkKey => {
+                    const linkName = selectedLinks[linkKey];
+                    const badge = document.createElement('span');
+                    badge.className = 'link-badge';
+                    badge.innerHTML = linkName + ' <span class="remove-link" onclick="removeLink(\'' + linkKey + '\')">×</span>';
+                    container.appendChild(badge);
+                });
+            }
 
             input.value = linkKeys.join(',');
         }
 
         function removeLink(linkKey) {
             delete selectedLinks[linkKey];
+            
+            // Update button state
+            const button = document.querySelector(`[data-link-key="${linkKey}"]`);
+            if (button) {
+                button.classList.remove('active');
+            }
+            
             updateLinkDisplay();
         }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLinkDisplay();
+        });
     </script>
 </body>
 </html>

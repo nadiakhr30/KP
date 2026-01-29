@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 ob_start();
 session_start();
 include_once("../koneksi.php");
@@ -28,6 +30,10 @@ $qKalender = mysqli_query($koneksi, "
     ORDER BY j.tanggal_rilis DESC
 ");
 
+if (!$qKalender) {
+    die("Database error: " . mysqli_error($koneksi));
+}
+
 $jadwalkalender = [];
 while ($row = mysqli_fetch_assoc($qKalender)) {
     $id_jadwal = $row['id_jadwal'];
@@ -47,10 +53,13 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
         }
     }
     
-    if ($row['status'] == 0) $color = '#e84118';
-    else if ($row['status'] == 1) $color = '#fbc531';
-    else if ($row['status'] == 2) $color = '#44bd32';
-    else $color = '#718093';
+    // Set color based on status
+    $color = match ($row['status']) {
+        0 => '#e84118',
+        1 => '#fbc531',
+        2 => '#44bd32',
+        default => '#718093',
+    };
     
     $picText = [];
     foreach ($picData as $jenis => $nama) {
@@ -476,40 +485,70 @@ function showEventDetail(eventData) {
 // Calendar - Only initialize if FullCalendar library loaded successfully
 var calendarInstance = null;
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOMContentLoaded event fired');
+    
+    var calendarEl = document.getElementById('calendar');
+    console.log('Calendar element found:', calendarEl);
+    
     // Check if FullCalendar is available
     if (typeof FullCalendar === 'undefined' || window.FULLCALENDAR_DISABLED) {
         console.warn('FullCalendar not available - skipping calendar initialization');
+        if (calendarEl) {
+            calendarEl.innerHTML = '<div class="alert alert-warning">FullCalendar library not loaded. Please check console for errors.</div>';
+        }
         return;
     }
 
     // Only initialize once
-    if (calendarInstance) return;
+    if (calendarInstance) {
+        console.warn('Calendar already initialized');
+        return;
+    }
 
-    calendarInstance = new FullCalendar.Calendar(
-        document.getElementById('calendar'),
-        {
-            initialView: 'dayGridMonth',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,listMonth,timeGridWeek,timeGridDay'
-            },
-            height: 'auto',
-            locale: 'id',
-            events: " . json_encode($jadwalkalender) . ",
-            eventClick: function(info) {
-                info.jsEvent.preventDefault();
-                const eventData = {
-                    title: info.event.title,
-                    start: info.event.start,
-                    id: info.event.id,
-                    ...info.event.extendedProps
-                };
-                showEventDetail(eventData);
+    // Calendar events data from database
+    var calendarEvents = <?php echo json_encode($jadwalkalender); ?>;
+    console.log('Calendar Events from database:', calendarEvents);
+    console.log('Total events:', calendarEvents.length);
+
+    if (!calendarEl) {
+        console.error('Calendar element with id "calendar" not found!');
+        return;
+    }
+
+    try {
+        calendarInstance = new FullCalendar.Calendar(
+            calendarEl,
+            {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+                },
+                height: 'auto',
+                locale: 'id',
+                events: calendarEvents,
+                eventClick: function(info) {
+                    info.jsEvent.preventDefault();
+                    const eventData = {
+                        title: info.event.title,
+                        start: info.event.start,
+                        id: info.event.id,
+                        ...info.event.extendedProps
+                    };
+                    showEventDetail(eventData);
+                }
             }
+        );
+        console.log('Calendar instance created successfully');
+        calendarInstance.render();
+        console.log('Calendar rendered successfully');
+    } catch (error) {
+        console.error('Error initializing calendar:', error);
+        if (calendarEl) {
+            calendarEl.innerHTML = '<div class="alert alert-danger">Error initializing calendar: ' + error.message + '</div>';
         }
-    );
-    calendarInstance.render();
+    }
 });
 </script>
 <!-- Bootstrap with CDN Fallback Error Handling -->
