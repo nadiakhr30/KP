@@ -191,7 +191,7 @@ if ($format === 'excel') {
 
         // PIC map per type
         $picMap = [];
-        $qPic = mysqli_query($koneksi, "SELECT jp.nama_jenis_pic, u.nama FROM pic p JOIN user u ON p.nip = u.nip JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic WHERE p.id_jadwal = " . $id . " ORDER BY jp.nama_jenis_pic");
+        $qPic = mysqli_query($koneksi, "SELECT jp.nama_jenis_pic, u.nama FROM pic p JOIN pegawai u ON p.nip = u.nip JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic WHERE p.id_jadwal = " . $id . " ORDER BY jp.nama_jenis_pic");
         if ($qPic) { while ($p = mysqli_fetch_assoc($qPic)) { $picMap[$p['nama_jenis_pic']] = $p['nama']; } }
 
         // Link map per type

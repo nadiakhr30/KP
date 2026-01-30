@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_FILES["excelFile"]) && !iss
                 $hp_ok = true;
                 foreach ($halo_pst as $id_halo_pst) {
                     $id_halo_pst = (int)$id_halo_pst;
-                    $insert_halo_pst_query = "INSERT INTO pegawai_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_halo_pst . ")";
+                    $insert_halo_pst_query = "INSERT INTO user_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_halo_pst . ")";
                     if (!mysqli_query($koneksi, $insert_halo_pst_query)) {
                         $error = "Gagal menambahkan data Halo PST: " . mysqli_error($koneksi);
                         $hp_ok = false;
@@ -75,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_FILES["excelFile"]) && !iss
                     if (!empty($skills)) {
                         foreach ($skills as $id_skill) {
                             $id_skill = (int)$id_skill;
-                            $insert_skill_query = "INSERT INTO pegawai_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_skill . ")";
+                            $insert_skill_query = "INSERT INTO user_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_skill . ")";
                             if (!mysqli_query($koneksi, $insert_skill_query)) {
                                 $error = "Gagal menambahkan data skill: " . mysqli_error($koneksi);
                                 $hp_ok = false;
@@ -210,7 +210,7 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                 // Insert into user_halo_pst (nip, id_halo_pst)
                 $halopstIds = array_filter(array_map('intval', explode(',', $user['halo_pst'])));
                 foreach ($halopstIds as $halopstId) {
-                    $insertHaloPST = "INSERT INTO pegawai_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $user['nip']) . "', " . $halopstId . ")";
+                    $insertHaloPST = "INSERT INTO user_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $user['nip']) . "', " . $halopstId . ")";
                     mysqli_query($koneksi, $insertHaloPST);
                 }
 
@@ -218,7 +218,7 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                 if (!empty($user['skills'])) {
                     $skillIds = array_filter(array_map('intval', explode(',', $user['skills'])));
                     foreach ($skillIds as $skillId) {
-                        $insertSkill = "INSERT INTO pegawai_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $user['nip']) . "', " . $skillId . ")";
+                        $insertSkill = "INSERT INTO user_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $user['nip']) . "', " . $skillId . ")";
                         mysqli_query($koneksi, $insertSkill);
                     }
                 }

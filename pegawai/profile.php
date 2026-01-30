@@ -2,12 +2,12 @@
 session_start();
 require_once __DIR__ . '/../koneksi.php';
 
-if (!isset($_SESSION['user']['nip'])) {
+if (!isset($_SESSION['pegawai']['nip'])) {
     header('Location: ../index.php');
     exit;
 }
 
-$nip = mysqli_real_escape_string($koneksi, $_SESSION['user']['nip']);
+$nip = mysqli_real_escape_string($koneksi, $_SESSION['pegawai']['nip']);
 
 /* =======================
    DATA USER
@@ -23,7 +23,7 @@ SELECT
     u.id_role,
     j.nama_jabatan,
     p.nama_ppid
-FROM user u
+FROM pegawai u
 LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
 LEFT JOIN ppid p ON u.id_ppid = p.id_ppid
 WHERE u.nip = '$nip'

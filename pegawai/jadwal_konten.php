@@ -3,7 +3,7 @@ ob_start();
 session_start();
 require '../koneksi.php';
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Pegawai") {
     header("Location: ../index.php");
     exit;
 }
@@ -20,11 +20,7 @@ $qKalender = mysqli_query($koneksi, "
     j.tim,
     j.keterangan,
     j.status,
-    j.dokumentasi,
-    j.link_instagram,
-    j.link_facebook,
-    j.link_youtube,
-    j.link_website
+    j.dokumentasi
   FROM jadwal j
   ORDER BY j.tanggal_rilis DESC
 ");
@@ -34,7 +30,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
   $qPic = mysqli_query($koneksi, "
     SELECT u.nip, u.nama, jp.nama_jenis_pic
     FROM pic p
-    JOIN user u ON p.nip = u.nip
+    JOIN pegawai u ON p.nip = u.nip
     JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic
     WHERE p.id_jadwal = " . (int)$id_jadwal . "
     ORDER BY jp.nama_jenis_pic
@@ -49,7 +45,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     }
   }
 
-  $isPic = in_array($_SESSION['user']['nip'], $nipList);
+  $isPic = in_array($_SESSION['pegawai']['nip'], $nipList);
   
   if ($row['status'] == 0) $color = '#e84118';
   else if ($row['status'] == 1) $color = '#fbc531';

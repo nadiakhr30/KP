@@ -9,21 +9,21 @@ if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
 $error = '';
 $success = '';
 $nip = isset($_GET['nip']) ? mysqli_real_escape_string($koneksi, $_GET['nip']) : '';
-// Get user data
-$qUser = mysqli_query($koneksi, "SELECT * FROM pegawai WHERE nip = '$nip'");
+// Get pegawai data
+$qPegawai = mysqli_query($koneksi, "SELECT * FROM pegawai WHERE nip = '$nip'");
 if (mysqli_num_rows($qUser) == 0) {
-    $error = "User tidak ditemukan!";
+    $error = "Pegawai tidak ditemukan!";
     header("Refresh: 2; url=../manajemen_user.php");
     exit();
 }
-$user = mysqli_fetch_assoc($qUser);
+$pegawai = mysqli_fetch_assoc($qPegawai);
 // Handle deletion
 $deleteSuccess = false;
 $deleteError = '';
 if (isset($_POST['konfirmasi_hapus'])) {
-    // Delete user from all related tables
-    mysqli_query($koneksi, "DELETE FROM pegawai_skill WHERE nip = '$nip'");
-    mysqli_query($koneksi, "DELETE FROM pegawai_halo_pst WHERE nip = '$nip'");
+    // Delete pegawai from all related tables
+    mysqli_query($koneksi, "DELETE FROM user_skill WHERE nip = '$nip'");
+    mysqli_query($koneksi, "DELETE FROM user_halo_pst WHERE nip = '$nip'");
     // Delete user
     $delete = mysqli_query($koneksi, "DELETE FROM pegawai WHERE nip = '$nip'");
     if ($delete) {
@@ -67,23 +67,23 @@ if (isset($_POST['konfirmasi_hapus'])) {
                     <?php endif; ?>
                     <div class="alert alert-danger">
                         <h6 class="alert-heading"><i class="fa fa-exclamation-triangle"></i> Peringatan</h6>
-                        <p>Anda akan menghapus user berikut. Tindakan ini <strong>TIDAK DAPAT DIBATALKAN</strong>!</p>
+                        <p>Anda akan menghapus pegawai berikut. Tindakan ini <strong>TIDAK DAPAT DIBATALKAN</strong>!</p>
                     </div>
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4 text-center">
-                                    <?php if ($user['foto_profil']) : ?>
-                                        <img src="../../uploads/<?= htmlspecialchars($user['foto_profil']); ?>" width="80" style="border-radius: 50%; object-fit: cover;">
+                                    <?php if ($pegawai['foto_profil']) : ?>
+                                        <img src="../../uploads/<?= htmlspecialchars($pegawai['foto_profil']); ?>" width="80" style="border-radius: 50%; object-fit: cover;">
                                     <?php else : ?>
                                         <img src="../../images/noimages.jpg" width="80" style="border-radius: 50%; object-fit: cover;">
                                     <?php endif; ?>
                                 </div>
                                 <div class="col-md-8">
-                                    <p><strong>NIP:</strong> <?= htmlspecialchars($user['nip']); ?></p>
-                                    <p><strong>Nama:</strong> <?= htmlspecialchars($user['nama']); ?></p>
-                                    <p><strong>Email:</strong> <?= htmlspecialchars($user['email']); ?></p>
-                                    <p><strong>Status:</strong> <?= $user['status'] == 1 ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Tidak Aktif</span>'; ?></p>
+                                    <p><strong>NIP:</strong> <?= htmlspecialchars($pegawai['nip']); ?></p>
+                                    <p><strong>Nama:</strong> <?= htmlspecialchars($pegawai['nama']); ?></p>
+                                    <p><strong>Email:</strong> <?= htmlspecialchars($pegawai['email']); ?></p>
+                                    <p><strong>Status:</strong> <?= $pegawai['status'] == 1 ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-danger">Tidak Aktif</span>'; ?></p>
                                 </div>
                             </div>
                         </div>
@@ -93,7 +93,7 @@ if (isset($_POST['konfirmasi_hapus'])) {
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="konfirmasi" required>
                                 <label class="custom-control-label" for="konfirmasi">
-                                    Saya memahami bahwa data user akan dihapus secara permanen dan tidak dapat dikembalikan
+                                    Saya memahami bahwa data pegawai akan dihapus secara permanen dan tidak dapat dikembalikan
                                 </label>
                             </div>
                         </div>
@@ -125,7 +125,7 @@ if (isset($_POST['konfirmasi_hapus'])) {
     Swal.fire({
         icon: 'success',
         title: 'Berhasil!',
-        text: 'User berhasil dihapus!',
+        text: 'Pegawai berhasil dihapus!',
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'OK'
     }).then((result) => {

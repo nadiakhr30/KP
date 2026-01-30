@@ -12,8 +12,8 @@ $token      = $_GET['token'] ?? '';
 ===================== */
 
 // === MODE PROFILE (SUDAH LOGIN) ===
-if (isset($_SESSION['user']['id_user'])) {
-    $id_user = $_SESSION['user']['id_user'];
+if (isset($_SESSION['pegawai']['id_user'])) {
+    $id_user = $_SESSION['pegawai']['id_user'];
     $redirectUrl = 'pegawai/profile.php';
 }
 

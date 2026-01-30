@@ -129,7 +129,7 @@ SELECT
   s.nama_skill,
   COUNT(us.id_user_skill) AS total_skill
 FROM skill s
-LEFT JOIN pegawai_skill us ON s.id_skill = us.id_skill
+LEFT JOIN user_skill us ON s.id_skill = us.id_skill
 GROUP BY s.id_skill, s.nama_skill
 ORDER BY total_skill DESC
 ");

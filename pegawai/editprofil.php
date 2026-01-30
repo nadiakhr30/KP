@@ -2,12 +2,12 @@
 session_start();
 require_once __DIR__ . '/../koneksi.php';
 
-if (!isset($_SESSION['user']['nip'])) {
+if (!isset($_SESSION['pegawai']['nip'])) {
     header('Location: ../index.php');
     exit;
 }
 
-$nip = mysqli_real_escape_string($koneksi, $_SESSION['user']['nip']);
+$nip = mysqli_real_escape_string($koneksi, $_SESSION['pegawai']['nip']);
 
 /* =======================
    DATA USER
@@ -24,7 +24,7 @@ SELECT
     r.nama_role,
     j.nama_jabatan,
     p.nama_ppid
-FROM user u
+FROM pegawai u
 LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
 LEFT JOIN ppid p ON u.id_ppid = p.id_ppid
 LEFT JOIN role r ON u.id_role = r.id_role
@@ -96,8 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $newFile = time() . '_' . $nip . '.' . $ext;
             $uploadDir = __DIR__ . '/../uploads/';
             if (move_uploaded_file($_FILES['foto_profil']['tmp_name'], $uploadDir . $newFile)) {
-                mysqli_query($koneksi, "UPDATE user SET foto_profil='$newFile' WHERE nip='$nip'");
-                $_SESSION['user']['foto_profil'] = $newFile;
+                mysqli_query($koneksi, "UPDATE pegawai SET foto_profil='$newFile' WHERE nip='$nip'");
+                $_SESSION['pegawai']['foto_profil'] = $newFile;
             }
         }
     }
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
        UPDATE USER DATA
     ======================= */
     mysqli_query($koneksi, "
-        UPDATE user SET
+        UPDATE pegawai SET
             nama='$nama',
             email='$email',
             nomor_telepon='$telp',

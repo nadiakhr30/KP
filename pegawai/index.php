@@ -3,7 +3,7 @@ ob_start();
 session_start();
 require '../koneksi.php';
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Pegawai") {
     header("Location: ../index.php");
     exit;
 }
@@ -20,11 +20,7 @@ $qKalender = mysqli_query($koneksi, "
     j.tim,
     j.keterangan,
     j.status,
-    j.dokumentasi,
-    j.link_instagram,
-    j.link_facebook,
-    j.link_youtube,
-    j.link_website
+    j.dokumentasi
   FROM jadwal j
   ORDER BY j.tanggal_rilis DESC
 ");
@@ -34,7 +30,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
   $qPic = mysqli_query($koneksi, "
     SELECT u.nip, u.nama, jp.nama_jenis_pic
     FROM pic p
-    JOIN user u ON p.nip = u.nip
+    JOIN pegawai u ON p.nip = u.nip
     JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic
     WHERE p.id_jadwal = " . (int)$id_jadwal . "
     ORDER BY jp.nama_jenis_pic
@@ -49,7 +45,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     }
   }
 
-  $isPic = in_array($_SESSION['user']['nip'], $nipList);
+  $isPic = in_array($_SESSION['pegawai']['nip'], $nipList);
   
   if ($row['status'] == 0) $color = '#e84118';
   else if ($row['status'] == 1) $color = '#fbc531';
@@ -469,6 +465,166 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
     </section><!-- /Sumber Daya -->
 
+    <!-- Broadcast Section -->
+    <section id="broadcast" class="broadcast section light-background position-relative">
+      
+      <!-- Animated Background -->
+      <div class="broadcast-bg-animated"></div>
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Broadcast</h2>
+        <p>Akses semua sumber daya broadcast dalam satu tempat yang terpusat</p>
+      </div>
+
+      <div class="container position-relative">
+        <div class="row g-4 justify-content-center">
+
+          <!-- Video Operator -->
+          <div class="col-lg-5 col-md-10" data-aos="fade-up" data-aos-delay="100">
+            <a href="https://drive.google.com" target="_blank" class="broadcast-link">
+              <div class="broadcast-card-v3">
+                
+                <!-- Glow Effect -->
+                <div class="card-glow"></div>
+
+                <!-- Top Accent Line -->
+                <div class="accent-line"></div>
+
+                <!-- Header -->
+                <div class="card-header-v3">
+                  <div class="header-bg-gradient"></div>
+                  
+                  <div class="icon-container">
+                    <div class="icon-bg"></div>
+                    <i class="bi bi-camera-video-fill"></i>
+                  </div>
+                  
+                  <h3>Video Operator</h3>
+                  <p>Template dan panduan lengkap untuk operator video profesional</p>
+                </div>
+
+                <!-- Features -->
+                <div class="card-features">
+                  <div class="feature-list">
+                    <div class="feature-dot"></div>
+                    <div class="feature-dot"></div>
+                    <div class="feature-dot"></div>
+                  </div>
+                </div>
+
+                <!-- Footer CTA -->
+                <div class="card-footer-cta">
+                  <span class="cta-text">Buka Folder</span>
+                  <div class="arrow-icon">
+                    <i class="bi bi-arrow-right"></i>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Template OBS -->
+          <div class="col-lg-5 col-md-10" data-aos="fade-up" data-aos-delay="200">
+            <a href="https://drive.google.com" target="_blank" class="broadcast-link">
+              <div class="broadcast-card-v3 variant-pink">
+                
+                <!-- Glow Effect -->
+                <div class="card-glow"></div>
+
+                <!-- Top Accent Line -->
+                <div class="accent-line"></div>
+
+                <!-- Header -->
+                <div class="card-header-v3">
+                  <div class="header-bg-gradient"></div>
+                  
+                  <div class="icon-container">
+                    <div class="icon-bg"></div>
+                    <i class="bi bi-sliders2"></i>
+                  </div>
+                  
+                  <h3>Template OBS</h3>
+                  <p>Konfigurasi dan template siap pakai untuk OBS Studio dengan filter profesional</p>
+                </div>
+
+                <!-- Features -->
+                <div class="card-features">
+                  <div class="feature-list">
+                    <div class="feature-dot"></div>
+                    <div class="feature-dot"></div>
+                    <div class="feature-dot"></div>
+                  </div>
+                </div>
+
+                <!-- Footer CTA -->
+                <div class="card-footer-cta">
+                  <span class="cta-text">Buka Folder</span>
+                  <div class="arrow-icon">
+                    <i class="bi bi-arrow-right"></i>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+    </section><!-- /Broadcast Section -->
+
+<!-- Pengembangan Highlight Section -->
+    <section id="pengembangan-highlight" class="pengembangan-highlight section light-background">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Pusat Pengembangan</h2>
+        <p>Sumber daya inovasi dan pengembangan untuk tim kami</p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="pengembangan-grid">
+
+        <?php
+          // Ambil jenis dengan id_jenis = 4 (Pengembangan)
+          $jenisQ = mysqli_query($koneksi, "SELECT id_jenis, nama_jenis FROM jenis WHERE id_jenis = 4");
+          if ($jenisQ && mysqli_num_rows($jenisQ) > 0) {
+              $delay = 100;
+              while ($j = mysqli_fetch_assoc($jenisQ)) {
+                  // Ambil sub jenis dengan id_jenis = 4
+                  $subQ = mysqli_query($koneksi, "SELECT id_sub_jenis, nama_sub_jenis FROM sub_jenis WHERE id_jenis = 4 ORDER BY nama_sub_jenis ASC");
+                  
+                  if ($subQ && mysqli_num_rows($subQ) > 0) {
+                      while ($s = mysqli_fetch_assoc($subQ)) {
+        ?>
+          <div class="pengembangan-item" data-aos="zoom-in" data-aos-delay="<?= $delay ?>">
+            <div class="pengembangan-card">
+              <div class="card-icon">
+                <i class="bi bi-lightning-charge"></i>
+              </div>
+              <h3><?= htmlspecialchars($s['nama_sub_jenis']) ?></h3>
+              <p><?= htmlspecialchars($j['nama_jenis']) ?></p>
+              <a href="pengembangan.php" class="btn-explore">
+                Jelajahi <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        <?php
+                        $delay += 100;
+                      }
+                  }
+              }
+          } else {
+              echo '<div style="color:#fff;">Data pengembangan tidak tersedia</div>';
+          }
+        ?>
+
+        </div>
+
+      </div>
+
+    </section><!-- /Pengembangan Highlight Section -->
   </main>
   <?php
   $content = ob_get_clean();
@@ -535,88 +691,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
           events: <?= json_encode($jadwalkalender) ?>,
           eventClick: function(info) {
             info.jsEvent.preventDefault();
-            const p = info.event.extendedProps;
-            const jadwalId = info.event.id;
-
-            document.getElementById('modalTopik').innerText = p.topik ?? '-';
-            document.getElementById('modalJudul').innerText = info.event.title;
-            document.getElementById('modalTanggalPenugasan').innerText =
-              p.tanggal_penugasan
-                ? new Date(p.tanggal_penugasan).toLocaleDateString('id-ID')
-                : '-';
-            document.getElementById('modalTargetRilis').innerText =
-              info.event.start.toLocaleDateString('id-ID');
-            document.getElementById('modalTim').innerText = p.tim ?? '-';
-            
-            let statusText = '-';
-            let statusClass = 'secondary';
-            switch (String(p.status)) {
-              case '0':
-                statusText = 'Belum Dikerjakan';
-                statusClass = 'danger';
-                break;
-              case '1':
-                statusText = 'Sedang Dikerjakan';
-                statusClass = 'warning';
-                break;
-              case '2':
-                statusText = 'Selesai';
-                statusClass = 'success';
-                break;
-            }
-            document.getElementById('modalStatus').innerHTML =
-              `<span class="badge bg-${statusClass}">${statusText}</span>`;
-            
-            document.getElementById('modalPIC').innerHTML = p.pic_display || '-';
-            document.getElementById('modalKeterangan').innerHTML = p.keterangan ?? '-';
-            
-            // Dokumentasi
-            if (p.dokumentasi && p.dokumentasi.trim() !== '') {
-              document.getElementById('rowDokumentasi').style.display = 'table-row';
-              document.getElementById('modalDokumentasi').href = '../uploads/dokumentasi/' + p.dokumentasi;
-              document.getElementById('modalDokumentasi').style.display = 'inline-flex';
-              document.getElementById('docPlaceholder').style.display = 'none';
-            } else {
-              document.getElementById('rowDokumentasi').style.display = 'table-row';
-              document.getElementById('modalDokumentasi').style.display = 'none';
-              document.getElementById('docPlaceholder').style.display = p.isPic ? 'none' : 'inline';
-            }
-
-            // Link publikasi
-            let links = [];
-            
-            function renderLink(icon, label, url, color) {
-              if (!url || url === '-' || url.trim() === '') {
-                links.push(`<span class="text-muted" title="${label} (belum diisi)"><i class="bi ${icon}" style="font-size: 1.2rem; opacity: 0.3;"></i></span>`);
-              } else {
-                links.push(`<a href="${url}" target="_blank" title="${label}" style="color: ${color};"><i class="bi ${icon}" style="font-size: 1.2rem;"></i></a>`);
-              }
-            }
-            
-            renderLink('bi-instagram', 'Instagram', p.link_instagram, '#E1306C');
-            renderLink('bi-facebook', 'Facebook', p.link_facebook, '#1877F2');
-            renderLink('bi-youtube', 'YouTube', p.link_youtube, '#FF0000');
-            renderLink('bi-globe', 'Website', p.link_website, '#0d6efd');
-            
-            document.getElementById('rowLink').style.display = 'table-row';
-            document.getElementById('modalLinks').innerHTML = links.length > 0 ? links.join(' ') : '-';
-
-            document.getElementById('editDokumentasiBtn').style.display = 'none';
-            document.getElementById('editPublikasiBtn').style.display = 'none';
-            
-            if (p.isPic) {
-              document.getElementById('editDokumentasiBtn').style.display = 'inline-block';
-              document.getElementById('editPublikasiBtn').style.display = 'inline-block';
-            }
-
-            document.getElementById('editDokumentasiBtn').onclick = function() {
-              window.location.href = 'edit_dokumentasi.php?id=' + jadwalId + '&mode=dokumentasi';
-            };
-            document.getElementById('editPublikasiBtn').onclick = function() {
-              window.location.href = 'edit_dokumentasi.php?id=' + jadwalId + '&mode=publikasi';
-            };
-
-            new bootstrap.Modal(document.getElementById('jadwalModal')).show();
+            // Tidak ada action - hanya menampilkan event di kalender tanpa modal
           }
         }
       );

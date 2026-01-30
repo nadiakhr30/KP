@@ -2,7 +2,7 @@
 session_start();
 require '../koneksi.php';
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Pegawai") {
     header("Location: ../index.php");
     exit;
 }
@@ -162,7 +162,7 @@ body{
     $q = mysqli_query($koneksi,"
       SELECT a.*, u.nama AS pemegang
       FROM aset a
-      LEFT JOIN user u ON a.nip = u.nip
+      LEFT JOIN pegawai u ON a.nip = u.nip
       $where
       ORDER BY a.id_aset DESC
     ");

@@ -22,22 +22,22 @@ function checkLogin($data, &$errors)
 
     if (count($errors) === 0) {
 
-        // AMBIL USER
+        // AMBIL PEGAWAI
         $result = mysqli_query(
             $koneksi,
-            "SELECT * FROM user WHERE email = '" . mysqli_real_escape_string($koneksi, $email) . "' LIMIT 1"
+            "SELECT * FROM pegawai WHERE email = '" . mysqli_real_escape_string($koneksi, $email) . "' LIMIT 1"
         );
 
         if ($result && mysqli_num_rows($result) === 1) {
-            $user = mysqli_fetch_assoc($result);
+            $pegawai = mysqli_fetch_assoc($result);
 
             // VERIFIKASI PASSWORD (INI KUNCI UTAMA)
-            if (password_verify($password, $user["password"])) {
+            if (password_verify($password, $pegawai["password"])) {
 
                 // Login sukses
-                $_SESSION["user"] = $user;
+                $_SESSION["pegawai"] = $pegawai;
 
-                if ($user["id_role"] == '1') {
+                if ($pegawai["id_role"] == '1') {
                     $_SESSION["role"] = "Admin";
                     header("Location: admin/index.php");
                     exit;

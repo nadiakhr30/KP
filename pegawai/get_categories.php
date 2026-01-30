@@ -40,8 +40,7 @@ while ($row = mysqli_fetch_assoc($resultSkill)) {
 $queryPPID = "
     SELECT p.id_ppid, p.nama_ppid, COUNT(u.nip) as count
     FROM ppid p
-    LEFT JOIN user u ON p.id_ppid = u.id_ppid
-    WHERE u.id_role = 2
+    LEFT JOIN pegawai u ON p.id_ppid = u.id_ppid
     GROUP BY p.id_ppid, p.nama_ppid
     ORDER BY p.nama_ppid ASC
 ";

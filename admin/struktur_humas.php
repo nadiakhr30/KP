@@ -39,7 +39,7 @@ if ($filterType && $filterId > 0) {
             SELECT DISTINCT u.nip, u.nama, u.email, u.nomor_telepon, u.foto_profil as foto, j.nama_jabatan
             FROM pegawai u
             LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
-            JOIN pegawai_skill us ON u.nip = us.nip
+            JOIN user_skill us ON u.nip = us.nip
             WHERE us.id_skill = $filterId AND u.status = 1
             ORDER BY u.nama
         ");
@@ -56,7 +56,7 @@ if ($filterType && $filterId > 0) {
             SELECT DISTINCT u.nip, u.nama, u.email, u.nomor_telepon, u.foto_profil as foto, j.nama_jabatan
             FROM pegawai u
             LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
-            JOIN pegawai_halo_pst hu ON u.nip = hu.nip
+            JOIN user_halo_pst hu ON u.nip = hu.nip
             WHERE hu.id_halo_pst = $filterId AND u.status = 1
             ORDER BY u.nama
         ");

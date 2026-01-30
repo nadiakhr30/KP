@@ -2,7 +2,7 @@
 session_start();
 require '../koneksi.php';
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Pegawai") {
     header("Location: ../index.php");
     exit;
 }

@@ -119,7 +119,7 @@ $qJadwalList = mysqli_query($koneksi, "
         GROUP_CONCAT(CONCAT(jp.nama_jenis_pic, ': ', u.nama) SEPARATOR ', ') as pic_info
     FROM jadwal j
     LEFT JOIN pic p ON j.id_jadwal = p.id_jadwal
-    LEFT JOIN user u ON p.nip = u.nip
+    LEFT JOIN pegawai u ON p.nip = u.nip
     LEFT JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic
     GROUP BY j.id_jadwal, j.topik, j.judul_kegiatan, j.tanggal_penugasan, j.tanggal_rilis, j.tim, j.status
     ORDER BY j.tanggal_rilis DESC
@@ -130,7 +130,7 @@ while ($row = mysqli_fetch_assoc($qJadwalList)) {
     $qDetailPic = mysqli_query($koneksi, "
         SELECT jp.nama_jenis_pic, u.nama
         FROM pic p
-        JOIN user u ON p.nip = u.nip
+        JOIN pegawai u ON p.nip = u.nip
         JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic
         WHERE p.id_jadwal = " . (int)$row['id_jadwal'] . "
         ORDER BY jp.nama_jenis_pic

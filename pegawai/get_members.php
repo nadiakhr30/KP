@@ -18,7 +18,7 @@ if (!$category || !$id) {
 if ($category === 'skill') {
     $query = "
         SELECT DISTINCT u.nip, u.nama, j.nama_jabatan as role, u.email
-        FROM user u
+        FROM pegawai u
         JOIN jabatan j ON u.id_jabatan = j.id_jabatan
         JOIN user_skill us ON u.nip = us.nip
         WHERE us.id_skill = ? AND u.id_role = 2
@@ -38,7 +38,7 @@ if ($category === 'skill') {
 } else if ($category === 'ppid') {
     $query = "
         SELECT DISTINCT u.nip, u.nama, j.nama_jabatan as role, u.email
-        FROM user u
+        FROM pegawai u
         JOIN jabatan j ON u.id_jabatan = j.id_jabatan
         WHERE u.id_ppid = ? AND u.id_role = 2
         ORDER BY u.nama ASC
@@ -57,7 +57,7 @@ if ($category === 'skill') {
 } else if ($category === 'halopst') {
     $query = "
         SELECT DISTINCT u.nip, u.nama, j.nama_jabatan as role, u.email
-        FROM user u
+        FROM pegawai u
         JOIN jabatan j ON u.id_jabatan = j.id_jabatan
         JOIN user_halo_pst uhp ON u.nip = uhp.nip
         WHERE uhp.id_halo_pst = ? AND u.id_role = 2

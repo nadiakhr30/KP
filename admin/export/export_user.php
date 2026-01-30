@@ -41,7 +41,7 @@ while ($row = mysqli_fetch_assoc($qUser)) {
 function getUserSkills($koneksi, $nip) {
     $qSkill = mysqli_query($koneksi, "
         SELECT s.nama_skill
-        FROM pegawai_skill us
+        FROM user_skill us
         JOIN skill s ON us.id_skill = s.id_skill
         WHERE us.nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'
         ORDER BY s.nama_skill
@@ -57,7 +57,7 @@ function getUserSkills($koneksi, $nip) {
 function getUserHaloPST($koneksi, $nip) {
     $qHaloPST = mysqli_query($koneksi, "
         SELECT hp.nama_halo_pst
-        FROM pegawai_halo_pst uhp
+        FROM user_halo_pst uhp
         JOIN halo_pst hp ON uhp.id_halo_pst = hp.id_halo_pst
         WHERE uhp.nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'
         ORDER BY hp.nama_halo_pst
@@ -98,8 +98,8 @@ if ($format == 'print') {
             }
             .header-info {
                 text-align: center;
-                margin-bottom: 30px;
-                border-bottom: 3px solid #000000;
+                // FORMAT HANDLING
+                if ($format == 'print') {
                 padding-bottom: 15px;
             }
             .header-info h2 {
@@ -204,9 +204,7 @@ if ($format == 'print') {
     </html>
     <?php
     exit();
-}
-// EXCEL FORMAT
-else if ($format == 'excel') {
+} else if ($format == 'excel') {
     $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
     $sheet->setTitle('Data User');
@@ -235,7 +233,7 @@ else if ($format == 'excel') {
     $sheet->getRowDimension(1)->setRowHeight(25);
     // Add data
     $row = 2;
-    foreach ($dataUsers as $index => $user) {
+                } else if ($format == 'excel') {
         $sheet->setCellValue("A$row", $index + 1);
         $sheet->setCellValue("B$row", $user['nip']);
         $sheet->setCellValue("C$row", $user['nama']);
@@ -261,11 +259,8 @@ else if ($format == 'excel') {
     $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
     $writer->save('php://output');
     exit();
-}
-// JSON FORMAT
-else if ($format == 'json') {
+} else if ($format == 'json') {
     $jsonData = [];
-    
     foreach ($dataUsers as $user) {
         $jsonData[] = [
             'nip' => $user['nip'],
@@ -284,7 +279,6 @@ else if ($format == 'json') {
     $filename = 'Laporan_User_' . date('Y-m-d_H-i-s') . '.json';
     header('Content-Type: application/json');
     header('Content-Disposition: attachment;filename="' . $filename . '"');
-    
     echo json_encode($jsonData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     exit();
 }
@@ -294,7 +288,7 @@ else if ($format == 'csv') {
     $filename = 'Laporan_User_' . date('Y-m-d_H-i-s') . '.csv';
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment;filename="' . $filename . '"');
-
+                } else if ($format == 'json') {
     // Output BOM for Excel to recognize UTF-8
     echo "\xEF\xBB\xBF";
 
@@ -316,7 +310,7 @@ else if ($format == 'csv') {
             $user['email'],
             $user['nama_jabatan'] ?? '-',
             $user['nama_role'] ?? '-',
-            $user['status'] == 1 ? 'Aktif' : 'Tidak Aktif',
+                } else if ($format == 'csv') {
             $user['nomor_telepon'] ? '0' . $user['nomor_telepon'] : '-',
             $user['nama_ppid'],
             getUserHaloPST($koneksi, $user['nip']),
@@ -342,7 +336,7 @@ else if ($format == 'csv') {
 function getUserHaloPST($koneksi, $nip) {
     $qHaloPST = mysqli_query($koneksi, "
         SELECT hp.nama_halo_pst
-        FROM pegawai_halo_pst uhp
+        FROM user_halo_pst uhp
         JOIN halo_pst hp ON uhp.id_halo_pst = hp.id_halo_pst
         WHERE uhp.nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'
         ORDER BY hp.nama_halo_pst
@@ -489,9 +483,7 @@ if ($format == 'print') {
     </html>
     <?php
     exit();
-}
-// EXCEL FORMAT
-else if ($format == 'excel') {
+} else if ($format == 'excel') {
     $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
     $sheet->setTitle('Data User');

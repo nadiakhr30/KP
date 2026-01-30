@@ -2,7 +2,7 @@
 session_start();
 require '../koneksi.php';
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Pegawai") {
     header("Location: ../index.php");
     exit;
 }
@@ -14,10 +14,10 @@ if ($id_jadwal == 0) {
     die("ID Jadwal tidak valid");
 }
 
-// Cek apakah user adalah PIC dari jadwal ini
+// Cek apakah pegawai adalah PIC dari jadwal ini
 $qCheck = mysqli_query($koneksi, "
     SELECT COUNT(*) as count FROM pic 
-    WHERE id_jadwal = $id_jadwal AND nip = '{$_SESSION['user']['nip']}'
+    WHERE id_jadwal = $id_jadwal AND nip = '{$_SESSION['pegawai']['nip']}'
 ");
 $check = mysqli_fetch_assoc($qCheck);
 if ($check['count'] == 0) {

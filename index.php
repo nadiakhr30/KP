@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (isset($_SESSION["user"])) {
+if (isset($_SESSION["pegawai"])) {
     if ($_SESSION["role"] === "Admin") {
         header("Location: admin/index.php");
     } elseif ($_SESSION["role"] === "Pegawai") {
