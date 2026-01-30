@@ -247,8 +247,8 @@ ob_start();
                                     <div class="dropdown-info dropdown open">
                                         <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetakCard" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                         <div class="dropdown-menu" aria-labelledby="cetakCard" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                            <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                            <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export/export_jadwal.php?format=print">Print</a>
+                                            <a class="dropdown-item waves-light waves-effect" href="export/export_jadwal.php?format=excel">Excel</a>
                                         </div>
                                     </div>
                                 </div>
@@ -282,7 +282,7 @@ ob_start();
                                                 ?>
                                                 <span class="badge bg-<?= $statusClass ?>"><?= $statusText ?></span>
                                             </div>
-                                            <h5><?= htmlspecialchars($jadwal['judul_kegiatan']) ?></h5>
+                                            <h5 class="text-center m-b-10"><?= htmlspecialchars($jadwal['judul_kegiatan']) ?></h5>
                                             <p class="text-muted mb-2"><strong>Topik:</strong> <?= htmlspecialchars($jadwal['topik'] ?? '-') ?></p>
                                             <p class="text-muted mb-2"><strong>Tim:</strong> <?= htmlspecialchars($jadwal['tim'] ?? '-') ?></p>
                                             <p class="text-muted mb-2"><strong>Tanggal Penugasan:</strong> <?= $jadwal['tanggal_penugasan'] ? date('d-m-Y', strtotime($jadwal['tanggal_penugasan'])) : '-' ?></p>
@@ -339,7 +339,7 @@ ob_start();
                                             </p>
                                             <div style="display: flex; gap: 8px; justify-content: center;">
                                                 <a href="edit/edit_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-icon btn-warning waves-effect waves-light"><i class="ti-pencil text-dark"></i></a>
-                                                <a href="hapus/hapus_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-icon btn-danger waves-effect waves-light" onclick="return confirm('Yakin ingin menghapus?');"><i class="ti-trash text-dark"></i></a>
+                                                <button type="button" class="btn btn-icon btn-danger waves-effect waves-light" onclick="confirmDeleteJadwal(<?= $jadwal['id_jadwal'] ?>, '<?= htmlspecialchars($jadwal['judul_kegiatan'], ENT_QUOTES) ?>')"><i class="ti-trash text-dark"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -357,8 +357,8 @@ ob_start();
                                         <div class="dropdown-info dropdown open">
                                             <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetakTable" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
                                             <div class="dropdown-menu" aria-labelledby="cetakTable" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                                <a class="dropdown-item waves-light waves-effect" href="#">Print</a>
-                                                <a class="dropdown-item waves-light waves-effect" href="#">Excel</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export/export_jadwal.php?format=print">Print</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="export/export_jadwal.php?format=excel">Excel</a>
                                             </div>
                                         </div>
                                     </div>
@@ -453,7 +453,7 @@ ob_start();
                                                 </td>
                                                 <td>
                                                     <a href="edit/edit_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-icon btn-warning waves-effect waves-light"><i class="ti-pencil text-dark"></i></a>
-                                                    <a href="hapus/hapus_jadwal.php?id=<?= $jadwal['id_jadwal'] ?>" class="btn btn-icon btn-danger waves-effect waves-light" onclick="return confirm('Yakin ingin menghapus?');"><i class="ti-trash text-dark"></i></a>
+                                                    <button type="button" class="btn btn-icon btn-danger waves-effect waves-light" onclick="confirmDeleteJadwal(<?= $jadwal['id_jadwal'] ?>, '<?= htmlspecialchars($jadwal['judul_kegiatan'], ENT_QUOTES) ?>')"><i class="ti-trash text-dark"></i></button>
                                                 </td>
                                             </tr>
                                             <?php endforeach; ?>
@@ -581,10 +581,41 @@ ob_start();
     </div>
 </div>
 
+<!-- Modal Konfirmasi Hapus Jadwal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 400px; display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; background: #fcf2f2; border-left: 5px solid #e74c3c;">
+            <div class="modal-body" style="padding: 40px 30px; text-align: center;">
+                <div style="margin-bottom: 20px;">
+                    <i class="ti-alert" style="font-size: 56px; color: #e74c3c;"></i>
+                </div>
+                <h5 style="color: #2c3e50; font-weight: 700; font-size: 18px; margin-bottom: 10px;">Konfirmasi Hapus</h5>
+                <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 20px;">Apakah Anda yakin ingin menghapus jadwal <strong id="deleteConfirmTitle"></strong>?</p>
+                <p style="color: #e74c3c; font-size: 12px; margin-top: 20px; margin-bottom: 30px;">
+                    <i class="ti-alert-alt" style="margin-right: 6px;"></i>
+                    Tindakan ini tidak dapat dibatalkan.
+                </p>
+                <input type="hidden" id="jadwalToDeleteId" value="">
+                <div style="display: flex; justify-content: center; gap: 15px;">
+                    <button type="button" class="btn btn-secondary btn-icon waves-effect waves-light" data-bs-dismiss="modal" title="Batal">
+                        <i class="ti-close"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-icon waves-effect waves-light" id="confirmDeleteBtn" title="Hapus" onclick="performDeleteJadwal()">
+                        <i class="ti-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
 $content = ob_get_clean();
 ob_start();
 ?>
+<!-- Sweetalert2 untuk Notifikasi -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 // Initialize tooltips
 document.addEventListener('DOMContentLoaded', function() {
@@ -593,6 +624,89 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 });
+
+// Delete Jadwal
+let jadwalToDelete = null;
+
+function confirmDeleteJadwal(id, title) {
+    jadwalToDelete = id;
+    document.getElementById('deleteConfirmTitle').innerText = title;
+    new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
+}
+
+function performDeleteJadwal() {
+    if (!jadwalToDelete) return;
+    
+    const deleteBtn = document.getElementById('confirmDeleteBtn');
+    deleteBtn.disabled = true;
+    deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>';
+    
+    fetch('hapus/hapus_jadwal.php?id=' + jadwalToDelete)
+        .then(response => response.json())
+        .then(data => {
+            bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+            
+            // Show sweetalert notification
+            const icon = data.success ? 'success' : 'error';
+            const title = data.success ? 'Berhasil!' : 'Gagal!';
+            
+            Swal.fire({
+                icon: icon,
+                title: title,
+                text: data.message,
+                confirmButtonColor: data.success ? '#3085d6' : '#d33',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            }).then((result) => {
+                if (result.isConfirmed && data.success) {
+                    location.reload();
+                } else {
+                    // Reset button jika gagal
+                    deleteBtn.disabled = false;
+                    deleteBtn.innerHTML = '<i class="ti-trash"></i>';
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: 'Terjadi kesalahan saat menghapus data',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'OK'
+            });
+            
+            // Reset button
+            deleteBtn.disabled = false;
+            deleteBtn.innerHTML = '<i class="ti-trash"></i>';
+        });
+}
+
+// Notification function (tidak lagi dipakai, diganti sweetalert)
+function showNotification(type, message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+    alertDiv.style.position = 'fixed';
+    alertDiv.style.top = '20px';
+    alertDiv.style.right = '20px';
+    alertDiv.style.zIndex = '9999';
+    alertDiv.style.minWidth = '300px';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 4000);
+}
 
 // Open Edit Detail Modal from Jadwal Modal
 function openEditDetailModalFromJadwal() {

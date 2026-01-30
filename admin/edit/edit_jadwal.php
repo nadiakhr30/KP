@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             // Insert new PIC data
             foreach ($new_pic_data as $id_jenis_pic => $nip) {
-                $insert_pic_query = "INSERT INTO pic (nip, id_jadwal, id_jenis_pic) VALUES (" . $nip . ", " . $id_jadwal . ", " . $id_jenis_pic . ")";
+                $insert_pic_query = "INSERT INTO pic (nip, id_jadwal, id_jenis_pic) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_jadwal . ", " . $id_jenis_pic . ")";
                 
                 if (!mysqli_query($koneksi, $insert_pic_query)) {
                     $error = "Gagal memperbarui data PIC: " . mysqli_error($koneksi);

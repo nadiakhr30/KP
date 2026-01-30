@@ -112,30 +112,44 @@ if ($format == 'print') {
                 color: #7f8c8d;
                 font-size: 14px;
             }
-            table {
+            .table-report {
                 background: white;
+                padding: 10px;
+                border-radius: 8px;
+            }
+            .table-report table {
+                width: 100%;
+                table-layout: fixed;
                 border-collapse: collapse;
             }
-            th {
+            .table-report th {
                 background-color: #007bff;
                 color: white;
                 font-weight: 600;
                 padding: 12px;
                 text-align: left;
+                word-wrap: break-word;
+                white-space: normal;
             }
-            td {
+            .table-report td {
                 padding: 10px 12px;
                 border-bottom: 1px solid #ddd;
                 color: #666;
                 font-size: 13px;
+                word-wrap: break-word;
+                white-space: normal;
             }
-            tr:hover {
+            .table-report tr:hover {
                 background-color: #f9f9f9;
+            }
+            @media (max-width: 1200px) {
+                body { padding: 20px; }
+                .table-report { padding: 6px; }
             }
         </style>
     </head>
     <body>
-        <div class="no-print d-flex justify-content-between">
+        <div class="no-print d-flex justify-content-between mb-4">
             <button class="no-print btn btn-secondary btn-icon-l" onclick="window.history.back()"><i class="no-print fas fa-arrow-left"></i></button>
             <button class="no-print btn btn-primary btn-icon-l" onclick="window.print()"><i class="no-print fas fa-print"></i></button>
         </div>
@@ -145,10 +159,12 @@ if ($format == 'print') {
             <p>Tanggal Cetak: <?= date('d-m-Y H:i:s'); ?></p>
             <p>Total User: <?= count($dataUsers); ?></p>
         </div>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th style="width: 5%;">No</th>
+        <div class="table-report">
+            <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">No</th>
                     <th>NIP</th>
                     <th>Nama</th>
                     <th>Email</th>
@@ -179,7 +195,9 @@ if ($format == 'print') {
                 <?php endforeach; ?>
             </tbody>
         </table>
-        <div class="mt-5" style="text-align: center; font-size: 12px;">
+            </div>
+            </div>
+        <div class="mt-3 text-center" style="font-size:12px;">
             <p>Laporan ini digenerate otomatis pada <?= date('d-m-Y H:i:s'); ?></p>
         </div>
     </body>
