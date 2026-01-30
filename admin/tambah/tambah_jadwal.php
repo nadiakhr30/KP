@@ -455,6 +455,7 @@ foreach ($user_data as $user) {
                 <div class="tab-content">
                     <!-- Input Manual Tab -->
                     <div class="tab-pane m-t-10 fade <?php echo !$showImportTab ? 'show active' : ''; ?>" id="input-pane" role="tabpanel">
+                        <form method="POST">
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="tim">Tim <span class="text-danger">*</span></label>

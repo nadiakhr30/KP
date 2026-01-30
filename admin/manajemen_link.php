@@ -106,7 +106,7 @@ while ($row = mysqli_fetch_assoc($qLink)) {
                                             </div>
                                             <div class="user-content">
                                                 <h4><?= htmlspecialchars($link['nama_link']); ?></h4>
-                                                <a href="<?= htmlspecialchars($link['link']); ?>" target="_blank" class="badge bg-primary"><?= htmlspecialchars($link['link']); ?></a>
+                                                <a href="<?= htmlspecialchars($link['link']); ?>" target="_blank" class="badge bg-primary link-badge" title="<?= htmlspecialchars($link['link']); ?>"><?= htmlspecialchars($link['link']); ?></a>
                                             </div>
                                         </div>
                                     </div>
@@ -355,6 +355,19 @@ const lightbox = GLightbox({
     outline: none !important;
     box-shadow: none !important;
 }
+
+/* Prevent long URLs from overflowing cards */
+.link-badge {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* table-specific truncation removed — table view unchanged per user request */
 </style>
 <?php
 $script = ob_get_clean();

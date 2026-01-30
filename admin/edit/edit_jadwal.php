@@ -307,7 +307,7 @@ if ($link_result) {
                                 id="tanggal_penugasan" 
                                 name="tanggal_penugasan"
                                 required
-                                value="<?php echo $jadwal['tanggal_penugasan']; ?>"
+                                value="<?php echo $jadwal['tanggal_penugasan'] ? date('Y-m-d', strtotime($jadwal['tanggal_penugasan'])) : ''; ?>"
                             >
                         </div>
 
@@ -319,7 +319,7 @@ if ($link_result) {
                                 id="tanggal_rilis" 
                                 name="tanggal_rilis"
                                 required
-                                value="<?php echo $jadwal['tanggal_rilis']; ?>"
+                                value="<?php echo $jadwal['tanggal_rilis'] ? date('Y-m-d', strtotime($jadwal['tanggal_rilis'])) : ''; ?>"
                             >
                         </div>
                     </div>
