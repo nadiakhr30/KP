@@ -137,10 +137,10 @@ global $user;
                           <li class="user-profile header-notification">
                               <a href="#!" class="waves-effect waves-light m-t-10" style="display: flex; align-items: center; gap: 8px;">
                                     <div class="avatar-wrapper2">
-                                        <?php if ($_SESSION['user']['foto_profil'] == ""): ?>
+                                        <?php if ($_SESSION['pegawai']['foto_profil'] == ""): ?>
                                             <img src="../images/noimages.jpg" class="avatar-img" alt="No Images">
                                         <?php else: ?>
-                                            <img src="../uploads/<?= $_SESSION['user']['foto_profil'] ?>" class="avatar-img" alt="<?= $_SESSION['user']['foto_profil'];?>">
+                                            <img src="../uploads/<?= $_SESSION['pegawai']['foto_profil'] ?>" class="avatar-img" alt="<?= $_SESSION['pegawai']['foto_profil'];?>">
                                         <?php endif; ?>
                                     </div>
                                   <i class="ti-angle-down"></i>
@@ -150,9 +150,9 @@ global $user;
                                     <div class="card-header">
                                         <li class="waves-effect waves-light">
                                             <div style="display: flex; flex-direction: column; justify-content: center;">
-                                                <h5 style="margin: 0; font-size: 13px;"><?= $_SESSION['user']['nama'];?></h5>
+                                                <h5 style="margin: 0; font-size: 13px;"><?= $_SESSION['pegawai']['nama'];?></h5>
                                                 <small style="color: #999;"><?= $_SESSION['role'];?></small>
-                                                <small style="color: #999;"><?= $_SESSION['user']['email'];?></small>
+                                                <small style="color: #999;"><?= $_SESSION['pegawai']['email'];?></small>
                                             </div>
                                         </li>
                                     </div>

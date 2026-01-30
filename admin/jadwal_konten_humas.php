@@ -5,7 +5,7 @@ ob_start();
 session_start();
 include_once("../koneksi.php");
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
     header('Location: ../index.php');
     exit();
 }
@@ -36,7 +36,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     $qPic = mysqli_query($koneksi, "
         SELECT u.nip, u.nama, jp.nama_jenis_pic
         FROM pic p
-        JOIN user u ON p.nip = u.nip
+        JOIN pegawai u ON p.nip = u.nip
         JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic
         WHERE p.id_jadwal = " . (int)$id_jadwal . "
         ORDER BY jp.nama_jenis_pic
@@ -70,7 +70,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     }
     
     // Check if current user is PIC of this jadwal
-    $isUserPic = isset($_SESSION['user']['nip']) && in_array($_SESSION['user']['nip'], $picNips);
+    $isUserPic = isset($_SESSION['pegawai']['nip']) && in_array($_SESSION['pegawai']['nip'], $picNips);
     
     // Set color based on status
     $color = match ($row['status']) {
@@ -990,3 +990,4 @@ $script = ob_get_clean();
 include 'layout.php';
 renderLayout($content, $script);
 ?>
+

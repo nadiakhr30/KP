@@ -3,13 +3,13 @@ ob_start();
 session_start();
 include_once("../koneksi.php");
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
     header('Location: ../index.php');
     exit();
 }
 
 // TOTAL HIRED EMPLOYEE
-$qUser = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM user WHERE status = 1");
+$qUser = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pegawai WHERE status = 1");
 $totalUser = mysqli_fetch_assoc($qUser)['total'];
 
 // TOTAL TIM
@@ -60,7 +60,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
   $qPic = mysqli_query($koneksi, "
     SELECT u.nama, jp.nama_jenis_pic
     FROM pic p
-    JOIN user u ON p.nip = u.nip
+  JOIN pegawai u ON p.nip = u.nip
     JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic
     WHERE p.id_jadwal = " . (int)$id_jadwal . "
     ORDER BY jp.nama_jenis_pic
@@ -129,7 +129,7 @@ SELECT
   s.nama_skill,
   COUNT(us.id_user_skill) AS total_skill
 FROM skill s
-LEFT JOIN user_skill us ON s.id_skill = us.id_skill
+LEFT JOIN pegawai_skill us ON s.id_skill = us.id_skill
 GROUP BY s.id_skill, s.nama_skill
 ORDER BY total_skill DESC
 ");
@@ -151,7 +151,7 @@ while($s = mysqli_fetch_assoc($qStatus)){
 $qTopPegawai = mysqli_query($koneksi, "
   SELECT u.nama, COUNT(*) AS total
   FROM pic p
-  JOIN user u ON p.nip = u.nip
+  JOIN pegawai u ON p.nip = u.nip
   GROUP BY u.nip, u.nama
   ORDER BY total DESC
   LIMIT 5
@@ -172,7 +172,7 @@ while ($r = mysqli_fetch_assoc($qTopPegawai)) {
                 <div class="col-md-8">
                     <div class="page-header-title">
                         <h5 class="m-b-10">Dashboard</h5>
-                        <p class="m-b-0">Selamat Datang, <?= $_SESSION['user']['nama'] ?>!</p>
+                        <p class="m-b-0">Selamat Datang, <?= $_SESSION['pegawai']['nama'] ?>!</p>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -733,3 +733,4 @@ $script = ob_get_clean();
 include 'layout.php';
 renderLayout($content, $script);
 ?>
+

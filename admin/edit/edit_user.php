@@ -3,7 +3,7 @@ ob_start();
 session_start();
 include_once("../../koneksi.php");
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
     header('Location: ../../index.php');
     exit();
 }
@@ -15,7 +15,7 @@ $nip = isset($_GET['nip']) ? mysqli_real_escape_string($koneksi, $_GET['nip']) :
 // Get user data
 $qUser = mysqli_query($koneksi, "
     SELECT u.*, j.nama_jabatan, r.nama_role, p.nama_ppid
-    FROM user u
+    FROM pegawai u
     LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
     LEFT JOIN role r ON u.id_role = r.id_role
     LEFT JOIN ppid p ON u.id_ppid = p.id_ppid
@@ -59,13 +59,13 @@ if (mysqli_num_rows($qUser) == 0) {
         $skills[] = $row;
     }
 
-    $qUserHaloPST = mysqli_query($koneksi, "SELECT id_halo_pst FROM user_halo_pst WHERE nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'");
+    $qUserHaloPST = mysqli_query($koneksi, "SELECT id_halo_pst FROM pegawai_halo_pst WHERE nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'");
     $userHaloPSTs = [];
     while ($row = mysqli_fetch_assoc($qUserHaloPST)) {
         $userHaloPSTs[] = $row['id_halo_pst'];
     }
 
-    $qUserSkill = mysqli_query($koneksi, "SELECT id_skill FROM user_skill WHERE nip = '$nip'");
+    $qUserSkill = mysqli_query($koneksi, "SELECT id_skill FROM pegawai_skill WHERE nip = '$nip'");
     $userSkills = [];
     while ($row = mysqli_fetch_assoc($qUserSkill)) {
         $userSkills[] = $row['id_skill'];
@@ -102,7 +102,7 @@ if (mysqli_num_rows($qUser) == 0) {
             
             // Update user data
             $update = mysqli_query($koneksi, "
-                UPDATE user 
+                UPDATE pegawai 
                 SET nama = '$nama', 
                     email = '$email', 
                     nomor_telepon = " . (!empty($nomor_telepon) ? "'$nomor_telepon'" : "NULL") . ",
@@ -116,20 +116,20 @@ if (mysqli_num_rows($qUser) == 0) {
 
             if ($update) {
                 // Update Halo PST (required, multiple allowed)
-                mysqli_query($koneksi, "DELETE FROM user_halo_pst WHERE nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'");
+                mysqli_query($koneksi, "DELETE FROM pegawai_halo_pst WHERE nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'");
                 if (!empty($_POST['id_halo_pst']) && is_array($_POST['id_halo_pst'])) {
                     foreach ($_POST['id_halo_pst'] as $id_halo_pst) {
                         $id_halo_pst = (int)$id_halo_pst;
-                        mysqli_query($koneksi, "INSERT INTO user_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', $id_halo_pst)");
+                        mysqli_query($koneksi, "INSERT INTO pegawai_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', $id_halo_pst)");
                     }
                 }
 
                 // Update Skills (optional, multiple allowed)
-                mysqli_query($koneksi, "DELETE FROM user_skill WHERE nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'");
+                mysqli_query($koneksi, "DELETE FROM pegawai_skill WHERE nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'");
                 if (!empty($_POST['id_skill']) && is_array($_POST['id_skill'])) {
                     foreach ($_POST['id_skill'] as $id_skill) {
                         $id_skill = (int)$id_skill;
-                        mysqli_query($koneksi, "INSERT INTO user_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', $id_skill)");
+                        mysqli_query($koneksi, "INSERT INTO pegawai_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', $id_skill)");
                     }
                 }
 
@@ -336,3 +336,4 @@ if (mysqli_num_rows($qUser) == 0) {
 
 </body>
 </html>
+

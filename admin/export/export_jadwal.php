@@ -3,7 +3,7 @@ ob_start();
 session_start();
 include_once("../../koneksi.php");
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
     header('Location: ../index.php');
     exit();
 }
@@ -108,7 +108,7 @@ if ($format === 'print') {
                     $id = (int)$row['id_jadwal'];
                     // PIC map per type
                     $picMap = [];
-                    $qPic = mysqli_query($koneksi, "SELECT jp.nama_jenis_pic, u.nama FROM pic p JOIN user u ON p.nip = u.nip JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic WHERE p.id_jadwal = " . $id . " ORDER BY jp.nama_jenis_pic");
+                    $qPic = mysqli_query($koneksi, "SELECT jp.nama_jenis_pic, u.nama FROM pic p JOIN pegawai u ON p.nip = u.nip JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic WHERE p.id_jadwal = " . $id . " ORDER BY jp.nama_jenis_pic");
                     if ($qPic) { while ($p = mysqli_fetch_assoc($qPic)) { $picMap[$p['nama_jenis_pic']] = $p['nama']; } }
 
                     // Link map per type
@@ -261,3 +261,4 @@ if ($format === 'excel') {
 // Fallback: if unknown format, redirect back
 header('Location: ../jadwal_konten_humas.php');
 exit();
+

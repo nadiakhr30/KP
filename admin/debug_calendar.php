@@ -33,7 +33,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     $qPic = mysqli_query($koneksi, "
         SELECT u.nama, jp.nama_jenis_pic
         FROM pic p
-        JOIN user u ON p.nip = u.nip
+        JOIN pegawai u ON p.nip = u.nip
         JOIN jenis_pic jp ON p.id_jenis_pic = jp.id_jenis_pic
         WHERE p.id_jadwal = " . (int)$id_jadwal . "
         ORDER BY jp.nama_jenis_pic
@@ -101,3 +101,4 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 echo "\nFinal JSON output:\n";
 echo json_encode($jadwalkalender, JSON_PRETTY_PRINT);
 ?>
+

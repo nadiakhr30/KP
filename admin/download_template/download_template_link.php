@@ -37,3 +37,4 @@ header('Content-Disposition: attachment;filename="' . $filename . '"');
 $writer = new Xlsx($spreadsheet);
 $writer->save('php://output');
 exit();
+

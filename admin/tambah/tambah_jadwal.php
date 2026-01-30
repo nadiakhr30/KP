@@ -247,7 +247,7 @@ if ($jenis_pic_result) {
 }
 
 // Get user data for PIC dropdowns
-$user_query = "SELECT nip, nama FROM user WHERE status = 1 ORDER BY nama";
+$user_query = "SELECT nip, nama FROM pegawai WHERE status = 1 ORDER BY nama";
 $user_result = mysqli_query($koneksi, $user_query);
 $user_data = [];
 if ($user_result) {

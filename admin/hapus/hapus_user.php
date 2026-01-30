@@ -2,7 +2,7 @@
 ob_start();
 session_start();
 include_once("../../koneksi.php");
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
     header('Location: ../../index.php');
     exit();
 }
@@ -10,7 +10,7 @@ $error = '';
 $success = '';
 $nip = isset($_GET['nip']) ? mysqli_real_escape_string($koneksi, $_GET['nip']) : '';
 // Get user data
-$qUser = mysqli_query($koneksi, "SELECT * FROM user WHERE nip = '$nip'");
+$qUser = mysqli_query($koneksi, "SELECT * FROM pegawai WHERE nip = '$nip'");
 if (mysqli_num_rows($qUser) == 0) {
     $error = "User tidak ditemukan!";
     header("Refresh: 2; url=../manajemen_user.php");
@@ -22,10 +22,10 @@ $deleteSuccess = false;
 $deleteError = '';
 if (isset($_POST['konfirmasi_hapus'])) {
     // Delete user from all related tables
-    mysqli_query($koneksi, "DELETE FROM user_skill WHERE nip = '$nip'");
-    mysqli_query($koneksi, "DELETE FROM user_halo_pst WHERE nip = '$nip'");
+    mysqli_query($koneksi, "DELETE FROM pegawai_skill WHERE nip = '$nip'");
+    mysqli_query($koneksi, "DELETE FROM pegawai_halo_pst WHERE nip = '$nip'");
     // Delete user
-    $delete = mysqli_query($koneksi, "DELETE FROM user WHERE nip = '$nip'");
+    $delete = mysqli_query($koneksi, "DELETE FROM pegawai WHERE nip = '$nip'");
     if ($delete) {
         $deleteSuccess = true;
     } else {
@@ -144,3 +144,4 @@ if (isset($_POST['konfirmasi_hapus'])) {
 
 </body>
 </html>
+

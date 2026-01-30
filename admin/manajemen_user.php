@@ -3,7 +3,7 @@ ob_start();
 session_start();
 include_once("../koneksi.php");
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
     header('Location: ../index.php');
     exit();
 }
@@ -22,7 +22,7 @@ $qUser = mysqli_query($koneksi, "
         j.nama_jabatan,
         r.nama_role,
         p.nama_ppid
-    FROM user u
+    FROM pegawai u
     LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
     LEFT JOIN role r ON u.id_role = r.id_role
     LEFT JOIN ppid p ON u.id_ppid = p.id_ppid
@@ -37,7 +37,7 @@ while ($row = mysqli_fetch_assoc($qUser)) {
 function getUserSkills($koneksi, $nip) {
     $qSkill = mysqli_query($koneksi, "
         SELECT s.nama_skill
-        FROM user_skill us
+        FROM pegawai_skill us
         JOIN skill s ON us.id_skill = s.id_skill
         WHERE us.nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'
         ORDER BY s.nama_skill
@@ -53,7 +53,7 @@ function getUserSkills($koneksi, $nip) {
 function getUserHaloPST($koneksi, $nip) {
     $qHaloPST = mysqli_query($koneksi, "
         SELECT hp.nama_halo_pst
-        FROM user_halo_pst uhp
+        FROM pegawai_halo_pst uhp
         JOIN halo_pst hp ON uhp.id_halo_pst = hp.id_halo_pst
         WHERE uhp.nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'
         ORDER BY hp.nama_halo_pst
@@ -320,3 +320,4 @@ $script = ob_get_clean();
 include 'layout.php';
 renderLayout($content, $script);
 ?>
+

@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_FILES["excelFile"]) && !iss
         $error = "Nomor telepon harus berupa angka!";
     } else {
         // Check if email already exists
-        $check_email_query = "SELECT email FROM user WHERE email = '" . mysqli_real_escape_string($koneksi, $email) . "'";
+        $check_email_query = "SELECT email FROM pegawai WHERE email = '" . mysqli_real_escape_string($koneksi, $email) . "'";
         $check_email_result = mysqli_query($koneksi, $check_email_query);
         
         if (mysqli_num_rows($check_email_result) > 0) {
@@ -55,14 +55,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_FILES["excelFile"]) && !iss
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
             // Insert into user table
-            $insertUser = "INSERT INTO user (nip, nama, password, email, foto_profil, status, nomor_telepon, id_jabatan, id_role, id_ppid) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', '" . mysqli_real_escape_string($koneksi, $nama) . "', '" . mysqli_real_escape_string($koneksi, $hashed_password) . "', '" . mysqli_real_escape_string($koneksi, $email) . "', NULL, " . (int)$status . ", " . (!empty($nomor_telepon) ? "'" . mysqli_real_escape_string($koneksi, $nomor_telepon) . "'" : "NULL") . ", " . (int)$id_jabatan . ", " . (int)$id_role . ", " . (int)$id_ppid . ")";
+            $insertUser = "INSERT INTO pegawai (nip, nama, password, email, foto_profil, status, nomor_telepon, id_jabatan, id_role, id_ppid) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', '" . mysqli_real_escape_string($koneksi, $nama) . "', '" . mysqli_real_escape_string($koneksi, $hashed_password) . "', '" . mysqli_real_escape_string($koneksi, $email) . "', NULL, " . (int)$status . ", " . (!empty($nomor_telepon) ? "'" . mysqli_real_escape_string($koneksi, $nomor_telepon) . "'" : "NULL") . ", " . (int)$id_jabatan . ", " . (int)$id_role . ", " . (int)$id_ppid . ")";
 
             if (mysqli_query($koneksi, $insertUser)) {
                 // Insert required Halo PST entries (multiple)
                 $hp_ok = true;
                 foreach ($halo_pst as $id_halo_pst) {
                     $id_halo_pst = (int)$id_halo_pst;
-                    $insert_halo_pst_query = "INSERT INTO user_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_halo_pst . ")";
+                    $insert_halo_pst_query = "INSERT INTO pegawai_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_halo_pst . ")";
                     if (!mysqli_query($koneksi, $insert_halo_pst_query)) {
                         $error = "Gagal menambahkan data Halo PST: " . mysqli_error($koneksi);
                         $hp_ok = false;
@@ -75,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_FILES["excelFile"]) && !iss
                     if (!empty($skills)) {
                         foreach ($skills as $id_skill) {
                             $id_skill = (int)$id_skill;
-                            $insert_skill_query = "INSERT INTO user_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_skill . ")";
+                            $insert_skill_query = "INSERT INTO pegawai_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_skill . ")";
                             if (!mysqli_query($koneksi, $insert_skill_query)) {
                                 $error = "Gagal menambahkan data skill: " . mysqli_error($koneksi);
                                 $hp_ok = false;
@@ -185,7 +185,7 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
             $hashed_password = password_hash($user['password'], PASSWORD_DEFAULT);
             
             // Insert into user table
-            $insertUser = "INSERT INTO user (nip, nama, email, password, status, nomor_telepon, id_jabatan, id_role, id_ppid) 
+            $insertUser = "INSERT INTO pegawai (nip, nama, email, password, status, nomor_telepon, id_jabatan, id_role, id_ppid) 
                           VALUES (
                             '" . mysqli_real_escape_string($koneksi, $user['nip']) . "',
                             '" . mysqli_real_escape_string($koneksi, $user['nama']) . "',
@@ -203,14 +203,14 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                     $errorCount++;
                     $errors[] = "Baris " . ($index + 2) . ": Halo PST harus dipilih minimal satu!";
                     // Remove inserted user to keep data consistent
-                    mysqli_query($koneksi, "DELETE FROM user WHERE nip = '" . mysqli_real_escape_string($koneksi, $user['nip']) . "'");
+                    mysqli_query($koneksi, "DELETE FROM pegawai WHERE nip = '" . mysqli_real_escape_string($koneksi, $user['nip']) . "'");
                     continue;
                 }
 
                 // Insert into user_halo_pst (nip, id_halo_pst)
                 $halopstIds = array_filter(array_map('intval', explode(',', $user['halo_pst'])));
                 foreach ($halopstIds as $halopstId) {
-                    $insertHaloPST = "INSERT INTO user_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $user['nip']) . "', " . $halopstId . ")";
+                    $insertHaloPST = "INSERT INTO pegawai_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $user['nip']) . "', " . $halopstId . ")";
                     mysqli_query($koneksi, $insertHaloPST);
                 }
 
@@ -218,7 +218,7 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                 if (!empty($user['skills'])) {
                     $skillIds = array_filter(array_map('intval', explode(',', $user['skills'])));
                     foreach ($skillIds as $skillId) {
-                        $insertSkill = "INSERT INTO user_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $user['nip']) . "', " . $skillId . ")";
+                        $insertSkill = "INSERT INTO pegawai_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $user['nip']) . "', " . $skillId . ")";
                         mysqli_query($koneksi, $insertSkill);
                     }
                 }

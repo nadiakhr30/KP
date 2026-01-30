@@ -6,7 +6,7 @@ $success = "";
 
 // Fetch jenis aset and users for selects
 $jenisResult = mysqli_query($koneksi, "SELECT id_jenis_aset, nama_jenis_aset FROM jenis_aset ORDER BY nama_jenis_aset ASC");
-$usersResult = mysqli_query($koneksi, "SELECT nip, nama FROM user ORDER BY nama ASC");
+$usersResult = mysqli_query($koneksi, "SELECT nip, nama FROM pegawai ORDER BY nama ASC");
 
 // Process form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

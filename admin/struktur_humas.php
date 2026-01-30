@@ -3,7 +3,7 @@ ob_start();
 session_start();
 include_once("../koneksi.php");
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
     header('Location: ../index.php');
     exit();
 }
@@ -37,16 +37,16 @@ if ($filterType && $filterId > 0) {
     if ($filterType === 'skill') {
         $qUsers = mysqli_query($koneksi, "
             SELECT DISTINCT u.nip, u.nama, u.email, u.nomor_telepon, u.foto_profil as foto, j.nama_jabatan
-            FROM user u
+            FROM pegawai u
             LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
-            JOIN user_skill us ON u.nip = us.nip
+            JOIN pegawai_skill us ON u.nip = us.nip
             WHERE us.id_skill = $filterId AND u.status = 1
             ORDER BY u.nama
         ");
     } elseif ($filterType === 'ppid') {
         $qUsers = mysqli_query($koneksi, "
             SELECT DISTINCT u.nip, u.nama, u.email, u.nomor_telepon, u.foto_profil as foto, j.nama_jabatan
-            FROM user u
+            FROM pegawai u
             LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
             WHERE u.id_ppid = $filterId AND u.status = 1
             ORDER BY u.nama
@@ -54,9 +54,9 @@ if ($filterType && $filterId > 0) {
     } elseif ($filterType === 'halo') {
         $qUsers = mysqli_query($koneksi, "
             SELECT DISTINCT u.nip, u.nama, u.email, u.nomor_telepon, u.foto_profil as foto, j.nama_jabatan
-            FROM user u
+            FROM pegawai u
             LEFT JOIN jabatan j ON u.id_jabatan = j.id_jabatan
-            JOIN user_halo_pst hu ON u.nip = hu.nip
+            JOIN pegawai_halo_pst hu ON u.nip = hu.nip
             WHERE hu.id_halo_pst = $filterId AND u.status = 1
             ORDER BY u.nama
         ");
@@ -318,3 +318,4 @@ $(function() {
 
 renderLayout($pageContent, $script);
 ?>
+
