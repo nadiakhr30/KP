@@ -190,7 +190,7 @@ global $user;
                                   </a>
                               </li>
                               <li>
-                                  <a href="#" class="waves-effect waves-dark">
+                                  <a href="brankas_humas.php" class="waves-effect waves-dark">
                                       <span class="pcoded-micon"><i class="ti-harddrives"></i><b>FC</b></span>
                                       <span class="pcoded-mtext" data-i18n="menu.brankas-humas">Brankas Humas</span>
                                       <span class="pcoded-mcaret"></span>
@@ -250,27 +250,26 @@ global $user;
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                                   <ul class="pcoded-submenu">
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="menu.aset-visual">Aset Visual</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="menu.aset-barang">Aset Barang</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="menu.aset-lisensi">Aset Lisensi</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
+                                      <?php
+                                     if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                                         $qAsetMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT * FROM jenis_aset ORDER BY nama_jenis_aset");
+                                         if ($qAsetMenu) {
+                                             while ($rowAset = mysqli_fetch_assoc($qAsetMenu)) {
+                                                 echo '<li class=" ">';
+                                                 echo '<a href="aset.php?jenis=' . (int)$rowAset['id_jenis_aset'] . '" class="waves-effect waves-dark">';
+                                                 echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
+                                                 echo '<span class="pcoded-mtext">Aset ' . htmlspecialchars($rowAset['nama_jenis_aset']) . '</span>';
+                                                 echo '<span class="pcoded-mcaret"></span>';
+                                                 echo '</a>';
+                                                 echo '</li>';
+                                             }
+                                         } else {
+                                             echo '<li><a href="aset.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Aset</span></a></li>';
+                                         }
+                                     } else {
+                                         echo '<li><a href="aset.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Aset</span></a></li>';
+                                     }
+                                      ?>
                                   </ul>
                               </li>
                           </ul>
@@ -279,40 +278,32 @@ global $user;
                           <ul class="pcoded-item pcoded-left-item">
                               <li class="pcoded-hasmenu">
                                   <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-instagram"></i></span>
-                                      <span class="pcoded-mtext"  data-i18n="menu.template-medsos">Template Medsos</span>
-                                      <span class="pcoded-mcaret"></span>
-                                  </a>
-                                  <ul class="pcoded-submenu">
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="menu.potrait-45">Potrait (4:5)</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="menu.reels-916">Reels (9:16)</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="menu.landscape-169">Landscape (16:9)</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="menu.pedoman-visual">Pedoman Visual Medsos BPS</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                  </ul>
+                                          <span class="pcoded-micon"><i class="ti-instagram"></i></span>
+                                          <span class="pcoded-mtext"  data-i18n="menu.template-medsos">Template Medsos</span>
+                                          <span class="pcoded-mcaret"></span>
+                                      </a>
+                                      <ul class="pcoded-submenu">
+                                          <?php
+                                         if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                                             $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Template Medsos' ORDER BY s.nama_sub_jenis");
+                                             if ($qSubMenu) {
+                                                 while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
+                                                     echo '<li class=" ">';
+                                                     echo '<a href="template_medsos.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark">';
+                                                     echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
+                                                     echo '<span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span>';
+                                                     echo '<span class="pcoded-mcaret"></span>';
+                                                     echo '</a>';
+                                                     echo '</li>';
+                                                 }
+                                             } else {
+                                                 echo '<li><a href="template_medsos.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Template Medsos</span></a></li>';
+                                             }
+                                         } else {
+                                             echo '<li><a href="template_medsos.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Template Medsos</span></a></li>';
+                                         }
+                                          ?>
+                                      </ul>
                               </li>
                               <li class="pcoded-hasmenu">
                                   <a href="javascript:void(0)" class="waves-effect waves-dark">
@@ -321,20 +312,26 @@ global $user;
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                                   <ul class="pcoded-submenu">
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="menu.kegiatan-bps">Kegiatan BPS Bangkalan</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="menu.pendataan-sensus">Pendataan Sensus Ekonomi 2026</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
+                                      <?php
+                                     if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                                         $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Dokumentasi' ORDER BY s.nama_sub_jenis");
+                                         if ($qSubMenu) {
+                                             while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
+                                                 echo '<li class=" ">';
+                                                 echo '<a href="dokumentasi.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark">';
+                                                 echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
+                                                 echo '<span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span>';
+                                                 echo '<span class="pcoded-mcaret"></span>';
+                                                 echo '</a>';
+                                                 echo '</li>';
+                                             }
+                                         } else {
+                                             echo '<li><a href="dokumentasi.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Dokumentasi</span></a></li>';
+                                         }
+                                     } else {
+                                         echo '<li><a href="dokumentasi.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Dokumentasi</span></a></li>';
+                                     }
+                                      ?>
                                   </ul>
                               </li>
                               <li class="pcoded-hasmenu">
@@ -344,41 +341,26 @@ global $user;
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                                   <ul class="pcoded-submenu">
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="menu.pimpinan">Pimpinan</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="???">Pegawai</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="???">Sensus Ekonomi 2026</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="???">Gedung Kantor</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="???">Landmark Bangkalan</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
+                                      <?php
+                                     if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                                         $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Galeri Foto' ORDER BY s.nama_sub_jenis");
+                                         if ($qSubMenu) {
+                                             while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
+                                                 echo '<li class=" ">';
+                                                 echo '<a href="galeri_foto.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark">';
+                                                 echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
+                                                 echo '<span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span>';
+                                                 echo '<span class="pcoded-mcaret"></span>';
+                                                 echo '</a>';
+                                                 echo '</li>';
+                                             }
+                                         } else {
+                                             echo '<li><a href="galeri_foto.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Galeri Foto</span></a></li>';
+                                         }
+                                     } else {
+                                         echo '<li><a href="galeri_foto.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Galeri Foto</span></a></li>';
+                                     }
+                                      ?>
                                   </ul>
                               </li>
                               <li class="pcoded-hasmenu">
@@ -388,27 +370,26 @@ global $user;
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                                   <ul class="pcoded-submenu">
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="???">Kantor BPS Bangkalan</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="???">Landmark Bangkalan</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="???">Sensus Ekonomi 2026</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
+                                      <?php
+                                     if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                                         $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Galeri Video' ORDER BY s.nama_sub_jenis");
+                                         if ($qSubMenu) {
+                                             while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
+                                                 echo '<li class=" ">';
+                                                 echo '<a href="galeri_video.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark">';
+                                                 echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
+                                                 echo '<span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span>';
+                                                 echo '<span class="pcoded-mcaret"></span>';
+                                                 echo '</a>';
+                                                 echo '</li>';
+                                             }
+                                         } else {
+                                             echo '<li><a href="galeri_video.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Galeri Video</span></a></li>';
+                                         }
+                                     } else {
+                                         echo '<li><a href="galeri_video.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Galeri Video</span></a></li>';
+                                     }
+                                      ?>
                                   </ul>
                               </li>
                               <li class="pcoded-hasmenu">
@@ -418,63 +399,68 @@ global $user;
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                                   <ul class="pcoded-submenu">
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="???">Pemanfaatan Adobe</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="???">Konten SE2026</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="???">Humas Bulanan</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
-                                      <li class=" ">
-                                          <a href="#" class="waves-effect waves-dark">
-                                              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                                              <span class="pcoded-mtext" data-i18n="???">Humas Tahunan</span>
-                                              <span class="pcoded-mcaret"></span>
-                                          </a>
-                                      </li>
+                                      <?php
+                                     if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                                         $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Laporan' ORDER BY s.nama_sub_jenis");
+                                         if ($qSubMenu) {
+                                             while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
+                                                 echo '<li class=" ">';
+                                                 echo '<a href="laporan.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark">';
+                                                 echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
+                                                 echo '<span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span>';
+                                                 echo '<span class="pcoded-mcaret"></span>';
+                                                 echo '</a>';
+                                                 echo '</li>';
+                                             }
+                                         } else {
+                                             echo '<li><a href="laporan.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Laporan</span></a></li>';
+                                         }
+                                     } else {
+                                         echo '<li><a href="laporan.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Laporan</span></a></li>';
+                                     }
+                                      ?>
                                   </ul>
                               </li>
                           </ul>
                           <div class="pcoded-navigation-label" data-i18n="nav.category.broadcast">KEBUTUHAN BROADCAST</div>
                           <ul class="pcoded-item pcoded-left-item">
-                              <li class=" ">
-                                  <a href="#" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-video-clapper"></i><b>D</b></span>
-                                      <span class="pcoded-mtext" data-i18n="???">Video Operator</span>
-                                      <span class="pcoded-mcaret"></span>
-                                  </a>
-                              </li>
-                              <li class=" ">
-                                  <a href="#" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-blackboard"></i><b>FC</b></span>
-                                      <span class="pcoded-mtext" data-i18n="???">Template OBS Rilis</span>
-                                      <span class="pcoded-mcaret"></span>
-                                  </a>
-                              </li>
+                              <?php
+                             if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                                 $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Kebutuhan Broadcast' ORDER BY s.nama_sub_jenis");
+                                 if ($qSubMenu && mysqli_num_rows($qSubMenu) > 0) {
+                                     while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
+                                         echo '<li class=" ">';
+                                         echo '<a href="kebutuhan_broadcast.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark">';
+                                         echo '<span class="pcoded-micon"><i class="ti-video-clapper"></i></span>';
+                                         echo '<span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span>';
+                                         echo '<span class="pcoded-mcaret"></span>';
+                                         echo '</a>';
+                                         echo '</li>';
+                                     }
+                                 } else {
+                                     echo '<li><a href="kebutuhan_broadcast.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-video-clapper"></i></span><span class="pcoded-mtext">Kebutuhan Broadcast</span></a></li>';
+                                 }
+                             } else {
+                                 echo '<li><a href="kebutuhan_broadcast.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-video-clapper"></i></span><span class="pcoded-mtext">Kebutuhan Broadcast</span></a></li>';
+                             }
+                              ?>
                           </ul>
                           <div class="pcoded-navigation-label" data-i18n="nav.category.capacity">PENINGKATAN KAPASITAS</div>
                           <ul class="pcoded-item pcoded-left-item">
-                              <li class=" ">
-                                  <a href="#" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-microphone"></i><b>D</b></span>
-                                      <span class="pcoded-mtext" data-i18n="???">Pembinaan Kehumasan</span>
-                                      <span class="pcoded-mcaret"></span>
-                                  </a>
-                              </li>
+                              <?php
+                             if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                                 $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Peningkatan Kapasitas' ORDER BY s.nama_sub_jenis");
+                                 if ($qSubMenu && mysqli_num_rows($qSubMenu) > 0) {
+                                     while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
+                                         echo '<li><a href="peningkatan_kapasitas.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-microphone"></i></span><span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span></a></li>';
+                                     }
+                                 } else {
+                                     echo '<li><a href="peningkatan_kapasitas.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-microphone"></i></span><span class="pcoded-mtext">Peningkatan Kapasitas</span></a></li>';
+                                 }
+                             } else {
+                                 echo '<li><a href="peningkatan_kapasitas.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-microphone"></i></span><span class="pcoded-mtext">Peningkatan Kapasitas</span></a></li>';
+                             }
+                              ?>
                           </ul>
                       </div>
                   </nav>
@@ -545,6 +531,81 @@ global $user;
         }
       });
     </script>
+
+    <script>
+      // Sync menu active state with current page filename
+      document.addEventListener('DOMContentLoaded', function() {
+        var path = window.location.pathname.split('/').pop() || 'index.php';
+        
+        // Remove 'active' class from all menu items
+        var allMenuItems = document.querySelectorAll('.pcoded-inner-navbar li');
+        allMenuItems.forEach(function(li) {
+          li.classList.remove('active');
+        });
+        
+        // Find and mark matching page as active
+        var links = document.querySelectorAll('.pcoded-inner-navbar a[href]');
+        links.forEach(function(a){
+          var href = a.getAttribute('href').split('?')[0];
+          if (!href) return;
+          var target = href.split('/').pop();
+          if (target === path) {
+            var li = a.closest('li');
+            var parentSub = a.closest('.pcoded-submenu');
+            if (parentSub) {
+              // Mark only the submenu item as active
+              if (li) li.classList.add('active');
+              // Open parent submenu
+              var parentLi = parentSub.closest('li.pcoded-hasmenu');
+              if (parentLi) {
+                parentLi.classList.add('pcoded-open');
+              }
+            } else {
+              // For non-submenu items, mark as active normally
+              if (li) li.classList.add('active');
+            }
+          }
+        });
+
+        // Handle parent menu header clicks for toggle
+        setTimeout(function() {
+          var parentMenuLinks = document.querySelectorAll('.pcoded-inner-navbar li.pcoded-hasmenu > a[href="javascript:void(0)"]');
+          parentMenuLinks.forEach(function(link) {
+            link.addEventListener('click', function(e) {
+              e.preventDefault();
+              
+              var parentLi = this.closest('li.pcoded-hasmenu');
+              var isOpen = parentLi.classList.contains('pcoded-open');
+              
+              // Close all other dropdowns
+              var allParentMenus = document.querySelectorAll('.pcoded-inner-navbar li.pcoded-hasmenu');
+              allParentMenus.forEach(function(menu) {
+                menu.classList.remove('pcoded-open');
+              });
+              
+              // Toggle current dropdown
+              if (!isOpen) {
+                parentLi.classList.add('pcoded-open');
+              }
+            });
+          });
+        }, 100);
+      });
+    </script>
+
+    <style>
+      /* Style for active submenu items */
+      .pcoded-submenu li.active > a {
+        background: linear-gradient(to right, #f5f5f5, #e8e8e8) !important;
+        color: #000 !important;
+      }
+      .pcoded-submenu li.active > a .pcoded-mtext {
+        color: #000 !important;
+      }
+      .pcoded-submenu li.active > a i {
+        color: #000 !important;
+      }
+    </style>
 </body>
 
 </html>

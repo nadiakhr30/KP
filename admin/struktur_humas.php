@@ -16,11 +16,11 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == 1) {
     $filterId = isset($_GET['filterId']) ? (int)$_GET['filterId'] : 0;
     
     if ($filterType === 'skill') {
-        $q = mysqli_query($koneksi, "SELECT DISTINCT p.* FROM pegawai p INNER JOIN user_skill us ON p.id_pegawai = us.id_pegawai WHERE us.id_skill = $filterId");
+        $q = mysqli_query($koneksi, "SELECT DISTINCT p.*, j.nama_jabatan FROM pegawai p INNER JOIN user_skill us ON p.nip = us.nip LEFT JOIN jabatan j ON p.id_jabatan = j.id_jabatan WHERE us.id_skill = $filterId");
     } elseif ($filterType === 'ppid') {
-        $q = mysqli_query($koneksi, "SELECT DISTINCT p.* FROM pegawai p INNER JOIN user_ppid up ON p.id_pegawai = up.id_pegawai WHERE up.id_ppid = $filterId");
+        $q = mysqli_query($koneksi, "SELECT DISTINCT p.*, j.nama_jabatan FROM pegawai p LEFT JOIN jabatan j ON p.id_jabatan = j.id_jabatan WHERE p.id_ppid = $filterId");
     } elseif ($filterType === 'halo') {
-        $q = mysqli_query($koneksi, "SELECT DISTINCT p.* FROM pegawai p INNER JOIN user_halo_pst uh ON p.id_pegawai = uh.id_pegawai WHERE uh.id_halo_pst = $filterId");
+        $q = mysqli_query($koneksi, "SELECT DISTINCT p.*, j.nama_jabatan FROM pegawai p INNER JOIN user_halo_pst uh ON p.nip = uh.nip LEFT JOIN jabatan j ON p.id_jabatan = j.id_jabatan WHERE uh.id_halo_pst = $filterId");
     } else {
         echo json_encode(['error' => 'Invalid filter type']);
         exit;
@@ -191,33 +191,6 @@ $canvaMedia = mysqli_num_rows($qCanva) ? mysqli_fetch_assoc($qCanva) : null;
                                         Silakan tambahkan media dengan sub jenis "Struktur Humas" di menu Manajemen Media.
                                     </div>
                                     <?php endif; ?>
-
-                                    <!-- Edit Modal -->
-                                    <div class="modal" id="editCanvaModal" tabindex="-1" role="dialog" aria-hidden="true">
-                                        <div class="modal-dialog modal-lg" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Edit Link / Embed Canva</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form id="editCanvaForm">
-                                                        <input type="hidden" id="edit_id_media" name="id_media" value="" />
-                                                        <div class="form-group">
-                                                            <label for="edit_link">Link atau Embed Code</label>
-                                                            <textarea class="form-control" id="edit_link" name="link" rows="6" placeholder="Paste Canva embed iframe or view URL here..."></textarea>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                                    <button type="button" class="btn btn-primary" id="saveCanvaBtn">Simpan</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <!-- TAB 2: FILTER TIM -->
@@ -302,6 +275,33 @@ $canvaMedia = mysqli_num_rows($qCanva) ? mysqli_fetch_assoc($qCanva) : null;
     </div>
 </div>
 
+                                    <!-- Edit Modal -->
+                                    <div class="modal fade" id="editCanvaModal" tabindex="-1" role="dialog" aria-labelledby="editCanvaLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editCanvaLabel">Edit Link / Embed Canva</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="editCanvaForm">
+                                                        <input type="hidden" id="edit_id_media" name="id_media" value="" />
+                                                        <div class="form-group">
+                                                            <label for="edit_link">Link atau Embed Code</label>
+                                                            <textarea class="form-control" id="edit_link" name="link" rows="6" placeholder="Paste Canva embed iframe or view URL here..."></textarea>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                                    <button type="button" class="btn btn-primary" id="saveCanvaBtn">Simpan</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
 <?php
 $pageContent = ob_get_clean();
 include_once("layout.php");
@@ -357,6 +357,7 @@ $(function() {
                     response.forEach(function(user) {
                         var foto = user.foto ? "../uploads/" + user.foto : "../images/noimages.jpg";
                         var jabatan = user.nama_jabatan || "-";
+                        var telepon = user.nomor_telepon ? "0" + user.nomor_telepon : "-";
                         html += "<div class=\"col-lg-3 col-md-4 col-sm-6 mb-3\">";
                         html += "  <div class=\"card rounded-card user-card\">";
                         html += "    <div class=\"card-block\">";
@@ -366,7 +367,7 @@ $(function() {
                         html += "      <h6 class=\"mt-3 mb-1\" style=\"text-align: center;\">" + user.nama + "</h6>";
                         html += "      <p class=\"text-muted text-center\" style=\"font-size: 12px;\">" + jabatan + "</p>";
                         html += "      <p class=\"text-center\" style=\"font-size: 12px;\"><i class=\"fa fa-envelope\"></i> " + user.email + "</p>";
-                        html += "      <p class=\"text-center\" style=\"font-size: 12px;\"><i class=\"fa fa-phone\"></i> 0" + user.nomor_telepon + "</p>";
+                        html += "      <p class=\"text-center\" style=\"font-size: 12px;\"><i class=\"fa fa-phone\"></i> " + telepon + "</p>";
                         html += "    </div>";
                         html += "  </div>";
                         html += "</div>";
@@ -391,33 +392,50 @@ $(function() {
     });
 });
 
-// Edit Canva modal handlers
-$(document).on("click", "#editCanvaBtn", function() {
+// Edit Canva modal handlers - Simple pattern like manajemen_link.php
+function openEditCanvaModal(id, link) {
+    document.getElementById('edit_id_media').value = id;
+    document.getElementById('edit_link').value = link || '';
+    $('#editCanvaModal').modal('show');
+}
+
+$('#editCanvaBtn').on('click', function() {
     var id = $(this).data('id');
     var link = $(this).data('link') || '';
-    $('#edit_id_media').val(id);
-    $('#edit_link').val(link);
-    $('#editCanvaModal').modal('show');
+    openEditCanvaModal(id, link);
 });
 
-$(document).on('click', '#saveCanvaBtn', function() {
-    var id = $('#edit_id_media').val();
-    var link = $('#edit_link').val();
-    if (!link) { alert('Link tidak boleh kosong'); return; }
+$('#saveCanvaBtn').on('click', function() {
+    var id = document.getElementById('edit_id_media').value;
+    var link = document.getElementById('edit_link').value;
+    
+    if (!link) {
+        alert('Link tidak boleh kosong');
+        return;
+    }
+    
     $.ajax({
         url: 'struktur_humas.php',
         method: 'POST',
-        data: { action: 'update_canva_link', id_media: id, link: link },
+        data: { 
+            action: 'update_canva_link', 
+            id_media: id, 
+            link: link 
+        },
         dataType: 'json',
         success: function(res) {
             if (res && res.success) {
                 $('#editCanvaModal').modal('hide');
-                location.reload();
+                setTimeout(function() {
+                    location.reload();
+                }, 300);
             } else {
                 alert(res.message || 'Gagal menyimpan perubahan');
             }
         },
-        error: function() { alert('Terjadi kesalahan saat menyimpan'); }
+        error: function() {
+            alert('Terjadi kesalahan saat menyimpan');
+        }
     });
 });
 </script>

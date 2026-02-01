@@ -512,7 +512,6 @@ ob_start();
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-secondary waves-effect waves-light btn-icon" data-bs-dismiss="modal"><i class="fas fa-arrow-left"></i></button>
                 <button type="button" class="btn btn-sm btn-primary btn-icon waves-effect waves-light" onclick="saveEditDetail()"><i class="fas fa-save"></i></button>
             </div>
         </div>
