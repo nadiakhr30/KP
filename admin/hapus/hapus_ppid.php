@@ -4,7 +4,7 @@ include_once("../../koneksi.php");
 
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
     http_response_code(403);
     echo json_encode(['status' => 'error', 'message' => 'Anda tidak memiliki akses']);
     exit();

@@ -230,9 +230,9 @@ global $user;
                           <div class="pcoded-navigation-label" data-i18n="nav.category.workspace">RUANG HUMAS</div>
                           <ul class="pcoded-item pcoded-left-item">
                               <li class=" ">
-                                  <a href="struktur_humas.php" class="waves-effect waves-dark">
+                                  <a href="ruang_humas.php" class="waves-effect waves-dark">
                                       <span class="pcoded-micon"><i class="ti-layers-alt"></i><b>D</b></span>
-                                      <span class="pcoded-mtext" data-i18n="menu.struktur-humas">Struktur Humas</span>
+                                      <span class="pcoded-mtext" data-i18n="menu.ruang-humas">Struktur Humas</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                               </li>

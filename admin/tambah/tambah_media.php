@@ -126,12 +126,11 @@ if ($id_sub_jenis > 0) {
                         <div class="form-group col-md-6">
                             <label for="link">Link <span class="text-danger">*</span></label>
                             <input 
-                                type="url" 
+                                type="text"
                                 class="form-control" 
                                 id="link" 
                                 name="link"
                                 required
-                                maxlength="255"
                                 value="<?php echo isset($_POST["link"]) ? htmlspecialchars($_POST["link"]) : ''; ?>"
                             >
                         </div>

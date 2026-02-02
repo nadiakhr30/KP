@@ -83,6 +83,37 @@ while ($row = mysqli_fetch_assoc($qHalos)) {
     $allHalos[] = $row;
 }
 
+// Get sub_jenis for "Struktur Humas"
+$subId = 0;
+$qSub = mysqli_query($koneksi, "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE s.nama_sub_jenis = 'Struktur Humas' LIMIT 1");
+if ($qSub && mysqli_num_rows($qSub) > 0) {
+    $subRow = mysqli_fetch_assoc($qSub);
+    $subId = $subRow['id_sub_jenis'];
+} else {
+    // If sub_jenis doesn't exist, try to create it
+    $qJenis = mysqli_query($koneksi, "SELECT id_jenis FROM jenis WHERE nama_jenis = 'Struktur Humas'");
+    $idJenis = 0;
+    
+    if (!$qJenis || mysqli_num_rows($qJenis) === 0) {
+        // Create jenis
+        $insertJenis = mysqli_query($koneksi, "INSERT INTO jenis (nama_jenis) VALUES ('Struktur Humas')");
+        if ($insertJenis) {
+            $idJenis = mysqli_insert_id($koneksi);
+        }
+    } else {
+        $rJenis = mysqli_fetch_assoc($qJenis);
+        $idJenis = $rJenis['id_jenis'];
+    }
+    
+    // Now create sub_jenis
+    if ($idJenis > 0) {
+        $insertSub = mysqli_query($koneksi, "INSERT INTO sub_jenis (id_jenis, nama_sub_jenis) VALUES ($idJenis, 'Struktur Humas')");
+        if ($insertSub) {
+            $subId = mysqli_insert_id($koneksi);
+        }
+    }
+}
+
 // Fetch Canva media for Struktur Humas (latest)
 $qCanva = mysqli_query($koneksi, "
     SELECT m.*, sj.nama_sub_jenis
@@ -114,7 +145,7 @@ $canvaMedia = mysqli_num_rows($qCanva) ? mysqli_fetch_assoc($qCanva) : null;
                             <a href="index.php">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="struktur_humas.php">Struktur Organisasi</a>
+                            <a href="ruang_humas.php">Struktur Organisasi</a>
                         </li>
                     </ul>
                 </div>
@@ -137,60 +168,67 @@ $canvaMedia = mysqli_num_rows($qCanva) ? mysqli_fetch_assoc($qCanva) : null;
                                 <!-- TAB 1: GALERI STRUKTUR -->
                                 <div class="tab-pane p-3 active" id="galeri" role="tabpanel">
                                     <!-- Canva Preview Section -->
-                                    <?php if ($canvaMedia && !empty($canvaMedia['link'])): ?>
                                     <div class="card">
-                                        <div class="card-header d-flex align-items-center justify-content-between" style="background: linear-gradient(90deg, #fff 0%, #f8fafc 100%); border-bottom: 2px solid #f1f5f9; padding: 20px;">
+                                        <div class="card-header d-flex align-items-center justify-content-between" style="background: linear-gradient(90deg, #fff 0%, #f8fafc 100%); border-bottom: 2px solid #f1f5f9; padding: 20px; position: relative;">
                                             <h5 class="mb-0" style="color: #2c3e50; font-weight: 600; margin:0;">
                                                 <i class="fas fa-diagram-project"></i> Struktur Organisasi Kehumasan
                                             </h5>
-                                            <?php if (!empty($canvaMedia['id_media'])): ?>
-                                            <div>
-                                                <button type="button" id="editCanvaBtn" class="btn btn-sm btn-outline-secondary" data-id="<?php echo (int)$canvaMedia['id_media']; ?>" data-link="<?php echo htmlspecialchars($canvaMedia['link']); ?>">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </button>
+                                            <!-- Action Buttons in Top Right Corner -->
+                                            <div style="position: absolute; top: 15px; right: 15px; z-index: 10; display: flex; gap: 8px;">
+                                                <?php if (!$canvaMedia || empty($canvaMedia['link'])): ?>
+                                                    <a href="tambah/tambah_media.php?sub=<?= isset($subId) && $subId > 0 ? $subId : ''; ?>" class="btn btn-success btn-icon waves-effect waves-light" title="Tambah Link">
+                                                        <i class="ti-plus"></i>
+                                                    </a>
+                                                <?php else: ?>
+                                                    <button type="button" id="editCanvaBtn" class="btn btn-warning btn-icon waves-effect waves-light" data-id="<?php echo (int)$canvaMedia['id_media']; ?>" data-link="<?php echo htmlspecialchars($canvaMedia['link']); ?>" title="Update">
+                                                        <i class="ti-pencil text-dark"></i>
+                                                    </button>
+                                                <?php endif; ?>
                                             </div>
-                                            <?php endif; ?>
                                         </div>
 
                                         <div class="card-body p-0" style="background: #f8fafc; min-height: 700px; padding: 20px;">
-                                            <?php
-                                            $canvaUrl = trim($canvaMedia['link']);
+                                            <?php if ($canvaMedia && !empty($canvaMedia['link'])): ?>
+                                                <?php
+                                                $canvaUrl = trim($canvaMedia['link']);
 
-                                            // If stored value contains an iframe, output it directly
-                                            if (strpos($canvaUrl, '<iframe') !== false): ?>
-                                                <div style="width: 100%; min-height: 700px;">
-                                                    <?php echo $canvaUrl; ?>
-                                                </div>
-                                            <?php else:
-                                                // If it's a Canva URL, try convert /view to /embed and embed it
-                                                if (filter_var($canvaUrl, FILTER_VALIDATE_URL) !== false && strpos($canvaUrl, 'canva.com') !== false):
-                                                    $embedUrl = str_replace('/view', '/embed', $canvaUrl);
-                                                    $embedUrl = strtok($embedUrl, '?');
-                                            ?>
-                                                    <iframe 
-                                                        src="<?php echo htmlspecialchars($embedUrl); ?>" 
-                                                        style="width: 100%; min-height: 700px; border: none; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
-                                                        allow="fullscreen"
-                                                        title="Canva Design Preview">
-                                                    </iframe>
-                                            <?php else: ?>
-                                                    <div style="text-align: center; padding: 60px 20px;">
-                                                        <i class="fas fa-image fa-3x mb-3" style="opacity: 0.3; display: block; margin-bottom: 20px;"></i>
-                                                        <p class="text-muted mb-3">Buka organigram di browser untuk melihat preview</p>
-                                                        <a href="<?php echo htmlspecialchars($canvaUrl); ?>" target="_blank" class="btn btn-primary btn-lg">
-                                                            <i class="fas fa-external-link-alt"></i> Buka Canva Organigram
-                                                        </a>
+                                                // If stored value contains an iframe, output it directly
+                                                if (strpos($canvaUrl, '<iframe') !== false): ?>
+                                                    <div style="width: 100%; min-height: 700px;">
+                                                        <?php echo $canvaUrl; ?>
                                                     </div>
-                                            <?php endif; ?>
+                                                <?php else:
+                                                    // If it's a Canva URL, try convert /view to /embed and embed it
+                                                    if (filter_var($canvaUrl, FILTER_VALIDATE_URL) !== false && strpos($canvaUrl, 'canva.com') !== false):
+                                                        $embedUrl = str_replace('/view', '/embed', $canvaUrl);
+                                                        $embedUrl = strtok($embedUrl, '?');
+                                                ?>
+                                                        <iframe 
+                                                            src="<?php echo htmlspecialchars($embedUrl); ?>" 
+                                                            style="width: 100%; min-height: 700px; border: none; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
+                                                            allow="fullscreen"
+                                                            title="Canva Design Preview">
+                                                        </iframe>
+                                                <?php else: ?>
+                                                        <div style="text-align: center; padding: 60px 20px;">
+                                                            <i class="fas fa-image fa-3x mb-3" style="opacity: 0.3; display: block; margin-bottom: 20px;"></i>
+                                                            <p class="text-muted mb-3">Buka organigram di browser untuk melihat preview</p>
+                                                            <a href="<?php echo htmlspecialchars($canvaUrl); ?>" target="_blank" class="btn btn-primary btn-lg">
+                                                                <i class="fas fa-external-link-alt"></i> Buka Canva Organigram
+                                                            </a>
+                                                        </div>
+                                                <?php endif; ?>
+                                                <?php endif; ?>
+                                            <?php else: ?>
+                                                <div style="display: flex; align-items: center; justify-content: center; height: 660px;">
+                                                    <div style="text-align: center;">
+                                                        <i class="ti-link" style="font-size: 96px; color: #ddd; margin-bottom: 20px;"></i>
+                                                        <p style="color: #999; font-size: 16px;">Belum ada konten</p>
+                                                    </div>
+                                                </div>
                                             <?php endif; ?>
                                         </div>
                                     </div>
-                                    <?php else: ?>
-                                    <div class="alert alert-warning">
-                                        <i class="fa fa-exclamation-triangle"></i> <strong>Preview Canva tidak tersedia</strong><br>
-                                        Silakan tambahkan media dengan sub jenis "Struktur Humas" di menu Manajemen Media.
-                                    </div>
-                                    <?php endif; ?>
                                 </div>
 
                                 <!-- TAB 2: FILTER TIM -->
@@ -303,19 +341,9 @@ $canvaMedia = mysqli_num_rows($qCanva) ? mysqli_fetch_assoc($qCanva) : null;
                                     </div>
 
 <?php
-$pageContent = ob_get_clean();
-include_once("layout.php");
-
-// Consolidated JavaScript block
-$script = <<<'JS'
-<script src="assets/pages/data-table/js/jquery.dataTables.min.js"></script>
-<script src="bower_components/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="assets/pages/data-table/extensions/buttons/js/dataTables.buttons.min.js"></script>
-<script src="assets/pages/data-table/extensions/buttons/js/buttons.html5.min.js"></script>
-<script src="assets/pages/data-table/extensions/buttons/js/buttons.print.min.js"></script>
-<script src="assets/pages/data-table/extensions/buttons/js/buttons.colVis.min.js"></script>
-<script src="bower_components/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+$content = ob_get_clean();
+ob_start();
+?>
 <script>
 $(function() {
     // Category button click handler
@@ -335,7 +363,7 @@ $(function() {
         $("#selectedFilterDiv").hide();
         
         $.ajax({
-            url: "struktur_humas.php",
+            url: 'ruang_humas.php',
             method: "GET",
             data: { 
                 filterType: filterType, 
@@ -415,7 +443,7 @@ $('#saveCanvaBtn').on('click', function() {
     }
     
     $.ajax({
-        url: 'struktur_humas.php',
+        url: 'ruang_humas.php',
         method: 'POST',
         data: { 
             action: 'update_canva_link', 
@@ -439,8 +467,9 @@ $('#saveCanvaBtn').on('click', function() {
     });
 });
 </script>
-JS;
-
-renderLayout($pageContent, $script);
+<?php
+$script = ob_get_clean();
+include 'layout.php';
+renderLayout($content, $script);
 ?>
 

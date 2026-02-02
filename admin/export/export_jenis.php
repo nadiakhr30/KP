@@ -3,7 +3,7 @@ ob_start();
 session_start();
 include_once("../../koneksi.php");
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Admin") {
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
     header('Location: ../index.php');
     exit();
 }

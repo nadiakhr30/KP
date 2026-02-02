@@ -1,5 +1,5 @@
 <?php
-$host = '127.0.0.1:3307';
+$host = 'localhost';
 $username = 'root';
 $password = '';
 $database = 'sistem_kehumasan';
