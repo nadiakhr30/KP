@@ -153,8 +153,11 @@ function getYouTubePreview($link) {
                                 <?php else: ?>
                                         <?php foreach ($dataMedia as $media): ?>
                                             <?php $youtubePreview = getYouTubePreview($media['link']); ?>
-                                            <div class="col-lg-4 col-xl-3 col-md-6 mb-3 d-flex">
-                                                <div class="card rounded-card user-card w-100 h-100">
+                                            <div class="col-md-3">
+                                                <div class="card rounded-card">
+                                                    <div class="card-header">
+                                                        <h5><?= htmlspecialchars($media['judul']); ?></h5>
+                                                    </div>
                                                     <div class="card-block d-flex flex-column" style="height:100%;">
                                                         <!-- YouTube Preview Section - Clickable for Lightbox -->
                                                         <?php if ($youtubePreview['type'] === 'youtube' && $youtubePreview['thumbnail']): ?>
@@ -169,11 +172,7 @@ function getYouTubePreview($link) {
                                                                 <i class="ti-video-camera" style="font-size: 48px; color: #ccc;"></i>
                                                             </div>
                                                         <?php endif; ?>
-
-                                                        <div class="user-content" style="flex:1; display:flex; align-items:flex-start;">
-                                                            <h4 style="margin:0;"><?= htmlspecialchars($media['judul']); ?></h4>
-                                                        </div>
-                                                        <div style="margin-top: 15px; display: flex; gap: 8px;">
+                                                        <div style="margin-top: 15px; display: flex; gap: 8px; justify-content: center;">
                                                             <a href="edit/edit_media.php?id=<?= $media['id_media']; ?>" class="btn btn-icon btn-primary waves-effect waves-light flex-fill"><i class="ti-pencil"></i></a>
                                                             <button type="button" class="btn btn-icon btn-danger waves-effect waves-light flex-fill" onclick="deleteMedia(<?= $media['id_media']; ?>, '<?= htmlspecialchars($media['judul']); ?>')"><i class="ti-trash"></i></button>
                                                         </div>

@@ -533,9 +533,10 @@ global $user;
     </script>
 
     <script>
-      // Sync menu active state with current page filename
+      // Sync menu active state with current page filename and query parameters
       document.addEventListener('DOMContentLoaded', function() {
-        var path = window.location.pathname.split('/').pop() || 'index.php';
+        var currentPath = window.location.pathname.split('/').pop() || 'index.php';
+        var currentSearch = window.location.search; // Get full query string
         
         // Remove 'active' class from all menu items
         var allMenuItems = document.querySelectorAll('.pcoded-inner-navbar li');
@@ -546,10 +547,29 @@ global $user;
         // Find and mark matching page as active
         var links = document.querySelectorAll('.pcoded-inner-navbar a[href]');
         links.forEach(function(a){
-          var href = a.getAttribute('href').split('?')[0];
-          if (!href) return;
-          var target = href.split('/').pop();
-          if (target === path) {
+          var href = a.getAttribute('href');
+          if (!href || href === 'javascript:void(0)') return;
+          
+          // Extract filename and query string from href
+          var hrefFile = href.split('?')[0].split('/').pop();
+          var hrefSearch = href.indexOf('?') !== -1 ? href.substring(href.indexOf('?')) : '';
+          
+          // Check if this is the current page
+          var isCurrentPage = (hrefFile === currentPath);
+          
+          // If page matches and has query parameters, compare them too
+          if (isCurrentPage && hrefSearch !== '') {
+            // Only mark as active if query string matches exactly
+            isCurrentPage = (hrefSearch === currentSearch);
+          } else if (isCurrentPage && hrefSearch === '' && currentSearch === '') {
+            // Both have no query string, so it's a match
+            isCurrentPage = true;
+          } else if (isCurrentPage && hrefSearch === '' && currentSearch !== '') {
+            // href has no query string but current page does, not a match
+            isCurrentPage = false;
+          }
+          
+          if (isCurrentPage) {
             var li = a.closest('li');
             var parentSub = a.closest('.pcoded-submenu');
             if (parentSub) {
@@ -604,6 +624,19 @@ global $user;
       }
       .pcoded-submenu li.active > a i {
         color: #000 !important;
+      }
+
+      /* Remove gap between navbar and menu - Mobile only */
+      @media (max-width: 991px) {
+        .pcoded-inner-navbar {
+          padding-top: 0 !important;
+          margin-top: 0 !important;
+        }
+
+        .pcoded-navbar {
+          margin-top: 0 !important;
+          padding-top: 0 !important;
+        }
       }
     </style>
 </body>

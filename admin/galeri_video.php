@@ -64,24 +64,39 @@ function getLinkPreview($link) {
         return $preview;
     }
     
-    // Detect Google Drive file
-    if (strpos($link, 'drive.google.com') !== false) {
-        // Extract file ID
-        if (preg_match('/\/d\/([a-zA-Z0-9-_]+)/', $link, $matches)) {
-            $fileId = $matches[1];
+    // Detect Google Drive file (handle /d/ID and ?id=ID patterns)
+    if (strpos($link, 'drive.google.com') !== false || strpos($link, 'drive.googleusercontent.com') !== false) {
+        $fileId = null;
+        if (preg_match('/\/d\/([a-zA-Z0-9-_]+)/', $link, $m)) {
+            $fileId = $m[1];
+        } elseif (preg_match('/[?&]id=([a-zA-Z0-9-_]+)/', $link, $m)) {
+            $fileId = $m[1];
+        }
+        if ($fileId) {
             $preview['type'] = 'gdrive_file';
-            $preview['preview'] = 'https://drive.google.com/thumbnail?id=' . $fileId . '&sz=w200';
+            $preview['preview'] = 'https://drive.google.com/uc?export=view&id=' . $fileId;
             return $preview;
         }
     }
     
-    // Detect image URLs
-    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    // Detect image URLs by extension (path) or common direct image domains
+    $imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
     $parsedUrl = parse_url($link);
     $path = isset($parsedUrl['path']) ? strtolower($parsedUrl['path']) : '';
-    
+
     foreach ($imageExtensions as $ext) {
-        if (strpos($path, '.' . $ext) !== false) {
+        if ($ext !== '' && strpos($path, $ext) !== false) {
+            $preview['type'] = 'image';
+            $preview['preview'] = $link;
+            return $preview;
+        }
+    }
+
+    // Some CDN/image host links may not have extension in path; try common patterns
+    $hostsThatMayBeImages = ['imgur.com', 'images.unsplash.com', 'cdn.jsdelivr.net', 'cloudinary.com'];
+    $host = isset($parsedUrl['host']) ? strtolower($parsedUrl['host']) : '';
+    foreach ($hostsThatMayBeImages as $h) {
+        if ($host !== '' && strpos($host, $h) !== false) {
             $preview['type'] = 'image';
             $preview['preview'] = $link;
             return $preview;

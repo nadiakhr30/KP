@@ -497,6 +497,25 @@
       .navbar-container.show {
         display: flex !important;
       }
+
+      /* Mobile-only: remove gap between top navbar and side menu */
+      .header-navbar {
+        margin-bottom: 0 !important;
+      }
+
+      .navbar-wrapper,
+      .pcoded-container,
+      .pcoded-wrapper {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+      }
+
+      .pcoded-inner-navbar,
+      .pcoded-navbar {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+        top: 0 !important;
+      }
     }
     
     /* ======================

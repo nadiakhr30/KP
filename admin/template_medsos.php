@@ -64,24 +64,40 @@ function getLinkPreview($link) {
         return $preview;
     }
     
-    // Detect Google Drive file
-    if (strpos($link, 'drive.google.com') !== false) {
-        // Extract file ID
-        if (preg_match('/\/d\/([a-zA-Z0-9-_]+)/', $link, $matches)) {
-            $fileId = $matches[1];
+    // Detect Google Drive file (handle /d/ID and ?id=ID patterns)
+    if (strpos($link, 'drive.google.com') !== false || strpos($link, 'drive.googleusercontent.com') !== false) {
+        $fileId = null;
+        if (preg_match('/\/d\/([a-zA-Z0-9-_]+)/', $link, $m)) {
+            $fileId = $m[1];
+        } elseif (preg_match('/[?&]id=([a-zA-Z0-9-_]+)/', $link, $m)) {
+            $fileId = $m[1];
+        }
+        if ($fileId) {
             $preview['type'] = 'gdrive_file';
-            $preview['preview'] = 'https://drive.google.com/thumbnail?id=' . $fileId . '&sz=w200';
+            // Use a more reliable viewer URL for public files
+            $preview['preview'] = 'https://drive.google.com/uc?export=view&id=' . $fileId;
             return $preview;
         }
     }
     
-    // Detect image URLs
-    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    // Detect image URLs by extension (path) or common direct image domains
+    $imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
     $parsedUrl = parse_url($link);
     $path = isset($parsedUrl['path']) ? strtolower($parsedUrl['path']) : '';
-    
+
     foreach ($imageExtensions as $ext) {
-        if (strpos($path, '.' . $ext) !== false) {
+        if ($ext !== '' && strpos($path, $ext) !== false) {
+            $preview['type'] = 'image';
+            $preview['preview'] = $link;
+            return $preview;
+        }
+    }
+
+    // Some CDN/image host links may not have extension in path; try common patterns
+    $hostsThatMayBeImages = ['imgur.com', 'images.unsplash.com', 'cdn.jsdelivr.net', 'cloudinary.com'];
+    $host = isset($parsedUrl['host']) ? strtolower($parsedUrl['host']) : '';
+    foreach ($hostsThatMayBeImages as $h) {
+        if ($host !== '' && strpos($host, $h) !== false) {
             $preview['type'] = 'image';
             $preview['preview'] = $link;
             return $preview;
@@ -181,7 +197,7 @@ function getLinkPreview($link) {
                                                                     <div class="card-block">
                                                                         <!-- Preview Section - Clickable -->
                                                                         <a href="<?= htmlspecialchars($media['link']); ?>" target="_blank" style="display: block; text-decoration: none; cursor: pointer;">
-                                                                            <div style="margin-bottom: 15px; min-height: 120px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;" class="preview-container">
+                                                                            <div style="margin-bottom: 10px; min-height: 120px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;" class="preview-container">
                                                                                 <?php if ($linkPreview['type'] === 'image' && $linkPreview['preview']): ?>
                                                                                     <img src="<?= htmlspecialchars($linkPreview['preview']); ?>" alt="Preview" style="max-width: 100%; max-height: 120px; object-fit: cover;">
                                                                                 <?php elseif ($linkPreview['type'] === 'gdrive_file' && $linkPreview['preview']): ?>
@@ -200,7 +216,7 @@ function getLinkPreview($link) {
                                                                                 <?= htmlspecialchars(substr($media['deskripsi'], 0, 100)); ?><?= strlen($media['deskripsi']) > 100 ? '...' : ''; ?>
                                                                             </p>
                                                                         </div>
-                                                                        <div style="margin-top: 15px; display: flex; gap: 8px;">
+                                                                        <div style="margin-top: 10px; display: flex; gap: 8px;">
                                                                             <a href="edit/edit_media.php?id=<?= $media['id_media']; ?>" class="btn btn-icon btn-primary waves-effect waves-light flex-fill"><i class="ti-pencil"></i></a>
                                                                             <button type="button" class="btn btn-icon btn-danger waves-effect waves-light flex-fill" onclick="deleteMedia(<?= $media['id_media']; ?>, '<?= htmlspecialchars($media['judul']); ?>')"><i class="ti-trash"></i></button>
                                                                         </div>

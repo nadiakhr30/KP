@@ -208,7 +208,7 @@ b, strong {
       position: relative; }
       .card .card-header h5:after {
         content: "";
-        background-color: #448aff;
+        background-color: #2a549c;
         position: absolute;
         left: -20px;
         top: 0;
@@ -237,7 +237,7 @@ b, strong {
       transition: 0.25s; }
       .card .card-block a.dropdown-item:active,
       .card .card-block a.dropdown-item .active {
-        background-color: #448aff; }
+        background-color: #1b3e7a; }
     .card .card-block.remove-label i {
       margin: 0;
       padding: 0; }
@@ -921,10 +921,10 @@ a.mytooltip {
 ==========================  **/
 /*========= Owl-carousel css start ============*/
 .owl-theme .owl-nav [class*='owl-']:hover {
-  background: #448aff; }
+  background: #1b3e7a; }
 
 .owl-theme .owl-dots .owl-dot.active span, .owl-theme .owl-dots .owl-dot:hover span {
-  background: #448aff; }
+  background: #1b3e7a; }
 
 /*========= Owl-carousel css end ============*/
 /**  =====================
@@ -1972,9 +1972,9 @@ img.comment-img {
 
 .system_font_color {
   font-size: 18px;
-  color: #448aff; }
+  color: #1b3e7a; }
   .system_font_color a {
-    color: #448aff;
+    color: #1b3e7a;
     margin-left: 5px; }
 
 .port_detail_next_search h5 {
@@ -6006,38 +6006,6 @@ table tbody .border-bottom-info td {
   @media only screen and (max-width: 992px) {
     .main-menu {
       height: 100% !important; } }
-  .main-menu .main-menu-header {
-    padding: 15px 0;
-    background-image: url("../images/user-bg.jpg");
-    background-size: cover;
-    text-align: center;
-    position: relative; }
-    .main-menu .main-menu-header img {
-      position: relative;
-      width: 60px; }
-    .main-menu .main-menu-header .user-details {
-      display: block;
-      margin-top: 10px;
-      position: relative; }
-      .main-menu .main-menu-header .user-details #more-details {
-        cursor: pointer; }
-      .main-menu .main-menu-header .user-details span {
-        color: #fff;
-        display: block;
-        font-size: 14px;
-        text-transform: capitalize; }
-        .main-menu .main-menu-header .user-details span i {
-          font-size: 10px;
-          margin-left: 10px; }
-    .main-menu .main-menu-header:before {
-      content: "";
-      background: rgba(0, 0, 0, 0.2);
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 0; }
   .main-menu .main-menu-content .more-details {
     display: none; }
     .main-menu .main-menu-content .more-details a {
@@ -6055,8 +6023,7 @@ table tbody .border-bottom-info td {
   .main-menu .main-menu-content li {
     position: relative; }
 
-.pcoded[theme-layout="vertical"][vertical-nav-type="collapsed"] .main-menu-content,
-.pcoded[theme-layout="vertical"][vertical-nav-type="collapsed"] .main-menu-header {
+.pcoded[theme-layout="vertical"][vertical-nav-type="collapsed"] .main-menu-content{
   display: none; }
 .pcoded[theme-layout="vertical"][vertical-nav-type="collapsed"] .main-menu {
   width: 70px; }
@@ -6935,8 +6902,7 @@ table tbody .border-bottom-info td {
 .pcoded[theme-layout="vertical"][vertical-placement="right"] .pcoded-navbar {
   float: right;
   right: 0; }
-  .pcoded[theme-layout="vertical"][vertical-placement="right"] .pcoded-navbar .main-menu-content,
-  .pcoded[theme-layout="vertical"][vertical-placement="right"] .pcoded-navbar .main-menu-header {
+  .pcoded[theme-layout="vertical"][vertical-placement="right"] .pcoded-navbar .main-menu-content {
     direction: rtl; }
   .pcoded[theme-layout="vertical"][vertical-placement="right"] .pcoded-navbar .main-menu-content ul {
     padding-right: 0; }
@@ -7252,8 +7218,7 @@ table tbody .border-bottom-info td {
   width: 200px; }
 .pcoded[theme-layout="vertical"][vertical-placement="right"][vertical-nav-type="compact"][vertical-effect="overlay"] .pcoded-content {
   margin-right: 0; }
-.pcoded[theme-layout="vertical"][vertical-nav-type="compact"] .main-menu-content,
-.pcoded[theme-layout="vertical"][vertical-nav-type="compact"] .main-menu-header {
+.pcoded[theme-layout="vertical"][vertical-nav-type="compact"] .main-menu-content {
   display: none; }
 .pcoded[theme-layout="vertical"][vertical-nav-type="compact"] .pcoded-navbar .pcoded-item > li > a {
   line-height: 1;
@@ -7754,7 +7719,7 @@ table tbody .border-bottom-info td {
             transform: rotate(180deg); }
 
 body[themebg-pattern="theme1"] {
-  background-color: #448aff; }
+  background: linear-gradient(180deg, #1b3e7a, #122a52); }
 body[themebg-pattern="theme2"] {
   background-color: #b71c1c; }
 body[themebg-pattern="theme3"] {
@@ -7778,10 +7743,6 @@ body[themebg-pattern="theme6"] {
   background: #37474f; }
 .pcoded .pcoded-navbar[navbar-theme="theme1"] .main-menu {
   background-color: #37474f; }
-  .pcoded .pcoded-navbar[navbar-theme="theme1"] .main-menu .main-menu-header {
-    background-color: #37474f; }
-    .pcoded .pcoded-navbar[navbar-theme="theme1"] .main-menu .main-menu-header .user-details span {
-      color: #fff; }
   .pcoded .pcoded-navbar[navbar-theme="theme1"] .main-menu .main-menu-content .more-details a {
     color: #fff; }
 .pcoded .pcoded-navbar[navbar-theme="theme1"] .pcoded-item > li > a {
@@ -7846,10 +7807,6 @@ body[themebg-pattern="theme6"] {
   font-weight: 500; }
 .pcoded .pcoded-navbar[navbar-theme="themelight1"] .main-menu {
   background-color: #fff; }
-  .pcoded .pcoded-navbar[navbar-theme="themelight1"] .main-menu .main-menu-header {
-    background-color: #fff; }
-    .pcoded .pcoded-navbar[navbar-theme="themelight1"] .main-menu .main-menu-header .user-details span {
-      color: #fff; }
   .pcoded .pcoded-navbar[navbar-theme="themelight1"] .main-menu .main-menu-content .more-details a {
     color: #666; }
 .pcoded .pcoded-navbar[navbar-theme="themelight1"] .pcoded-item li.pcoded-hasmenu .pcoded-submenu {
@@ -16448,9 +16405,7 @@ body.dark {
     body.dark .chat-card .chat-control .chat-form .form-control:active {
       -webkit-box-shadow: none;
               box-shadow: none; }
-  .pcoded[layout-type="dark"] .main-menu .main-menu-header:before,
   .pcoded[layout-type="dark"] .page-header:before,
-  body.dark .main-menu .main-menu-header:before,
   body.dark .page-header:before {
     background-color: rgba(76, 98, 109, 0.8); }
 

@@ -38,12 +38,14 @@ if ($jenisAsetId > 0) {
     $qAset = mysqli_query($koneksi, "
         SELECT 
             a.id_aset,
-            a.nama,
+            a.nama as nama_aset,
             a.link,
             a.keterangan,
+            p.nama as nama_penanggung_jawab,
             ja.nama_jenis_aset
         FROM aset a
         INNER JOIN jenis_aset ja ON a.id_jenis_aset = ja.id_jenis_aset
+        LEFT JOIN pegawai p ON a.nip = p.nip
         WHERE a.id_jenis_aset = $jenisAsetId
         ORDER BY a.nama
     ");
@@ -123,20 +125,27 @@ if ($jenisAsetId > 0) {
                                 <div class="col-lg-4 col-xl-3 col-md-6">
                                     <div class="card rounded-card user-card">
                                         <div class="card-block">
+                                            <!-- Preview Section - Clickable -->
+                                            <a href="<?= htmlspecialchars($aset['link']); ?>" target="_blank" style="display: block; text-decoration: none; cursor: pointer;">
+                                                <div style="margin-bottom: 15px; min-height: 120px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;" class="preview-container">
+                                                    <i class="ti-link" style="font-size: 48px; color: #999;"></i>
+                                                </div>
+                                            </a>
+                                            
                                             <div class="user-content">
-                                                <h4><?= htmlspecialchars($aset['nama']); ?></h4>
-                                                <p style="font-size: 12px; margin-bottom: 10px; min-height: 40px;">
+                                                <h4><?= htmlspecialchars($aset['nama_aset']); ?></h4>
+                                                <h6 style="font-size: 12px; min-height: 40px;">
                                                     <?= htmlspecialchars(substr($aset['keterangan'], 0, 100)); ?><?= strlen($aset['keterangan']) > 100 ? '...' : ''; ?>
-                                                </p>
-                                                <?php if ($aset['link']): ?>
-                                                <a href="<?= htmlspecialchars($aset['link']); ?>" target="_blank" class="badge bg-primary link-badge" title="<?= htmlspecialchars($aset['link']); ?>">
-                                                    <?= htmlspecialchars($aset['link']); ?>
-                                                </a>
+                                                </h6>
+                                                <?php if (!empty($aset['nama_penanggung_jawab'])): ?>
+                                                <h5 style="font-size: 13px; color: #666;">
+                                                    <strong>PJ:</strong> <?= htmlspecialchars($aset['nama_penanggung_jawab']); ?>
+                                                </h5>
                                                 <?php endif; ?>
                                             </div>
-                                            <div style="margin-top: 15px; display: flex; gap: 8px;">
-                                                <a href="edit/edit_aset.php?id=<?= $aset['id_aset']; ?>" class="btn btn-icon btn-primary waves-effect waves-light flex-fill"><i class="ti-pencil"></i></a>
-                                                <button type="button" class="btn btn-icon btn-danger waves-effect waves-light flex-fill" onclick="deleteAset(<?= $aset['id_aset']; ?>, '<?= htmlspecialchars($aset['nama']); ?>')"><i class="ti-trash"></i></button>
+                                            <div style="display: flex; gap: 8px;">
+                                                <a href="edit/edit_aset.php?id=<?= $aset['id_aset']; ?>" class="btn btn-icon btn-warning waves-effect waves-light flex-fill" title="Edit"><i class="ti-pencil"></i></a>
+                                                <button type="button" class="btn btn-icon btn-danger waves-effect waves-light flex-fill" onclick="deleteAset(<?= $aset['id_aset']; ?>, '<?= htmlspecialchars($aset['nama_aset']); ?>')" title="Hapus"><i class="ti-trash"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -173,6 +182,7 @@ if ($jenisAsetId > 0) {
                                                 <th>Nama Aset</th>
                                                 <th>Keterangan</th>
                                                 <th>Link</th>
+                                                <th>Nama Penanggung Jawab</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
@@ -185,7 +195,7 @@ if ($jenisAsetId > 0) {
                                             <?php foreach ($dataAset as $aset) : ?>
                                             <tr>
                                               <td><?= $aset['id_aset']; ?></td>
-                                              <td><?= htmlspecialchars($aset['nama']); ?></td>
+                                              <td><?= htmlspecialchars($aset['nama_aset']); ?></td>
                                               <td><?= htmlspecialchars(substr($aset['keterangan'], 0, 100)); ?><?= strlen($aset['keterangan']) > 100 ? '...' : ''; ?></td>
                                               <td>
                                                 <?php if ($aset['link']): ?>
@@ -194,13 +204,14 @@ if ($jenisAsetId > 0) {
                                                   <span class="badge bg-secondary">-</span>
                                                 <?php endif; ?>
                                               </td>
+                                              <td><?= htmlspecialchars($aset['nama_penanggung_jawab']); ?></td> 
                                               <td>
                                                 <a href="edit/edit_aset.php?id=<?= $aset['id_aset']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
                                                   <i class="ti-pencil text-dark"></i>
                                                 </a>
                                                 <button type="button" 
                                                         class="btn waves-effect waves-light btn-danger btn-icon"
-                                                        onclick="deleteAset(<?= $aset['id_aset']; ?>, '<?= htmlspecialchars($aset['nama']); ?>')"
+                                                        onclick="deleteAset(<?= $aset['id_aset']; ?>, '<?= htmlspecialchars($aset['nama_aset']); ?>')"
                                                         title="Hapus">
                                                    <i class="ti-trash text-dark"></i>
                                                 </button>
@@ -215,6 +226,7 @@ if ($jenisAsetId > 0) {
                                                 <th>Nama Aset</th>
                                                 <th>Keterangan</th>
                                                 <th>Link</th>
+                                                <th>Nama Penanggung Jawab</th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </tfoot>
@@ -319,6 +331,11 @@ document.addEventListener('DOMContentLoaded', function() {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.preview-container:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 </style>
 <?php
