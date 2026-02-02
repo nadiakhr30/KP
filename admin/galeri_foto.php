@@ -64,17 +64,21 @@ function getLinkPreview($link) {
         return $preview;
     }
     
-    // Detect Google Drive file (handle /d/ID and ?id=ID patterns)
+    // Detect Google Drive file (handle /d/ID, /file/d/ID, and ?id=ID patterns)
     if (strpos($link, 'drive.google.com') !== false || strpos($link, 'drive.googleusercontent.com') !== false) {
         $fileId = null;
+        // Try pattern: /d/FILE_ID or /file/d/FILE_ID
         if (preg_match('/\/d\/([a-zA-Z0-9-_]+)/', $link, $m)) {
             $fileId = $m[1];
-        } elseif (preg_match('/[?&]id=([a-zA-Z0-9-_]+)/', $link, $m)) {
+        } 
+        // Try pattern: ?id=FILE_ID or &id=FILE_ID
+        elseif (preg_match('/[?&]id=([a-zA-Z0-9-_]+)/', $link, $m)) {
             $fileId = $m[1];
         }
         if ($fileId) {
             $preview['type'] = 'gdrive_file';
-            $preview['preview'] = 'https://drive.google.com/uc?export=view&id=' . $fileId;
+            // Use export=view which works better for public files
+            $preview['preview'] = 'https://drive.google.com/uc?export=view&id=' . htmlspecialchars($fileId);
             return $preview;
         }
     }
@@ -195,19 +199,23 @@ function getLinkPreview($link) {
                                                                 <div class="card rounded-card user-card">
                                                                     <div class="card-block">
                                                                         <!-- Preview Section - Clickable -->
-                                                                        <a href="<?= htmlspecialchars($media['link']); ?>" target="_blank" style="display: block; text-decoration: none; cursor: pointer;">
-                                                                            <div style="margin-bottom: 15px; min-height: 120px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;" class="preview-container">
-                                                                                <?php if ($linkPreview['type'] === 'image' && $linkPreview['preview']): ?>
-                                                                                    <img src="<?= htmlspecialchars($linkPreview['preview']); ?>" alt="Preview" style="max-width: 100%; max-height: 120px; object-fit: cover;">
-                                                                                <?php elseif ($linkPreview['type'] === 'gdrive_file' && $linkPreview['preview']): ?>
-                                                                                    <img src="<?= htmlspecialchars($linkPreview['preview']); ?>" alt="GDrive File" style="max-width: 100%; max-height: 120px; object-fit: cover;">
-                                                                                <?php elseif ($linkPreview['type'] === 'gdrive_folder'): ?>
+                                                                        <div style="margin-bottom: 15px; min-height: 120px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;" class="preview-container">
+                                                                            <?php if ($linkPreview['type'] === 'image' && $linkPreview['preview']): ?>
+                                                                                <a href="<?= htmlspecialchars($media['link']); ?>" target="_blank" style="display: block; width: 100%; height: 100%; text-decoration: none;">
+                                                                                    <img src="<?= htmlspecialchars($linkPreview['preview']); ?>" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                                </a>
+                                                                            <?php elseif ($linkPreview['type'] === 'gdrive_file' && $linkPreview['preview']): ?>
+                                                                                <iframe src="https://drive.google.com/file/d/<?= htmlspecialchars(str_replace('https://drive.google.com/uc?export=view&id=', '', $linkPreview['preview'])); ?>/preview" style="width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
+                                                                            <?php elseif ($linkPreview['type'] === 'gdrive_folder'): ?>
+                                                                                <a href="<?= htmlspecialchars($media['link']); ?>" target="_blank" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; text-decoration: none;">
                                                                                     <i class="ti-folder" style="font-size: 48px; color: #FFB84D;"></i>
-                                                                                <?php else: ?>
+                                                                                </a>
+                                                                            <?php else: ?>
+                                                                                <a href="<?= htmlspecialchars($media['link']); ?>" target="_blank" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; text-decoration: none;">
                                                                                     <i class="<?= $linkPreview['icon']; ?>" style="font-size: 48px; color: #999;"></i>
-                                                                                <?php endif; ?>
-                                                                            </div>
-                                                                        </a>
+                                                                                </a>
+                                                                            <?php endif; ?>
+                                                                        </div>
                                                                         
                                                                         <div class="user-content">
                                                                             <h4><?= htmlspecialchars($media['judul']); ?></h4>
