@@ -174,7 +174,7 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
             }
             
             // Check if email already exists
-            $checkEmail = mysqli_query($koneksi, "SELECT email FROM user WHERE email = '" . mysqli_real_escape_string($koneksi, $user['email']) . "'");
+            $checkEmail = mysqli_query($koneksi, "SELECT email FROM pegawai WHERE email = '" . mysqli_real_escape_string($koneksi, $user['email']) . "'");
             if (mysqli_num_rows($checkEmail) > 0) {
                 $errorCount++;
                 $errors[] = "Baris " . ($index + 2) . ": Email sudah terdaftar!";

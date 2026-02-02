@@ -11,7 +11,7 @@ $success = '';
 $nip = isset($_GET['nip']) ? mysqli_real_escape_string($koneksi, $_GET['nip']) : '';
 // Get pegawai data
 $qPegawai = mysqli_query($koneksi, "SELECT * FROM pegawai WHERE nip = '$nip'");
-if (mysqli_num_rows($qUser) == 0) {
+if (mysqli_num_rows($qPegawai) == 0) {
     $error = "Pegawai tidak ditemukan!";
     header("Refresh: 2; url=../manajemen_user.php");
     exit();

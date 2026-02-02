@@ -289,7 +289,7 @@ ob_start();
                                             <p class="text-muted mb-2"><strong>Target Rilis:</strong> <?= date('d-m-Y', strtotime($jadwal['tanggal_rilis'])) ?></p>
                                             <p class="text-muted mb-3"><strong>PIC:</strong>
 <?php if (!empty($jadwal['pic_data_detail'])): ?>
-    <span class="badge bg-info ms-2"
+    <span class="badge bg-primary ms-2"
           style="cursor: help;"
           data-bs-toggle="tooltip"
           data-bs-html="true"
@@ -328,7 +328,7 @@ ob_start();
                                             </p>
                                             <p class="text-muted mb-3"><strong>Dokumentasi:</strong>
 <?php if (!empty($jadwal['dokumentasi'])): ?>
-    <span class="badge bg-success ms-2" style="cursor: help;" data-bs-toggle="tooltip" title="Dokumentasi tersedia">
+    <span class="badge bg-primary ms-2" style="cursor: help;" data-bs-toggle="tooltip" title="Dokumentasi tersedia">
         <i class="ti-eye"></i> Ada
     </span>
 <?php else: ?>
@@ -512,7 +512,6 @@ ob_start();
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-secondary waves-effect waves-light btn-icon" data-bs-dismiss="modal"><i class="fas fa-arrow-left"></i></button>
                 <button type="button" class="btn btn-sm btn-primary btn-icon waves-effect waves-light" onclick="saveEditDetail()"><i class="fas fa-save"></i></button>
             </div>
         </div>

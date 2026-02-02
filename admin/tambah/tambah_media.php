@@ -4,52 +4,56 @@ include("../../koneksi.php");
 $error = "";
 $success = "";
 
+// Get sub_jenis from URL parameter
+$id_sub_jenis = isset($_GET["sub"]) ? (int)$_GET["sub"] : 0;
+
+if ($id_sub_jenis <= 0) {
+    $error = "Parameter sub jenis tidak valid!";
+}
+
+// determine nama jenis for redirects
+$namaJenis = 'media';
+if ($id_sub_jenis > 0) {
+    $qSub = mysqli_query($koneksi, "SELECT s.nama_sub_jenis, j.nama_jenis FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE s.id_sub_jenis = $id_sub_jenis");
+    if ($qSub && mysqli_num_rows($qSub) > 0) {
+        $rSub = mysqli_fetch_assoc($qSub);
+        $namaJenis = strtolower(str_replace(' ', '_', $rSub['nama_jenis']));
+    }
+}
+
 // Process form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Sanitize and validate input
     $judul = trim($_POST["judul"] ?? "");
     $topik = trim($_POST["topik"] ?? "");
     $deskripsi = trim($_POST["deskripsi"] ?? "");
     $link = trim($_POST["link"] ?? "");
-    $id_sub_jenis = isset($_POST["id_sub_jenis"]) ? (int)$_POST["id_sub_jenis"] : "";
+    $id_sub_jenis = isset($_POST["id_sub_jenis"]) ? (int)$_POST["id_sub_jenis"] : 0;
     
     // Validate required input
-    if (empty($judul) || empty($topik) || empty($deskripsi) || empty($link) || empty($id_sub_jenis)) {
-        $error = "Semua field harus diisi!";
-    } else {
-        // Insert into database
-        $query = "INSERT INTO media (judul, topik, deskripsi, link, id_sub_jenis) 
-                  VALUES (
-                    '" . mysqli_real_escape_string($koneksi, $judul) . "',
-                    '" . mysqli_real_escape_string($koneksi, $topik) . "',
-                    '" . mysqli_real_escape_string($koneksi, $deskripsi) . "',
-                    '" . mysqli_real_escape_string($koneksi, $link) . "',
-                    " . $id_sub_jenis . "
-                  )";
-        
-        if (mysqli_query($koneksi, $query)) {
-            $success = "Media berhasil ditambahkan!";
-            // Redirect after 1 second
-            header("Refresh: 1; url=../index.php");
+        if (empty($judul) || empty($topik) || empty($deskripsi) || empty($link) || $id_sub_jenis <= 0) {
+            $error = "Semua field harus diisi!";
         } else {
-            $error = "Gagal menambahkan media: " . mysqli_error($koneksi);
+            // Insert into database
+            $query = "INSERT INTO media (judul, topik, deskripsi, link, id_sub_jenis) 
+                      VALUES (
+                        '" . mysqli_real_escape_string($koneksi, $judul) . "',
+                        '" . mysqli_real_escape_string($koneksi, $topik) . "',
+                        '" . mysqli_real_escape_string($koneksi, $deskripsi) . "',
+                        '" . mysqli_real_escape_string($koneksi, $link) . "',
+                        " . $id_sub_jenis . "
+                      )";
+
+            if (mysqli_query($koneksi, $query)) {
+                $success = 'Media berhasil ditambahkan';
+                // Redirect after 1 second to current jenis page
+                header("Refresh: 1; url=../" . $namaJenis . ".php?sub=" . $id_sub_jenis);
+                exit();
+            } else {
+                $error = "Gagal menambahkan media: " . mysqli_error($koneksi);
+            }
         }
     }
-}
-
-// Get sub_jenis data
-$sub_jenis_query = "SELECT sub_jenis.id_sub_jenis, sub_jenis.nama_sub_jenis, jenis.nama_jenis 
-                    FROM sub_jenis 
-                    JOIN jenis ON sub_jenis.id_jenis = jenis.id_jenis 
-                    ORDER BY jenis.nama_jenis, sub_jenis.nama_sub_jenis";
-$sub_jenis_result = mysqli_query($koneksi, $sub_jenis_query);
-$sub_jenis_data = [];
-
-if ($sub_jenis_result) {
-    while ($row = mysqli_fetch_assoc($sub_jenis_result)) {
-        $sub_jenis_data[] = $row;
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -66,81 +70,15 @@ if ($sub_jenis_result) {
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/custom.css">
     <style>
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        .card {
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-        }
-        .form-control {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px 12px;
-            font-size: 14px;
-        }
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-        }
-        .text-danger {
-            color: #dc3545;
-        }
-        .alert {
-            border-radius: 4px;
-            padding: 12px 20px;
-        }
-        .btn {
-            border-radius: 4px;
-            padding: 10px 20px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #0056b3;
-            color: white;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            border: none;
-            color: white;
-        }
-        .btn-secondary:hover {
-            background-color: #5a6268;
-            color: white;
-        }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        .button-group {
-            display: flex;
-            gap: 10px;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
     </style>
 </head>
 <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
-        <div class="col-md-10">
+        <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">Tambah Media</h5>
                 </div>
-            <div class="card-body">
+            <div class="card-body px-5">
                 <?php if ($error): ?>
                     <div class="alert alert-danger alert-dismissible fade show">
                         <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error) ?>
@@ -186,24 +124,15 @@ if ($sub_jenis_result) {
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label for="id_sub_jenis">Sub Jenis <span class="text-danger">*</span></label>
-                            <select class="form-control" id="id_sub_jenis" name="id_sub_jenis" required>
-                                <option value="">-- Pilih Sub Jenis --</option>
-                                <?php 
-                                $current_jenis = '';
-                                foreach ($sub_jenis_data as $sj): 
-                                    if ($current_jenis != $sj['nama_jenis']) {
-                                        if ($current_jenis != '') echo '</optgroup>';
-                                        echo '<optgroup label="' . htmlspecialchars($sj['nama_jenis']) . '">';
-                                        $current_jenis = $sj['nama_jenis'];
-                                    }
-                                ?>
-                                    <option value="<?php echo $sj['id_sub_jenis']; ?>" <?php echo isset($_POST["id_sub_jenis"]) && $_POST["id_sub_jenis"] == $sj['id_sub_jenis'] ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($sj['nama_sub_jenis']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                                <?php if ($current_jenis != '') echo '</optgroup>'; ?>
-                            </select>
+                            <label for="link">Link <span class="text-danger">*</span></label>
+                            <input 
+                                type="text"
+                                class="form-control" 
+                                id="link" 
+                                name="link"
+                                required
+                                value="<?php echo isset($_POST["link"]) ? htmlspecialchars($_POST["link"]) : ''; ?>"
+                            >
                         </div>
                     </div>
 
@@ -217,34 +146,21 @@ if ($sub_jenis_result) {
                         ><?php echo isset($_POST["deskripsi"]) ? htmlspecialchars($_POST["deskripsi"]) : ''; ?></textarea>
                     </div>
 
-                    <div class="form-group">
-                        <label for="link">Link <span class="text-danger">*</span></label>
-                        <input 
-                            type="url" 
-                            class="form-control" 
-                            id="link" 
-                            name="link"
-                            required
-                            maxlength="255"
-                            value="<?php echo isset($_POST["link"]) ? htmlspecialchars($_POST["link"]) : ''; ?>"
-                        >
-                    </div>
+                    <!-- Hidden field for sub_jenis -->
+                    <input type="hidden" name="id_sub_jenis" value="<?php echo htmlspecialchars($id_sub_jenis); ?>">
 
-                    <div class="button-group">
-                        <a href="../index.php" class="btn btn-secondary">
-                            <i class="fas fa-times-circle"></i> Batal
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Simpan Media
-                        </button>
+                    <!-- Action Buttons -->
+                    <div class="form-group mt-4 d-flex justify-content-between">
+                        <a href="../<?php echo htmlspecialchars($namaJenis); ?>.php?sub=<?php echo htmlspecialchars($id_sub_jenis); ?>" class="btn btn-secondary btn-icon-l"><i class="fas fa-arrow-left"></i></a>
+                        <button type="submit" class="btn btn-primary btn-icon-l"><i class="fas fa-save"></i></button>
                     </div>
                 </form>
                 </div>
-            </div>
-        </div>
+                    </div>
+                </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+        </body>
+        </html>
 

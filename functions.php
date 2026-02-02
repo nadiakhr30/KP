@@ -25,7 +25,7 @@ function checkLogin($data, &$errors)
         // AMBIL PEGAWAI
         $result = mysqli_query(
             $koneksi,
-            "SELECT * FROM pegawai WHERE email = '" . mysqli_real_escape_string($koneksi, $email) . "' LIMIT 1"
+            "SELECT p.*, r.nama_role FROM pegawai p LEFT JOIN role r ON p.id_role = r.id_role WHERE p.email = '" . mysqli_real_escape_string($koneksi, $email) . "' LIMIT 1"
         );
 
         if ($result && mysqli_num_rows($result) === 1) {
@@ -37,7 +37,7 @@ function checkLogin($data, &$errors)
                 // Login sukses
                 $_SESSION["pegawai"] = $pegawai;
 
-                if ($pegawai["id_role"] == '1') {
+                if ($pegawai["nama_role"] == 'Admin') {
                     $_SESSION["role"] = "Admin";
                     header("Location: admin/index.php");
                     exit;
