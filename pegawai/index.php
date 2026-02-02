@@ -482,29 +482,19 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
           <!-- Video Operator -->
           <div class="col-lg-5 col-md-10" data-aos="fade-up" data-aos-delay="100">
-            <a href="https://drive.google.com" target="_blank" class="broadcast-link">
+            <a href="broadcast_media.php" class="broadcast-link">
               <div class="broadcast-card-v3">
-                
-                <!-- Glow Effect -->
                 <div class="card-glow"></div>
-
-                <!-- Top Accent Line -->
                 <div class="accent-line"></div>
-
-                <!-- Header -->
                 <div class="card-header-v3">
                   <div class="header-bg-gradient"></div>
-                  
                   <div class="icon-container">
                     <div class="icon-bg"></div>
                     <i class="bi bi-camera-video-fill"></i>
                   </div>
-                  
                   <h3>Video Operator</h3>
                   <p>Template dan panduan lengkap untuk operator video profesional</p>
                 </div>
-
-                <!-- Features -->
                 <div class="card-features">
                   <div class="feature-list">
                     <div class="feature-dot"></div>
@@ -512,8 +502,6 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
                     <div class="feature-dot"></div>
                   </div>
                 </div>
-
-                <!-- Footer CTA -->
                 <div class="card-footer-cta">
                   <span class="cta-text">Buka Folder</span>
                   <div class="arrow-icon">
@@ -526,29 +514,19 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
           <!-- Template OBS -->
           <div class="col-lg-5 col-md-10" data-aos="fade-up" data-aos-delay="200">
-            <a href="https://drive.google.com" target="_blank" class="broadcast-link">
+            <a href="obs_media.php" class="broadcast-link">
               <div class="broadcast-card-v3 variant-pink">
-                
-                <!-- Glow Effect -->
                 <div class="card-glow"></div>
-
-                <!-- Top Accent Line -->
                 <div class="accent-line"></div>
-
-                <!-- Header -->
                 <div class="card-header-v3">
                   <div class="header-bg-gradient"></div>
-                  
                   <div class="icon-container">
                     <div class="icon-bg"></div>
                     <i class="bi bi-sliders2"></i>
                   </div>
-                  
                   <h3>Template OBS</h3>
                   <p>Konfigurasi dan template siap pakai untuk OBS Studio dengan filter profesional</p>
                 </div>
-
-                <!-- Features -->
                 <div class="card-features">
                   <div class="feature-list">
                     <div class="feature-dot"></div>
@@ -556,8 +534,6 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
                     <div class="feature-dot"></div>
                   </div>
                 </div>
-
-                <!-- Footer CTA -->
                 <div class="card-footer-cta">
                   <span class="cta-text">Buka Folder</span>
                   <div class="arrow-icon">
@@ -600,14 +576,22 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
         ?>
           <div class="pengembangan-item" data-aos="zoom-in" data-aos-delay="<?= $delay ?>">
             <div class="pengembangan-card">
-              <div class="card-icon">
-                <i class="bi bi-lightning-charge"></i>
+
+              <div class="card-header-main">
+                <div class="icon-wrap">
+                  <div class="icon-circle"><i class="bi bi-folder2-open"></i></div>
+                </div>
+                <h3><?= htmlspecialchars($s['nama_sub_jenis']) ?></h3>
+                <p>Meningkatkan kompetensi dan inovasi melalui <?= htmlspecialchars(strtolower($s['nama_sub_jenis'])) ?> di lingkungan kehumasan.</p>
               </div>
-              <h3><?= htmlspecialchars($s['nama_sub_jenis']) ?></h3>
-              <p><?= htmlspecialchars($j['nama_jenis']) ?></p>
-              <a href="pengembangan.php" class="btn-explore">
-                Jelajahi <i class="bi bi-arrow-right"></i>
-              </a>
+
+              <div class="card-dots"><span></span><span></span><span></span></div>
+
+              <div class="card-footer-cta">
+                <a href="pengembangan.php" class="btn-explore">Buka Folder</a>
+                <a href="pengembangan.php" class="cta-circle" title="Buka"><i class="bi bi-arrow-right-short"></i></a>
+              </div>
+
             </div>
           </div>
         <?php
@@ -625,6 +609,130 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
       </div>
 
     </section><!-- /Pengembangan Highlight Section -->
+
+    <!-- Dokumentasi -->
+    <section id="about" class="about section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Dokumentasi</h2>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row gy-4 justify-content-center">
+
+        <?php
+          // Ambil jenis dengan id_jenis IN (2, 6, 7, 8)
+          $jenisQ = mysqli_query($koneksi, "SELECT id_jenis, nama_jenis FROM jenis WHERE id_jenis IN (2, 6, 7, 8) ORDER BY id_jenis ASC");
+          if ($jenisQ && mysqli_num_rows($jenisQ) > 0) {
+              $delay = 100;
+              while ($j = mysqli_fetch_assoc($jenisQ)) {
+                  $id_jenis = $j['id_jenis'];
+                  // Ambil sub jenis untuk setiap jenis
+                  $subQ = mysqli_query($koneksi, "SELECT id_sub_jenis, nama_sub_jenis FROM sub_jenis WHERE id_jenis = " . (int)$id_jenis . " ORDER BY nama_sub_jenis ASC");
+                  
+                  
+                  $iconMap = [
+                    2 => 'bi-file-earmark-text',      // Dokumentasi
+                    6 => 'bi-image',                  // Galeri Foto
+                    7 => 'bi-camera-video-fill',      // Galeri Video
+                    8 => 'bi-file-earmark-text'       // Laporan
+                  ];
+                  $icon = isset($iconMap[$id_jenis]) ? $iconMap[$id_jenis] : 'bi-folder2-open';
+
+                  
+                  $subIconMap = [
+                    2 => 'bi-file-earmark-text',      // Dokumentasi (dokumen)
+                    6 => 'bi-image',                  // Foto
+                    7 => 'bi-camera-video-fill',      // Video
+                    8 => 'bi-file-earmark-text'       // Laporan
+                  ];
+                  $subIconForType = isset($subIconMap[$id_jenis]) ? $subIconMap[$id_jenis] : 'bi-folder2-open';
+        ?>
+          <div class="col-xl-3 col-md-6 d-flex" data-aos="zoom-in" data-aos-delay="<?= $delay ?>">
+              <div class="service-item humas-card position-relative text-center<?= (int)$id_jenis === 2 ? ' dokumentasi-card' : '' ?>">
+
+              <div class="icon">
+                <?php if ($id_jenis == 2): ?>
+                  <a href="dokumentasi.php" class="card-main-link-icon" style="color:inherit;text-decoration:none;display:inline-block;" title="Buka Dokumentasi">
+                    <div class="icon-folder">
+                      <div class="folder-tab"></div>
+                      <div class="folder-body">
+                        <i class="bi bi-folder2-open" aria-hidden="true"></i>
+                      </div>
+                    </div>
+                  </a>
+                <?php else: ?>
+                  <div class="icon-circle-type">
+                    <i class="bi <?= $icon ?>"></i>
+                  </div>
+                <?php endif; ?>
+              </div>
+              <h4><?= htmlspecialchars($j['nama_jenis']) ?></h4>
+              <p>Akses koleksi lengkap untuk <?= htmlspecialchars(strtolower($j['nama_jenis'])) ?></p>
+
+              <div class="humas-overlay">
+                <?php if ($subQ && mysqli_num_rows($subQ) > 0): ?>
+                  <?php while ($s = mysqli_fetch_assoc($subQ)): ?>
+                    <?php
+                      $subName = strtolower($s['nama_sub_jenis']);
+                      $subIconClass = $subIconForType;
+
+                      if (strpos($subName, 'foto') !== false || strpos($subName, 'gambar') !== false) {
+                        $subIconClass = 'bi-image';
+                      } else if (strpos($subName, 'video') !== false) {
+                        $subIconClass = 'bi-camera-video-fill';
+                      } else if (strpos($subName, 'laporan') !== false || strpos($subName, 'dokumen') !== false || strpos($subName, 'publikasi') !== false) {
+                        $subIconClass = 'bi-file-earmark-text';
+                      } else if (strpos($subName, 'aset') !== false || strpos($subName, 'barang') !== false) {
+                        $subIconClass = 'bi-box-seam';
+                      } else if (strpos($subName, 'lisensi') !== false) {
+                        $subIconClass = 'bi-patch-check';
+                      } else if (strpos($subName, 'grafik') !== false || strpos($subName, 'statistik') !== false) {
+                        $subIconClass = 'bi-bar-chart-fill';
+                      }
+
+                      $specialSubRoutes = [
+                        8 => 'dokumentasi.php?sub=8',
+                        9 => 'dokumentasi.php?sub=9'
+                      ];
+                      $subId = (int)$s['id_sub_jenis'];
+                      if ($id_jenis == 6) {
+                        $subHref = "galeri_foto.php?sub=" . urlencode($s['id_sub_jenis']);
+                      } else if ($id_jenis == 7) {
+                        $subHref = "galeri_video.php?sub=" . urlencode($s['id_sub_jenis']);
+                      } else if ($id_jenis == 8) {
+                        $subHref = "galeri_laporan.php?sub=" . urlencode($s['id_sub_jenis']);
+                      } else {
+                        $subHref = isset($specialSubRoutes[$subId]) ? $specialSubRoutes[$subId] : "media.php?sub=" . urlencode($s['id_sub_jenis']);
+                      }
+                    ?>
+
+                    <a class="overlay-item" href="<?= $subHref ?>">
+                      <i class="bi <?= $subIconClass ?>" aria-hidden="true"></i>
+                      <span><?= htmlspecialchars($s['nama_sub_jenis']) ?></span>
+                    </a>
+                  <?php endwhile; ?>
+                <?php else: ?>
+                  <div class="overlay-empty">Tidak ada sub jenis tersedia</div>
+                <?php endif; ?>
+              </div>
+            </div>
+          </div>
+        <?php
+              $delay += 100;
+          }
+          } else {
+              echo '<div style="color:#fff;">Data tidak tersedia</div>';
+          }
+        ?>
+
+        </div>
+
+      </div>
+
+    </section><!-- /About Section -->
   </main>
   <?php
   $content = ob_get_clean();
@@ -638,7 +746,24 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
   <!-- BOOTSTRAP ICONS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  
+  <style>
+    /* Sembunyikan ikon overlay sampai kartu di-hover untuk menghindari duplikat di header */
+    .humas-overlay .overlay-menu a i { opacity: 0; transform: translateX(-6px); transition: opacity .18s ease, transform .18s ease; display: inline-block; }
+    .service-item:hover .humas-overlay .overlay-menu a i { opacity: 1; transform: none; }
+
+    /* Styling lingkaran ikon utama agar lebih konsisten */
+    .icon-circle-type { width: 72px; height: 72px; border-radius: 14px; background: linear-gradient(180deg, rgba(86,97,255,0.06), rgba(86,97,255,0.02)); display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 14px; border: 1px solid rgba(86,97,255,0.06); }
+    .icon-circle-type .bi { font-size: 28px; color: #5661ff; }
+
+    /* Folder-style icon for Dokumentasi */
+    .icon-folder { width: 84px; height: 58px; position: relative; margin: 0 auto 14px; }
+    .icon-folder .folder-tab { position: absolute; top: -10px; left: 10px; width: 46px; height: 18px; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, #f3f4ff, #e8eaff); border: 1px solid rgba(86,97,255,0.08); }
+    .icon-folder .folder-body { width: 100%; height: 100%; background: linear-gradient(180deg, rgba(86,97,255,0.06), rgba(86,97,255,0.02)); border-radius: 8px; display:flex; align-items:center; justify-content:center; border: 1px solid rgba(86,97,255,0.06); }
+    .icon-folder .bi { font-size: 26px; color: #5661ff; }
+    .card-main-link-icon:hover .icon-folder { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(86,97,255,0.06); transition: transform .2s ease, box-shadow .2s ease; }
+
+   
+  </style>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {

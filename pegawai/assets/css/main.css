@@ -40,7 +40,7 @@
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
 
 .light-background {
-  --background-color: #f5f6f8;
+  --background-color: #ffffff;
   --surface-color: #ffffff;
 }
 
@@ -792,6 +792,13 @@ section,
   overflow: clip;
 }
 
+/* Force white for sections that must remain white (fixes caching/overrides) */
+section.light-background,
+.section.light-background,
+.pricing.section {
+  background-color: #ffffff !important;
+}
+
 @media (max-width: 1199px) {
 
   section,
@@ -1232,12 +1239,32 @@ section,
   margin-bottom: 0;
 }
 
-.services .service-item:hover {
+..services .service-item:hover {
   transform: translateY(-10px);
 }
 
 .services .service-item:hover h4 a {
   color: var(--accent-color);
+}
+
+/* Prevent service cards from collapsing into narrow rails */
+.services .service-item {
+  min-width: 220px; /* keep reasonable minimum */
+  flex: none;       /* don't let cards flex outside their column */
+  width: 100%;      /* respect bootstrap column width */
+  box-sizing: border-box;
+}
+
+/* Ensure card row respects gaps and prevents overflow caused by overlays */
+.services .row {
+  gap: 24px;
+}
+
+/* Keep overlay elements clipped to their card */
+.services .service-item,
+.humas-card,
+.asset-card {
+  overflow: hidden;
 }
 
 /*--------------------------------------------------------------

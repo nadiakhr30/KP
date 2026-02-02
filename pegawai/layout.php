@@ -287,8 +287,9 @@ global $pegawai;
         font-family: 'Poppins', sans-serif;
         background: #fff;
         border-radius: 20px;
-        padding: 40px 30px;
-        height: 100%;
+        padding: 48px 30px;
+        min-height: 360px;
+        height: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -296,6 +297,15 @@ global $pegawai;
         border: 1.5px solid rgba(102, 126, 234, 0.1);
         transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      /* Dokumentasi card tweaks */
+      .dokumentasi-card { min-height: 440px; }
+      .dokumentasi-card .overlay-list {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 8px;
+        max-height: 320px;
+        overflow-y: auto;
       }
 
       .humas-card::before {
@@ -631,6 +641,7 @@ global $pegawai;
       height: 100%;
       flex-direction: row;
       gap: 0;
+      overflow: hidden; /* prevent hover translations from causing horizontal overflow */
     }
 
     .overlay-menu a {
@@ -666,23 +677,20 @@ global $pegawai;
 
     .overlay-menu a:hover {
       background: rgba(255, 255, 255, 0.2);
-      transform: translateX(8px);
+      transform: none; /* disable translation to avoid creating horizontal space */
     }
 
     .overlay-menu a:hover::after {
       opacity: 1;
     }
 
-    /* ICON DI BUTTON */
+    /* ICON DI BUTTON - dinonaktifkan agar bisa menggunakan ikon kustom di dalam link */
     .overlay-menu a::before {
-      content: "\F392"; /* bi-folder-fill */
-      font-family: "Bootstrap-icons";
-      font-size: 1.3rem;
-      transition: all 0.3s ease;
+      content: none; /* nonaktifkan pseudo-elemen ikon default */
     }
 
     .overlay-menu a:hover::before {
-      transform: scale(1.2);
+      transform: none;
     }
       
     }
@@ -969,45 +977,108 @@ global $pegawai;
 
       .pengembangan-card {
         position: relative;
-        height: 340px;
         border-radius: 24px;
-        background: linear-gradient(135deg, #ffffff 0%, #f5f7ff 100%);
-        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.15);
+        background: #ffffff; /* solid white background */
+        box-shadow: 0 12px 40px rgba(8,20,60,0.05);
         overflow: hidden;
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+        transition: all 0.45s cubic-bezier(0.23, 1, 0.320, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: space-between;
+        padding: 0;
+        border: 1px solid rgba(0,0,0,0.03);
+        text-align: center;
+        gap: 0;
+        min-height: 340px; /* keep the original length */
+      }
+
+      /* Header (big gradient block) */
+      .card-header-main {
+        background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+        color: #fff;
+        padding: 42px 28px 28px;
+        border-top-left-radius: 24px;
+        border-top-right-radius: 24px;
+        position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 48px 36px;
-        border: 1.5px solid rgba(102, 126, 234, 0.12);
-        text-align: center;
-        gap: 16px;
+        gap: 12px;
       }
 
-      .pengembangan-card::before {
+      .icon-wrap{ position: relative; }
+      .icon-circle{
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.12);
+        display:flex;align-items:center;justify-content:center;
+        box-shadow: 0 18px 40px rgba(79,70,229,0.12);
+        font-size: 36px;
+        transition: transform 0.36s cubic-bezier(0.2,0.9,0.3,1), box-shadow 0.36s ease, opacity 0.36s ease;
+        will-change: transform, box-shadow, opacity;
+      }
+
+      .card-header-main h3{ margin:0; font-size:1.35rem; font-weight:800; color:#fff; }
+      .card-header-main p{ margin:0; font-size:0.98rem; color: rgba(255,255,255,0.92); max-width:760px }
+
+      /* Small slider dots centered */
+      .card-dots{ padding: 18px 0; display:flex; align-items:center; justify-content:center; gap:10px; background: linear-gradient(180deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0) 100%);} 
+      .card-dots span{ width:10px; height:10px; border-radius:50%; background: rgba(255,255,255,0.7); opacity:0.55; box-shadow: 0 4px 10px rgba(10,20,60,0.04); }
+      .card-dots span:nth-child(2){ width:12px; height:12px; background:#4f46e5; box-shadow: 0 6px 16px rgba(79,70,229,0.18); opacity:1 }
+
+      /* Footer CTA */
+      .card-footer-cta{ display:flex; align-items:center; justify-content:space-between; padding:18px 22px; background:#fff; border-bottom-left-radius:24px; border-bottom-right-radius:24px; }
+      .card-footer-cta .btn-explore{ color:#4f46e5; font-weight:700; text-decoration:none; }
+      .cta-circle{ width:44px; height:44px; border-radius:50%; background: linear-gradient(135deg,#4f46e5 0%, #06b6d4 100%); display:flex; align-items:center; justify-content:center; color:#fff; box-shadow: 0 10px 30px rgba(79,70,229,0.12); text-decoration:none; transition: transform 0.32s cubic-bezier(0.2,0.9,0.3,1), box-shadow 0.32s ease; will-change: transform, box-shadow; }
+
+      .pengembangan-card:hover{ transform: translateY(-14px) scale(1.02); box-shadow: 0 40px 140px rgba(79,70,229,0.18), 0 8px 30px rgba(6,182,212,0.06); }
+
+      .pengembangan-card::after {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 5px;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f5576c 100%);
-        z-index: 5;
+        inset: 0;
+        border-radius: 24px;
+        pointer-events: none;
+        box-shadow: 0 0 0 rgba(79,70,229,0);
+        opacity: 0;
+        transition: box-shadow 0.45s ease, opacity 0.45s ease, transform 0.45s ease;
+        z-index: 2;
       }
 
-      .pengembangan-card:hover {
-        transform: translateY(-12px);
-        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.25);
-        border-color: rgba(102, 126, 234, 0.2);
+      .pengembangan-card:hover::after {
+        box-shadow: 0 30px 80px rgba(79,70,229,0.08), 0 0 60px rgba(6,182,212,0.04);
+        opacity: 1;
+        transform: translateY(-6px);
       }
 
+      /* Icon & CTA hover emphasis */
+      .pengembangan-card:hover .icon-circle {
+        transform: translateY(-6px) scale(1.12);
+        box-shadow: 0 28px 80px rgba(79,70,229,0.2);
+      }
+
+      .pengembangan-card:hover .cta-circle {
+        transform: translateX(6px) scale(1.06);
+        box-shadow: 0 16px 40px rgba(79,70,229,0.16);
+      }
+
+      @media (max-width: 768px){
+        .card-header-main{ padding:28px 18px 22px }
+        .icon-circle{ width:70px; height:70px; font-size:28px }
+        .card-header-main h3{ font-size:1.15rem }
+        .card-dots{ padding:12px 0 }
+        .card-footer-cta{ padding:14px 16px }
+      }
       .pengembangan-item::before {
         content: '';
         position: absolute;
         width: 40px;
         height: 40px;
-        background: radial-gradient(circle at 30% 30%, rgba(102, 126, 234, 0.2), rgba(102, 126, 234, 0.05));
+        background: radial-gradient(circle at 30% 30%, rgba(79, 70, 229, 0.18), rgba(79, 70, 229, 0.05));
         border-radius: 50%;
         top: 10%;
         left: 10%;
@@ -1021,7 +1092,7 @@ global $pegawai;
         position: absolute;
         width: 25px;
         height: 25px;
-        background: radial-gradient(circle at 30% 30%, rgba(245, 87, 108, 0.15), rgba(245, 87, 108, 0.03));
+        background: radial-gradient(circle at 30% 30%, rgba(6, 182, 212, 0.12), rgba(6, 182, 212, 0.03));
         border-radius: 50%;
         bottom: 15%;
         right: 12%;
@@ -1050,83 +1121,74 @@ global $pegawai;
       }
 
       .pengembangan-card .card-icon {
-        width: 100px;
-        height: 100px;
+        width: 132px;
+        height: 132px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 48px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f5576c 100%);
+        font-size: 56px;
+        background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
         color: #fff;
         margin: 0;
         transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
-        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.35);
+        box-shadow: 0 32px 80px rgba(79, 70, 229, 0.12), 0 6px 18px rgba(79,70,229,0.06);
         position: relative;
         z-index: 3;
+        transform: translateY(-10px);
       }
 
       .pengembangan-card:hover .card-icon {
-        transform: scale(1.15) rotate(-8deg);
-        box-shadow: 0 16px 48px rgba(102, 126, 234, 0.45);
+        transform: translateY(-12px) scale(1.06) rotate(-6deg);
+        box-shadow: 0 38px 120px rgba(79, 70, 229, 0.14);
       }
 
       .pengembangan-card h3 {
         margin: 0;
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #1a2332;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #ffffff; /* white title */
         letter-spacing: -0.3px;
         transition: all 0.3s ease;
-        line-height: 1.4;
+        line-height: 1.3;
         position: relative;
         z-index: 3;
+        margin-top: 6px;
       }
 
-      .pengembangan-card:hover h3 {
-        color: #667eea;
-      }
+
 
       .pengembangan-card p {
         margin: 0;
-        font-size: 0.95rem;
-        color: rgba(26, 35, 50, 0.65);
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.95); /* white description */
         font-family: 'Poppins', sans-serif;
         transition: all 0.3s ease;
         position: relative;
         z-index: 3;
-        line-height: 1.6;
+        line-height: 1.7;
+        max-width: 820px;
       }
 
-      .pengembangan-card:hover p {
-        color: rgba(102, 126, 234, 0.85);
-      }
 
+
+      /* CTA link centered and subtle like sample */
       .pengembangan-card .btn-explore {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        color: #667eea;
+        gap: 10px;
+        color: #4f46e5;
         text-decoration: none;
-        font-weight: 600;
-        font-size: 13px;
-        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
-        margin-top: auto;
-        padding: 10px 20px;
+        font-weight: 700;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        margin-top: 18px;
+        padding: 0;
       }
 
-      .pengembangan-card .btn-explore:hover {
-        color: #764ba2;
-        gap: 12px;
-      }
+      .pengembangan-card .btn-explore i { transition: transform 0.3s ease; }
+      .pengembangan-card .btn-explore:hover { transform: translateX(6px); opacity: 0.95; color: inherit; }
 
-      .pengembangan-card .btn-explore i {
-        transition: transform 0.3s ease;
-      }
-
-      .pengembangan-card .btn-explore:hover i {
-        transform: translateX(4px);
-      }
 
       .pengembangan-grid {
         display: grid;
@@ -1901,8 +1963,7 @@ global $pegawai;
           <li><a href="#beranda" class="active">Beranda</a></li>
           <li><a href="#Humas">Humas</a></li>
           <li><a href="#services">Manajemen</a></li>
-          <li><a href="#portfolio">Dokumentasi</a></li>
-          <li><a href="#team">Pengembangan</a></li>
+          <li><a href="#about">Dokumentasi</a></li>
           <li><a href="#sumberdaya">Sumber Daya</a></li>
           <li><a href="#broadcast">Broadcast</a></li>
         </ul>

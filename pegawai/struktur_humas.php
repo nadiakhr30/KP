@@ -2,9 +2,9 @@
 session_start();
 require '../koneksi.php';
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] != "Pegawai") {
-    header("Location: ../index.php");
-    exit;
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Pegawai") {
+  header("Location: ../index.php");
+  exit;
 }
 
 $breadcrumbTitle = "Struktur Humas";
@@ -45,7 +45,7 @@ if ($qHaloPst) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= $breadcrumbTitle ?></title>
+<title><?= htmlspecialchars($breadcrumbTitle) ?></title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -463,7 +463,7 @@ body {
     grid-template-columns: 1fr;
   }
 }
-
+.breadcrumb-link{color:#0f172a;text-decoration:none}
 </style>
 </head>
 
@@ -476,13 +476,15 @@ body {
       <i class="bi bi-house-fill"></i>
     </a>
     <span>›</span>
-    <span class="breadcrumb-active"><?= $breadcrumbTitle ?></span>
+    <a href="index.php#humas" class="breadcrumb-link">Humas</a>
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-active"><?= htmlspecialchars($breadcrumbTitle) ?></span>
   </div>
 
   <!-- HEADER -->
   <div class="header">
-    <h2><?= $breadcrumbTitle ?></h2>
-    <p><?= $subtitle ?></p>
+    <h2><?= htmlspecialchars($breadcrumbTitle) ?></h2>
+    <p><?= htmlspecialchars($subtitle) ?></p>
   </div>
 
   <!-- TABS -->
@@ -504,12 +506,9 @@ body {
         </h3>
       </div>
       <div class="canva-wrapper">
-        <iframe 
-          class="canva-frame"
-          src="https://www.canva.com/design/DAG_ftpWi2k/Zvddz08HAqisT44l2EM9lg/view?embed&mode=fullscreen" 
-          allowfullscreen
-          allow="autoplay">
-        </iframe>
+        <div style="position:relative;width:100%;padding-top:56.25%;">
+          <iframe class="canva-frame" loading="lazy" src="https://www.canva.com/design/DAG_ftpWi2k/KOCL7HumwJahW8SKt23LTw/view?embed" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:8px;" allowfullscreen allow="autoplay"></iframe>
+        </div>
       </div>
     </div>
   </div>
@@ -580,17 +579,35 @@ let humasData = {
 
 // Load data dari server saat page load
 document.addEventListener('DOMContentLoaded', function() {
-  loadCategoryData();
+  loadCategoryData().then(() => {
+    const initialCategory = <?= json_encode($filterKategori) ?>;
+    const initialSub = <?= json_encode($filterSubKategori) ?>;
+    if (initialCategory) {
+      filterByCategory(initialCategory);
+      if (initialSub) {
+        // give time for sub buttons to render
+        setTimeout(() => {
+          const items = (humasData[initialCategory] && humasData[initialCategory].items) ? humasData[initialCategory].items : [];
+          const it = items.find(i => String(i.id) === String(initialSub));
+          if (it) filterBySubCategory(initialCategory, it.id, it.name);
+        }, 120);
+      }
+    }
+  });
 });
 
 function loadCategoryData() {
-  fetch('get_categories.php')
+  return fetch('get_categories.php')
     .then(response => response.json())
     .then(data => {
       humasData = data;
       console.log('Data loaded:', humasData);
+      return humasData;
     })
-    .catch(error => console.error('Error loading categories:', error));
+    .catch(error => {
+      console.error('Error loading categories:', error);
+      return humasData; // fallback to whatever is present
+    });
 }
 
 function filterByCategory(category) {

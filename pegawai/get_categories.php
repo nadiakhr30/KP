@@ -21,9 +21,10 @@ $response = [
 
 // Fetch skills dengan count
 $querySkill = "
-    SELECT s.id_skill, s.nama_skill, COUNT(us.nip) as count
+    SELECT s.id_skill, s.nama_skill, COUNT(DISTINCT u.nip) as count
     FROM skill s
     LEFT JOIN user_skill us ON s.id_skill = us.id_skill
+    LEFT JOIN pegawai u ON us.nip = u.nip AND u.id_role = 2
     GROUP BY s.id_skill, s.nama_skill
     ORDER BY s.nama_skill ASC
 ";
@@ -38,9 +39,9 @@ while ($row = mysqli_fetch_assoc($resultSkill)) {
 
 // Fetch PPID dengan count
 $queryPPID = "
-    SELECT p.id_ppid, p.nama_ppid, COUNT(u.nip) as count
+    SELECT p.id_ppid, p.nama_ppid, COUNT(DISTINCT u.nip) as count
     FROM ppid p
-    LEFT JOIN pegawai u ON p.id_ppid = u.id_ppid
+    LEFT JOIN pegawai u ON p.id_ppid = u.id_ppid AND u.id_role = 2
     GROUP BY p.id_ppid, p.nama_ppid
     ORDER BY p.nama_ppid ASC
 ";
@@ -55,9 +56,10 @@ while ($row = mysqli_fetch_assoc($resultPPID)) {
 
 // Fetch HALO PST dengan count
 $queryHaloPst = "
-    SELECT hp.id_halo_pst, hp.nama_halo_pst, COUNT(uhp.nip) as count
+    SELECT hp.id_halo_pst, hp.nama_halo_pst, COUNT(DISTINCT u.nip) as count
     FROM halo_pst hp
     LEFT JOIN user_halo_pst uhp ON hp.id_halo_pst = uhp.id_halo_pst
+    LEFT JOIN pegawai u ON uhp.nip = u.nip AND u.id_role = 2
     GROUP BY hp.id_halo_pst, hp.nama_halo_pst
     ORDER BY hp.nama_halo_pst ASC
 ";

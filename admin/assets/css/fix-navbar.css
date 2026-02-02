@@ -1,0 +1,4 @@
+/* Perbaikan navbar terlalu ke kanan: hilangkan margin kiri pada navbar utama */
+.header-navbar .navbar-wrapper .navbar-container {
+  margin-left: 0 !important;
+}

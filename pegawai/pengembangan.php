@@ -12,7 +12,7 @@ $filterKategori = $_GET['kategori'] ?? 'all';
 $where = "";
 
 /* Breadcrumb & Title */
-$breadcrumbTitle = "Pengembangan";
+$breadcrumbTitle = "Pembinaan Kehumasan";
 $subtitle = "Sumber daya untuk pengembangan dan inovasi internal";
 
 if ($filterKategori != 'all' && !empty($filterKategori)) {
@@ -101,39 +101,26 @@ body{
   border: 1px solid #eef2f7;
 }
 
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f5576c 100%);
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  z-index: 10;
-}
+/* top accent removed for solid white cards */
+  .card::before { display: none; }
 
 .card:hover{
   transform:translateY(-8px);
-  box-shadow:0 16px 48px rgba(15,23,42,.15);
-  border-color: #e0e9f8;
-}
-
-.card:hover::before {
-  opacity: 1;
+  box-shadow:0 18px 54px rgba(15,23,42,.12);
+  border-color: #e6eefb;
 }
 
 .thumb{
   height:180px;
-  background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f5576c 100%);
+  background:#ffffff; /* white header */
   display:flex;
   align-items:center;
   justify-content:center;
   font-size:56px;
-  color:#fff;
+  color:#2563eb; /* blue icon */
   position: relative;
   overflow: hidden;
+  border-bottom: 1px solid rgba(79,70,229,0.04);
 }
 
 .thumb::after {
@@ -247,6 +234,7 @@ body{
   .header{padding:20px 16px}
   .page-wrapper{padding:16px}
 }
+.breadcrumb-link{color:#0f172a;text-decoration:none}
 </style>
 </head>
 
@@ -258,6 +246,8 @@ body{
     <a href="index.php" class="breadcrumb-link">
         <i class="bi bi-house-fill"></i>
     </a>
+    <span class="breadcrumb-separator">›</span>
+    <a href="index.php#pengembangan-highlight" class="breadcrumb-link">Pusat Pengembangan</a>
     <span class="breadcrumb-separator">›</span>
     <span class="breadcrumb-active"><?= $breadcrumbTitle ?></span>
   </div>
@@ -286,7 +276,22 @@ body{
   ?>
     <div class="card">
       <div class="thumb">
-        <i class="bi bi-rocket"></i>
+        <?php
+        // Cek apakah link adalah YouTube
+        $isYoutube = false;
+        $youtubeId = '';
+        if (!empty($m['link'])) {
+          if (preg_match('~(?:youtu\.be/|youtube\.com/(?:embed/|v/|watch\?v=|shorts/))([\w-]{11})~i', $m['link'], $ytMatch)) {
+            $isYoutube = true;
+            $youtubeId = $ytMatch[1];
+          }
+        }
+        ?>
+        <?php if($isYoutube): ?>
+          <iframe width="100%" height="180" style="border-radius:12px;" src="https://www.youtube.com/embed/<?= htmlspecialchars($youtubeId) ?>" frameborder="0" allowfullscreen></iframe>
+        <?php else: ?>
+          <i class="bi bi-play-circle"></i>
+        <?php endif; ?>
       </div>
       <div class="body">
         <span class="badge primary">

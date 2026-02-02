@@ -51,6 +51,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <link rel="stylesheet" type="text/css" href="admin/assets/icon/font-awesome/css/font-awesome.min.css">
       <!-- Style.css -->
       <link rel="stylesheet" type="text/css" href="admin/assets/css/style.css">
+      <!-- Perbaikan navbar kiri -->
+      <link rel="stylesheet" type="text/css" href="admin/assets/css/fix-navbar.css">
   </head>
 
   <body themebg-pattern="theme1">
