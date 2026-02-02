@@ -1,5 +1,10 @@
 <?php
 session_start();
+
+// Pastikan tidak ada output sebelum header
+if (headers_sent()) {
+  ob_clean();
+}
 require '../koneksi.php';
 
 if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Pegawai") {
@@ -506,9 +511,49 @@ body {
         </h3>
       </div>
       <div class="canva-wrapper">
-        <div style="position:relative;width:100%;padding-top:56.25%;">
-          <iframe class="canva-frame" loading="lazy" src="https://www.canva.com/design/DAG_ftpWi2k/KOCL7HumwJahW8SKt23LTw/view?embed" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:8px;" allowfullscreen allow="autoplay"></iframe>
-        </div>
+        <?php
+        // Ambil link dari tabel media dengan id_sub_jenis=22
+        $mediaLink = null;
+        $idSubJenis = 22;
+        $debug = isset($_GET['debug']) ? true : false;
+        $sql = "SELECT link FROM media WHERE id_sub_jenis=" . intval($idSubJenis) . " ORDER BY id_media DESC LIMIT 1";
+        if (isset($koneksi) && $koneksi) {
+            $qMedia = mysqli_query($koneksi, $sql);
+            if ($qMedia && $row = mysqli_fetch_assoc($qMedia)) {
+                $mediaLink = $row['link'];
+            } else if ($debug) {
+                echo '<div style="color:red;font-size:13px;">Query error: ' . htmlspecialchars(mysqli_error($koneksi)) . '<br>SQL: ' . htmlspecialchars($sql) . '</div>';
+            }
+        } else if ($debug) {
+            echo '<div style="color:red;font-size:13px;">Koneksi database tidak tersedia.</div>';
+        }
+        $defaultCanva = 'https://www.canva.com/design/DAG_ftpWi2k/KOCL7HumwJahW8SKt23LTw/view?embed';
+
+        if ($mediaLink && (stripos($mediaLink, '<iframe') !== false || stripos($mediaLink, '<div') !== false)) {
+            // Bungkus embed HTML dengan div khusus dan hilangkan padding-top:100%
+            echo '<div class="canva-embed-fix" style="max-width:1300px;margin:0 auto;">';
+            $mediaLinkFixed = preg_replace('/padding-top\\s*:\\s*100%\\s*;?/i', 'padding-top:0;', $mediaLink);
+            echo $mediaLinkFixed;
+            echo '</div>';
+            if (stripos($mediaLink, 'canva.com') === false) {
+                echo '<div class="alert alert-info" style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,0.8);z-index:2;"><span>Embed bukan Canva, preview default di bawah:</span></div>';
+                echo '<div style="position:relative;width:100%;padding-top:56.25%;max-width:1300px;margin:0 auto;"><iframe class="canva-frame" loading="lazy" src="' . htmlspecialchars($defaultCanva) . '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:8px;opacity:0.5;z-index:1;" allowfullscreen allow="autoplay"></iframe></div>';
+            }
+        } else {
+            echo '<div style="position:relative;width:100%;padding-top:56.25%;max-width:1300px;margin:0 auto;">';
+            if ($mediaLink) {
+                echo '<iframe class="canva-frame" loading="lazy" src="' . htmlspecialchars($mediaLink) . '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:8px;" allowfullscreen allow="autoplay"></iframe>';
+                if (stripos($mediaLink, 'canva.com') === false) {
+                    echo '<div class="alert alert-info" style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,0.8);z-index:2;"><span>Link bukan Canva, preview default di bawah:</span></div>';
+                    echo '<iframe class="canva-frame" loading="lazy" src="' . htmlspecialchars($defaultCanva) . '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:8px;opacity:0.5;z-index:1;" allowfullscreen allow="autoplay"></iframe>';
+                }
+            } else {
+                echo '<iframe class="canva-frame" loading="lazy" src="' . htmlspecialchars($defaultCanva) . '" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:8px;" allowfullscreen allow="autoplay"></iframe>';
+                echo '<div class="alert alert-warning" style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#fff;z-index:2;"><span>' . ($koneksi ? 'Tidak ada link organigram yang tersedia.' : 'Koneksi database gagal.') . '</span></div>';
+            }
+            echo '</div>';
+        }
+        ?>
       </div>
     </div>
   </div>

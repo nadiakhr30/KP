@@ -72,6 +72,7 @@ body{
   font-weight:600;
   color:#0f172a;
 }
+.breadcrumb-link{color:#0f172a;text-decoration:none}
 
 /* ===== HEADER SECTION ===== */
 .header{
@@ -146,6 +147,8 @@ body{
     <a href="index.php" class="breadcrumb-link">
         <i class="bi bi-house-fill"></i>
     </a>
+    <span class="breadcrumb-separator">›</span>
+    <a href="index.php#humas" class="breadcrumb-link">Humas</a>
     <span class="breadcrumb-separator">›</span>
     <span class="breadcrumb-active"><?= $breadcrumbTitle ?></span>
   </div>

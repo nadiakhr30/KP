@@ -266,7 +266,17 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
           <p>Penyimpanan dokumen dan arsip publikasi.</p>
 
           <div class="humas-overlay">
-            <a href="https://drive.google.com" target="_blank" class="overlay-item">
+            <?php
+            // Ambil link Google Drive Humas dari tabel media (id_sub_jenis=23)
+            $driveLink = 'https://drive.google.com';
+            $qDrive = mysqli_query($koneksi, "SELECT link FROM media WHERE id_sub_jenis=23 ORDER BY id_media DESC LIMIT 1");
+            if ($qDrive && $rowDrive = mysqli_fetch_assoc($qDrive)) {
+                if (!empty($rowDrive['link'])) {
+                    $driveLink = $rowDrive['link'];
+                }
+            }
+            ?>
+            <a href="<?= htmlspecialchars($driveLink) ?>" target="_blank" class="overlay-item">
               <i class="bi bi-google"></i>
               <span>Google Drive Humas</span>
             </a>

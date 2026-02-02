@@ -8,6 +8,34 @@ if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Pegawai") {
 $breadcrumbTitle = "OBS Media";
 $subtitle = "Kumpulan sumber daya OBS untuk tim kehumasan";
 $mediaQ = mysqli_query($koneksi, "SELECT * FROM media WHERE id_sub_jenis = 7 ORDER BY id_media DESC");
+
+// Helper: render a preview HTML for a media link (Drive folder/file, image, video, iframe fallback)
+function render_media_preview($rawLink, $height = 360) {
+  $rawLink = trim($rawLink ?? '');
+  $href = $rawLink;
+  $isExternal = preg_match('/^https?:\/\//i', $rawLink);
+  if (!$isExternal && $rawLink !== '') { $href = 'uploads/' . ltrim($rawLink, '/'); }
+
+  $previewHtml = '';
+  if ($rawLink && preg_match('/drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)/', $rawLink, $mm)) {
+    $id = $mm[1];
+    $previewHtml = '<iframe src="https://drive.google.com/embeddedfolderview?id=' . htmlspecialchars($id) . '#grid" width="100%" height="' . intval($height) . '" frameborder="0" allowfullscreen></iframe>';
+  } elseif ($rawLink && (preg_match('/id=([a-zA-Z0-9_-]+)/', $rawLink, $mm) || preg_match('/\/d\/([a-zA-Z0-9_-]+)/', $rawLink, $mm))) {
+    $fid = $mm[1];
+    if (preg_match('/\.(jpg|jpeg|png|gif|bmp|webp)$/i', $rawLink)) {
+      $previewHtml = '<img src="https://drive.google.com/uc?export=view&id=' . htmlspecialchars($fid) . '" style="width:100%;height:auto;max-height:' . intval($height) . 'px;object-fit:contain" alt="Media">';
+    } else {
+      $previewHtml = '<iframe src="https://drive.google.com/file/d/' . htmlspecialchars($fid) . '/preview" width="100%" height="' . intval($height) . '" frameborder="0" allowfullscreen></iframe>';
+    }
+  } elseif ($href && preg_match('/\.(jpg|jpeg|png|gif|bmp|webp)$/i', $href)) {
+    $previewHtml = '<img src="' . htmlspecialchars($href) . '" style="width:100%;height:auto;max-height:' . intval($height) . 'px;object-fit:contain" alt="Media">';
+  } elseif ($href && preg_match('/\.(mp4|webm|ogg|mov)$/i', $href)) {
+    $previewHtml = '<video controls style="width:100%;max-height:' . intval($height) . 'px;background:#000"><source src="' . htmlspecialchars($href) . '"></video>';
+  } elseif ($href) {
+    $previewHtml = '<iframe src="' . htmlspecialchars($href) . '" width="100%" height="' . intval($height) . '" frameborder="0"></iframe>';
+  }
+    return $previewHtml;
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -43,18 +71,13 @@ body{
   font-weight:600;
   color:#0f172a;
 }
-.header{
-  background:#fff;
-  border-radius:20px;
-  padding:28px 32px;
-  box-shadow:0 10px 30px rgba(15,23,42,.08);
-  margin-bottom:28px;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
-  gap:28px;
-}
+.breadcrumb-link{color:#0f172a;text-decoration:none}
+
+.header{display:flex;flex-direction:column;align-items:flex-start;gap:8px;background:#fff;border-radius:20px;padding:18px 24px;box-shadow:0 10px 30px rgba(15,23,42,.08);margin-bottom:28px}
+  .header h2{margin:0;font-size:20px}
+  .header p{margin:0;color:#64748b}
+.grid{display:grid;grid-template-columns:1fr;gap:40px;padding-bottom:40px}
+.media-item{background:#fff;border-radius:12px;padding:12px;box-shadow:0 8px 30px rgba(15,23,42,.06)}
 .card{
   background:#fff;
   border-radius:14px;
@@ -66,8 +89,6 @@ body{
   transform:translateY(-4px);
   box-shadow:0 14px 40px rgba(15,23,42,.12);
 }
-.thumb{height:200px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;}
-.thumb i{font-size:64px;color:#e83e8c;}
 .body{padding:16px;display:flex;flex-direction:column;gap:10px}
 .badge{
   width:max-content;
@@ -100,6 +121,8 @@ body{
         <i class="bi bi-house-fill"></i>
     </a>
     <span class="breadcrumb-separator">›</span>
+    <a href="index.php#broadcast" class="breadcrumb-link">Broadcast</a>
+    <span class="breadcrumb-separator">›</span>
     <span class="breadcrumb-active">OBS Media</span>
   </div>
   <div class="header">
@@ -112,45 +135,6 @@ body{
       while ($m = mysqli_fetch_assoc($mediaQ)):
     ?>
     <div class="card">
-      <div class="thumb">
-        <?php
-        // Cek apakah ada link Google Drive di kolom link
-        $driveUrl = '';
-        if (!empty($m['link']) && preg_match('/drive\\.google\\.com/', $m['link'])) {
-          $driveUrl = $m['link'];
-        }
-        if ($driveUrl) {
-          // Ambil file ID dari link Google Drive
-          $fileId = '';
-          if (preg_match('/id=([a-zA-Z0-9_-]+)/', $driveUrl, $matches)) {
-            $fileId = $matches[1];
-          } elseif (preg_match('/\/d\/([a-zA-Z0-9_-]+)/', $driveUrl, $matches)) {
-            $fileId = $matches[1];
-          }
-          if ($fileId) {
-            // Coba deteksi tipe file dari ekstensi di link (jika ada)
-            $isImage = false;
-            $isVideo = false;
-            if (preg_match('/\.(jpg|jpeg|png|gif|bmp|webp)/i', $driveUrl)) {
-              $isImage = true;
-            } elseif (preg_match('/\.(mp4|webm|ogg|mov|avi|mkv)/i', $driveUrl)) {
-              $isVideo = true;
-            }
-            // Jika image, tampilkan img tag
-            if ($isImage) {
-              echo '<img src="https://drive.google.com/uc?export=view&id=' . htmlspecialchars($fileId) . '" style="max-width:100%;max-height:160px;object-fit:contain;" alt="Gambar">';
-            } else {
-              // Default: preview video (iframe Google Drive bisa preview video dan PDF)
-              echo '<iframe src="https://drive.google.com/file/d/' . htmlspecialchars($fileId) . '/preview" width="100%" height="160" allow="autoplay" frameborder="0" allowfullscreen></iframe>';
-            }
-          } else {
-            echo '<i class="bi bi-sliders2"></i>';
-          }
-        } else {
-          echo '<i class="bi bi-sliders2"></i>';
-        }
-        ?>
-      </div>
       <?php
         $displayTitle = $m['judul'] ?? '-';
         if (!empty($driveUrl)) {
@@ -169,23 +153,17 @@ body{
         }
       ?>
       <div class="body">
-        <span class="badge">OBS</span>
-        <h4><?= htmlspecialchars($displayTitle) ?></h4>
-        <p><?= htmlspecialchars($m['deskripsi'] ?? '-') ?></p>
-        <div class="footer">
-          <div>
-            <small>Link</small><br>
+        <?php
+          // Render full-size preview (same style as Broadcast)
+          echo render_media_preview($m['link'], 360);
+        ?>
+        <?php if (!empty($m['link'])): ?>
+          <?php $rawLink = trim($m['link'] ?? ''); $isExternal = preg_match('/^https?:\/\//i', $rawLink); $href = $isExternal ? $rawLink : 'uploads/' . ltrim($rawLink, '/'); ?>
+          <div style="padding-top:10px;border-top:1px solid #eef2f7;margin-top:10px;">
+            <small>Link sumber:</small><br>
+            <a href="<?= htmlspecialchars($href) ?>" target="_blank" rel="noopener noreferrer"><?= htmlspecialchars($href) ?></a>
           </div>
-          <?php if (!empty($m['link'])): ?>
-            <?php
-              $isExternal = preg_match('/^https?:\\/\\//', $m['link']);
-              $href = $isExternal ? $m['link'] : 'uploads/' . $m['link'];
-            ?>
-            <a href="<?= htmlspecialchars($href) ?>" target="_blank" class="open" title="Buka link">
-              <i class="bi bi-link-45deg"></i>
-            </a>
-          <?php endif; ?>
-        </div>
+        <?php endif; ?>
       </div>
     </div>
     <?php endwhile;

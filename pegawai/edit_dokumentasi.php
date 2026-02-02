@@ -58,36 +58,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         mysqli_query($koneksi, "UPDATE jadwal SET dokumentasi = '$dokumentasi' WHERE id_jadwal = $id_jadwal");
         
     } elseif ($mode == 'publikasi') {
-        $link_instagram = mysqli_real_escape_string($koneksi, $_POST['link_instagram'] ?? '');
-        $link_facebook = mysqli_real_escape_string($koneksi, $_POST['link_facebook'] ?? '');
-        $link_youtube = mysqli_real_escape_string($koneksi, $_POST['link_youtube'] ?? '');
-        $link_website = mysqli_real_escape_string($koneksi, $_POST['link_website'] ?? '');
-        
-        mysqli_query($koneksi, "UPDATE jadwal SET 
-            link_instagram = '$link_instagram',
-            link_facebook = '$link_facebook',
-            link_youtube = '$link_youtube',
-            link_website = '$link_website'
-            WHERE id_jadwal = $id_jadwal
-        ");
+        // Ambil semua jenis_link
+        $jenisLinks = [];
+        $qJenis = mysqli_query($koneksi, "SELECT * FROM jenis_link ORDER BY id_jenis_link");
+        while ($row = mysqli_fetch_assoc($qJenis)) {
+            $jenisLinks[$row['id_jenis_link']] = $row['nama_link'];
+        }
+        // Simpan/update semua link publikasi ke jadwal_link
+        foreach ($jenisLinks as $idJenis => $namaJenis) {
+            $field = strtolower(str_replace(' ', '_', $namaJenis));
+            $link = mysqli_real_escape_string($koneksi, $_POST[$field] ?? '');
+            // Cek apakah sudah ada
+            $qExist = mysqli_query($koneksi, "SELECT * FROM jadwal_link WHERE id_jadwal = $id_jadwal AND id_jenis_link = $idJenis");
+            if (mysqli_num_rows($qExist) > 0) {
+                mysqli_query($koneksi, "UPDATE jadwal_link SET link = '$link' WHERE id_jadwal = $id_jadwal AND id_jenis_link = $idJenis");
+            } else {
+                mysqli_query($koneksi, "INSERT INTO jadwal_link (id_jadwal, id_jenis_link, link) VALUES ($id_jadwal, $idJenis, '$link')");
+            }
+        }
     }
-    
-    // Auto-update status ke "Selesai" (2) jika dokumentasi + minimal 1 link publikasi ada
-    $qCheck = mysqli_query($koneksi, "
-        SELECT dokumentasi, link_instagram, link_facebook, link_youtube, link_website 
-        FROM jadwal WHERE id_jadwal = $id_jadwal
-    ");
-    $data = mysqli_fetch_assoc($qCheck);
-    
-    $hasDokumentasi = !empty($data['dokumentasi']);
-    $hasLink = !empty($data['link_instagram']) || !empty($data['link_facebook']) || 
-               !empty($data['link_youtube']) || !empty($data['link_website']);
-    
-    if ($hasDokumentasi && $hasLink) {
+    // Cek status selesai: dokumentasi + minimal 1 link publikasi di jadwal_link
+    $hasDokumentasi = !empty($jadwal['dokumentasi']);
+    $qLinks = mysqli_query($koneksi, "SELECT COUNT(*) as cnt FROM jadwal_link WHERE id_jadwal = $id_jadwal AND link IS NOT NULL AND link != ''");
+    $cntLinks = mysqli_fetch_assoc($qLinks)['cnt'];
+    if ($hasDokumentasi && $cntLinks > 0) {
         mysqli_query($koneksi, "UPDATE jadwal SET status = 2 WHERE id_jadwal = $id_jadwal");
     }
-    
-    header("Location: viewjadwal.php");
+    header("Location: index.php");
     exit;
 }
 ?>
@@ -209,22 +206,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <?php endif; ?>
 
                     <?php elseif ($mode == 'publikasi'): ?>
+                        <?php
+                        // Ambil semua jenis_link
+                        $jenisLinks = [];
+                        $qJenis = mysqli_query($koneksi, "SELECT * FROM jenis_link ORDER BY id_jenis_link");
+                        while ($row = mysqli_fetch_assoc($qJenis)) {
+                            $jenisLinks[$row['id_jenis_link']] = $row['nama_link'];
+                        }
+                        // Ambil semua link publikasi dari jadwal_link
+                        $jadwalLinks = [];
+                        $qLinks = mysqli_query($koneksi, "SELECT * FROM jadwal_link WHERE id_jadwal = $id_jadwal");
+                        while ($row = mysqli_fetch_assoc($qLinks)) {
+                            $jadwalLinks[$row['id_jenis_link']] = $row['link'];
+                        }
+                        ?>
+                        <?php foreach ($jenisLinks as $idJenis => $namaJenis):
+                            $field = strtolower(str_replace(' ', '_', $namaJenis));
+                            $icon = 'bi-globe';
+                            if (stripos($namaJenis, 'instagram') !== false) $icon = 'bi-instagram';
+                            if (stripos($namaJenis, 'facebook') !== false) $icon = 'bi-facebook';
+                            if (stripos($namaJenis, 'youtube') !== false) $icon = 'bi-youtube';
+                        ?>
                         <div class="mb-3">
-                            <label class="form-label"><i class="bi bi-instagram"></i> Link Instagram</label>
-                            <input type="url" name="link_instagram" class="form-control" value="<?= htmlspecialchars($jadwal['link_instagram'] ?? '') ?>">
+                            <label class="form-label"><i class="bi <?= $icon ?>"></i> Link <?= htmlspecialchars($namaJenis) ?></label>
+                            <input type="url" name="<?= $field ?>" class="form-control" value="<?= htmlspecialchars($jadwalLinks[$idJenis] ?? '') ?>">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label"><i class="bi bi-facebook"></i> Link Facebook</label>
-                            <input type="url" name="link_facebook" class="form-control" value="<?= htmlspecialchars($jadwal['link_facebook'] ?? '') ?>" >
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label"><i class="bi bi-youtube"></i> Link YouTube</label>
-                            <input type="url" name="link_youtube" class="form-control" value="<?= htmlspecialchars($jadwal['link_youtube'] ?? '') ?>" >
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label"><i class="bi bi-globe"></i> Link Website</label>
-                            <input type="url" name="link_website" class="form-control" value="<?= htmlspecialchars($jadwal['link_website'] ?? '') ?>" >
-                        </div>
+                        <?php endforeach; ?>
                         <div class="alert alert-warning">
                             <small><i class="bi bi-info-circle"></i> Status akan otomatis berubah ke "Selesai" ketika dokumentasi dan minimal 1 link publikasi terisi.</small>
                         </div>
