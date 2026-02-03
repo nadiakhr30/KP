@@ -1,0 +1,60 @@
+{
+  "name": "Sikumbang",
+  "short_name": "Sikumbang",
+  "description": "Sistem Manajemen Kehumasan Badan Pusat Statistika Bangkalan",
+  "start_url": "/Sistem Kehumasan/KP/index.php",
+  "scope": "/Sistem Kehumasan/KP/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#343bb9",
+  "icons": [
+    {
+      "src": "/Sistem Kehumasan/KP/assets/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/Sistem Kehumasan/KP/assets/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/Sistem Kehumasan/KP/assets/icons/screenshot-540x720.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Dashboard Admin",
+      "short_name": "Admin",
+      "description": "Buka dashboard admin",
+      "url": "/Sistem Kehumasan/KP/admin/index.php",
+      "icons": [
+        {
+          "src": "/Sistem Kehumasan/KP/assets/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard Pegawai",
+      "short_name": "Pegawai",
+      "description": "Buka dashboard pegawai",
+      "url": "/Sistem Kehumasan/KP/pegawai/index.php",
+      "icons": [
+        {
+          "src": "/Sistem Kehumasan/KP/assets/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

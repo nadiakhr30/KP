@@ -22,12 +22,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 
 <head>
-    <title>Log In</title>
+    <title>Log In - Sistem Kehumasan</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
       <meta name="author" content="Kamila - Nadia" />
+      <meta name="description" content="Sistem Manajemen Kehumasan dan Konten Media Sosial">
+      <meta name="theme-color" content="#2196F3">
+      <meta name="mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-status-bar-style" content="default">
+      <meta name="apple-mobile-web-app-title" content="Kehumasan">
       <link rel="icon" href="admin/assets/images/logo_bps.ico" type="image/x-icon">
+      <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+      <link rel="manifest" href="manifest.json">
       <!-- Google font-->     
       <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
       <!-- Required Fremwork -->
@@ -269,6 +277,23 @@ function togglePassword() {
   }
 }
 </script>
+
+<!-- PWA Service Worker Registration -->
+<script src="assets/js/pwa-install.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(function(registration) {
+          console.log('Service Worker registered successfully:', registration);
+        })
+        .catch(function(error) {
+          console.log('Service Worker registration failed:', error);
+        });
+    });
+  }
+</script>
+
 </body>
 
 </html>

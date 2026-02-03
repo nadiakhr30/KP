@@ -134,7 +134,7 @@ if ($jenisAsetId > 0) {
                                             
                                             <div class="user-content">
                                                 <h4><?= htmlspecialchars($aset['nama_aset']); ?></h4>
-                                                <h6 style="font-size: 12px; min-height: 40px;">
+                                                <h6 style="font-size: 12px;">
                                                     <?= htmlspecialchars(substr($aset['keterangan'], 0, 100)); ?><?= strlen($aset['keterangan']) > 100 ? '...' : ''; ?>
                                                 </h6>
                                                 <?php if (!empty($aset['nama_penanggung_jawab'])): ?>
@@ -143,8 +143,8 @@ if ($jenisAsetId > 0) {
                                                 </h5>
                                                 <?php endif; ?>
                                             </div>
-                                            <div style="display: flex; gap: 8px;">
-                                                <a href="edit/edit_aset.php?id=<?= $aset['id_aset']; ?>" class="btn btn-icon btn-warning waves-effect waves-light flex-fill" title="Edit"><i class="ti-pencil"></i></a>
+                                            <div style="display: flex; justify-content: center; margin-top: 15px; gap: 8px;">
+                                                <a href="edit/edit_aset.php?id=<?= $aset['id_aset']; ?>" class="btn btn-icon btn-primary waves-effect waves-light flex-fill" title="Edit"><i class="ti-pencil"></i></a>
                                                 <button type="button" class="btn btn-icon btn-danger waves-effect waves-light flex-fill" onclick="deleteAset(<?= $aset['id_aset']; ?>, '<?= htmlspecialchars($aset['nama_aset']); ?>')" title="Hapus"><i class="ti-trash"></i></button>
                                             </div>
                                         </div>

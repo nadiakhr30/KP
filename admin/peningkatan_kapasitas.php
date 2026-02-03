@@ -148,7 +148,7 @@ function getYouTubePreview($link) {
                             <div class="row">
                                 <?php if (count($dataMedia) === 0): ?>
                                     <div class="col-12 text-center">
-                                        <p><?= $currentSub ? 'Tidak ada video untuk ' . htmlspecialchars($currentSub['nama_sub_jenis']) : 'Pilih sub jenis terlebih dahulu'; ?></p>
+                                        <p><?= $currentSub ? 'Tidak ada media untuk ' . htmlspecialchars($currentSub['nama_sub_jenis']) : 'Pilih sub jenis terlebih dahulu'; ?></p>
                                     </div>
                                 <?php else: ?>
                                         <?php foreach ($dataMedia as $media): ?>
@@ -218,7 +218,7 @@ function getYouTubePreview($link) {
                                         <tbody>
                                             <?php if (count($dataMedia) === 0): ?>
                                             <tr>
-                                              <td colspan="6" class="text-center"><?= $currentSub ? 'Tidak ada video untuk ' . htmlspecialchars($currentSub['nama_sub_jenis']) : 'Pilih sub jenis terlebih dahulu'; ?></td>
+                                              <td colspan="6" class="text-center"><?= $currentSub ? 'Tidak ada media untuk ' . htmlspecialchars($currentSub['nama_sub_jenis']) : 'Pilih sub jenis terlebih dahulu'; ?></td>
                                             </tr>
                                             <?php else: ?>
                                             <?php foreach ($dataMedia as $media) : ?>

@@ -8,11 +8,18 @@ global $user;
 
 <head>
     <title>Dashboard Admin</title>
+    <link rel="icon" href="../images/sikumbang.ico" type="image/x-icon">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="author" content="Kamila" />
-    <link rel="icon" href="assets/images/logo_bps.ico" type="image/x-icon">
+    <meta name="theme-color" content="#343bb9">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Sikumbang">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+    <link rel="manifest" href="../manifest.json">
     <!-- Pegawai Theme Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
@@ -114,7 +121,7 @@ global $user;
                           <i class="ti-menu"></i>
                       </a>
                       <a href="index.php" style="display:flex; align-items:center; gap:8px; text-decoration:none; max-width:220px;" class="logo">
-                          <img src="../images/bps.png" alt="Logo BPS" style="width:40px; height:auto; flex-shrink:0;" />
+                          <img src="../images/sikumbang.png" alt="Logo BPS" style="width:40px; height:auto; flex-shrink:0;" />
                           <span style="color:white;">Humas BPS Bangkalan</span>
                       </a>
                       <a class="mobile-options waves-effect waves-light">
@@ -134,6 +141,13 @@ global $user;
                           </li>
                       </ul>
                       <ul class="nav-right">
+                          <!-- PWA Install Button -->
+                          <li style="display: none;" id="pwa-install-prompt">
+                              <a href="javascript:void(0)" class="waves-effect waves-light" id="pwa-install-btn" style="padding: 8px 12px; border-radius: 4px; color: white; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                                  <i class="ti-download"></i>
+                                  <span>Install App</span>
+                              </a>
+                          </li>
                           <li class="user-profile header-notification">
                               <a href="#!" class="waves-effect waves-light m-t-10" style="display: flex; align-items: center; gap: 8px;">
                                     <div class="avatar-wrapper2">
@@ -639,6 +653,22 @@ global $user;
         }
       }
     </style>
+    
+    <!-- PWA Service Worker Registration -->
+    <script src="../assets/js/pwa-install.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('../service-worker.js')
+            .then(function(registration) {
+              console.log('Service Worker registered successfully:', registration);
+            })
+            .catch(function(error) {
+              console.log('Service Worker registration failed:', error);
+            });
+        });
+      }
+    </script>
 </body>
 
 </html>

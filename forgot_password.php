@@ -3,7 +3,15 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Lupa Password</title>
+<title>Lupa Password - Sistem Kehumasan</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Sistem Manajemen Kehumasan dan Konten Media Sosial">
+<meta name="theme-color" content="#2196F3">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kehumasan">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -161,6 +169,22 @@ function konfirmasi(){
         }
     })
 }
+</script>
+
+<!-- PWA Service Worker Registration -->
+<script src="assets/js/pwa-install.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(function(registration) {
+          console.log('Service Worker registered successfully:', registration);
+        })
+        .catch(function(error) {
+          console.log('Service Worker registration failed:', error);
+        });
+    });
+  }
 </script>
 
 </body>

@@ -262,7 +262,16 @@ ob_start();
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="align-items-right" style="float: right;">
+                                    <div class="align-items-right d-flex justify-content-end" style="float: right; gap:8px;">
+                                        <div class="btn-group">
+                                            <button id="statusFilterBtnCard" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Status: Semua</button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" href="#" onclick="applyStatusFilter('all'); return false;">Semua</a>
+                                                <a class="dropdown-item" href="#" onclick="applyStatusFilter('0'); return false;">Belum Dikerjakan</a>
+                                                <a class="dropdown-item" href="#" onclick="applyStatusFilter('1'); return false;">Sedang Dikerjakan</a>
+                                                <a class="dropdown-item" href="#" onclick="applyStatusFilter('2'); return false;">Selesai</a>
+                                            </div>
+                                        </div>
                                         <a href="tambah/tambah_jadwal.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
                                     </div>
                                 </div>
@@ -274,7 +283,7 @@ ob_start();
                                     </div>
                                 <?php else: ?>
                                 <?php foreach ($jadwalList as $jadwal): ?>
-                                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-4" data-status="<?= $jadwal['status'] ?>">
                                     <div class="card rounded-card">
                                         <div class="card-block">
                                             <div style="margin-bottom: 15px;">
@@ -372,7 +381,16 @@ ob_start();
                                         </div>
                                     </div>
                                     <div class="col-6">
-                                        <div class="align-items-right" style="float: right;">
+                                        <div class="align-items-right d-flex justify-content-end" style="float: right; gap:8px;">
+                                            <div class="btn-group">
+                                                <button id="statusFilterBtn" type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Status: Semua</button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#" onclick="applyStatusFilter('all'); return false;">Semua</a>
+                                                    <a class="dropdown-item" href="#" onclick="applyStatusFilter('0'); return false;">Belum Dikerjakan</a>
+                                                    <a class="dropdown-item" href="#" onclick="applyStatusFilter('1'); return false;">Sedang Dikerjakan</a>
+                                                    <a class="dropdown-item" href="#" onclick="applyStatusFilter('2'); return false;">Selesai</a>
+                                                </div>
+                                            </div>
                                             <a href="tambah/tambah_jadwal.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
                                         </div>
                                     </div>
@@ -393,6 +411,7 @@ ob_start();
                                                 <?php foreach ($linkTypes as $linkType): ?>
                                                     <th><?= htmlspecialchars($linkType) ?></th>
                                                 <?php endforeach; ?>
+                                                <th class="col-status-val" style="display:none">StatusVal</th>
                                                 <th>Dokumentasi</th>
                                                 <th>Status</th>
                                                 <th>Aksi</th>
@@ -401,11 +420,11 @@ ob_start();
                                         <tbody>
                                             <?php if (count($jadwalList) === 0): ?>
                                             <tr>
-                                                <td colspan="<?= 8 + count($picTypes) + count($linkTypes) ?>" class="text-center">Tidak ada data jadwal tersedia.</td>
+                                                <td colspan="<?= 9 + count($picTypes) + count($linkTypes) ?>" class="text-center">Tidak ada data jadwal tersedia.</td>
                                             </tr>
                                             <?php else: ?>
                                             <?php foreach ($jadwalList as $jadwal): ?>
-                                            <tr>
+                                            <tr data-status="<?= $jadwal['status'] ?>">
                                                 <td><?= $jadwal['id_jadwal'] ?></td>
                                                 <td><?= htmlspecialchars($jadwal['topik'] ?? '-') ?></td>
                                                 <td><?= htmlspecialchars($jadwal['judul_kegiatan']) ?></td>
@@ -435,6 +454,7 @@ ob_start();
                                                         <?php endif; ?>
                                                     </td>
                                                 <?php endforeach; ?>
+                                                <td class="col-status-val" style="display:none"><?= $jadwal['status'] ?></td>
                                                 <td>
                                                     <?php if (!empty($jadwal['dokumentasi'])): ?>
                                                         <span class="badge bg-success">
@@ -482,6 +502,7 @@ ob_start();
                                                 <?php foreach ($linkTypes as $linkType): ?>
                                                     <th><?= htmlspecialchars($linkType) ?></th>
                                                 <?php endforeach; ?>
+                                                <th class="col-status-val" style="display:none">StatusVal</th>
                                                 <th>Dokumentasi</th>
                                                 <th>Status</th>
                                                 <th>Aksi</th>
@@ -920,6 +941,93 @@ function showEventDetail(eventData) {
     }
     
     new bootstrap.Modal(document.getElementById('jadwalModal')).show();
+}
+
+// Apply status filter for table and card view
+function applyStatusFilter(status) {
+    const labels = {
+        'all': 'Semua',
+        '0': 'Belum Dikerjakan',
+        '1': 'Sedang Dikerjakan',
+        '2': 'Selesai'
+    };
+    const label = labels[status] || labels['all'];
+    // Update any filter button labels (both locations)
+    const btns = [document.getElementById('statusFilterBtn'), document.getElementById('statusFilterBtnCard')];
+    btns.forEach(b => { if (b) b.innerText = 'Status: ' + label; });
+
+    // If DataTables is present and this table is initialized, use DataTables search API
+    if (window.jQuery && window.jQuery.fn && window.jQuery.fn.dataTable && window.jQuery.fn.dataTable.isDataTable && jQuery.fn.dataTable.isDataTable('#order-table')) {
+        const table = jQuery('#order-table').DataTable();
+
+        // Prefer column-based filtering if we have the hidden status column
+        const headerTh = jQuery('#order-table thead th.col-status-val');
+        if (headerTh.length) {
+            const idx = headerTh.index();
+            if (status === 'all') {
+                table.column(idx).search('').draw();
+            } else {
+                // exact match for numeric status
+                table.column(idx).search('^' + status + '$', true, false).draw();
+            }
+            // Also filter card view (if present)
+            filterCardElements(status);
+            return;
+        }
+
+        // Fallback: use DataTables row nodes to filter by data-status attribute
+        if (status === 'all') {
+            table.rows().every(function() {
+                jQuery(this.node()).show();
+            });
+            table.draw(false);
+            filterCardElements(status);
+            return;
+        }
+        table.rows().every(function() {
+            const node = this.node();
+            const ds = node ? node.getAttribute && node.getAttribute('data-status') : null;
+            if (ds === String(status)) jQuery(node).show(); else jQuery(node).hide();
+        });
+        table.draw(false);
+        filterCardElements(status);
+        return;
+    }
+
+    // Fallback: simple DOM-based filtering for non-DataTables table
+    const tbody = document.querySelector('#order-table tbody');
+    if (!tbody) return;
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.forEach(r => {
+        const ds = r.getAttribute('data-status');
+        if (ds === null) {
+            // Keep rows without data-status only when showing all
+            r.style.display = (status === 'all') ? '' : 'none';
+            return;
+        }
+        if (status === 'all' || ds === String(status)) {
+            r.style.display = '';
+        } else {
+            r.style.display = 'none';
+        }
+    });
+    // Also filter card view (if present)
+    filterCardElements(status);
+}
+
+// Helper to filter card elements with data-status attribute
+function filterCardElements(status) {
+    const cardContainer = document.querySelector('.users-card');
+    if (!cardContainer) return;
+    const cards = Array.from(cardContainer.querySelectorAll('[data-status]'));
+    cards.forEach(card => {
+        const ds = card.getAttribute('data-status');
+        if (status === 'all' || ds === String(status)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
 }
 
 // Calendar - Only initialize if FullCalendar library loaded successfully
