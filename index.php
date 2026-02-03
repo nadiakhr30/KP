@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 
 <head>
-    <title>Log In - Sistem Kehumasan</title>
+    <title>Sikumbang - Sistem Kehumasan BPS Bangkalan</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <meta name="mobile-web-app-capable" content="yes">
       <meta name="apple-mobile-web-app-capable" content="yes">
       <meta name="apple-mobile-web-app-status-bar-style" content="default">
-      <meta name="apple-mobile-web-app-title" content="Kehumasan">
+      <meta name="apple-mobile-web-app-title" content="Sikumbang">
       <link rel="icon" href="admin/assets/images/logo_bps.ico" type="image/x-icon">
       <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
       <link rel="manifest" href="manifest.json">
@@ -63,11 +63,11 @@ background-size: cover;
     <!-- KIRI -->
     <div class="left-panel">
       <div class="brand">
-        <img src="images/bps.png" alt="BPS Logo">
+        <img src="images/sikumbang.png" alt="Sikumbang Logo">
       </div>
 
       <div class="welcome-text">
-        <h1>Selamat<br>Datang!</h1>
+        <h1>SIKUMBANG</h1>
         <h6>Sistem Informasi Kehumasan BPS Kabupaten Bangkalan</h6>
       </div>
     </div>

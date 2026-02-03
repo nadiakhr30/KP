@@ -23,14 +23,6 @@ $icons = [
     'icon-512x512.png' => [
         'size' => 512,
         'desc' => '512x512 standard icon'
-    ],
-    'icon-maskable-192x192.png' => [
-        'size' => 192,
-        'desc' => '192x192 maskable icon'
-    ],
-    'icon-maskable-512x512.png' => [
-        'size' => 512,
-        'desc' => '512x512 maskable icon'
     ]
 ];
 

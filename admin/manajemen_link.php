@@ -62,6 +62,17 @@ while ($row = mysqli_fetch_assoc($qLink)) {
                         </li>
                     </ul>
                     <div class="tab-content tabs card">
+                        <div class="card-header">
+                            <div class="card-header-right">
+                                <ul class="list-unstyled card-option">
+                                    <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                                    <li><i class="fa fa-window-maximize full-card"></i></li>
+                                    <li><i class="fa fa-minus minimize-card"></i></li>
+                                    <li><i class="fa fa-refresh reload-card"></i></li>
+                                    <li><i class="fa fa-trash close-card"></i></li>
+                                </ul>
+                            </div>
+                        </div>
                         <div class="tab-pane p-5 active" id="card" role="tabpanel">
                             <div class="row m-b-10">
                                 <div class="col-6">

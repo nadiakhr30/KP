@@ -47,7 +47,7 @@ if ($format === 'print') {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Laporan Jadwal Konten</title>
-        <link rel="icon" href="../assets/images/logo_bps.ico" type="image/x-icon">
+    <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

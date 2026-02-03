@@ -150,7 +150,7 @@ if (mysqli_num_rows($qUser) == 0) {
     <title>Edit User</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="icon" href="../assets/images/logo_bps.ico" type="image/x-icon">
+    <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins&family=Jost&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
@@ -250,7 +250,14 @@ if (mysqli_num_rows($qUser) == 0) {
                         <div class="form-row">
                             <div class="form-group col-md-6 px-5">
                                 <label>Password</label>
-                                <input type="password" name="password" class="form-control" placeholder="Biarkan kosong jika tidak ingin mengubah">
+                                <div class="input-group">
+                                    <input type="password" name="password" class="form-control" id="password" placeholder="Biarkan kosong jika tidak ingin mengubah">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary password-toggle" type="button" data-target="password">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
                                 <small class="text-muted">Kosongkan untuk mempertahankan password saat ini</small>
                             </div>
                         </div>
@@ -330,6 +337,26 @@ if (mysqli_num_rows($qUser) == 0) {
                 const checkbox = document.getElementById(checkboxId);
                 checkbox.checked = !checkbox.checked;
                 this.classList.toggle('active');
+            });
+        });
+
+        // Password visibility toggle
+        document.querySelectorAll('.password-toggle').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.dataset.target;
+                const input = document.getElementById(targetId);
+                const icon = this.querySelector('i');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
             });
         });
     });

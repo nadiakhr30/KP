@@ -308,7 +308,7 @@ if ($skill_result) {
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
     <title>Tambah User</title>
     <link rel="icon" href="../assets/images/logo_bps.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -521,15 +521,22 @@ if ($skill_result) {
                                 <div class="form-row">
                                     <div class="form-group col-md-6 px-5">
                                         <label for="password">Password <span class="text-danger">*</span></label>
-                                        <input 
-                                            type="password" 
-                                            class="form-control" 
-                                            id="password" 
-                                            name="password"
-                                            placeholder="Masukkan password"
-                                            required
-                                            maxlength="255"
-                                        >
+                                        <div class="input-group">
+                                            <input 
+                                                type="password" 
+                                                class="form-control" 
+                                                id="password" 
+                                                name="password"
+                                                placeholder="Masukkan password"
+                                                required
+                                                maxlength="255"
+                                            >
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary password-toggle" type="button" data-target="password">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-row">
@@ -912,6 +919,26 @@ if ($skill_result) {
             const input = document.getElementById('skills_input');
             input.value = Object.keys(selectedSkills).join(',');
         }
+
+        // Password visibility toggle
+        document.querySelectorAll('.password-toggle').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.dataset.target;
+                const input = document.getElementById(targetId);
+                const icon = this.querySelector('i');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
     });
 </script>
 

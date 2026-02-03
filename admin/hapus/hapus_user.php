@@ -38,6 +38,7 @@ if (isset($_POST['konfirmasi_hapus'])) {
 <head>
     <meta charset="UTF-8">
     <title>Hapus User</title>
+    <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins&family=Jost&display=swap">

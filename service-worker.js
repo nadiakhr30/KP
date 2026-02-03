@@ -2,6 +2,7 @@
 const CACHE_NAME = 'sistem-kehumasan-v1';
 const urlsToCache = [
   '/Sistem Kehumasan/KP/offline.html',
+  '/Sistem Kehumasan/KP/index.php',
   '/Sistem Kehumasan/KP/admin/index.php',
   '/Sistem Kehumasan/KP/admin/assets/css/style.css',
   '/Sistem Kehumasan/KP/admin/assets/css/custom.css',
@@ -49,49 +50,66 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') {
     return;
   }
+  const requestUrl = new URL(event.request.url);
 
+  // Treat navigations and dashboard/index requests as network-first
+  const isNavigation = event.request.mode === 'navigate' ||
+    requestUrl.pathname.endsWith('/index.php') ||
+    requestUrl.pathname.includes('/admin/') ||
+    requestUrl.pathname.includes('/pegawai/') ||
+    requestUrl.pathname === '/Sistem Kehumasan/KP/' ||
+    requestUrl.pathname === '/Sistem Kehumasan/KP';
+
+  if (isNavigation) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, copy);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          // Network failed -> try cache -> then offline.html
+          return caches.match(event.request)
+            .then((cached) => cached || (
+              requestUrl.pathname.includes('/pegawai/') ?
+                caches.match('/Sistem Kehumasan/KP/pegawai/index.php') :
+                caches.match('/Sistem Kehumasan/KP/admin/index.php')
+            ))
+            .then((resp) => resp || caches.match('/Sistem Kehumasan/KP/offline.html'));
+        })
+    );
+    return;
+  }
+
+  // For other requests (static assets) use cache-first then network
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached response if available
-        if (response) {
-          return response;
-        }
-
-        // Otherwise fetch from network
-        return fetch(event.request)
-          .then((response) => {
-            // Don't cache if not a successful response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Clone the response
-            const responseToCache = response.clone();
-
-            // Cache the response for future use
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          })
-          .catch(() => {
-        // Return offline page or appropriate cached dashboard
-        console.log('Service Worker: Network request failed, using offline fallback');
-        
-        // Try to serve appropriate dashboard based on request URL
-        const requestUrl = new URL(event.request.url);
-        
-        if (requestUrl.pathname.includes('/pegawai/')) {
-          return caches.match('/Sistem Kehumasan/KP/pegawai/index.php')
-            .then(response => response || caches.match('/Sistem Kehumasan/KP/offline.html'));
-        } else {
-          return caches.match('/Sistem Kehumasan/KP/admin/index.php')
-            .then(response => response || caches.match('/Sistem Kehumasan/KP/offline.html'));
-        }
-          });
-      })
+    caches.match(event.request).then((response) => {
+      if (response) {
+        return response;
+      }
+      return fetch(event.request)
+        .then((networkResponse) => {
+          if (!networkResponse || networkResponse.status !== 200) {
+            return networkResponse;
+          }
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
+          return networkResponse;
+        })
+        .catch(() => caches.match('/Sistem Kehumasan/KP/offline.html'));
+    })
   );
+});
+
+// Allow the page to tell the SW to skipWaiting (for immediate activation)
+self.addEventListener('message', (event) => {
+  if (!event.data) return;
+  if (event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });

@@ -30,7 +30,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'doLogout') {
       height: 100%;
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #6689ea 0%, #4b62a2 100%);
       min-height: 100vh;
       display: flex;
       justify-content: center;
