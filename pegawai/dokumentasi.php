@@ -95,9 +95,20 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
   .card.card-with-drive:hover .icon-folder{transform:translateY(-8px)}
   .grid{display:grid;grid-template-columns:1fr;gap:24px}
 
-  .modal-custom{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px}
-  .modal-custom-inner{width:100%;max-width:1100px;border-radius:10px;overflow:hidden;background:#fff}
-  .modal-custom-body iframe{border-radius:8px} 
+  .modal-custom{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;padding:24px;backdrop-filter:blur(6px);transition:opacity .18s ease}
+  .modal-custom[aria-hidden='true']{opacity:0;pointer-events:none}
+  .modal-card{width:100%;max-width:720px;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#fff,#fcfcff);box-shadow:0 18px 40px rgba(2,6,23,0.18);display:flex;flex-direction:column}
+  .modal-card-header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #eef2f7}
+  .modal-folder-icon{width:52px;height:52px;border-radius:10px;background:linear-gradient(180deg,#fff5eb,#fff1e6);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(245,158,11,0.06)}
+  .modal-folder-icon svg{width:28px;height:28px;color:#f59e0b}
+  .modal-card-title{font-size:15px;font-weight:700;color:#0f172a}
+  .modal-card-controls{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .modal-close-btn{border:none;background:transparent;font-size:20px;line-height:1;cursor:pointer;color:#475569}
+  .modal-card-body{background:#fff;padding:10px}
+  .modal-iframe{width:100%;height:480px;border-radius:10px;border:0;background:#f8fafc;min-height:260px}
+  .modal-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px;color:#64748b}
+
+  .modal-error{padding:18px;text-align:center;color:#ef4444} 
 .body{padding:18px;display:flex;flex-direction:column;gap:10px;background:#fff;border-radius:12px;margin-top:-20px;box-shadow:0 8px 30px rgba(15,23,42,.06)}
 .badge{width:max-content;font-size:11px;padding:4px 10px;border-radius:999px;font-weight:600;color:#fff}
 .primary{background:#2563eb}.success{background:#16a34a}.warning{background:#f59e0b}.secondary{background:#64748b}
@@ -172,10 +183,15 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
       }
 
       $cardDataAttr = '';
+      // expose the original link and title so JS can show modal
+      if (!empty($rawLink)) {
+        $cardDataAttr .= ' data-media-link="' . htmlspecialchars($rawLink) . '"';
+      }
+      $cardDataAttr .= ' data-media-title="' . htmlspecialchars($judul) . '"';
       if ($mediaDriveId) {
-        $cardDataAttr = 'data-media-drive-id="' . htmlspecialchars($mediaDriveId) . '"';
+        $cardDataAttr .= ' data-media-drive-id="' . htmlspecialchars($mediaDriveId) . '"';
       } elseif ($driveEmbedId) {
-        $cardDataAttr = 'data-drive-id="' . htmlspecialchars($driveEmbedId) . '"';
+        $cardDataAttr .= ' data-drive-id="' . htmlspecialchars($driveEmbedId) . '"';
       }
     ?>
     <div class="card<?= $mediaDriveId || $driveEmbedId ? ' card-with-drive' : '' ?>" <?= $cardDataAttr ?> >
@@ -200,12 +216,19 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
             <small>Dibuat</small><br>
             <strong><?= $created ?></strong>
           </div>
-          <?php if (!empty($link) && !$mediaDriveId): ?>
-            <a href="<?= $link ?>" target="_blank" class="open"><i class="bi bi-box-arrow-up-right"></i></a>
-          <?php endif; ?>
 
           <?php if (!empty($link)): ?>
-            <a href="<?= $link ?>" target="_blank" class="open"><i class="bi bi-box-arrow-up-right"></i></a>
+            <?php
+              // hanya preview untuk Google Drive
+              $isDrive = stripos($rawLink, 'drive.google.com') !== false;
+            ?>
+            <?php if ($isDrive): ?>
+              <!-- preview modal untuk Drive (gh: gunakan href asli sebagai fallback) -->
+              <a href="<?= htmlspecialchars($rawLink) ?>" target="_blank" class="open open-in-modal" data-media-link="<?= htmlspecialchars($rawLink) ?>" data-media-title="<?= htmlspecialchars($judul) ?>" title="Buka tautan (tab baru)"><i class="bi bi-box-arrow-up-right"></i></a>
+            <?php else: ?>
+              <!-- langsung buka tautan (termasuk YouTube) -->
+              <a href="<?= htmlspecialchars($rawLink) ?>" target="_blank" class="open" title="Buka tautan"><i class="bi bi-box-arrow-up-right"></i></a>
+            <?php endif; ?>
           <?php endif; ?>
 
         </div>
@@ -227,20 +250,67 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   function openDriveModal(driveId, title, originalLink){
-    var modal = document.getElementById('driveModal');
-    var iframe = document.getElementById('driveIframe');
-    var titleEl = document.getElementById('driveModalTitle');
-    var linkEl = document.getElementById('driveOriginalLink');
-    iframe.src = 'https://drive.google.com/embeddedfolderview?id=' + driveId + '#grid';
-    titleEl.textContent = title ? title : 'Isi Folder Google Drive';
-    linkEl.href = originalLink ? originalLink : '#';
-    modal.style.display = 'flex';
+    // reuse generic modal but use the embedded folder view for Drive folders
+    openGenericModal('https://drive.google.com/embeddedfolderview?id=' + driveId + '#grid', title ? title : 'Isi Folder Google Drive', originalLink ? originalLink : ('https://drive.google.com/drive/folders/' + driveId));
   }
+
+  // try to convert a Drive file link to the embeddable preview url
+  function extractDrivePreviewUrl(url){
+    var m = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/open\?id=([a-zA-Z0-9_-]+)/);
+    if (m) return 'https://drive.google.com/file/d/' + m[1] + '/preview';
+    return url;
+  }
+
+
+  // generic modal open: shows spinner, loads iframe, shows fallback on error
+  function openGenericModal(url, title, originalLink){
+    var modal = document.getElementById('driveModal');
+    var titleEl = document.getElementById('driveModalTitle');
+    var iframe = document.getElementById('driveIframe');
+    var placeholder = document.getElementById('modalPlaceholder');
+    var error = document.getElementById('modalError');
+    var openOrigBtn = document.getElementById('modalOpenOriginal');
+
+    titleEl.textContent = title || 'Pratinjau';
+
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden','false');
+
+    error.style.display = 'none';
+    iframe.style.display = 'none';
+    placeholder.style.display = 'flex';
+    if (openOrigBtn) openOrigBtn.style.display = 'none';
+
+    if (openOrigBtn) openOrigBtn.href = originalLink || url;
+    if (openOrigBtn) openOrigBtn.onclick = function(){ setTimeout(closeDriveModal, 150); };
+
+    var loaded = false;
+    var loadTimer = setTimeout(function(){
+      if (!loaded){
+        placeholder.style.display = 'none';
+        error.style.display = 'block';
+        if (openOrigBtn) openOrigBtn.style.display = 'inline-block';
+      }
+    }, 1800);
+
+    iframe.onload = function(){
+      loaded = true;
+      clearTimeout(loadTimer);
+      placeholder.style.display = 'none';
+      error.style.display = 'none';
+      if (openOrigBtn) openOrigBtn.style.display = 'none';
+      iframe.style.display = 'block';
+    };
+
+    iframe.src = url;
+  }
+
   function closeDriveModal(){
     var modal = document.getElementById('driveModal');
     var iframe = document.getElementById('driveIframe');
     iframe.src = '';
     modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
   }
   var closeBtn = document.getElementById('driveModalClose');
   if (closeBtn) closeBtn.addEventListener('click', closeDriveModal);
@@ -256,21 +326,24 @@ document.addEventListener('DOMContentLoaded', function(){
       var mediaDriveId = card.getAttribute('data-media-drive-id');
       if (mediaDriveId){
         e.preventDefault(); e.stopPropagation();
-        // toggle panel inside this card
-        var panel = card.querySelector('.drive-panel');
-        if (!panel) return;
-        var iframe = panel.querySelector('.drive-iframe');
-
-        if (panel.style.display === '' || panel.style.display === 'none'){
-          // close other panels first
-          document.querySelectorAll('.drive-panel').forEach(function(p){ p.style.display='none'; var f = p.querySelector('.drive-iframe'); if (f) f.src=''; });
-          panel.style.display = 'block';
-          if (iframe) iframe.src = 'https://drive.google.com/embeddedfolderview?id=' + mediaDriveId + '#grid';
-        } else {
-          if (iframe) iframe.src = '';
-          panel.style.display = 'none';
-        }
+        // open centralized modal (embedded folder view)
+        var title = card.getAttribute('data-media-title') || null;
+        var original = card.getAttribute('data-media-link') || ('https://drive.google.com/drive/folders/' + mediaDriveId);
+        openGenericModal('https://drive.google.com/embeddedfolderview?id=' + mediaDriveId + '#grid', title ? title : 'Isi Folder Google Drive', original);
         return;
+      }
+
+      // If no per-media drive, but this media has a direct link: only preview Drive files here; non-Drive do nothing (use box-arrow)
+      var mediaLink = card.getAttribute('data-media-link');
+      if (mediaLink){
+        if (mediaLink.indexOf('drive.google.com') !== -1){
+          e.preventDefault(); e.stopPropagation();
+          var title = card.getAttribute('data-media-title') || null;
+          var preview = extractDrivePreviewUrl(mediaLink);
+          openGenericModal(preview, title, mediaLink);
+          return;
+        }
+        // otherwise: do nothing — user should click the box-arrow (footer) to open the link
       }
 
       // If no per-media drive, fall back to sub-level drive modal if present
@@ -301,6 +374,17 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   });
 
+  // Footer icon (box-arrow) always opens the original link in a new tab; modal is only for the folder icon
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a.open-in-modal');
+    if (a){
+      e.preventDefault(); e.stopPropagation();
+      var link = a.getAttribute('data-media-link') || a.href;
+      if (!link) return;
+      window.open(link, '_blank');
+    }
+  });
+
   var modalEl = document.getElementById('driveModal');
   if (modalEl) modalEl.addEventListener('click', function(e){ if (e.target === this) closeDriveModal(); });
   // Handle drive button clicks (bottom-right) — open per-media panel using the media.link or drive id
@@ -317,24 +401,68 @@ document.addEventListener('DOMContentLoaded', function(){
       if (!mediaDriveId && mediaLink){
         var m = mediaLink.match(/drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)/) || mediaLink.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/) || mediaLink.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
         if (m) mediaDriveId = m[1];
+        else {
+          // no drive id; open the link in modal (preview if Drive file) or open in new tab for non-Drive
+          var title = card.getAttribute('data-media-title') || null;
+          if (mediaLink.indexOf('drive.google.com') !== -1){
+            var preview = extractDrivePreviewUrl(mediaLink);
+            openGenericModal(preview, title, mediaLink);
+          } else {
+            window.open(mediaLink, '_blank');
+          }
+          return;
+        }
       }
 
-      var iframe = panel.querySelector('.drive-iframe');
-      if (!iframe) return;
-
-      if (panel.style.display === '' || panel.style.display === 'none'){
-        // close all other panels
-        document.querySelectorAll('.drive-panel').forEach(function(p){ p.style.display='none'; var f = p.querySelector('.drive-iframe'); if (f) f.src=''; });
-        panel.style.display = 'block';
-        if (mediaDriveId) iframe.src = 'https://drive.google.com/embeddedfolderview?id=' + mediaDriveId + '#grid';
-      } else {
-        panel.style.display = 'none';
-        iframe.src = '';
+      // If we have a drive id prefer opening it in the modal
+      if (mediaDriveId){
+        var title = card.getAttribute('data-media-title') || null;
+        var original = mediaLink || ('https://drive.google.com/drive/folders/' + mediaDriveId);
+        openGenericModal('https://drive.google.com/embeddedfolderview?id=' + mediaDriveId + '#grid', title ? title : 'Isi Folder Google Drive', original);
+        return;
       }
-      return;
+
+      // If there's no drive id but a mediaLink, preview if Drive file, otherwise open in new tab
+      if (mediaLink){
+        var title2 = card.getAttribute('data-media-title') || null;
+        if (mediaLink.indexOf('drive.google.com') !== -1){
+          var preview = extractDrivePreviewUrl(mediaLink);
+          openGenericModal(preview, title2, mediaLink);
+        } else {
+          window.open(mediaLink, '_blank');
+        }
+        return;
+      }
     }
   });
 });
 </script>
+
+<!-- Modal for drive / file preview -->
+<div id="driveModal" class="modal-custom" aria-hidden="true" style="display:none;">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-label="Preview">
+    <div class="modal-card-header">
+      <div class="modal-folder-icon"><i class="bi bi-folder2-open" aria-hidden="true"></i></div>
+      <div id="driveModalTitle" class="modal-card-title">Pratinjau</div>
+      <div class="modal-card-controls">
+        <button id="driveModalClose" class="modal-close-btn" aria-label="Tutup">&times;</button>
+      </div>
+    </div>
+    <div class="modal-card-body">
+      <div id="modalPlaceholder" class="modal-placeholder">
+        <div style="margin-top:14px;color:#64748b">Memuat pratinjau…</div>
+      </div>
+
+      <iframe id="driveIframe" class="modal-iframe" src="" frameborder="0" style="display:none;"></iframe>
+
+      <div id="modalError" class="modal-error" style="display:none">
+        <p><strong>Pratinjau tidak tersedia untuk alamat ini.</strong></p>
+        <p>Silakan buka tautan asli dari kartu atau footer untuk melihat sumber.</p>
+        <p><a id="modalOpenOriginal" href="#" target="_blank" class="btn modal-open-original">Buka tautan asli</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

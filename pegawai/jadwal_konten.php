@@ -27,6 +27,7 @@ $qKalender = mysqli_query($koneksi, "
 
 while ($row = mysqli_fetch_assoc($qKalender)) {
   $id_jadwal = $row['id_jadwal'];
+  // Ambil PIC
   $qPic = mysqli_query($koneksi, "
     SELECT u.nip, u.nama, jp.nama_jenis_pic
     FROM pic p
@@ -35,7 +36,6 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     WHERE p.id_jadwal = " . (int)$id_jadwal . "
     ORDER BY jp.nama_jenis_pic
   ");
-
   $picData = [];
   $nipList = [];
   if ($qPic) {
@@ -44,21 +44,30 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
       $nipList[] = $pic['nip'];
     }
   }
-
   $isPic = in_array($_SESSION['pegawai']['nip'], $nipList);
-  
+  // Ambil link publikasi dari jadwal_link
+  $link_instagram = '';
+  $link_facebook = '';
+  $link_youtube = '';
+  $link_website = '';
+  $qLinks = mysqli_query($koneksi, "SELECT jl.link, jlk.nama_jenis_link FROM jadwal_link jl JOIN jenis_link jlk ON jl.id_jenis_link = jlk.id_jenis_link WHERE jl.id_jadwal = $id_jadwal");
+  while ($l = mysqli_fetch_assoc($qLinks)) {
+    $nama = strtolower($l['nama_jenis_link']);
+    if (strpos($nama, 'instagram') !== false) $link_instagram = $l['link'];
+    if (strpos($nama, 'facebook') !== false) $link_facebook = $l['link'];
+    if (strpos($nama, 'youtube') !== false) $link_youtube = $l['link'];
+    if (strpos($nama, 'website') !== false || strpos($nama, 'web') !== false) $link_website = $l['link'];
+  }
   if ($row['status'] == 0) $color = '#e84118';
   else if ($row['status'] == 1) $color = '#fbc531';
   else if ($row['status'] == 2) $color = '#44bd32';
   else $color = '#718093';
-  
   // Build PIC text dynamically
   $picText = [];
   foreach ($picData as $jenis => $nama) {
     $picText[] = "<b>$jenis:</b> $nama";
   }
   $picDisplay = count($picText) > 0 ? implode("<br>", $picText) : "-";
-  
   $jadwalkalender[] = [
     'id'    => $row['id_jadwal'],
     'title' => $row['judul_kegiatan'],
@@ -72,10 +81,10 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
       'keterangan' => $row['keterangan'],
       'pic_display' => $picDisplay,
       'dokumentasi' => !empty($row['dokumentasi']) ? $row['dokumentasi'] : '',
-      'link_instagram' => !empty($row['link_instagram']) ? $row['link_instagram'] : '',
-      'link_facebook' => !empty($row['link_facebook']) ? $row['link_facebook'] : '',
-      'link_youtube' => !empty($row['link_youtube']) ? $row['link_youtube'] : '',
-      'link_website' => !empty($row['link_website']) ? $row['link_website'] : '',
+      'link_instagram' => $link_instagram,
+      'link_facebook' => $link_facebook,
+      'link_youtube' => $link_youtube,
+      'link_website' => $link_website,
       'isPic' => $isPic
     ]
   ];
@@ -344,6 +353,7 @@ body{
 .pic-display{
   line-height:1.6;
 }
+.breadcrumb-link{color:#0f172a;text-decoration:none}
 </style>
 </head>
 
@@ -355,6 +365,8 @@ body{
     <a href="index.php" class="breadcrumb-link">
         <i class="bi bi-house-fill"></i>
     </a>
+     <span>›</span>
+    <a href="index.php#humas" class="breadcrumb-link">Humas</a>
     <span class="breadcrumb-separator">›</span>
     <span class="breadcrumb-active">Jadwal Konten Humas</span>
   </div>
@@ -415,7 +427,15 @@ body{
         <th>Dokumentasi</th>
         <td class="d-flex align-items-center gap-2">
           <a id="modalDokumentasi" target="_blank" style="display:none; font-size: 1.2rem;">
-            <i class="bi bi-eye-fill" style="color:#2563eb;"></i>
+            <i class="bi bi-eye-fill" style="color:#2563eb;cursor:pointer;"></i>
+          <!-- MODAL PREVIEW GAMBAR DOKUMENTASI -->
+          <div class="modal-overlay" id="previewGambarModal" style="z-index:2000;display:none;align-items:center;justify-content:center;">
+            <div style="background:#fff;padding:16px 16px 8px 16px;border-radius:16px;max-width:90vw;max-height:90vh;box-shadow:0 10px 30px rgba(0,0,0,0.2);position:relative;">
+              <button onclick="closePreviewGambar()" style="position:absolute;top:8px;right:8px;background:none;border:none;font-size:24px;cursor:pointer;color:#64748b;"><i class="bi bi-x-lg"></i></button>
+              <img id="previewGambar" src="" alt="Dokumentasi" style="max-width:80vw;max-height:80vh;display:block;margin:auto;" onerror="showImgError()">
+              <div id="imgErrorMsg" style="display:none;color:#e84118;text-align:center;margin-top:8px;font-size:14px;"></div>
+            </div>
+          </div>
           </a>
           <span id="docPlaceholder" style="display:none; color:#999;">Belum ada dokumentasi</span>
           <a id="editDokumentasiBtn" class="btn" title="Edit Dokumentasi" href="#" style="display:none;">
@@ -424,14 +444,14 @@ body{
         </td>
       </tr>
       <tr id="rowLink" style="display:none;">
-        <th>Link Publikasi</th>
-        <td>
-          <div class="modal-links" id="modalLinks"></div>
-          <a id="editPublikasiBtn" class="btn" title="Edit Link Publikasi" style="display:none; margin-top:12px;">
-            <i class="bi bi-pencil"></i> Edit
-          </a>
-        </td>
-      </tr>
+              <th>Link Publikasi</th>
+              <td>
+                <div class="modal-links" id="modalLinks"></div>
+                <a id="editPublikasiBtn" class="btn" title="Edit Link Publikasi" style="display:none; margin-top:12px;">
+                  <i class="bi bi-pencil"></i> Edit
+                </a>
+              </td>
+            </tr>
     </table>
   </div>
 </div>
@@ -451,6 +471,7 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       events: <?= json_encode($jadwalkalender) ?>,
       eventClick: function(info) {
+        console.log('eventClick triggered', info);
         info.jsEvent.preventDefault();
         const p = info.event.extendedProps;
         const jadwalId = info.event.id;
@@ -490,8 +511,10 @@ document.addEventListener("DOMContentLoaded", function () {
         // Dokumentasi
         if (p.dokumentasi && p.dokumentasi.trim() !== '') {
           document.getElementById('rowDokumentasi').style.display = 'table-row';
-          document.getElementById('modalDokumentasi').href = '../uploads/dokumentasi/' + p.dokumentasi;
+          document.getElementById('modalDokumentasi').href = p.dokumentasi;
           document.getElementById('modalDokumentasi').style.display = 'inline-flex';
+          document.getElementById('modalDokumentasi').target = '_blank';
+          document.getElementById('modalDokumentasi').onclick = null;
           document.getElementById('docPlaceholder').style.display = 'none';
         } else {
           document.getElementById('rowDokumentasi').style.display = 'table-row';
@@ -506,7 +529,8 @@ document.addEventListener("DOMContentLoaded", function () {
           if (!url || url === '-' || url.trim() === '') {
             links.push(`<span class="text-muted" title="${label} (belum diisi)"><i class="bi ${icon}" style="font-size: 1.2rem; opacity: 0.3;"></i></span>`);
           } else {
-            links.push(`<a href="${url}" target="_blank" title="${label}" style="color: ${color};"><i class="bi ${icon}" style="font-size: 1.2rem;"></i></a>`);
+            // Semua icon biru jika sudah diisi
+            links.push(`<a href="${url}" target="_blank" title="${label}" style="color: #009cfd;"><i class="bi ${icon}" style="font-size: 1.2rem;"></i></a>`);
           }
         }
         
@@ -532,7 +556,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         document.getElementById('editPublikasiBtn').onclick = function(e) {
           e.preventDefault();
-          window.location.href = 'edit_dokumentasi.php?id=' + jadwalId + '&mode=publikasi';
+          window.location.href = 'edit_link_publikasi.php?id=' + jadwalId;
         };
 
         openModal();
@@ -543,6 +567,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function openModal() {
+  console.log('openModal called');
   document.getElementById('jadwalModal').classList.add('active');
 }
 

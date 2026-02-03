@@ -826,11 +826,70 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
           events: <?= json_encode($jadwalkalender) ?>,
           eventClick: function(info) {
             info.jsEvent.preventDefault();
-            // Tidak ada action - hanya menampilkan event di kalender tanpa modal
+            // Ambil data event
+            var props = info.event.extendedProps;
+            // Isi modal
+            document.getElementById('modalTopik').textContent = props.topik || '-';
+            document.getElementById('modalJudul').textContent = info.event.title || '-';
+            document.getElementById('modalTanggalPenugasan').textContent = props.tanggal_penugasan || '-';
+            document.getElementById('modalTargetRilis').textContent = info.event.startStr || '-';
+            document.getElementById('modalTim').textContent = props.tim || '-';
+            // Status
+            var statusText = '-';
+            if (props.status == 0) statusText = 'Belum Selesai';
+            else if (props.status == 1) statusText = 'Proses';
+            else if (props.status == 2) statusText = 'Selesai';
+            document.getElementById('modalStatus').textContent = statusText;
+            document.getElementById('modalPIC').innerHTML = props.pic_display || '-';
+            document.getElementById('modalKeterangan').textContent = props.keterangan || '-';
+            // Dokumentasi
+            var docLink = props.dokumentasi;
+            var docA = document.getElementById('modalDokumentasi');
+            var docPlaceholder = document.getElementById('docPlaceholder');
+            if (docLink && docLink.trim() !== '') {
+              docA.style.display = '';
+              docA.href = docLink;
+              docA.title = 'Lihat Dokumentasi';
+              docPlaceholder.style.display = 'none';
+            } else {
+              docA.style.display = 'none';
+              docPlaceholder.style.display = '';
+            }
+            // Tampilkan tombol edit/upload dokumentasi jika user PIC
+            var editBtn = document.getElementById('editDokumentasiBtn');
+            if (props.isPic) {
+              editBtn.style.display = '';
+              editBtn.href = 'upload_dokumentasi.php?id=' + encodeURIComponent(info.event.id);
+              editBtn.textContent = docLink ? 'Edit Dokumentasi' : 'Upload Dokumentasi';
+              // Tampilkan tombol edit link publikasi
+              var editPublikasiBtn = document.getElementById('editPublikasiBtn');
+              if (editPublikasiBtn) {
+                editPublikasiBtn.style.display = '';
+                editPublikasiBtn.href = 'edit_link_publikasi.php?id=' + encodeURIComponent(info.event.id);
+              }
+            } else {
+              editBtn.style.display = 'none';
+              var editPublikasiBtn = document.getElementById('editPublikasiBtn');
+              if (editPublikasiBtn) editPublikasiBtn.style.display = 'none';
+            }
+            // Tampilkan modal
+            var modal = new bootstrap.Modal(document.getElementById('jadwalModal'));
+            modal.show();
           }
         }
       );
       calendar.render();
+
+      // Validasi link dokumentasi (contoh, bisa dipakai di form upload/edit dokumentasi)
+      window.validasiLinkDokumentasi = function(input) {
+        var url = input.value.trim();
+        var pattern = /^(https?:\/\/)[\w\-]+(\.[\w\-]+)+[/#?]?.*$/i;
+        if (!pattern.test(url)) {
+          input.setCustomValidity('Link tidak valid. Harus diawali http:// atau https://');
+        } else {
+          input.setCustomValidity('');
+        }
+      }
     });
   </script>
 

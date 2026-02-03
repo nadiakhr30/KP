@@ -199,11 +199,7 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
             <a href="<?= $link ?>" target="_blank" class="open"><i class="bi bi-box-arrow-up-right"></i></a>
           <?php endif; ?>
         </div>
-        <?php if ($mediaDriveId): ?>
-        <div class="drive-panel" style="display:none;margin-top:12px;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 8px 24px rgba(15,23,42,.06);">
-          <iframe class="drive-iframe" src="" width="100%" height="420" frameborder="0"></iframe>
-        </div>
-        <?php endif; ?>
+
       </div>
     </div>
     
@@ -212,7 +208,63 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-  // Klik folder icon untuk toggle embed
+  // Convert Drive file links to embeddable preview URLs
+  function extractDrivePreviewUrl(url){
+    var m = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/open\?id=([a-zA-Z0-9_-]+)/);
+    if (m) return 'https://drive.google.com/file/d/' + m[1] + '/preview';
+    return url;
+  }
+
+  // Generic modal open (placeholder, load timeout, fallback)
+  function openGenericModal(url, title, originalLink){
+    var modal = document.getElementById('driveModal');
+    var titleEl = document.getElementById('driveModalTitle');
+    var iframe = document.getElementById('driveIframe');
+    var placeholder = document.getElementById('modalPlaceholder');
+    var error = document.getElementById('modalError');
+    var openOrigBtn = document.getElementById('modalOpenOriginal');
+
+    titleEl.textContent = title || 'Pratinjau';
+
+    modal.style.display = 'flex';
+
+    error.style.display = 'none';
+    iframe.style.display = 'none';
+    placeholder.style.display = 'block';
+    if (openOrigBtn) openOrigBtn.style.display = 'none';
+
+    if (openOrigBtn) openOrigBtn.href = originalLink || url;
+    if (openOrigBtn) openOrigBtn.onclick = function(){ setTimeout(closeDriveModal, 150); };
+
+    var loaded = false;
+    var loadTimer = setTimeout(function(){
+      if (!loaded){
+        placeholder.style.display = 'none';
+        error.style.display = 'block';
+        if (openOrigBtn) openOrigBtn.style.display = 'inline-block';
+      }
+    }, 1800);
+
+    iframe.onload = function(){
+      loaded = true;
+      clearTimeout(loadTimer);
+      placeholder.style.display = 'none';
+      error.style.display = 'none';
+      if (openOrigBtn) openOrigBtn.style.display = 'none';
+      iframe.style.display = 'block';
+    };
+
+    iframe.src = url;
+  }
+
+  function closeDriveModal(){
+    var modal = document.getElementById('driveModal');
+    var iframe = document.getElementById('driveIframe');
+    iframe.src = '';
+    modal.style.display = 'none';
+  }
+
+  // Klik folder icon: buka modal preview untuk Drive
   document.addEventListener('click', function(e){
     var iconEl = e.target.closest && e.target.closest('.icon-folder');
     if (iconEl){
@@ -221,40 +273,101 @@ document.addEventListener('DOMContentLoaded', function(){
       var mediaDriveId = card.getAttribute('data-media-drive-id');
       if (mediaDriveId){
         e.preventDefault(); e.stopPropagation();
-        var panel = card.querySelector('.drive-panel');
-        if (!panel) return;
-        var iframe = panel.querySelector('.drive-iframe');
-        if (panel.style.display === '' || panel.style.display === 'none'){
-          // Tutup panel lain
-          document.querySelectorAll('.drive-panel').forEach(function(p){ p.style.display='none'; var f = p.querySelector('.drive-iframe'); if (f) f.src=''; });
-          panel.style.display = 'block';
-          if (iframe) iframe.src = 'https://drive.google.com/embeddedfolderview?id=' + mediaDriveId + '#grid';
-        } else {
-          if (iframe) iframe.src = '';
-          panel.style.display = 'none';
-        }
+        var title = card.getAttribute('data-media-title') || null;
+        var original = card.getAttribute('data-media-link') || ('https://drive.google.com/drive/folders/' + mediaDriveId);
+        openGenericModal('https://drive.google.com/embeddedfolderview?id=' + mediaDriveId + '#grid', title, original);
         return;
       }
-      // fallback: jika ada data-drive-id (subjenis)
+      // If no per-media drive, but this card has a direct media link which is a Drive file, preview it in modal
+      var mediaLink = card.getAttribute('data-media-link');
+      if (mediaLink){
+        if (mediaLink.indexOf('drive.google.com') !== -1){
+          e.preventDefault(); e.stopPropagation();
+          var title = card.getAttribute('data-media-title') || null;
+          var preview = extractDrivePreviewUrl(mediaLink);
+          openGenericModal(preview, title, mediaLink);
+          return;
+        }
+        // otherwise: do nothing — user should click the box-arrow/footer to open external links
+      }
+
+      // If no per-media drive, fall back to sub-level drive modal if present
       var driveId = card.getAttribute('data-drive-id');
       if (driveId){
         e.preventDefault(); e.stopPropagation();
-        var panel = card.querySelector('.drive-panel');
-        if (!panel) return;
-        var iframe = panel.querySelector('.drive-iframe');
-        if (panel.style.display === '' || panel.style.display === 'none'){
-          document.querySelectorAll('.drive-panel').forEach(function(p){ p.style.display='none'; var f = p.querySelector('.drive-iframe'); if (f) f.src=''; });
-          panel.style.display = 'block';
-          if (iframe) iframe.src = 'https://drive.google.com/embeddedfolderview?id=' + driveId + '#grid';
-        } else {
-          if (iframe) iframe.src = '';
-          panel.style.display = 'none';
-        }
+        var subName = <?= json_encode($selectedSubName ? $selectedSubName : 'Galeri Video') ?>;
+        var original = '<?= htmlspecialchars($driveOriginalLink ? $driveOriginalLink : '') ?>';
+        openGenericModal('https://drive.google.com/embeddedfolderview?id=' + driveId + '#grid', subName, original);
         return;
       }
     }
   });
+
+  // overlay click closes modal
+  var modalEl = document.getElementById('driveModal');
+  if (modalEl) modalEl.addEventListener('click', function(e){ if (e.target === this) closeDriveModal(); });
+
+  // close button
+  var closeBtn = document.getElementById('driveModalClose');
+  if (closeBtn) closeBtn.addEventListener('click', closeDriveModal);
+
+  // Handle drive button clicks (bottom-right) — open modal using the media.link or drive id
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest && e.target.closest('.drive-btn');
+    if (btn){
+      e.preventDefault(); e.stopPropagation();
+      var card = btn.closest('.card');
+      var mediaDriveId = btn.getAttribute('data-media-drive-id') || btn.getAttribute('data-media-id');
+      var mediaLink = btn.getAttribute('data-media-link') || '';
+
+      if (!mediaDriveId && mediaLink){
+        var m = mediaLink.match(/drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)/) || mediaLink.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/) || mediaLink.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+        if (m) mediaDriveId = m[1];
+        else {
+          var title = card.getAttribute('data-media-title') || null;
+          if (mediaLink.indexOf('drive.google.com') !== -1){
+            var preview = extractDrivePreviewUrl(mediaLink);
+            openGenericModal(preview, title, mediaLink);
+          } else {
+            window.open(mediaLink, '_blank');
+          }
+          return;
+        }
+      }
+
+      // If we have a drive id prefer opening it in the modal
+      if (mediaDriveId){
+        var title = card.getAttribute('data-media-title') || null;
+        var original = mediaLink || ('https://drive.google.com/drive/folders/' + mediaDriveId);
+        openGenericModal('https://drive.google.com/embeddedfolderview?id=' + mediaDriveId + '#grid', title ? title : 'Isi Folder Google Drive', original);
+        return;
+      }
+    }
+  });
+
 });
 </script>
+<!-- Central modal for Drive preview (same UX as dokumentasi) -->
+<div id="driveModal" class="modal-custom" aria-hidden="true" style="display:none;">
+  <div class="modal-custom-inner" role="dialog" aria-modal="true" aria-label="Preview" style="max-width:880px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eef2f7;">
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(180deg,#fff5eb,#fff1e6);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(245,158,11,0.06)"><i class="bi bi-folder2-open" style="font-size:20px;color:#f59e0b" aria-hidden="true"></i></div>
+        <div id="driveModalTitle" style="font-weight:700;color:#0f172a;">Pratinjau</div>
+      </div>
+      <div><button id="driveModalClose" aria-label="Tutup" style="border:none;background:none;font-size:22px;line-height:1;">&times;</button></div>
+    </div>
+    <div class="modal-custom-body" style="padding:16px;">
+      <div id="modalPlaceholder" style="text-align:center;color:#64748b;padding:40px">Memuat pratinjau…</div>
+      <iframe id="driveIframe" width="100%" height="480" frameborder="0" style="display:none;border-radius:8px"></iframe>
+      <div id="modalError" style="display:none;text-align:center;color:#334155;padding:18px;">
+        <p><strong>Pratinjau tidak tersedia untuk alamat ini.</strong></p>
+        <p>Silakan buka tautan asli dari kartu atau footer untuk melihat sumber.</p>
+        <p><a id="modalOpenOriginal" href="#" target="_blank" class="btn modal-open-original" style="display:inline-block;margin-top:10px;padding:8px 12px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none">Buka tautan asli</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
