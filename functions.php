@@ -56,3 +56,5 @@ function checkLogin($data, &$errors)
         }
     }
 }
+
+// Semua kode notifikasi email, PHPMailer, dan Gmail sudah dihapus dari functions.php.

@@ -14,6 +14,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'doLogout') {
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
   <title>Logout</title>
 
   <!-- Google Fonts: Poppins -->

@@ -3,6 +3,8 @@ ob_start();
 session_start();
 require '../koneksi.php';
 
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
+
 if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Pegawai") {
     header("Location: ../index.php");
     exit;
@@ -84,8 +86,9 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
 
 
+  <!-- ICON NOTIFIKASI DI NAVBAR dipindahkan ke layout.php agar tidak bentrok dengan user/profile -->
   <main class="main">
-
+    
     <!-- Beranda -->
     <section id="beranda" class="hero section dark-background position-relative">
 
@@ -140,6 +143,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
       <div class="container section-title" data-aos="fade-up">
         <h2>Kalender & Jadwal</h2>
         <p class="text-muted mb-0">Jadwal rilis dan kegiatan kehumasan</p>
+        <span id="badgeUrgent" style="display:none;background:#e84118;color:#fff;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;margin-left:12px;">Tugas Mendesak!</span>
       </div><!-- End Section Title -->
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -621,7 +625,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     </section><!-- /Pengembangan Highlight Section -->
 
     <!-- Dokumentasi -->
-    <section id="about" class="about section">
+    <section id="dokumentasi" class="about section">
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
@@ -776,6 +780,65 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
   </style>
 
   <script>
+  // ===== NOTIFIKASI POP-UP HANYA DI SECTION KALENDER-JADWAL & BADGE TAMPIL TANGGAL =====
+  document.addEventListener("DOMContentLoaded", function () {
+    var urgentTasks = [];
+    var today = new Date();
+    var threeDays = 1000 * 60 * 60 * 24 * 3;
+    var events = <?= json_encode($jadwalkalender) ?>;
+    events.forEach(function(ev) {
+      var status = ev.extendedProps.status;
+      if (ev.extendedProps && ev.extendedProps.isPic && (status == 0 || status == 1)) {
+        var tglRilis = new Date(ev.start);
+        var selisih = tglRilis - today;
+        if (selisih <= threeDays && selisih >= 0) {
+          urgentTasks.push(ev);
+        }
+      }
+    });
+    // Badge Tugas Mendesak tampil tanggal
+    var badge = document.getElementById('badgeUrgent');
+    if (urgentTasks.length > 0) {
+      badge.style.display = 'inline-block';
+      // Gabungkan tanggal-tanggal urgent
+      var tgls = urgentTasks.map(function(ev) {
+        var tgl = new Date(ev.start);
+        return tgl.toLocaleDateString('id-ID');
+      });
+      // Unik dan urut
+      tgls = [...new Set(tgls)].sort();
+      badge.innerHTML = 'Tugas Mendesak! (' + tgls.join(', ') + ')';
+    } else {
+      badge.style.display = 'none';
+    }
+
+    // Toastr hanya muncul saat user scroll ke section kalender-jadwal
+    var popUpShown = false;
+    function showUrgentPopups() {
+      if (popUpShown) return;
+      urgentTasks.forEach(function(ev) {
+        var tglRilis = new Date(ev.start);
+        var sisa = Math.ceil((tglRilis - today) / (1000*60*60*24));
+        var msg = 'Deadline <b>' + ev.title + '</b> tinggal ' + (sisa === 0 ? 'hari ini!' : sisa + ' hari lagi!');
+        toastr.warning(msg, 'Deadline Mendesak', {timeOut: 9000, closeButton: true, progressBar: true, escapeHtml: false});
+      });
+      popUpShown = true;
+    }
+    // Deteksi scroll ke section kalender-jadwal
+    var section = document.getElementById('kalender-jadwal');
+    if (section && urgentTasks.length > 0) {
+      function onScrollCheck() {
+        var rect = section.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          showUrgentPopups();
+          window.removeEventListener('scroll', onScrollCheck);
+        }
+      }
+      window.addEventListener('scroll', onScrollCheck);
+      // Jika sudah kelihatan saat load
+      onScrollCheck();
+    }
+  });
     document.addEventListener("DOMContentLoaded", function () {
       const track = document.getElementById("stepsTrack");
       const slides = document.querySelectorAll(".steps-slide");
@@ -891,6 +954,78 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
         }
       }
     });
+  </script>
+
+  <!-- TOASTR NOTIFICATION -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script>
+    toastr.options = {
+      "positionClass": "toast-bottom-right",
+      "closeButton": true,
+      "progressBar": true,
+      "timeOut": "7000",
+      "extendedTimeOut": "2000"
+    };
+  </script>
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var urgentTasks = [];
+    var today = new Date();
+    var twoDays = 1000 * 60 * 60 * 24 * 2;
+    var events = <?= json_encode($jadwalkalender) ?>;
+    var notifCount = 0;
+    var notifItems = [];
+    events.forEach(function(ev) {
+      var status = ev.extendedProps.status;
+      if (ev.extendedProps && ev.extendedProps.isPic && (status == 0 || status == 1)) {
+        var tglRilis = new Date(ev.start);
+        var selisih = tglRilis - today;
+        // Deadline < 2 hari ke depan atau hari ini
+        if (selisih <= twoDays && selisih >= 0) {
+          urgentTasks.push(ev);
+        }
+        // Jadwal baru (rilis hari ini)
+        if (tglRilis.toDateString() === today.toDateString()) {
+          notifCount++;
+          notifItems.push(ev);
+          // toastr pop-up hanya muncul di section kalender-jadwal, bukan di navbar
+        }
+      }
+    });
+    if (notifCount > 0) {
+      document.getElementById('navbarNotif').style.display = 'inline-block';
+      document.getElementById('notifCount').textContent = notifCount;
+      var notifList = document.getElementById('notifList');
+      notifList.innerHTML = '';
+      notifItems.forEach(function(ev) {
+        var tglRilis = new Date(ev.start);
+        var item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.innerHTML = '<b>' + ev.title + '</b><br><span style="font-size:12px;color:#888">Rilis: ' + tglRilis.toLocaleDateString('id-ID') + '</span>';
+        notifList.appendChild(item);
+      });
+    } else {
+      document.getElementById('navbarNotif').style.display = 'none';
+    }
+    // Dropdown toggle
+    var notifIcon = document.getElementById('navbarNotif');
+    var notifDropdown = document.getElementById('notifDropdown');
+    notifIcon.onclick = function(e) {
+      e.stopPropagation();
+      if (notifDropdown.style.display === 'none' || notifDropdown.style.display === '') {
+        notifDropdown.style.display = 'block';
+      } else {
+        notifDropdown.style.display = 'none';
+      }
+    };
+    document.addEventListener('click', function(e) {
+      if (notifDropdown.style.display === 'block') {
+        notifDropdown.style.display = 'none';
+      }
+    });
+  });
   </script>
 
   <?php

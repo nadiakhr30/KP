@@ -1,3 +1,39 @@
+<style>
+/* Responsive for schedule section */
+@media (max-width: 768px) {
+  .jadwal-table {
+    font-size: 15px;
+  }
+  .urgent-badge {
+    font-size: 15px;
+    padding: 6px 10px;
+  }
+  .toastr {
+    font-size: 15px !important;
+    min-width: 220px !important;
+    max-width: 90vw !important;
+    left: 5vw !important;
+    right: auto !important;
+    bottom: 12px !important;
+  }
+}
+@media (max-width: 480px) {
+  .jadwal-table {
+    font-size: 13px;
+  }
+  .urgent-badge {
+    font-size: 13px;
+    padding: 5px 7px;
+  }
+  .toastr {
+    font-size: 13px !important;
+    min-width: 180px !important;
+    max-width: 98vw !important;
+    left: 1vw !important;
+    bottom: 8px !important;
+  }
+}
+</style>
 <?php
 ob_start();
 session_start();
@@ -94,9 +130,15 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
 <title>Jadwal Konten Humas</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- TOASTR NOTIFICATION -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <!-- FULLCALENDAR CDN -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
@@ -374,7 +416,8 @@ body{
   <!-- HEADER -->
   <div class="header">
     <h2>Jadwal Konten Humas</h2>
-    <p>Jadwal rilis dan kegiatan kehumasan</p>
+    <p>Jadwal rilis dan kegiatan kehumasan</p><br>
+    <span id="badgeUrgent" style="display:none;background:#e84118;color:#fff;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;margin-left:12px; justify-content: center;">Tugas Mendesak!</span>
   </div>
 
   <!-- CALENDAR -->
@@ -457,6 +500,52 @@ body{
 </div>
 
 <script>
+// ===== NOTIFIKASI POP-UP UNTUK JADWAL BARU/DEADLINE =====
+document.addEventListener("DOMContentLoaded", function () {
+  // Cek apakah user adalah PIC pada jadwal yang deadline-nya < 3 hari ke depan atau baru saja ditambahkan
+  var urgentTasks = [];
+  var today = new Date();
+  var twoDays = 1000 * 60 * 60 * 24 * 2;
+  var events = <?= json_encode($jadwalkalender) ?>;
+  events.forEach(function(ev) {
+    var status = ev.extendedProps.status;
+    if (ev.extendedProps && ev.extendedProps.isPic && (status == 0 || status == 1)) {
+      var tglRilis = new Date(ev.start);
+      var selisih = tglRilis - today;
+      // Jadwal baru (rilis hari ini, user PIC)
+      if (tglRilis.toDateString() === today.toDateString()) {
+        console.log('[TOASTR HIJAU]', {
+          title: ev.title,
+          tglRilis: tglRilis,
+          isPic: ev.extendedProps.isPic,
+          status: status
+        });
+        toastr.success('Ada jadwal baru: <b>' + ev.title + '</b> untuk Anda!', 'Jadwal Baru', {timeOut: 7000, closeButton: true, progressBar: true, escapeHtml: false});
+      }
+      // Deadline < 2 hari ke depan atau hari ini (selain hari ini baru)
+      if (selisih <= twoDays && selisih >= 0) {
+        urgentTasks.push(ev);
+      }
+    }
+  });
+  if (urgentTasks.length > 0) {
+    var badge = document.getElementById('badgeUrgent');
+    badge.style.display = 'inline-block';
+    // Gabungkan tanggal-tanggal urgent
+    var tgls = urgentTasks.map(function(ev) {
+      var tgl = new Date(ev.start);
+      return tgl.toLocaleDateString('id-ID');
+    });
+    tgls = [...new Set(tgls)].sort();
+    badge.innerHTML = 'Tugas Mendesak! (' + tgls.join(', ') + ')';
+    urgentTasks.forEach(function(ev) {
+      var tglRilis = new Date(ev.start);
+      var sisa = Math.ceil((tglRilis - today) / (1000*60*60*24));
+      var msg = 'Deadline <b>' + ev.title + '</b> tinggal ' + (sisa === 0 ? 'hari ini!' : sisa + ' hari lagi!');
+      toastr.warning(msg, 'Deadline Mendesak', {timeOut: 9000, closeButton: true, progressBar: true, escapeHtml: false});
+    });
+  }
+});
 document.addEventListener("DOMContentLoaded", function () {
   var calendar = new FullCalendar.Calendar(
     document.getElementById('calendar'),
@@ -470,6 +559,50 @@ document.addEventListener("DOMContentLoaded", function () {
         right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
       },
       events: <?= json_encode($jadwalkalender) ?>,
+      eventDidMount: function(info) {
+        // Highlight baris jika deadline < 2 hari ke depan dan user adalah PIC
+        var p = info.event.extendedProps;
+        if (p && p.isPic && (p.status == 0 || p.status == 1)) {
+          var tglRilis = new Date(info.event.start);
+          var today = new Date();
+          var twoDays = 1000 * 60 * 60 * 24 * 2;
+          var selisih = tglRilis - today;
+          if (selisih <= twoDays && selisih >= 0) {
+            info.el.style.border = '2px solid #e84118';
+          }
+        }
+      // ===== NOTIFIKASI POP-UP UNTUK JADWAL BARU/DEADLINE =====
+      document.addEventListener("DOMContentLoaded", function () {
+        var urgentTasks = [];
+        var today = new Date();
+        var threeDays = 1000 * 60 * 60 * 24 * 3;
+        var events = <?= json_encode($jadwalkalender) ?>;
+        events.forEach(function(ev) {
+          var status = ev.extendedProps.status;
+          if (ev.extendedProps && ev.extendedProps.isPic && (status == 0 || status == 1)) {
+            var tglRilis = new Date(ev.start);
+            var selisih = tglRilis - today;
+            if (selisih <= threeDays && selisih >= 0) {
+              urgentTasks.push(ev);
+            }
+            if (tglRilis.toDateString() === today.toDateString()) {
+              toastr.success('Ada jadwal baru: <b>' + ev.title + '</b> untuk Anda!', 'Jadwal Baru', {timeOut: 7000, closeButton: true, progressBar: true, escapeHtml: false});
+            }
+          }
+        });
+        if (urgentTasks.length > 0) {
+          document.getElementById('badgeUrgent').style.display = 'inline-block';
+          urgentTasks.forEach(function(ev) {
+            var tglRilis = new Date(ev.start);
+            var sisa = Math.ceil((tglRilis - today) / (1000*60*60*24));
+            var msg = 'Deadline <b>' + ev.title + '</b> tinggal ' + (sisa === 0 ? 'hari ini!' : sisa + ' hari lagi!');
+            toastr.warning(msg, 'Deadline Mendesak', {timeOut: 9000, closeButton: true, progressBar: true, escapeHtml: false});
+          });
+        } else {
+          document.getElementById('badgeUrgent').style.display = 'none';
+        }
+      });
+      },
       eventClick: function(info) {
         console.log('eventClick triggered', info);
         info.jsEvent.preventDefault();

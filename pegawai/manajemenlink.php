@@ -7,6 +7,7 @@
   <title>Service Details - Arsha Bootstrap Template</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
+  <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
 
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon">

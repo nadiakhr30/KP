@@ -61,6 +61,16 @@
 # General Styling & Shared Classes
 --------------------------------------------------------------*/
 body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+  main {
+    flex: 1 0 auto;
+  }
+  .footer {
+    flex-shrink: 0;
+  }
   color: var(--default-color);
   background-color: var(--background-color);
   font-family: var(--default-font);
@@ -512,10 +522,14 @@ h6 {
 --------------------------------------------------------------*/
 .footer {
   color: var(--default-color);
-  background-color: var(--background-color);
+  background-color: var(--heading-color) !important;
   font-size: 14px;
-  padding-bottom: 50px;
+  padding-bottom: 20px;
   position: relative;
+  font-family: 'Poppins', sans-serif !important;
+}
+.footer * {
+  font-family: 'Poppins', sans-serif !important;
 }
 
 .footer .footer-newsletter {

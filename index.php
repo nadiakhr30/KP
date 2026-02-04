@@ -22,6 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 
 <head>
+    <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
     <title>Sikumbang - Sistem Kehumasan BPS Bangkalan</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
@@ -235,15 +236,67 @@ background-size: cover;
 @media(max-width:768px){
   .login-card{
     flex-direction:column;
-    width:90%;
+    width:96%;
+    min-width:unset;
+    box-shadow: 0 4px 16px rgba(0,0,0,.12);
   }
-
   .left-panel, .right-panel{
     width:100%;
+    padding:28px 12px;
   }
-
   .left-panel{
     text-align:center;
+  }
+  .welcome-text h1{
+    font-size:28px;
+  }
+  .welcome-text h6{
+    font-size:15px;
+  }
+  .btn-outline{
+    padding:7px 16px;
+    font-size:15px;
+  }
+  .right-panel form{
+    max-width:98vw;
+    padding:0 2vw;
+  }
+  .right-panel input, .btn-login{
+    font-size:16px;
+    padding:14px;
+  }
+}
+
+@media(max-width:480px){
+  .login-card{
+    width:100vw;
+    border-radius:0;
+    box-shadow:none;
+  }
+  .left-panel, .right-panel{
+    padding:18px 4px;
+  }
+  .welcome-text h1{
+    font-size:22px;
+  }
+  .welcome-text h6{
+    font-size:13px;
+  }
+  .btn-outline{
+    font-size:13px;
+    padding:6px 10px;
+  }
+  .right-panel form{
+    max-width:100vw;
+    padding:0 1vw;
+  }
+  .right-panel input, .btn-login{
+    font-size:15px;
+    padding:12px;
+  }
+  .toggle-password{
+    font-size:22px;
+    right:8px;
   }
 }
 </style>

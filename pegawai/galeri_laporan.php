@@ -42,20 +42,13 @@ if ($selectedSub) {
     }
 }
 
-// Tambahkan mapping Google Drive untuk sub jenis laporan
-$driveFolderMap = [
-  18 => '19etMs1YUULn4v4P4Y7Uqvw7fJR2UA6qL',
-  19 => '1cZJFB2bTNl7r7fZ4GhHpx5h-NFaxI7At',
-  20 => '1XH_L1GUhQXs313dd6a9Z2qpJfjzdaz8k',
-  21 => '1RcCoLxXfsNqGXJc2dEiyCbK_pn7oQYNr'
-];
-$driveEmbedId = isset($driveFolderMap[$selectedSub]) ? $driveFolderMap[$selectedSub] : null;
-$driveOriginalLink = $driveEmbedId ? 'https://drive.google.com/drive/folders/' . $driveEmbedId : null;
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
 <title><?= htmlspecialchars($breadcrumbTitle) ?></title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -70,8 +63,8 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
 .header{display:flex;align-items:center;gap:20px;background:#fff;border-radius:20px;padding:18px 24px;box-shadow:0 10px 30px rgba(15,23,42,.08);margin-bottom:28px}  .header-controls{margin-left:auto;display:flex;align-items:center}
   .sub-select-form{display:flex;align-items:center;gap:8px}
   .sub-select{padding:8px 10px;border-radius:8px;border:1px solid #e6eef8;background:#fff;font-weight:600;font-size:14px}
-  @media (max-width:600px){ .sub-select{font-size:13px;padding:6px 8px} .header{flex-direction:column;align-items:flex-start;gap:12px} .header-controls{width:100%;justify-content:flex-start} }.grid{display:grid;grid-template-columns:1fr;gap:24px}
-.card{background:transparent;border-radius:0;overflow:visible;box-shadow:none;transition:none;padding:0;position:relative}
+  @media (max-width:600px){ .sub-select{font-size:13px;padding:6px 8px} .header{flex-direction:column;align-items:flex-start;gap:12px} .header-controls{width:100%;justify-content:flex-start} }.grid{display:grid;grid-template-columns:1fr;gap:18px}
+.card{background:transparent;border-radius:0;overflow:visible;box-shadow:none;transition:none;padding:0;position:relative;margin-bottom:18px}
 .card .body{background:#fff;border-radius:12px;margin-top:-20px;padding:18px;box-shadow:0 8px 30px rgba(15,23,42,.06)}
 .card-tag{position:absolute;left:18px;top:12px;z-index:20}
 .card-tag .badge{font-size:12px;padding:6px 10px;border-radius:999px;box-shadow:0 6px 18px rgba(15,23,42,.04)}
@@ -147,7 +140,7 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
   </div>
 
   
-
+  <br><br>          
   <div class="grid"> 
     <?php if (count($mediaList) == 0): ?>
       <div class="no-data"><i class="bi bi-inbox" style="font-size:32px;display:block;margin-bottom:10px;opacity:0.5"></i>Tidak ada media ditemukan</div>
@@ -161,21 +154,27 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
       $link = htmlspecialchars($rawLink);
       $created = date('d M Y', strtotime($m['created_at']));
       $badgeClass = 'primary';
-      // Parse Google Drive folder ID dari link jika ada
+      // Parse Google Drive folder/file ID dari link jika ada
       $mediaDriveId = null;
       if (!empty($rawLink)) {
-        if (preg_match('/drive\\.google\\.com\\/drive\\/folders\\/([a-zA-Z0-9_-]+)/', $rawLink, $matches) || preg_match('/drive\\.google\\.com\\/open\\?id=([a-zA-Z0-9_-]+)/', $rawLink, $matches) || preg_match('/drive\\.google\\.com\\/file\\/d\\/([a-zA-Z0-9_-]+)/', $rawLink, $matches)) {
+        // Samakan urutan dan regex dengan galeri_foto.php
+        if (preg_match('/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/', $rawLink, $matches)
+         || preg_match('/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/', $rawLink, $matches)
+         || preg_match('/drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)/', $rawLink, $matches)) {
           $mediaDriveId = $matches[1];
         }
       }
       $cardDataAttr = '';
-      if ($mediaDriveId) {
-        $cardDataAttr = 'data-media-drive-id="' . htmlspecialchars($mediaDriveId) . '"';
-      } elseif ($driveEmbedId) {
-        $cardDataAttr = 'data-drive-id="' . htmlspecialchars($driveEmbedId) . '"';
+      if (!empty($rawLink)) {
+        $cardDataAttr .= ' data-media-link="' . htmlspecialchars($rawLink) . '"';
       }
+      $cardDataAttr .= ' data-media-title="' . $judul . '"';
+      if ($mediaDriveId) {
+        $cardDataAttr .= ' data-media-drive-id="' . htmlspecialchars($mediaDriveId) . '"';
+      }
+      $hasDrive = $mediaDriveId;
     ?>
-    <div class="card<?= $mediaDriveId || $driveEmbedId ? ' card-with-drive' : '' ?>" <?= $cardDataAttr ?> >
+    <div class="card<?= $hasDrive ? ' card-with-drive' : '' ?>" <?= $cardDataAttr ?> >
       <div class="card-folder"> 
         <div class="icon-folder">
           <div class="folder-tab"></div>
@@ -196,13 +195,17 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
             <strong><?= $created ?></strong>
           </div>
           <?php if (!empty($link)): ?>
-            <a href="<?= $link ?>" target="_blank" class="open"><i class="bi bi-box-arrow-up-right"></i></a>
+            <?php $isDrive = stripos($rawLink, 'drive.google.com') !== false; ?>
+            <?php if ($isDrive): ?>
+              <a href="<?= $link ?>" target="_blank" class="open open-in-modal" data-media-link="<?= $link ?>" data-media-title="<?= $judul ?>" title="Buka tautan (tab baru)"><i class="bi bi-box-arrow-up-right"></i></a>
+            <?php else: ?>
+              <a href="<?= $link ?>" target="_blank" class="open" title="Buka tautan"><i class="bi bi-box-arrow-up-right"></i></a>
+            <?php endif; ?>
           <?php endif; ?>
         </div>
 
       </div>
     </div>
-    <br><br>
     <?php endforeach; ?>
   </div>
 </div>
@@ -225,46 +228,44 @@ document.addEventListener('DOMContentLoaded', function(){
     var openOrigBtn = document.getElementById('modalOpenOriginal');
 
     titleEl.textContent = title || 'Pratinjau';
-
     modal.style.display = 'flex';
-
-    error.style.display = 'none';
-    iframe.style.display = 'none';
-    placeholder.style.display = 'block';
+    modal.setAttribute('aria-hidden','false');
+    if (error) error.style.display = 'none';
+    if (iframe) iframe.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'flex';
     if (openOrigBtn) openOrigBtn.style.display = 'none';
-
     if (openOrigBtn) openOrigBtn.href = originalLink || url;
     if (openOrigBtn) openOrigBtn.onclick = function(){ setTimeout(closeDriveModal, 150); };
-
     var loaded = false;
     var loadTimer = setTimeout(function(){
       if (!loaded){
-        placeholder.style.display = 'none';
-        error.style.display = 'block';
+        if (placeholder) placeholder.style.display = 'none';
+        if (error) error.style.display = 'block';
         if (openOrigBtn) openOrigBtn.style.display = 'inline-block';
       }
     }, 1800);
-
-    iframe.onload = function(){
+    if (iframe) iframe.onload = function(){
       loaded = true;
       clearTimeout(loadTimer);
-      placeholder.style.display = 'none';
-      error.style.display = 'none';
+      if (placeholder) placeholder.style.display = 'none';
+      if (error) error.style.display = 'none';
       if (openOrigBtn) openOrigBtn.style.display = 'none';
       iframe.style.display = 'block';
     };
-
-    iframe.src = url;
+    if (iframe) iframe.src = url;
   }
 
   function closeDriveModal(){
     var modal = document.getElementById('driveModal');
     var iframe = document.getElementById('driveIframe');
-    iframe.src = '';
-    modal.style.display = 'none';
+    if (iframe) iframe.src = '';
+    if (modal) modal.style.display = 'none';
+    if (modal) modal.setAttribute('aria-hidden', 'true');
   }
+  var closeBtn = document.getElementById('driveModalClose');
+  if (closeBtn) closeBtn.addEventListener('click', closeDriveModal);
 
-  // Klik folder icon: buka modal preview untuk Drive
+  // Klik folder icon: buka modal preview untuk Drive (logika dokumentasi.php)
   document.addEventListener('click', function(e){
     var iconEl = e.target.closest && e.target.closest('.icon-folder');
     if (iconEl){
@@ -275,10 +276,9 @@ document.addEventListener('DOMContentLoaded', function(){
         e.preventDefault(); e.stopPropagation();
         var title = card.getAttribute('data-media-title') || null;
         var original = card.getAttribute('data-media-link') || ('https://drive.google.com/drive/folders/' + mediaDriveId);
-        openGenericModal('https://drive.google.com/embeddedfolderview?id=' + mediaDriveId + '#grid', title, original);
+        openGenericModal('https://drive.google.com/embeddedfolderview?id=' + mediaDriveId + '#grid', title ? title : 'Isi Folder Google Drive', original);
         return;
       }
-      // If no per-media drive, but this card has a direct media link which is a Drive file, preview it in modal
       var mediaLink = card.getAttribute('data-media-link');
       if (mediaLink){
         if (mediaLink.indexOf('drive.google.com') !== -1){
@@ -288,20 +288,23 @@ document.addEventListener('DOMContentLoaded', function(){
           openGenericModal(preview, title, mediaLink);
           return;
         }
-        // otherwise: do nothing — user should click the box-arrow/footer to open external links
       }
-
-      // If no per-media drive, fall back to sub-level drive modal if present
-      var driveId = card.getAttribute('data-drive-id');
-      if (driveId){
-        e.preventDefault(); e.stopPropagation();
-        var subName = <?= json_encode($selectedSubName ? $selectedSubName : 'Laporan') ?>;
-        var original = '<?= htmlspecialchars($driveOriginalLink ? $driveOriginalLink : '') ?>';
-        openGenericModal('https://drive.google.com/embeddedfolderview?id=' + driveId + '#grid', subName, original);
-        return;
-      }
+      // Tidak ada fallback, logika sesuai dokumentasi.php
     }
   });
+
+  // Footer icon (box-arrow) always opens the original link in a new tab; modal is only for the folder icon
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a.open-in-modal');
+    if (a){
+      e.preventDefault(); e.stopPropagation();
+      var link = a.getAttribute('data-media-link') || a.href;
+      if (!link) return;
+      window.open(link, '_blank');
+    }
+  });
+
+  // (duplikat, hapus blok ini)
 
   // overlay click closes modal
   var modalEl = document.getElementById('driveModal');

@@ -1,3 +1,134 @@
+  <style>
+        /* Full-width hero/content for mobile */
+        @media (max-width: 768px) {
+          .hero, .container-xl, .container, .row, .footer-top {
+            width: 100vw !important;
+            min-width: 100vw !important;
+            max-width: 100vw !important;
+            margin: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            box-sizing: border-box !important;
+          }
+          body, html {
+            overflow-x: hidden !important;
+          }
+        }
+    #navbarNotif {
+      position: relative;
+      font-size: 22px;
+      color: #e84118;
+      cursor: pointer;
+      vertical-align: middle;
+    /* removed stray closing brace */
+    #navbarNotif .notif-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #e84118;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 12px;
+      padding: 2px 6px;
+      font-weight: bold;
+      z-index: 10001;
+    }
+    #navbarNotif .dropdown-menu {
+      z-index: 10001;
+    }
+
+    /* Responsive Navbar & Dropdown */
+    @media (max-width: 768px) {
+      html, body {
+        overflow-x: hidden !important;
+      }
+      .header {
+        padding: 10px 0;
+      }
+      .navmenu {
+        width: 100vw;
+        left: 0;
+        margin: 0;
+        padding: 0;
+      }
+      .navmenu ul {
+        flex-direction: column;
+        background: #fff;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100vw;
+        min-width: 100vw;
+        max-width: 100vw;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        z-index: 9999;
+        overflow-x: hidden;
+      }
+      .navmenu ul li {
+        width: 100vw;
+        text-align: left;
+        margin: 0;
+        padding: 0;
+      }
+      .navmenu ul li a {
+        display: block;
+        width: 100vw;
+        box-sizing: border-box;
+        padding: 16px 18px;
+        font-size: 17px;
+        border-bottom: 1px solid #eee;
+        margin: 0;
+      }
+      #navbarNotif {
+        font-size: 26px;
+        margin-right: 8px;
+      }
+      #navbarNotif .notif-badge {
+        font-size: 14px;
+        top: -10px;
+        right: -10px;
+      }
+      #notifDropdown {
+        min-width: 90vw;
+        left: 5vw;
+        right: auto;
+        top: 40px;
+        font-size: 15px;
+      }
+      .dropdown-menu {
+        font-size: 15px;
+      }
+      .avatar-img, .avatar-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 32px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header {
+        padding: 6px 0;
+      }
+      .navmenu ul li a {
+        padding: 14px 16px;
+        font-size: 16px;
+      }
+      #navbarNotif {
+        font-size: 24px;
+      }
+      #notifDropdown {
+        min-width: 98vw;
+        left: 1vw;
+        top: 38px;
+        font-size: 14px;
+      }
+      .avatar-img, .avatar-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 26px;
+      }
+    }
+  </style>
 <?php
 function renderLayout($content, $script) {
 
@@ -8,6 +139,7 @@ global $pegawai;
 <html lang="en">
 
 <head>
+  <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Dashboard Pegawai - Sistem Kehumasan</title>
@@ -18,11 +150,7 @@ global $pegawai;
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Kehumasan">
 
-  <!-- Favicons -->
-  <link href="assets/img/favicon.png" rel="icon">
-  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
-  <link rel="apple-touch-icon" href="../assets/icons/icon-192x192.png">
-  <link rel="manifest" href="../manifest.json">
+  
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -701,279 +829,7 @@ global $pegawai;
       
     }
 
-      /* ===== MODERN FOOTER STYLE ===== */
-      #footer {
-        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #172554 100%) !important;
-        background-color: #0f172a !important;
-        color: #fff !important;
-        position: relative;
-        overflow: hidden;
-        padding: 60px 0 0;
-      }
-
-      .footer {
-        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #172554 100%) !important;
-        background-color: #0f172a !important;
-      }
-
-      #footer::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        pointer-events: none;
-      }
-
-      #footer::after {
-        content: '';
-        position: absolute;
-        bottom: -10%;
-        left: -5%;
-        width: 400px;
-        height: 400px;
-        background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: float-footer 10s ease-in-out infinite;
-        pointer-events: none;
-      }
-
-      @keyframes float-footer {
-        0%, 100% { transform: translate(0, 0); }
-        50% { transform: translate(40px, 40px); }
-      }
-
-      #footer .container {
-        position: relative;
-        z-index: 2;
-      }
-
-      #footer .footer-top {
-        padding-bottom: 40px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      }
-
-      #footer .row {
-        gap: 30px;
-        display: flex;
-        flex-wrap: wrap;
-      }
-
-      @media (min-width: 992px) {
-        #footer .row {
-          flex-wrap: nowrap;
-        }
-      }
-
-      /* Footer About */
-      #footer .footer-about {
-        padding-right: 30px;
-      }
-
-      #footer .sitename {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 1.3rem;
-        letter-spacing: -0.5px;
-        color: #fff;
-      }
-
-      #footer .footer-contact {
-        font-family: 'Poppins', sans-serif;
-      }
-
-      #footer .footer-contact p {
-        margin-bottom: 12px;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: rgba(255, 255, 255, 0.8);
-      }
-
-      #footer .footer-contact strong {
-        color: #667eea;
-        font-weight: 700;
-      }
-
-      #footer .footer-contact span {
-        color: rgba(255, 255, 255, 0.9);
-        font-weight: 500;
-      }
-
-      /* Footer Links */
-      #footer .footer-links h4 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 1.1rem;
-        margin-bottom: 25px;
-        letter-spacing: -0.3px;
-        position: relative;
-        padding-bottom: 12px;
-        color: #fff;
-      }
-
-      #footer .footer-links h4::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 40px;
-        height: 3px;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        border-radius: 2px;
-        transition: width 0.3s ease;
-      }
-
-      #footer .footer-links h4:hover::after {
-        width: 60px;
-      }
-
-      #footer .footer-links ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      #footer .footer-links ul li {
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transition: all 0.3s ease;
-      }
-
-      #footer .footer-links ul li:hover {
-        transform: translateX(6px);
-      }
-
-      #footer .footer-links ul li i {
-        color: #667eea;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        flex-shrink: 0;
-      }
-
-      #footer .footer-links ul li:hover i {
-        color: #764ba2;
-        transform: scaleX(1.2);
-      }
-
-      #footer .footer-links ul li a {
-        color: rgba(255, 255, 255, 0.85);
-        text-decoration: none;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        position: relative;
-      }
-
-      #footer .footer-links ul li a::before {
-        content: '';
-        position: absolute;
-        bottom: -3px;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        transition: width 0.3s ease;
-      }
-
-      #footer .footer-links ul li a:hover {
-        color: #fff;
-      }
-
-      #footer .footer-links ul li a:hover::before {
-        width: 100%;
-      }
-
-      /* Follow Us Section */
-      #footer > .container .col-lg-4:nth-child(4) h4 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 1rem;
-        margin-bottom: 18px;
-        letter-spacing: -0.3px;
-        color: #fff;
-      }
-
-      #footer > .container .col-lg-4:nth-child(4) p {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        color: rgba(255, 255, 255, 0.8);
-        margin-bottom: 20px;
-      }
-
-      /* Social Links */
-      #footer .social-links {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-      }
-
-      #footer .social-links a {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: rgba(102, 126, 234, 0.12);
-        color: #667eea;
-        font-size: 1.2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
-        border: 1.5px solid rgba(102, 126, 234, 0.25);
-        cursor: pointer;
-        text-decoration: none;
-      }
-
-      #footer .social-links a:hover {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #fff;
-        transform: translateY(-8px) scale(1.1);
-        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
-        border-color: transparent;
-      }
-
-      /* Copyright */
-      #footer .copyright {
-        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #172554 100%) !important;
-        text-align: center;
-        padding-top: 30px !important;
-        padding-bottom: 40px !important;
-        position: relative;
-        z-index: 2;
-      }
-
-      #footer .copyright p {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.7);
-        margin: 0;
-        font-weight: 500;
-      }
-
-      #footer .copyright span {
-        color: rgba(255, 255, 255, 0.85);
-      }
-
-      #footer .credits {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.6);
-        margin-top: 10px;
-        font-weight: 500;
-      }
-
-      #footer .credits strong {
-        color: #667eea;
-        transition: all 0.3s ease;
-      }
-
-      #footer .credits:hover strong {
-        color: #764ba2;
-      }
+     
 
       /* ===== PENGEMBANGAN SECTION ===== */
       .pengembangan-highlight {
@@ -1969,13 +1825,22 @@ global $pegawai;
           <li><a href="#beranda" class="active">Beranda</a></li>
           <li><a href="#Humas">Humas</a></li>
           <li><a href="#services">Manajemen</a></li>
-          <li><a href="#about">Dokumentasi</a></li>
+          <li><a href="#dokumentasi">Dokumentasi</a></li>
           <li><a href="#sumberdaya">Sumber Daya</a></li>
           <li><a href="#broadcast">Broadcast</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
+        <!-- Bell Notifikasi Jadwal Baru -->
+        <span id="navbarNotif" style="display:none;position:relative;margin-right:18px;">
+          <i class="bi bi-bell-fill"></i>
+          <span class="notif-badge" id="notifCount">1</span>
+          <div id="notifDropdown" class="dropdown-menu dropdown-menu-end" style="min-width:260px;max-width:320px;display:none;position:absolute;top:32px;right:0;z-index:9999;">
+            <h6 class="dropdown-header">Jadwal Baru untuk Anda</h6>
+            <div id="notifList"></div>
+          </div>
+        </span>
         <div class="ms-3">
         <div class="dropdown">
           <a class="d-flex align-items-center text-decoration-none dropdown-toggle"
@@ -2060,22 +1925,22 @@ global $pegawai;
         <div class="col-lg-2 col-md-3 footer-links">
           <h4>Quick Links</h4>
           <ul>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Beranda</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Ruang Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Dokumentasi</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Sumber Daya</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Broadcast</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#beranda">Beranda</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#Humas">Ruang Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi">Dokumentasi</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#sumberdaya">Sumber Daya</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#broadcast">Broadcast</a></li>
           </ul>
         </div>
 
         <div class="col-lg-2 col-md-3 footer-links">
           <h4>Layanan Informasi</h4>
           <ul>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Jadwal Konten Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Galeri Foto</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Galeri Video</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Laporan Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Pedoman Visual Medsos</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#kalender-jadwal>Jadwal Konten Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi">Galeri Foto</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi">Galeri Video</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi">Laporan Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#sumberdaya">Pedoman Visual Medsos</a></li>
           </ul>
         </div>
 

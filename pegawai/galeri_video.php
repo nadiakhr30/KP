@@ -44,18 +44,12 @@ if ($selectedSub) {
   }
 }
 // Tambahkan mapping Google Drive setelah $selectedSub sudah pasti
-$driveFolderMap = [
-  15 => '17ZJUa8nX_-G5HLYaLU-hrzxt1BjW3ebE',
-  16 => '1iPPy7eJZOmRBJoBlhzHkJ_rLf3QJ0S2Y',
-  17 => '1DPS7SXg0RKjgmcJ2orELz3-eEdW-TcUW'
-];
-$driveEmbedId = isset($driveFolderMap[$selectedSub]) ? $driveFolderMap[$selectedSub] : null;
-$driveOriginalLink = $driveEmbedId ? 'https://drive.google.com/drive/folders/' . $driveEmbedId : null;
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
 <title><?= htmlspecialchars($breadcrumbTitle) ?></title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -161,21 +155,27 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
       $link = htmlspecialchars($rawLink);
       $created = date('d M Y', strtotime($m['created_at']));
       $badgeClass = 'primary';
-      // Parse Google Drive folder ID dari link jika ada
+
+      // Parse Google Drive folder/file ID dari link jika ada (seperti dokumentasi.php)
       $mediaDriveId = null;
       if (!empty($rawLink)) {
-        if (preg_match('/drive\\.google\\.com\\/drive\\/folders\\/([a-zA-Z0-9_-]+)/', $rawLink, $matches) || preg_match('/drive\\.google\\.com\\/open\\?id=([a-zA-Z0-9_-]+)/', $rawLink, $matches) || preg_match('/drive\\.google\\.com\\/file\\/d\\/([a-zA-Z0-9_-]+)/', $rawLink, $matches)) {
+        if (preg_match('/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/', $rawLink, $matches)
+         || preg_match('/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/', $rawLink, $matches)
+         || preg_match('/drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)/', $rawLink, $matches)) {
           $mediaDriveId = $matches[1];
         }
       }
+
       $cardDataAttr = '';
+      if (!empty($rawLink)) {
+        $cardDataAttr .= ' data-media-link="' . htmlspecialchars($rawLink) . '"';
+      }
+      $cardDataAttr .= ' data-media-title="' . $judul . '"';
       if ($mediaDriveId) {
-        $cardDataAttr = 'data-media-drive-id="' . htmlspecialchars($mediaDriveId) . '"';
-      } elseif ($driveEmbedId) {
-        $cardDataAttr = 'data-drive-id="' . htmlspecialchars($driveEmbedId) . '"';
+        $cardDataAttr .= ' data-media-drive-id="' . htmlspecialchars($mediaDriveId) . '"';
       }
     ?>
-    <div class="card<?= $mediaDriveId || $driveEmbedId ? ' card-with-drive' : '' ?>" <?= $cardDataAttr ?> >
+    <div class="card<?= $mediaDriveId ? ' card-with-drive' : '' ?>" <?= $cardDataAttr ?> >
       <div class="card-folder"> 
         <div class="icon-folder">
           <div class="folder-tab"></div>
@@ -196,7 +196,12 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
             <strong><?= $created ?></strong>
           </div>
           <?php if (!empty($link)): ?>
-            <a href="<?= $link ?>" target="_blank" class="open"><i class="bi bi-box-arrow-up-right"></i></a>
+            <?php $isDrive = stripos($rawLink, 'drive.google.com') !== false; ?>
+            <?php if ($isDrive): ?>
+              <a href="<?= $link ?>" target="_blank" class="open open-in-modal" data-media-link="<?= $link ?>" data-media-title="<?= $judul ?>" title="Buka tautan (tab baru)"><i class="bi bi-box-arrow-up-right"></i></a>
+            <?php else: ?>
+              <a href="<?= $link ?>" target="_blank" class="open" title="Buka tautan"><i class="bi bi-box-arrow-up-right"></i></a>
+            <?php endif; ?>
           <?php endif; ?>
         </div>
 
@@ -264,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function(){
     modal.style.display = 'none';
   }
 
-  // Klik folder icon: buka modal preview untuk Drive
+  // Klik folder icon: buka modal preview untuk Drive (logika dokumentasi.php)
   document.addEventListener('click', function(e){
     var iconEl = e.target.closest && e.target.closest('.icon-folder');
     if (iconEl){
@@ -275,10 +280,9 @@ document.addEventListener('DOMContentLoaded', function(){
         e.preventDefault(); e.stopPropagation();
         var title = card.getAttribute('data-media-title') || null;
         var original = card.getAttribute('data-media-link') || ('https://drive.google.com/drive/folders/' + mediaDriveId);
-        openGenericModal('https://drive.google.com/embeddedfolderview?id=' + mediaDriveId + '#grid', title, original);
+        openGenericModal('https://drive.google.com/embeddedfolderview?id=' + mediaDriveId + '#grid', title ? title : 'Isi Folder Google Drive', original);
         return;
       }
-      // If no per-media drive, but this card has a direct media link which is a Drive file, preview it in modal
       var mediaLink = card.getAttribute('data-media-link');
       if (mediaLink){
         if (mediaLink.indexOf('drive.google.com') !== -1){
@@ -288,18 +292,8 @@ document.addEventListener('DOMContentLoaded', function(){
           openGenericModal(preview, title, mediaLink);
           return;
         }
-        // otherwise: do nothing — user should click the box-arrow/footer to open external links
       }
-
-      // If no per-media drive, fall back to sub-level drive modal if present
-      var driveId = card.getAttribute('data-drive-id');
-      if (driveId){
-        e.preventDefault(); e.stopPropagation();
-        var subName = <?= json_encode($selectedSubName ? $selectedSubName : 'Galeri Video') ?>;
-        var original = '<?= htmlspecialchars($driveOriginalLink ? $driveOriginalLink : '') ?>';
-        openGenericModal('https://drive.google.com/embeddedfolderview?id=' + driveId + '#grid', subName, original);
-        return;
-      }
+      // Tidak ada fallback, logika sesuai dokumentasi.php
     }
   });
 
@@ -342,6 +336,17 @@ document.addEventListener('DOMContentLoaded', function(){
         openGenericModal('https://drive.google.com/embeddedfolderview?id=' + mediaDriveId + '#grid', title ? title : 'Isi Folder Google Drive', original);
         return;
       }
+    }
+  });
+
+  // Footer icon (box-arrow) always opens the original link in a new tab; modal is only for the folder icon
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a.open-in-modal');
+    if (a){
+      e.preventDefault(); e.stopPropagation();
+      var link = a.getAttribute('data-media-link') || a.href;
+      if (!link) return;
+      window.open(link, '_blank');
     }
   });
 
