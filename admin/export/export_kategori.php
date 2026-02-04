@@ -14,7 +14,7 @@ if ($format == 'excel') {
     require '../../vendor/autoload.php';
 }
 
-$qData = mysqli_query($koneksi, "SELECT j.*, k.nama_kategori FROM jenis j LEFT JOIN kategori k ON j.id_kategori = k.id_kategori ORDER BY j.nama_jenis");
+$qData = mysqli_query($koneksi, "SELECT * FROM kategori ORDER BY nama_kategori");
 $dataList = [];
 while ($row = mysqli_fetch_assoc($qData)) {
     $dataList[] = $row;
@@ -27,7 +27,7 @@ if ($format == 'print') {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Laporan Data Jenis Media</title>
+        <title>Laporan Data Kategori</title>
     <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,7 +91,7 @@ if ($format == 'print') {
             <button class="btn btn-primary btn-icon-l" onclick="window.print()"><i class="no-print fas fa-print"></i></button>
         </div>
         <div class="header-info">
-            <h2>Laporan Data Jenis Media Sistem Kehumasan</h2>
+            <h2>Laporan Data Kategori Sistem Kehumasan</h2>
             <h2>Badan Pusat Statistik Bangkalan</h2>
             <p>Tanggal Cetak: <?= date('d-m-Y H:i:s'); ?></p>
             <p>Total Data: <?= count($dataList); ?></p>
@@ -101,17 +101,15 @@ if ($format == 'print') {
                 <tr>
                     <th style="width: 5%;">No</th>
                     <th style="width: 10%;">ID</th>
-                    <th style="width: 40%;">Kategori</th>
-                    <th style="width: 45%;">Nama Jenis</th>
+                    <th style="width: 85%;">Nama Kategori</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($dataList as $index => $item) : ?>
                 <tr>
                     <td><?= $index + 1 ?></td>
-                    <td><?= $item['id_jenis'] ?></td>
+                    <td><?= $item['id_kategori'] ?></td>
                     <td><?= htmlspecialchars($item['nama_kategori']) ?></td>
-                    <td><?= htmlspecialchars($item['nama_jenis']) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -127,14 +125,13 @@ if ($format == 'print') {
 else if ($format == 'excel') {
     $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
-    $sheet->setTitle('Data Jenis');
+    $sheet->setTitle('Data Kategori');
     
     $sheet->getColumnDimension('A')->setWidth(5);
     $sheet->getColumnDimension('B')->setWidth(10);
-    $sheet->getColumnDimension('C')->setWidth(25);
-    $sheet->getColumnDimension('D')->setWidth(30);
+    $sheet->getColumnDimension('C')->setWidth(40);
 
-    $headers = ['No', 'ID', 'Kategori', 'Nama Jenis'];
+    $headers = ['No', 'ID', 'Nama Kategori'];
     $sheet->fromArray($headers, NULL, 'A1');
 
     $headerStyle = [
@@ -142,15 +139,14 @@ else if ($format == 'excel') {
         'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '007BFF']],
         'alignment' => ['horizontal' => 'center', 'vertical' => 'center', 'wrapText' => true],
     ];
-    $sheet->getStyle('A1:D1')->applyFromArray($headerStyle);
+    $sheet->getStyle('A1:C1')->applyFromArray($headerStyle);
     $sheet->getRowDimension(1)->setRowHeight(25);
 
     $row = 2;
     foreach ($dataList as $index => $item) {
         $sheet->setCellValue("A$row", $index + 1);
-        $sheet->setCellValue("B$row", $item['id_jenis']);
+        $sheet->setCellValue("B$row", $item['id_kategori']);
         $sheet->setCellValue("C$row", $item['nama_kategori']);
-        $sheet->setCellValue("D$row", $item['nama_jenis']);
         $row++;
     }
 
@@ -160,7 +156,7 @@ else if ($format == 'excel') {
     $sheet->getStyle("A$row")->getFont()->setBold(true);
     $sheet->getStyle("B$row")->getFont()->setBold(true);
 
-    $filename = 'Laporan_Jenis_' . date('Y-m-d_H-i-s') . '.xlsx';
+    $filename = 'Laporan_Kategori_' . date('Y-m-d_H-i-s') . '.xlsx';
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment;filename="' . $filename . '"');
 

@@ -4,35 +4,27 @@ include("../../koneksi.php");
 $error   = "";
 $success = "";
 
-// ambil data kategori untuk dropdown
-$dataKategori = mysqli_query(
-    $koneksi,
-    "SELECT id_kategori, nama_kategori FROM kategori ORDER BY nama_kategori"
-);
-
 // proses simpan
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $nama_jenis = trim($_POST["nama_jenis"] ?? "");
-    $id_kategori       = trim($_POST["id_kategori"] ?? "");
+    $nama_kategori = trim($_POST["nama_kategori"] ?? "");
 
-    if ($nama_jenis == "" || $id_kategori == "") {
-        $error = "Nama Jenis dan Kategori wajib diisi!";
+    if ($nama_kategori == "") {
+        $error = "Nama Kategori wajib diisi!";
     } else {
 
-        $nama_jenis = mysqli_real_escape_string($koneksi, $nama_jenis);
-        $id_kategori       = mysqli_real_escape_string($koneksi, $id_kategori);
+        $nama_kategori = mysqli_real_escape_string($koneksi, $nama_kategori);
 
         $query = "
-            INSERT INTO jenis (nama_jenis, id_kategori)
-            VALUES ('$nama_jenis', '$id_kategori')
+            INSERT INTO kategori (nama_kategori)
+            VALUES ('$nama_kategori')
         ";
 
         if (mysqli_query($koneksi, $query)) {
-            $success = "Jenis berhasil ditambahkan!";
+            $success = "Kategori berhasil ditambahkan!";
             header("Refresh: 1; url=../manajemen_data_lainnya.php");
         } else {
-            $error = "Gagal menambahkan Jenis: " . mysqli_error($koneksi);
+            $error = "Gagal menambahkan Kategori: " . mysqli_error($koneksi);
         }
     }
 }
@@ -42,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Tambah Jenis</title>
+    <title>Tambah Kategori</title>
     <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -57,42 +49,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="col-md-4 my-5">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Tambah Jenis</h5>
+                    <h5 class="mb-0">Tambah Kategori</h5>
                 </div>
+
                 <div class="card-body px-5">
+
                     <?php if ($error): ?>
                         <div class="alert alert-danger alert-dismissible fade show">
                             <?= htmlspecialchars($error) ?>
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
                     <?php endif; ?>
+
                     <?php if ($success): ?>
                         <div class="alert alert-success alert-dismissible fade show">
                             <?= htmlspecialchars($success) ?>
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
                     <?php endif; ?>
+
                     <form method="POST">
+
                         <div class="form-group">
-                            <label>Kategori <span class="text-danger">*</span></label>
-                            <select name="id_kategori" class="form-control" required>
-                                <option value="">-- Pilih Kategori --</option>
-                                <?php while ($k = mysqli_fetch_assoc($dataKategori)) : ?>
-                                    <option value="<?= $k['id_kategori']; ?>"
-                                        <?= (isset($_POST['id_kategori']) && $_POST['id_kategori'] == $k['id_kategori']) ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($k['nama_kategori']); ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Nama Jenis <span class="text-danger">*</span></label>
+                            <label>Nama Kategori <span class="text-danger">*</span></label>
                             <input
                                 type="text"
-                                name="nama_jenis"
+                                name="nama_kategori"
                                 class="form-control"
-                                placeholder="Masukkan nama jenis"
-                                value="<?= isset($_POST['nama_jenis']) ? htmlspecialchars($_POST['nama_jenis']) : '' ?>"
+                                placeholder="Masukkan nama kategori"
+                                value="<?= isset($_POST['nama_kategori']) ? htmlspecialchars($_POST['nama_kategori']) : '' ?>"
                                 required
                             >
                         </div>
@@ -101,6 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <button type="submit" class="btn btn-primary btn-icon-l"><i class="fas fa-save"></i></button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>

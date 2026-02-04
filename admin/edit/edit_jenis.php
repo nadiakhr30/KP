@@ -26,17 +26,26 @@ if (!$data) {
     exit();
 }
 
+// Get kategori options
+$qKategori = mysqli_query($koneksi, "SELECT * FROM kategori");
+$kategoriOptions = [];
+while ($row = mysqli_fetch_assoc($qKategori)) {
+    $kategoriOptions[] = $row;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nama_jenis = mysqli_real_escape_string($koneksi, trim($_POST['nama_jenis']));
+    $id_kategori = isset($_POST['id_kategori']) ? (int)$_POST['id_kategori'] : 0;
 
-    if (empty($nama_jenis)) {
-        $error = "Nama Jenis wajib diisi!";
+    if (empty($nama_jenis) || $id_kategori <= 0) {
+        $error = "Nama Jenis dan Kategori wajib diisi!";
     } else {
-        $updateQuery = "UPDATE jenis SET nama_jenis = '$nama_jenis' WHERE id_jenis = $id_jenis";
+        $updateQuery = "UPDATE jenis SET nama_jenis = '$nama_jenis', id_kategori = $id_kategori WHERE id_jenis = $id_jenis";
 
         if (mysqli_query($koneksi, $updateQuery)) {
             $success = "Jenis berhasil diperbarui!";
             $data['nama_jenis'] = $nama_jenis;
+            $data['id_kategori'] = $id_kategori;
             header("Refresh: 1; url=../manajemen_data_lainnya.php");
         } else {
             $error = "Jenis gagal diperbarui!";
@@ -79,6 +88,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                     <?php endif; ?>
                     <form method="POST">
+                        <div class="form-group">
+                            <label>Kategori <span class="text-danger">*</span></label>
+                            <select name="id_kategori" class="form-control" required>
+                                <option value="">-- Pilih Kategori --</option>
+                                <?php foreach ($kategoriOptions as $kategori): ?>
+                                    <option value="<?= $kategori['id_kategori']; ?>" <?= $data['id_kategori'] == $kategori['id_kategori'] ? 'selected' : ''; ?>>
+                                        <?= htmlspecialchars($kategori['nama_kategori']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
                         <div class="form-group">
                             <label>Nama Jenis <span class="text-danger">*</span></label>
                             <input type="text" name="nama_jenis" class="form-control" required 

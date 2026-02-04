@@ -1,50 +1,56 @@
 <?php
-include("../../koneksi.php");
+ob_start();
+session_start();
+include_once("../../koneksi.php");
 
-$error   = "";
+if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
+    header('Location: ../../index.php');
+    exit();
+}
+
+$error = "";
 $success = "";
+$id_kategori = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// ambil data kategori untuk dropdown
-$dataKategori = mysqli_query(
-    $koneksi,
-    "SELECT id_kategori, nama_kategori FROM kategori ORDER BY nama_kategori"
-);
+if ($id_kategori <= 0) {
+    header('Location: ../manajemen_data_lainnya.php');
+    exit();
+}
 
-// proses simpan
+$query = "SELECT * FROM kategori WHERE id_kategori = $id_kategori";
+$result = mysqli_query($koneksi, $query);
+$data = mysqli_fetch_assoc($result);
+
+if (!$data) {
+    header('Location: ../manajemen_data_lainnya.php');
+    exit();
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nama_kategori = mysqli_real_escape_string($koneksi, trim($_POST['nama_kategori']));
 
-    $nama_jenis = trim($_POST["nama_jenis"] ?? "");
-    $id_kategori       = trim($_POST["id_kategori"] ?? "");
-
-    if ($nama_jenis == "" || $id_kategori == "") {
-        $error = "Nama Jenis dan Kategori wajib diisi!";
+    if (empty($nama_kategori)) {
+        $error = "Nama Kategori wajib diisi!";
     } else {
+        $updateQuery = "UPDATE kategori SET nama_kategori = '$nama_kategori' WHERE id_kategori = $id_kategori";
 
-        $nama_jenis = mysqli_real_escape_string($koneksi, $nama_jenis);
-        $id_kategori       = mysqli_real_escape_string($koneksi, $id_kategori);
-
-        $query = "
-            INSERT INTO jenis (nama_jenis, id_kategori)
-            VALUES ('$nama_jenis', '$id_kategori')
-        ";
-
-        if (mysqli_query($koneksi, $query)) {
-            $success = "Jenis berhasil ditambahkan!";
+        if (mysqli_query($koneksi, $updateQuery)) {
+            $success = "Kategori berhasil diperbarui!";
+            $data['nama_kategori'] = $nama_kategori;
             header("Refresh: 1; url=../manajemen_data_lainnya.php");
         } else {
-            $error = "Gagal menambahkan Jenis: " . mysqli_error($koneksi);
+            $error = "Kategori gagal diperbarui!";
         }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Tambah Jenis</title>
-    <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
+    <title>Edit Kategori</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins&family=Jost&display=swap">
@@ -57,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="col-md-4 my-5">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Tambah Jenis</h5>
+                    <h5 class="mb-0">Edit Kategori</h5>
                 </div>
                 <div class="card-body px-5">
                     <?php if ($error): ?>
@@ -74,25 +80,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <?php endif; ?>
                     <form method="POST">
                         <div class="form-group">
-                            <label>Kategori <span class="text-danger">*</span></label>
-                            <select name="id_kategori" class="form-control" required>
-                                <option value="">-- Pilih Kategori --</option>
-                                <?php while ($k = mysqli_fetch_assoc($dataKategori)) : ?>
-                                    <option value="<?= $k['id_kategori']; ?>"
-                                        <?= (isset($_POST['id_kategori']) && $_POST['id_kategori'] == $k['id_kategori']) ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($k['nama_kategori']); ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Nama Jenis <span class="text-danger">*</span></label>
+                            <label>Nama Kategori <span class="text-danger">*</span></label>
                             <input
                                 type="text"
-                                name="nama_jenis"
+                                name="nama_kategori"
                                 class="form-control"
-                                placeholder="Masukkan nama jenis"
-                                value="<?= isset($_POST['nama_jenis']) ? htmlspecialchars($_POST['nama_jenis']) : '' ?>"
+                                placeholder="Masukkan nama kategori"
+                                value="<?= htmlspecialchars($data['nama_kategori']); ?>"
                                 required
                             >
                         </div>

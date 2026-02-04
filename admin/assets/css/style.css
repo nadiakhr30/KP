@@ -1542,7 +1542,8 @@ h6.media-heading {
 .user-info .media-body,
 .user-info .media-left {
   display: table-cell;
-  vertical-align: middle; }
+  vertical-align: middle; 
+  color:#000}
 
 .cover-btn {
   bottom: 38px;
@@ -6139,7 +6140,8 @@ table tbody .border-bottom-info td {
             display: inline-block;
             font-size: 14px;
             font-weight: 500;
-            margin-bottom: 0; }
+            margin-bottom: 0; 
+            color: #000;}
           .header-navbar .navbar-wrapper .navbar-container .header-notification .show-notification li:first-child label, .header-navbar .navbar-wrapper .navbar-container .header-notification .profile-notification li:first-child label {
             float: right; }
         .header-navbar .navbar-wrapper .navbar-container .header-notification .show-notification li img, .header-navbar .navbar-wrapper .navbar-container .header-notification .profile-notification li img {
@@ -6154,9 +6156,11 @@ table tbody .border-bottom-info td {
       .header-navbar .navbar-wrapper .navbar-container .header-notification .show-notification .notification-user, .header-navbar .navbar-wrapper .navbar-container .header-notification .profile-notification .notification-user {
         font-size: 15px;
         font-weight: 500;
-        margin-bottom: 5px; }
+        margin-bottom: 5px; 
+        color: #000; }
       .header-navbar .navbar-wrapper .navbar-container .header-notification .show-notification .notification-msg, .header-navbar .navbar-wrapper .navbar-container .header-notification .profile-notification .notification-msg {
-        margin-bottom: 5px; }
+        margin-bottom: 5px; 
+        color: #000; }
       .header-navbar .navbar-wrapper .navbar-container .header-notification .show-notification .notification-time, .header-navbar .navbar-wrapper .navbar-container .header-notification .profile-notification .notification-time {
         font-size: 12px;
         color: #919aa3; }

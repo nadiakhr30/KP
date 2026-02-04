@@ -20,8 +20,14 @@ $dataJabatans = [];
 while ($row = mysqli_fetch_assoc($qJabatan)) {
     $dataJabatans[] = $row;
 }
+// DATA Kategori
+$qKategori = mysqli_query($koneksi, "SELECT * FROM kategori");
+$dataKategoris = [];
+while ($row = mysqli_fetch_assoc($qKategori)) {
+    $dataKategoris[] = $row;
+}
 // DATA Jenis
-$qJenis = mysqli_query($koneksi, "SELECT * FROM jenis");
+$qJenis = mysqli_query($koneksi, "SELECT j.*, k.nama_kategori FROM jenis j LEFT JOIN kategori k ON j.id_kategori = k.id_kategori");
 $dataJenises = [];
 while ($row = mysqli_fetch_assoc($qJenis)) {
     $dataJenises[] = $row;
@@ -183,7 +189,7 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                         </div>
                                     </div>
                                     <div class="dt-responsive table-responsive">
-                                        <table id="order-table" class="table table-striped table-bordered nowrap">
+                                        <table id="halopst-table" class="table table-striped table-bordered nowrap">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -312,7 +318,7 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                         </div>
                                     </div>
                                     <div class="dt-responsive table-responsive">
-                                        <table id="order-table" class="table table-striped table-bordered nowrap">
+                                        <table id="jabatan-table" class="table table-striped table-bordered nowrap">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -348,6 +354,135 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Nama Jabatan</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-header-left">
+                                <h5>Kategori</h5>
+                                <span>Data kategori berisi pengelompokan atau klasifikasi media yang terkait dengan jenis media tertentu.</span>
+                            </div>
+                            <div class="card-header-right">
+                                <ul class="list-unstyled card-option">
+                                    <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                                    <li><i class="fa fa-window-maximize full-card"></i></li>
+                                    <li><i class="fa fa-minus minimize-card"></i></li>
+                                    <li><i class="fa fa-refresh reload-card"></i></li>
+                                    <li><i class="fa fa-trash close-card"></i></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-block">
+                            <ul class="nav nav-tabs tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#cardkategori" role="tab"><i class="ti-layout-grid2"></i> Card</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#tabledkategori" role="tab"><i class="ti-layout-menu-v"></i> Tabel</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content tabs">
+                                <div class="tab-pane active" id="cardkategori" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <a href="export/export_kategori.php?format=print" class="btn waves-effect waves-light btn-grd-info">Print</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_kategori.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row users-card p-3">
+                                        <?php if (count($dataKategoris) === 0): ?>
+                                            <div class="col-12 text-center">
+                                                <p>Tidak ada data Kategori tersedia.</p>
+                                            </div>
+                                        <?php else: ?>
+                                        <?php foreach ($dataKategoris as $kategori) : ?>
+                                        <div class="col-lg-3 col-md-4">
+                                            <div class="card rounded-card user-card">
+                                                <div class="card-block">
+                                                    <div class="user-content">
+                                                        <h4><?= htmlspecialchars($kategori['nama_kategori']); ?></h4>
+                                                        <a href="edit/edit_kategori.php?id=<?= $kategori['id_kategori']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
+                                                          <i class="ti-pencil text-dark"></i>
+                                                        </a>
+                                                        <a href="hapus/hapus_kategori.php?id=<?= $kategori['id_kategori']; ?>" 
+                                                           class="btn waves-effect waves-light btn-danger btn-icon"
+                                                           onclick="return confirmDelete('hapus/hapus_kategori.php?id=<?= $kategori['id_kategori']; ?>')"
+                                                           title="Hapus">
+                                                           <i class="ti-trash text-dark"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tabledkategori" role="tabpanel">
+                                    <div class="row m-b-10 m-t-10">
+                                        <div class="col-6">
+                                            <div class="dropdown-info dropdown open">
+                                                <button class="btn btn-info dropdown-toggle waves-effect waves-light" type="button" id="cetak" data-toggle="dropdown" aria-haspopup='true' aria-expanded='true'>Cetak</button>
+                                                <div class="dropdown-menu" aria-labelledby="cetak" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_kategori.php?format=print">Print</a>
+                                                    <a class="dropdown-item waves-light waves-effect" href="export/export_kategori.php?format=excel">Excel</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="align-items-right" style="float: right;">
+                                                <a href="tambah/tambah_kategori.php" class="btn waves-effect waves-light btn-grd-success"><i class="ti-plus"></i> Tambah</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dt-responsive table-responsive">
+                                        <table id="kategori-table" class="table table-striped table-bordered nowrap">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Nama Kategori</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (count($dataKategoris) === 0): ?>
+                                                <tr>
+                                                  <td colspan="3" class="text-center">Tidak ada data Kategori tersedia.</td>
+                                                </tr>
+                                                <?php else: ?>
+                                                <?php foreach ($dataKategoris as $kategori) : ?>
+                                                <tr>
+                                                  <td><?= $kategori['id_kategori']; ?></td>
+                                                  <td><?= htmlspecialchars($kategori['nama_kategori']); ?></td>
+                                                  <td>
+                                                    <a href="edit/edit_kategori.php?id=<?= $kategori['id_kategori']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
+                                                      <i class="ti-pencil text-dark"></i>
+                                                    </a>
+                                                    <a href="hapus/hapus_kategori.php?id=<?= $kategori['id_kategori']; ?>"
+                                                       class="btn waves-effect waves-light btn-danger btn-icon"
+                                                       onclick="return confirmDelete('hapus/hapus_kategori.php?id=<?= $kategori['id_kategori']; ?>')">
+                                                       <i class="ti-trash text-dark"></i>
+                                                    </a>
+                                                  </td>
+                                                </tr>
+                                                <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Nama Kategori</th>
                                                     <th>Aksi</th>
                                                 </tr>
                                             </tfoot>
@@ -406,6 +541,7 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                                 <div class="card-block">
                                                     <div class="user-content">
                                                         <h4><?= htmlspecialchars($jenis['nama_jenis']); ?></h4>
+                                                        <span><?= htmlspecialchars($jenis['nama_kategori']); ?></span><br>
                                                         <a href="edit/edit_jenis.php?id=<?= $jenis['id_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon" title="Edit">
                                                           <i class="ti-pencil text-dark"></i>
                                                         </a>
@@ -441,10 +577,11 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                         </div>
                                     </div>
                                     <div class="dt-responsive table-responsive">
-                                        <table id="order-table" class="table table-striped table-bordered nowrap">
+                                        <table id="jenis-table" class="table table-striped table-bordered nowrap">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
+                                                    <th>Kategori</th>
                                                     <th>Nama Jenis</th>
                                                     <th>Aksi</th>
                                                 </tr>
@@ -452,12 +589,13 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                             <tbody>
                                                 <?php if (count($dataJenises) === 0): ?>
                                                 <tr>
-                                                  <td colspan="3" class="text-center">Tidak ada data Jenis tersedia.</td>
+                                                  <td colspan="4" class="text-center">Tidak ada data Jenis tersedia.</td>
                                                 </tr>
                                                 <?php else: ?>
                                                 <?php foreach ($dataJenises as $jenis) : ?>
                                                 <tr>
                                                   <td><?= $jenis['id_jenis']; ?></td>
+                                                  <td><?= htmlspecialchars($jenis['nama_kategori']); ?></td>
                                                   <td><?= htmlspecialchars($jenis['nama_jenis']); ?></td>
                                                   <td>
                                                     <a href="edit/edit_jenis.php?id=<?= $jenis['id_jenis']; ?>" class="btn waves-effect waves-light btn-warning btn-icon">
@@ -476,6 +614,7 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                             <tfoot>
                                                 <tr>
                                                     <th>ID</th>
+                                                    <th>Kategori</th>
                                                     <th>Nama Jenis</th>
                                                     <th>Aksi</th>
                                                 </tr>
@@ -571,7 +710,7 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                         </div>
                                     </div>
                                     <div class="dt-responsive table-responsive">
-                                        <table id="order-table" class="table table-striped table-bordered nowrap">
+                                        <table id="subjenis-table" class="table table-striped table-bordered nowrap">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -703,7 +842,7 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                         </div>
                                     </div>
                                     <div class="dt-responsive table-responsive">
-                                        <table id="order-table" class="table table-striped table-bordered nowrap">
+                                        <table id="jenisaset-table" class="table table-striped table-bordered nowrap">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -832,7 +971,7 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                         </div>
                                     </div>
                                     <div class="dt-responsive table-responsive">
-                                        <table id="order-table" class="table table-striped table-bordered nowrap">
+                                        <table id="jenispic-table" class="table table-striped table-bordered nowrap">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -961,7 +1100,7 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                         </div>
                                     </div>
                                     <div class="dt-responsive table-responsive">
-                                        <table id="order-table" class="table table-striped table-bordered nowrap">
+                                        <table id="ppid-table" class="table table-striped table-bordered nowrap">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -1090,7 +1229,7 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                         </div>
                                     </div>
                                     <div class="dt-responsive table-responsive">
-                                        <table id="order-table" class="table table-striped table-bordered nowrap">
+                                        <table id="role-table" class="table table-striped table-bordered nowrap">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -1219,7 +1358,7 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                         </div>
                                     </div>
                                     <div class="dt-responsive table-responsive">
-                                        <table id="order-table" class="table table-striped table-bordered nowrap">
+                                        <table id="skill-table" class="table table-striped table-bordered nowrap">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -1347,7 +1486,7 @@ while ($row = mysqli_fetch_assoc($qJenisLink)) {
                                         </div>
                                     </div>
                                     <div class="dt-responsive table-responsive">
-                                        <table id="order-table" class="table table-striped table-bordered nowrap">
+                                        <table id="jenislink-table" class="table table-striped table-bordered nowrap">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -1433,6 +1572,29 @@ ob_start();
 ?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+// Initialize DataTables for all data tables with search, show entries, pagination
+document.addEventListener('DOMContentLoaded', function() {
+    const tableIds = ['halopst-table', 'jabatan-table', 'kategori-table', 'jenis-table', 'subjenis-table', 'jenisaset-table', 'jenispic-table', 'ppid-table', 'role-table', 'skill-table', 'jenislink-table'];
+    
+    tableIds.forEach(function(tableId) {
+        const tableElement = document.getElementById(tableId);
+        if (tableElement && typeof $ !== 'undefined' && $.fn && $.fn.DataTable) {
+            $(tableElement).DataTable({
+                "pageLength": 10,
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "language": {
+                    "search": "Cari:",
+                    "lengthMenu": "Tampilkan _MENU_ entri",
+                    "paginate": { "previous": "Sebelumnya", "next": "Berikutnya" },
+                    "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                    "infoEmpty": "Menampilkan 0 sampai 0 dari 0 entri",
+                    "zeroRecords": "Tidak ada data yang cocok"
+                }
+            });
+        }
+    });
+});
+
 // Handle delete notifications from session
 window.addEventListener('load', function() {
     <?php

@@ -148,6 +148,48 @@ global $user;
                                   <span>Install App</span>
                               </a>
                           </li>
+                          <li class="header-notification">
+                              <a href="#!" class="waves-effect waves-light">
+                                  <i class="ti-bell"></i>
+                                  <span class="badge bg-c-red"></span>
+                              </a>
+                              <ul class="show-notification">
+                                  <li>
+                                      <h6>Notifications</h6>
+                                      <label class="label label-danger">New</label>
+                                  </li>
+                                  <li class="waves-effect waves-light">
+                                      <div class="media">
+                                          <img class="d-flex align-self-center img-radius" src="assets/images/avatar-2.jpg" alt="Generic placeholder image">
+                                          <div class="media-body">
+                                              <h5 class="notification-user">John Doe</h5>
+                                              <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+                                              <span class="notification-time">30 minutes ago</span>
+                                          </div>
+                                      </div>
+                                  </li>
+                                  <li class="waves-effect waves-light">
+                                      <div class="media">
+                                          <img class="d-flex align-self-center img-radius" src="assets/images/avatar-4.jpg" alt="Generic placeholder image">
+                                          <div class="media-body">
+                                              <h5 class="notification-user">Joseph William</h5>
+                                              <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+                                              <span class="notification-time">30 minutes ago</span>
+                                          </div>
+                                      </div>
+                                  </li>
+                                  <li class="waves-effect waves-light">
+                                      <div class="media">
+                                          <img class="d-flex align-self-center img-radius" src="assets/images/avatar-3.jpg" alt="Generic placeholder image">
+                                          <div class="media-body">
+                                              <h5 class="notification-user">Sara Soudein</h5>
+                                              <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+                                              <span class="notification-time">30 minutes ago</span>
+                                          </div>
+                                      </div>
+                                  </li>
+                              </ul>
+                          </li>
                           <li class="user-profile header-notification">
                               <a href="#!" class="waves-effect waves-light m-t-10" style="display: flex; align-items: center; gap: 8px;">
                                     <div class="avatar-wrapper2">
@@ -204,7 +246,17 @@ global $user;
                                   </a>
                               </li>
                               <li>
-                                  <a href="brankas_humas.php" class="waves-effect waves-dark">
+                                  <?php
+                                  $brankasHumasLink = 'brankas_humas.php'; // Fallback
+                                  if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                                      $qBrankas = @mysqli_query($GLOBALS['koneksi'], "SELECT s.id_sub_jenis FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Brankas Humas' LIMIT 1");
+                                      if ($qBrankas && mysqli_num_rows($qBrankas) > 0) {
+                                          $rowBrankas = mysqli_fetch_assoc($qBrankas);
+                                          $brankasHumasLink = 'preview_konten.php?sub=' . (int)$rowBrankas['id_sub_jenis'];
+                                      }
+                                  }
+                                  ?>
+                                  <a href="<?= $brankasHumasLink; ?>" class="waves-effect waves-dark">
                                       <span class="pcoded-micon"><i class="ti-harddrives"></i><b>FC</b></span>
                                       <span class="pcoded-mtext" data-i18n="menu.brankas-humas">Brankas Humas</span>
                                       <span class="pcoded-mcaret"></span>
@@ -288,194 +340,107 @@ global $user;
                               </li>
                           </ul>
         
-                          <div class="pcoded-navigation-label" data-i18n="nav.category.resources">SUMBERDAYA HUMAS</div>
-                          <ul class="pcoded-item pcoded-left-item">
-                              <li class="pcoded-hasmenu">
-                                  <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                          <span class="pcoded-micon"><i class="ti-instagram"></i></span>
-                                          <span class="pcoded-mtext"  data-i18n="menu.template-medsos">Template Medsos</span>
-                                          <span class="pcoded-mcaret"></span>
-                                      </a>
-                                      <ul class="pcoded-submenu">
-                                          <?php
-                                         if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
-                                             $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Template Medsos' ORDER BY s.nama_sub_jenis");
-                                             if ($qSubMenu) {
-                                                 while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
-                                                     echo '<li class=" ">';
-                                                     echo '<a href="template_medsos.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark">';
-                                                     echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
-                                                     echo '<span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span>';
-                                                     echo '<span class="pcoded-mcaret"></span>';
-                                                     echo '</a>';
-                                                     echo '</li>';
-                                                 }
-                                             } else {
-                                                 echo '<li><a href="template_medsos.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Template Medsos</span></a></li>';
-                                             }
-                                         } else {
-                                             echo '<li><a href="template_medsos.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Template Medsos</span></a></li>';
-                                         }
-                                          ?>
-                                      </ul>
-                              </li>
-                              <li class="pcoded-hasmenu">
-                                  <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-folder"></i></span>
-                                      <span class="pcoded-mtext"  data-i18n="menu.dokumentasi">Dokumentasi</span>
-                                      <span class="pcoded-mcaret"></span>
-                                  </a>
-                                  <ul class="pcoded-submenu">
-                                      <?php
-                                     if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
-                                         $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Dokumentasi' ORDER BY s.nama_sub_jenis");
-                                         if ($qSubMenu) {
-                                             while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
-                                                 echo '<li class=" ">';
-                                                 echo '<a href="dokumentasi.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark">';
-                                                 echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
-                                                 echo '<span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span>';
-                                                 echo '<span class="pcoded-mcaret"></span>';
-                                                 echo '</a>';
-                                                 echo '</li>';
-                                             }
-                                         } else {
-                                             echo '<li><a href="dokumentasi.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Dokumentasi</span></a></li>';
-                                         }
-                                     } else {
-                                         echo '<li><a href="dokumentasi.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Dokumentasi</span></a></li>';
-                                     }
-                                      ?>
-                                  </ul>
-                              </li>
-                              <li class="pcoded-hasmenu">
-                                  <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-camera"></i></span>
-                                      <span class="pcoded-mtext"  data-i18n="menu.galeri-foto">Galeri Foto</span>
-                                      <span class="pcoded-mcaret"></span>
-                                  </a>
-                                  <ul class="pcoded-submenu">
-                                      <?php
-                                     if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
-                                         $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Galeri Foto' ORDER BY s.nama_sub_jenis");
-                                         if ($qSubMenu) {
-                                             while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
-                                                 echo '<li class=" ">';
-                                                 echo '<a href="galeri_foto.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark">';
-                                                 echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
-                                                 echo '<span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span>';
-                                                 echo '<span class="pcoded-mcaret"></span>';
-                                                 echo '</a>';
-                                                 echo '</li>';
-                                             }
-                                         } else {
-                                             echo '<li><a href="galeri_foto.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Galeri Foto</span></a></li>';
-                                         }
-                                     } else {
-                                         echo '<li><a href="galeri_foto.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Galeri Foto</span></a></li>';
-                                     }
-                                      ?>
-                                  </ul>
-                              </li>
-                              <li class="pcoded-hasmenu">
-                                  <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-video-camera"></i></span>
-                                      <span class="pcoded-mtext"  data-i18n="???">Galeri Video</span>
-                                      <span class="pcoded-mcaret"></span>
-                                  </a>
-                                  <ul class="pcoded-submenu">
-                                      <?php
-                                     if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
-                                         $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Galeri Video' ORDER BY s.nama_sub_jenis");
-                                         if ($qSubMenu) {
-                                             while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
-                                                 echo '<li class=" ">';
-                                                 echo '<a href="galeri_video.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark">';
-                                                 echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
-                                                 echo '<span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span>';
-                                                 echo '<span class="pcoded-mcaret"></span>';
-                                                 echo '</a>';
-                                                 echo '</li>';
-                                             }
-                                         } else {
-                                             echo '<li><a href="galeri_video.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Galeri Video</span></a></li>';
-                                         }
-                                     } else {
-                                         echo '<li><a href="galeri_video.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Galeri Video</span></a></li>';
-                                     }
-                                      ?>
-                                  </ul>
-                              </li>
-                              <li class="pcoded-hasmenu">
-                                  <a href="javascript:void(0)" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-files"></i></span>
-                                      <span class="pcoded-mtext"  data-i18n="???">Laporan</span>
-                                      <span class="pcoded-mcaret"></span>
-                                  </a>
-                                  <ul class="pcoded-submenu">
-                                      <?php
-                                     if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
-                                         $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Laporan' ORDER BY s.nama_sub_jenis");
-                                         if ($qSubMenu) {
-                                             while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
-                                                 echo '<li class=" ">';
-                                                 echo '<a href="laporan.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark">';
-                                                 echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
-                                                 echo '<span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span>';
-                                                 echo '<span class="pcoded-mcaret"></span>';
-                                                 echo '</a>';
-                                                 echo '</li>';
-                                             }
-                                         } else {
-                                             echo '<li><a href="laporan.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Laporan</span></a></li>';
-                                         }
-                                     } else {
-                                         echo '<li><a href="laporan.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-angle-right"></i></span><span class="pcoded-mtext">Laporan</span></a></li>';
-                                     }
-                                      ?>
-                                  </ul>
-                              </li>
-                          </ul>
-                          <div class="pcoded-navigation-label" data-i18n="nav.category.broadcast">KEBUTUHAN BROADCAST</div>
-                          <ul class="pcoded-item pcoded-left-item">
-                              <?php
-                             if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
-                                 $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Kebutuhan Broadcast' ORDER BY s.nama_sub_jenis");
-                                 if ($qSubMenu && mysqli_num_rows($qSubMenu) > 0) {
-                                     while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
-                                         echo '<li class=" ">';
-                                         echo '<a href="kebutuhan_broadcast.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark">';
-                                         echo '<span class="pcoded-micon"><i class="ti-video-clapper"></i></span>';
-                                         echo '<span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span>';
-                                         echo '<span class="pcoded-mcaret"></span>';
-                                         echo '</a>';
-                                         echo '</li>';
-                                     }
-                                 } else {
-                                     echo '<li><a href="kebutuhan_broadcast.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-video-clapper"></i></span><span class="pcoded-mtext">Kebutuhan Broadcast</span></a></li>';
-                                 }
-                             } else {
-                                 echo '<li><a href="kebutuhan_broadcast.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-video-clapper"></i></span><span class="pcoded-mtext">Kebutuhan Broadcast</span></a></li>';
-                             }
-                              ?>
-                          </ul>
-                          <div class="pcoded-navigation-label" data-i18n="nav.category.capacity">PENINGKATAN KAPASITAS</div>
-                          <ul class="pcoded-item pcoded-left-item">
-                              <?php
-                             if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
-                                 $qSubMenu = @mysqli_query($GLOBALS['koneksi'], "SELECT s.* FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Peningkatan Kapasitas' ORDER BY s.nama_sub_jenis");
-                                 if ($qSubMenu && mysqli_num_rows($qSubMenu) > 0) {
-                                     while ($rowSub = mysqli_fetch_assoc($qSubMenu)) {
-                                         echo '<li><a href="peningkatan_kapasitas.php?sub=' . (int)$rowSub['id_sub_jenis'] . '" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-microphone"></i></span><span class="pcoded-mtext">' . htmlspecialchars($rowSub['nama_sub_jenis']) . '</span></a></li>';
-                                     }
-                                 } else {
-                                     echo '<li><a href="peningkatan_kapasitas.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-microphone"></i></span><span class="pcoded-mtext">Peningkatan Kapasitas</span></a></li>';
-                                 }
-                             } else {
-                                 echo '<li><a href="peningkatan_kapasitas.php" class="waves-effect waves-dark"><span class="pcoded-micon"><i class="ti-microphone"></i></span><span class="pcoded-mtext">Peningkatan Kapasitas</span></a></li>';
-                             }
-                              ?>
-                          </ul>
+                          <?php
+                          // Dynamic menu from database (exclude Utama and Ruang Humas as they are hardcoded)
+                          if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                              // Get all kategori except "Utama" and "Ruang Humas" ordered by id
+                              $qKategori = @mysqli_query($GLOBALS['koneksi'], "SELECT * FROM kategori WHERE nama_kategori NOT IN ('Utama', 'Ruang Humas') ORDER BY id_kategori");
+                              
+                              if ($qKategori && mysqli_num_rows($qKategori) > 0) {
+                                  while ($rowKategori = mysqli_fetch_assoc($qKategori)) {
+                                      echo '<div class="pcoded-navigation-label">' . htmlspecialchars($rowKategori['nama_kategori']) . '</div>';
+                                      echo '<ul class="pcoded-item pcoded-left-item">';
+                                      
+                                      // Get jenis for this kategori
+                                      $qJenis = @mysqli_query($GLOBALS['koneksi'], "SELECT * FROM jenis WHERE id_kategori = " . (int)$rowKategori['id_kategori'] . " ORDER BY nama_jenis");
+                                      
+                                      if ($qJenis && mysqli_num_rows($qJenis) > 0) {
+                                          while ($rowJenis = mysqli_fetch_assoc($qJenis)) {
+                                              // Get sub_jenis for this jenis
+                                              $qSubJenis = @mysqli_query($GLOBALS['koneksi'], "SELECT * FROM sub_jenis WHERE id_jenis = " . (int)$rowJenis['id_jenis'] . " ORDER BY nama_sub_jenis");
+                                              $hasSubMenu = false;
+                                              $subMenuItems = array();
+                                              
+                                              if ($qSubJenis && mysqli_num_rows($qSubJenis) > 0) {
+                                                  while ($rowSubJenis = mysqli_fetch_assoc($qSubJenis)) {
+                                                      // Only add to submenu if sub_jenis name is different from jenis name
+                                                      if ($rowSubJenis['nama_sub_jenis'] !== $rowJenis['nama_jenis']) {
+                                                          $hasSubMenu = true;
+                                                          $subMenuItems[] = $rowSubJenis;
+                                                      }
+                                                  }
+                                              }
+                                              
+                                              if ($hasSubMenu) {
+                                                  // Menu with submenu
+                                                  echo '<li class="pcoded-hasmenu">';
+                                                  echo '<a href="javascript:void(0)" class="waves-effect waves-dark">';
+                                                  echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
+                                                  echo '<span class="pcoded-mtext">' . htmlspecialchars($rowJenis['nama_jenis']) . '</span>';
+                                                  echo '<span class="pcoded-mcaret"></span>';
+                                                  echo '</a>';
+                                                  echo '<ul class="pcoded-submenu">';
+                                                  
+                                                  foreach ($subMenuItems as $subItem) {
+                                                      echo '<li class=" ">';
+                                                      echo '<a href="konten.php?jenis=' . urlencode($rowJenis['nama_jenis']) . '&sub=' . (int)$subItem['id_sub_jenis'] . '" class="waves-effect waves-dark">';
+                                                      echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
+                                                      echo '<span class="pcoded-mtext">' . htmlspecialchars($subItem['nama_sub_jenis']) . '</span>';
+                                                      echo '<span class="pcoded-mcaret"></span>';
+                                                      echo '</a>';
+                                                      echo '</li>';
+                                                  }
+                                                  
+                                                  echo '</ul>';
+                                                  echo '</li>';
+                                              } else {
+                                                  // Simple menu item without submenu
+                                                  // Determine if this should use preview_konten or konten
+                                                  $contentFile = 'konten.php'; // Default
+                                                  $previewOnlyJenis = array('Kebutuhan Broadcast', 'Brankas Humas'); // Add jenis that should use preview view
+                                                  
+                                                  if (in_array($rowJenis['nama_jenis'], $previewOnlyJenis)) {
+                                                      // Find the sub_jenis that matches jenis name for preview pages
+                                                      $qPreviewSub = @mysqli_query($GLOBALS['koneksi'], "SELECT id_sub_jenis FROM sub_jenis WHERE id_jenis = " . (int)$rowJenis['id_jenis'] . " AND nama_sub_jenis = '" . mysqli_real_escape_string($GLOBALS['koneksi'], $rowJenis['nama_jenis']) . "' LIMIT 1");
+                                                      if ($qPreviewSub && mysqli_num_rows($qPreviewSub) > 0) {
+                                                          $rowPreviewSub = mysqli_fetch_assoc($qPreviewSub);
+                                                          $contentFile = 'preview_konten.php?sub=' . (int)$rowPreviewSub['id_sub_jenis'];
+                                                      } else {
+                                                          $contentFile = 'konten.php?jenis=' . urlencode($rowJenis['nama_jenis']);
+                                                      }
+                                                  } else {
+                                                      $contentFile = 'konten.php?jenis=' . urlencode($rowJenis['nama_jenis']);
+                                                  }
+                                                  
+                                                  // Check if there's a sub_jenis with the same name as jenis (preview-only pattern)
+                                                  $qSameNameSub = @mysqli_query($GLOBALS['koneksi'], "SELECT id_sub_jenis FROM sub_jenis WHERE id_jenis = " . (int)$rowJenis['id_jenis'] . " AND nama_sub_jenis = '" . mysqli_real_escape_string($GLOBALS['koneksi'], $rowJenis['nama_jenis']) . "' LIMIT 1");
+                                                  $hasSameNameSub = $qSameNameSub && mysqli_num_rows($qSameNameSub) > 0;
+                                                  
+                                                  // Use preview_konten if same-named sub exists AND jenis is not "pembinaan kehumasan"
+                                                  if ($hasSameNameSub && strtolower(trim($rowJenis['nama_jenis'])) !== 'pembinaan kehumasan') {
+                                                      $rowSameNameSub = mysqli_fetch_assoc($qSameNameSub);
+                                                      $contentFile = 'preview_konten.php?sub=' . (int)$rowSameNameSub['id_sub_jenis'];
+                                                  } else if (!$hasSameNameSub) {
+                                                      // If no same-named sub, always use conten
+                                                      $contentFile = 'konten.php?jenis=' . urlencode($rowJenis['nama_jenis']);
+                                                  }
+                                                  
+                                                  echo '<li class=" ">';
+                                                  echo '<a href="' . $contentFile . '" class="waves-effect waves-dark">';
+                                                  echo '<span class="pcoded-micon"><i class="ti-angle-right"></i></span>';
+                                                  echo '<span class="pcoded-mtext">' . htmlspecialchars($rowJenis['nama_jenis']) . '</span>';
+                                                  echo '<span class="pcoded-mcaret"></span>';
+                                                  echo '</a>';
+                                                  echo '</li>';
+                                              }
+                                          }
+                                      }
+                                      
+                                      echo '</ul>';
+                                  }
+                              }
+                          }
+                          ?>
                       </div>
                   </nav>
                   <?= $content ?>
