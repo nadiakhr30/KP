@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Waktu pembuatan: 02 Feb 2026 pada 08.26
+-- Waktu pembuatan: 05 Feb 2026 pada 05.40
 -- Versi server: 8.0.30
 -- Versi PHP: 8.1.10
 
@@ -97,18 +97,28 @@ CREATE TABLE `jadwal` (
   `tanggal_rilis` date NOT NULL,
   `keterangan` text COLLATE utf8mb4_general_ci NOT NULL,
   `status` int NOT NULL,
-  `dokumentasi` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `dokumentasi` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `reminder_sent` tinyint(1) NOT NULL DEFAULT '0',
+  `reminder_sent_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `jadwal`
 --
 
-INSERT INTO `jadwal` (`id_jadwal`, `tim`, `topik`, `judul_kegiatan`, `tanggal_penugasan`, `tanggal_rilis`, `keterangan`, `status`, `dokumentasi`) VALUES
-(1, 'PPID', 'Jumat Berkah', 'Acara Jumat Berkah Bulan Agustus', '2026-01-20', '2026-01-23', 'Kasih banyak MBG yah', 0, NULL),
-(2, 'PPID', 'Jumat Berkah', 'Acara Jumat Berkah Bulan Agustus', '2026-01-21', '2026-01-21', 'aaaaaaaaaaaaaaaa', 0, NULL),
-(3, 'Ya', 'Ya', 'Ya', '2026-01-15', '2026-01-31', 'Ya', 0, NULL),
-(4, 'Ya2', 'Ya2', 'Ya2', '2026-01-28', '2026-01-31', 'Ya2', 1, '../uploads/dokumentasi/1770015184_Logo TIF.png');
+INSERT INTO `jadwal` (`id_jadwal`, `tim`, `topik`, `judul_kegiatan`, `tanggal_penugasan`, `tanggal_rilis`, `keterangan`, `status`, `dokumentasi`, `reminder_sent`, `reminder_sent_at`) VALUES
+(1, 'PPID', 'Jumat Berkah', 'Acara Jumat Berkah Bulan Agustus', '2026-01-20', '2026-01-23', 'Kasih banyak MBG yah', 0, NULL, 0, NULL),
+(2, 'PPID', 'Jumat Berkah', 'Acara Jumat Berkah Bulan Agustus', '2026-01-21', '2026-01-21', 'aaaaaaaaaaaaaaaa', 0, NULL, 0, NULL),
+(3, 'Ya', 'Ya', 'Ya', '2026-01-15', '2026-01-31', 'Ya', 0, NULL, 0, NULL),
+(4, 'Ya2', 'Ya2', 'Ya2', '2026-01-28', '2026-01-31', 'Ya2', 2, 'https://drive.google.com/file/d/1qn1jZ0NG5m6EarnnC-tdqnu0JVga76tF/view?usp=sharing', 0, NULL),
+(17, 'ayayaya', 'sensus', 'Diseminasi dan Pelayanan PEKPPP', '2026-02-04', '2026-02-06', 'aaaa', 2, 'https://docs.google.com/spreadsheets/d/1Ko-VHKp-mwN4w-BqJt0OyjBAcqoQa4imQJ01xTM4now/edit?gid=704059312#gid=704059312', 0, NULL),
+(18, 'Humas', 'Hari Berkah', 'Barokah', '2026-02-04', '2026-02-10', 'dddd', 0, NULL, 0, NULL),
+(19, 'Humas', 'Hari Berkah', 'Barokah', '2026-02-04', '2026-02-10', 'dddd', 0, NULL, 0, NULL),
+(21, 'ayayaya', 'oii', 'Ya2', '2026-02-04', '2026-02-05', 'aaa', 0, NULL, 0, NULL),
+(22, 'Pengolahan dan Layanan Statistik', 'sensus', 'adalah pokoknya', '2026-02-04', '2026-02-08', 'aaa', 0, NULL, 0, NULL),
+(23, 'vbj', 'sensus', 'asss', '2026-02-04', '2026-02-11', 'aaaa', 0, NULL, 0, NULL),
+(24, 'aaaa', 'awww', 'not found', '2026-02-05', '2026-02-06', 'aaaa', 0, NULL, 0, NULL),
+(25, 'sss', 'sensus', 'adalah pokoknya', '2026-02-05', '2026-02-06', 'aaa', 0, NULL, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -123,6 +133,29 @@ CREATE TABLE `jadwal_link` (
   `id_jadwal` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `jadwal_link`
+--
+
+INSERT INTO `jadwal_link` (`id_jadwal_link`, `link`, `id_jenis_link`, `id_jadwal`) VALUES
+(5, 'https://www.instagram.com/', 1, 4),
+(6, 'https://www.instagram.com/', 2, 4),
+(43, 'https://www.instagram.com/', 1, 17),
+(44, 'https://www.instagram.com/', 2, 17),
+(45, 'https://www.instagram.com/', 4, 17),
+(46, NULL, 3, 18),
+(47, NULL, 4, 18),
+(48, NULL, 3, 19),
+(49, NULL, 4, 19),
+(52, NULL, 2, 21),
+(53, NULL, 4, 21),
+(54, NULL, 1, 22),
+(55, NULL, 1, 23),
+(56, NULL, 1, 24),
+(57, NULL, 4, 24),
+(58, NULL, 1, 25),
+(59, NULL, 2, 25);
+
 -- --------------------------------------------------------
 
 --
@@ -131,23 +164,24 @@ CREATE TABLE `jadwal_link` (
 
 CREATE TABLE `jenis` (
   `id_jenis` int NOT NULL,
-  `nama_jenis` varchar(255) COLLATE utf8mb4_general_ci NOT NULL
+  `nama_jenis` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `id_kategori` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `jenis`
 --
 
-INSERT INTO `jenis` (`id_jenis`, `nama_jenis`) VALUES
-(1, 'Template Medsos'),
-(2, 'Dokumentasi'),
-(4, 'Pembinaan Kehumasan'),
-(5, 'Kebutuhan Broadcast'),
-(6, 'Galeri Foto'),
-(7, 'Galeri Video'),
-(8, 'Laporan'),
-(9, 'Ruang Humas'),
-(10, 'Brankas Humas');
+INSERT INTO `jenis` (`id_jenis`, `nama_jenis`, `id_kategori`) VALUES
+(1, 'Template Medsos', 3),
+(2, 'Dokumentasi', 3),
+(4, 'Pembinaan Kehumasan', 5),
+(5, 'Kebutuhan Broadcast', 4),
+(6, 'Galeri Foto', 3),
+(7, 'Galeri Video', 3),
+(8, 'Laporan', 3),
+(9, 'Ruang Humas', 2),
+(10, 'Brankas Humas', 1);
 
 -- --------------------------------------------------------
 
@@ -178,6 +212,16 @@ CREATE TABLE `jenis_link` (
   `nama_jenis_link` varchar(255) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `jenis_link`
+--
+
+INSERT INTO `jenis_link` (`id_jenis_link`, `nama_jenis_link`) VALUES
+(1, 'Instagram'),
+(2, 'Facebook'),
+(3, 'YouTube'),
+(4, 'Website');
+
 -- --------------------------------------------------------
 
 --
@@ -196,8 +240,29 @@ CREATE TABLE `jenis_pic` (
 INSERT INTO `jenis_pic` (`id_jenis_pic`, `nama_jenis_pic`) VALUES
 (1, 'Narasi'),
 (2, 'Medsos'),
-(3, 'Design'),
-(4, 'Ya');
+(3, 'Design');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `kategori`
+--
+
+CREATE TABLE `kategori` (
+  `id_kategori` int NOT NULL,
+  `nama_kategori` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data untuk tabel `kategori`
+--
+
+INSERT INTO `kategori` (`id_kategori`, `nama_kategori`) VALUES
+(1, 'Utama'),
+(2, 'Ruang Humas'),
+(3, 'Sumberdaya Humas'),
+(4, 'Kebutuhan Broadcast'),
+(5, 'Peningkatan Kapasitas');
 
 -- --------------------------------------------------------
 
@@ -243,7 +308,7 @@ INSERT INTO `media` (`id_media`, `judul`, `topik`, `deskripsi`, `link`, `created
 (1, 'ayyaya', 'oii', 'wihhh', 'https://bangkalankab.bps.go.id/id', '2026-01-29 07:19:34', 5),
 (2, 'ayoyo', 'Hari Berkah', 'intinya itu lah', 'https://youtu.be/0ULADG6Iq-s?si=wXrTld-ykTSCeoGA', '2026-01-30 06:57:38', 5),
 (4, 'ahh malas', 'malass', 'oiii', 'https://drive.google.com/drive/u/0/folders/1IqVL27bOUIIqJqOGc-nAMSy3cjQwNJIk', '2026-01-30 07:26:43', 3),
-(12, 'sensus 2026', 'sensus', 'aaa', 'https://drive.google.com/file/d/1qn1jZ0NG5m6EarnnC-tdqnu0JVga76tF/view?usp=sharing', '2026-02-02 08:02:13', 8),
+(12, 'sensus 2026', 'sensus', 'aaa', 'https://drive.google.com/drive/folders/1zePa7oyrxVY4cSsKPIfI4gfR1TX7NdHf?usp=sharing', '2026-02-03 03:15:43', 8),
 (13, 'pendataan sensus', '2026', 'www', 'https://drive.google.com/drive/folders/1iForWwZ54uUgvTPPCGZHznTSmqwONbm-?usp=sharing', '2026-02-01 03:35:56', 9),
 (15, 'landmark bangkalan', 'landmark bangkalan', 'aaaa', 'https://drive.google.com/drive/folders/1P3FWTYgH54fqwgOdaOtoTXB1okSkR6RA?usp=sharing', '2026-02-01 06:46:32', 14),
 (16, 'Gedung kantor', 'Gedung', 'aaa', 'https://drive.google.com/drive/folders/1EJAun7zsJhfjXi7Iue9bcwFMWNjHRdOg?usp=sharing', '2026-02-01 07:17:20', 13),
@@ -258,7 +323,10 @@ INSERT INTO `media` (`id_media`, `judul`, `topik`, `deskripsi`, `link`, `created
 (25, 'aaa', 'adlah pokoknya', 'aaaa', 'https://drive.google.com/drive/folders/1k5WKGHiKni2VXQPgVoOUCiG2zSuKHQ63?usp=sharing', '2026-02-02 03:57:17', 6),
 (26, 'aaaa', 'ayyy', 'awwww', 'https://drive.google.com/drive/folders/1YfxK8VSypHrnnFWGrAvVNtio8JlbiJxB?usp=sharing', '2026-02-02 04:41:44', 7),
 (27, 'Organigram Humas', 'Organigram', 'BPS Bangkalan', '<div style=\"position: relative; width: 100%; height: 0; padding-top: 100.0000%;  padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;  border-radius: 8px; will-change: transform;\">   <iframe loading=\"lazy\" style=\"position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;\"     src=\"https://www.canva.com/design/DAG_ftpWi2k/KOCL7HumwJahW8SKt23LTw/view?embed\" allowfullscreen=\"allowfullscreen\" allow=\"fullscreen\">   </iframe> </div> <a href=\"https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAG_ftpWi2k&#x2F;KOCL7HumwJahW8SKt23LTw&#x2F;view?utm_content=DAG_ftpWi2k&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link\" target=\"_blank\" rel=\"noopener\">struktur humas</a> oleh Nadiatul Khoir', '2026-02-02 07:01:41', 22),
-(28, 'nadia', 'udah capek', 'aaaa', 'https://drive.google.com/drive/folders/1WWx2mtsOU6_PitIFzZd8oqTqv2EqI-qZ', '2026-02-02 07:50:49', 23);
+(28, 'nadia', 'udah capek', 'aaaa', 'https://drive.google.com/drive/folders/1WWx2mtsOU6_PitIFzZd8oqTqv2EqI-qZ', '2026-02-02 07:50:49', 23),
+(29, 'aaa', 'aaa', 'aaa', 'https://drive.google.com/drive/folders/17ZJUa8nX_-G5HLYaLU-hrzxt1BjW3ebE?usp=sharing', '2026-02-03 04:13:29', 15),
+(30, 'aaa', 'aaa', 'aaa', 'https://drive.google.com/drive/folders/1XH_L1GUhQXs313dd6a9Z2qpJfjzdaz8k?usp=sharing', '2026-02-03 04:16:10', 20),
+(31, 'aaa', 'sensus', 'aaa', 'https://drive.google.com/drive/folders/1XH_L1GUhQXs313dd6a9Z2qpJfjzdaz8k?usp=sharing', '2026-02-04 06:46:44', 20);
 
 -- --------------------------------------------------------
 
@@ -310,11 +378,33 @@ INSERT INTO `pic` (`nip`, `id_jadwal`, `id_pic`, `id_jenis_pic`) VALUES
 (19920410, 3, 8, 1),
 (19920410, 3, 9, 2),
 (19920410, 3, 10, 3),
-(19920410, 3, 11, 4),
-(230411100184, 4, 12, 1),
-(230411100156, 4, 13, 2),
-(230411100156, 4, 14, 3),
-(230411100156, 4, 15, 4);
+(230411100184, 4, 24, 1),
+(230411100184, 4, 25, 2),
+(230411100156, 4, 26, 3),
+(230411100184, 17, 64, 1),
+(230411100184, 17, 65, 2),
+(230411100184, 17, 66, 3),
+(230411100184, 18, 67, 1),
+(19920410, 18, 68, 2),
+(230411100184, 18, 69, 3),
+(230411100184, 19, 70, 1),
+(19920410, 19, 71, 2),
+(230411100184, 19, 72, 3),
+(230411100184, 21, 76, 1),
+(230411100184, 21, 77, 2),
+(230411100184, 21, 78, 3),
+(230411100184, 22, 79, 1),
+(230411100184, 22, 80, 2),
+(230411100184, 22, 81, 3),
+(230411100184, 23, 82, 1),
+(230411100184, 23, 83, 2),
+(230411100184, 23, 84, 3),
+(230411100156, 24, 85, 1),
+(230411100184, 24, 86, 2),
+(230411100184, 24, 87, 3),
+(230411100184, 25, 88, 1),
+(230411100184, 25, 89, 2),
+(230411100184, 25, 90, 3);
 
 -- --------------------------------------------------------
 
@@ -516,7 +606,8 @@ ALTER TABLE `jadwal_link`
 -- Indeks untuk tabel `jenis`
 --
 ALTER TABLE `jenis`
-  ADD PRIMARY KEY (`id_jenis`);
+  ADD PRIMARY KEY (`id_jenis`),
+  ADD KEY `id_kategori` (`id_kategori`);
 
 --
 -- Indeks untuk tabel `jenis_aset`
@@ -535,6 +626,12 @@ ALTER TABLE `jenis_link`
 --
 ALTER TABLE `jenis_pic`
   ADD PRIMARY KEY (`id_jenis_pic`);
+
+--
+-- Indeks untuk tabel `kategori`
+--
+ALTER TABLE `kategori`
+  ADD PRIMARY KEY (`id_kategori`);
 
 --
 -- Indeks untuk tabel `link`
@@ -634,13 +731,13 @@ ALTER TABLE `jabatan`
 -- AUTO_INCREMENT untuk tabel `jadwal`
 --
 ALTER TABLE `jadwal`
-  MODIFY `id_jadwal` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_jadwal` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT untuk tabel `jadwal_link`
 --
 ALTER TABLE `jadwal_link`
-  MODIFY `id_jadwal_link` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_jadwal_link` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT untuk tabel `jenis`
@@ -658,13 +755,19 @@ ALTER TABLE `jenis_aset`
 -- AUTO_INCREMENT untuk tabel `jenis_link`
 --
 ALTER TABLE `jenis_link`
-  MODIFY `id_jenis_link` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_jenis_link` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `jenis_pic`
 --
 ALTER TABLE `jenis_pic`
   MODIFY `id_jenis_pic` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT untuk tabel `kategori`
+--
+ALTER TABLE `kategori`
+  MODIFY `id_kategori` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT untuk tabel `link`
@@ -676,13 +779,13 @@ ALTER TABLE `link`
 -- AUTO_INCREMENT untuk tabel `media`
 --
 ALTER TABLE `media`
-  MODIFY `id_media` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id_media` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT untuk tabel `pic`
 --
 ALTER TABLE `pic`
-  MODIFY `id_pic` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_pic` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT untuk tabel `ppid`
@@ -737,6 +840,12 @@ ALTER TABLE `aset`
 ALTER TABLE `jadwal_link`
   ADD CONSTRAINT `jadwal_link_ibfk_1` FOREIGN KEY (`id_jadwal`) REFERENCES `jadwal` (`id_jadwal`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `jadwal_link_ibfk_2` FOREIGN KEY (`id_jenis_link`) REFERENCES `jenis_link` (`id_jenis_link`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `jenis`
+--
+ALTER TABLE `jenis`
+  ADD CONSTRAINT `jenis_ibfk_1` FOREIGN KEY (`id_kategori`) REFERENCES `kategori` (`id_kategori`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `media`

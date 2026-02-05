@@ -228,6 +228,41 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
     </section><!-- /Kalender & Jadwal -->
 
+     <!-- Brankas Humas -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Brankas Humas</h2>
+        <p class="text-muted mb-0">Penyimpanan dokumen dan arsip publikasi</p>
+        <span id="badgeUrgent" style="display:none;background:#e84118;color:#fff;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;margin-left:12px;">Tugas Mendesak!</span>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row gy-4">
+          <div class="col-lg-12">
+            <div class="service-item humas-card position-relative text-center">
+          <div class="icon"><i class="bi bi-folder2-open icon"></i></div>
+          
+
+          <div class="humas-overlay">
+            <?php
+            // Ambil link Google Drive Humas dari tabel media (id_sub_jenis=23)
+            $driveLink = 'https://drive.google.com';
+            $qDrive = mysqli_query($koneksi, "SELECT link FROM media WHERE id_sub_jenis=23 ORDER BY id_media DESC LIMIT 1");
+            if ($qDrive && $rowDrive = mysqli_fetch_assoc($qDrive)) {
+                if (!empty($rowDrive['link'])) {
+                    $driveLink = $rowDrive['link'];
+                }
+            }
+            ?>
+            <a href="<?= htmlspecialchars($driveLink) ?>" target="_blank" class="overlay-item">
+              <i class="bi bi-google"></i>
+              <span>Google Drive Humas</span>
+            </a>
+          </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
  <!-- Humas Section -->
 <section id="Humas" class="services section light-background">
@@ -262,31 +297,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
         </div>
       </div>
 
-      <!-- Brankas Humas -->
-      <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
-        <div class="service-item humas-card position-relative text-center">
-          <div class="icon"><i class="bi bi-folder2-open icon"></i></div>
-          <h4>Brankas Humas</h4>
-          <p>Penyimpanan dokumen dan arsip publikasi.</p>
-
-          <div class="humas-overlay">
-            <?php
-            // Ambil link Google Drive Humas dari tabel media (id_sub_jenis=23)
-            $driveLink = 'https://drive.google.com';
-            $qDrive = mysqli_query($koneksi, "SELECT link FROM media WHERE id_sub_jenis=23 ORDER BY id_media DESC LIMIT 1");
-            if ($qDrive && $rowDrive = mysqli_fetch_assoc($qDrive)) {
-                if (!empty($rowDrive['link'])) {
-                    $driveLink = $rowDrive['link'];
-                }
-            }
-            ?>
-            <a href="<?= htmlspecialchars($driveLink) ?>" target="_blank" class="overlay-item">
-              <i class="bi bi-google"></i>
-              <span>Google Drive Humas</span>
-            </a>
-          </div>
-        </div>
-      </div>
+      
 
       <!-- Aset Humas -->
       <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
@@ -475,8 +486,68 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
               }
           }
           ?>
-      </div>
 
+        <!-- DOKUMENTASI, GALERI FOTO, GALERI VIDEO, LAPORAN -->
+        <?php
+          // Ambil jenis dengan id_jenis IN (2, 6, 7, 8)
+          $jenisQ = mysqli_query($koneksi, "SELECT id_jenis, nama_jenis FROM jenis WHERE id_jenis IN (2, 6, 7, 8) ORDER BY id_jenis ASC");
+          if ($jenisQ && mysqli_num_rows($jenisQ) > 0) {
+              while ($j = mysqli_fetch_assoc($jenisQ)) {
+                  $id_jenis = $j['id_jenis'];
+                  // Ambil sub jenis untuk setiap jenis
+                  $subQ = mysqli_query($koneksi, "SELECT id_sub_jenis, nama_sub_jenis FROM sub_jenis WHERE id_jenis = " . (int)$id_jenis . " ORDER BY nama_sub_jenis ASC");
+                  
+                  // Icon mapping untuk setiap jenis
+                  $iconMap = [
+                    2 => 'bi-file-earmark-text',      // Dokumentasi
+                    6 => 'bi-image',                  // Galeri Foto
+                    7 => 'bi-camera-video-fill',      // Galeri Video
+                    8 => 'bi-file-earmark-text'       // Laporan
+                  ];
+                  $icon = isset($iconMap[$id_jenis]) ? $iconMap[$id_jenis] : 'bi-folder2-open';
+        ?>
+          <div class="asset-card">
+            <div class="card-content">
+              <div class="icon-circle blue">
+                <i class="bi <?= $icon ?>"></i>
+              </div>
+              <h4><?= htmlspecialchars($j['nama_jenis']) ?></h4>
+              <p>Konten visual siap pakai</p>
+            </div>
+
+            <div class="card-overlay">
+              <div class="overlay-menu">
+                <?php if ($subQ && mysqli_num_rows($subQ) > 0): ?>
+                  <?php while ($s = mysqli_fetch_assoc($subQ)): ?>
+                    <?php
+                      // Routing logic untuk setiap jenis
+                      if ($id_jenis == 6) {
+                        $subHref = "galeri_foto.php?sub=" . urlencode($s['id_sub_jenis']);
+                      } else if ($id_jenis == 7) {
+                        $subHref = "galeri_video.php?sub=" . urlencode($s['id_sub_jenis']);
+                      } else if ($id_jenis == 8) {
+                        $subHref = "galeri_laporan.php?sub=" . urlencode($s['id_sub_jenis']);
+                      } else if ($id_jenis == 2) {
+                        $subHref = "dokumentasi.php?sub=" . urlencode($s['id_sub_jenis']);
+                      } else {
+                        $subHref = "media.php?sub=" . urlencode($s['id_sub_jenis']);
+                      }
+                    ?>
+                    <a href="<?= $subHref ?>"><?= htmlspecialchars($s['nama_sub_jenis']) ?></a>
+                  <?php endwhile; ?>
+                <?php else: ?>
+                  <span style="color:#fff;">Tidak ada sub jenis tersedia</span> 
+                <?php endif; ?>
+              </div>
+            </div>
+          </div>
+        <?php
+              }
+          } else {
+              echo '<div style="color:#fff;">Data tidak tersedia</div>';
+          }
+        ?>
+        </div>
     </section><!-- /Sumber Daya -->
 
     <!-- Broadcast Section -->
@@ -624,129 +695,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
     </section><!-- /Pengembangan Highlight Section -->
 
-    <!-- Dokumentasi -->
-    <section id="dokumentasi" class="about section">
 
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Dokumentasi</h2>
-      </div><!-- End Section Title -->
-
-      <div class="container">
-
-        <div class="row gy-4 justify-content-center">
-
-        <?php
-          // Ambil jenis dengan id_jenis IN (2, 6, 7, 8)
-          $jenisQ = mysqli_query($koneksi, "SELECT id_jenis, nama_jenis FROM jenis WHERE id_jenis IN (2, 6, 7, 8) ORDER BY id_jenis ASC");
-          if ($jenisQ && mysqli_num_rows($jenisQ) > 0) {
-              $delay = 100;
-              while ($j = mysqli_fetch_assoc($jenisQ)) {
-                  $id_jenis = $j['id_jenis'];
-                  // Ambil sub jenis untuk setiap jenis
-                  $subQ = mysqli_query($koneksi, "SELECT id_sub_jenis, nama_sub_jenis FROM sub_jenis WHERE id_jenis = " . (int)$id_jenis . " ORDER BY nama_sub_jenis ASC");
-                  
-                  
-                  $iconMap = [
-                    2 => 'bi-file-earmark-text',      // Dokumentasi
-                    6 => 'bi-image',                  // Galeri Foto
-                    7 => 'bi-camera-video-fill',      // Galeri Video
-                    8 => 'bi-file-earmark-text'       // Laporan
-                  ];
-                  $icon = isset($iconMap[$id_jenis]) ? $iconMap[$id_jenis] : 'bi-folder2-open';
-
-                  
-                  $subIconMap = [
-                    2 => 'bi-file-earmark-text',      // Dokumentasi (dokumen)
-                    6 => 'bi-image',                  // Foto
-                    7 => 'bi-camera-video-fill',      // Video
-                    8 => 'bi-file-earmark-text'       // Laporan
-                  ];
-                  $subIconForType = isset($subIconMap[$id_jenis]) ? $subIconMap[$id_jenis] : 'bi-folder2-open';
-        ?>
-          <div class="col-xl-3 col-md-6 d-flex" data-aos="zoom-in" data-aos-delay="<?= $delay ?>">
-              <div class="service-item humas-card position-relative text-center<?= (int)$id_jenis === 2 ? ' dokumentasi-card' : '' ?>">
-
-              <div class="icon">
-                <?php if ($id_jenis == 2): ?>
-                  <a href="dokumentasi.php" class="card-main-link-icon" style="color:inherit;text-decoration:none;display:inline-block;" title="Buka Dokumentasi">
-                    <div class="icon-folder">
-                      <div class="folder-tab"></div>
-                      <div class="folder-body">
-                        <i class="bi bi-folder2-open" aria-hidden="true"></i>
-                      </div>
-                    </div>
-                  </a>
-                <?php else: ?>
-                  <div class="icon-circle-type">
-                    <i class="bi <?= $icon ?>"></i>
-                  </div>
-                <?php endif; ?>
-              </div>
-              <h4><?= htmlspecialchars($j['nama_jenis']) ?></h4>
-              <p>Akses koleksi lengkap untuk <?= htmlspecialchars(strtolower($j['nama_jenis'])) ?></p>
-
-              <div class="humas-overlay">
-                <?php if ($subQ && mysqli_num_rows($subQ) > 0): ?>
-                  <?php while ($s = mysqli_fetch_assoc($subQ)): ?>
-                    <?php
-                      $subName = strtolower($s['nama_sub_jenis']);
-                      $subIconClass = $subIconForType;
-
-                      if (strpos($subName, 'foto') !== false || strpos($subName, 'gambar') !== false) {
-                        $subIconClass = 'bi-image';
-                      } else if (strpos($subName, 'video') !== false) {
-                        $subIconClass = 'bi-camera-video-fill';
-                      } else if (strpos($subName, 'laporan') !== false || strpos($subName, 'dokumen') !== false || strpos($subName, 'publikasi') !== false) {
-                        $subIconClass = 'bi-file-earmark-text';
-                      } else if (strpos($subName, 'aset') !== false || strpos($subName, 'barang') !== false) {
-                        $subIconClass = 'bi-box-seam';
-                      } else if (strpos($subName, 'lisensi') !== false) {
-                        $subIconClass = 'bi-patch-check';
-                      } else if (strpos($subName, 'grafik') !== false || strpos($subName, 'statistik') !== false) {
-                        $subIconClass = 'bi-bar-chart-fill';
-                      }
-
-                      $specialSubRoutes = [
-                        8 => 'dokumentasi.php?sub=8',
-                        9 => 'dokumentasi.php?sub=9'
-                      ];
-                      $subId = (int)$s['id_sub_jenis'];
-                      if ($id_jenis == 6) {
-                        $subHref = "galeri_foto.php?sub=" . urlencode($s['id_sub_jenis']);
-                      } else if ($id_jenis == 7) {
-                        $subHref = "galeri_video.php?sub=" . urlencode($s['id_sub_jenis']);
-                      } else if ($id_jenis == 8) {
-                        $subHref = "galeri_laporan.php?sub=" . urlencode($s['id_sub_jenis']);
-                      } else {
-                        $subHref = isset($specialSubRoutes[$subId]) ? $specialSubRoutes[$subId] : "media.php?sub=" . urlencode($s['id_sub_jenis']);
-                      }
-                    ?>
-
-                    <a class="overlay-item" href="<?= $subHref ?>">
-                      <i class="bi <?= $subIconClass ?>" aria-hidden="true"></i>
-                      <span><?= htmlspecialchars($s['nama_sub_jenis']) ?></span>
-                    </a>
-                  <?php endwhile; ?>
-                <?php else: ?>
-                  <div class="overlay-empty">Tidak ada sub jenis tersedia</div>
-                <?php endif; ?>
-              </div>
-            </div>
-          </div>
-        <?php
-              $delay += 100;
-          }
-          } else {
-              echo '<div style="color:#fff;">Data tidak tersedia</div>';
-          }
-        ?>
-
-        </div>
-
-      </div>
-
-    </section><!-- /About Section -->
   </main>
   <?php
   $content = ob_get_clean();
@@ -776,67 +725,46 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     .icon-folder .bi { font-size: 26px; color: #5661ff; }
     .card-main-link-icon:hover .icon-folder { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(86,97,255,0.06); transition: transform .2s ease, box-shadow .2s ease; }
 
+    /* Membuat asset-card lebih panjang/landscape */
+    .asset-grid .asset-card {
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
    
   </style>
 
   <script>
-  // ===== NOTIFIKASI POP-UP HANYA DI SECTION KALENDER-JADWAL & BADGE TAMPIL TANGGAL =====
+  // ===== NOTIFIKASI BELL BERDASARKAN DEADLINE JADWAL =====
   document.addEventListener("DOMContentLoaded", function () {
-    var urgentTasks = [];
     var today = new Date();
-    var threeDays = 1000 * 60 * 60 * 24 * 3;
     var events = <?= json_encode($jadwalkalender) ?>;
+    var deadlineTasks = [];
+    var oneDayMs = 1000 * 60 * 60 * 24;
+    var twoDaysMs = oneDayMs * 2;
+    
     events.forEach(function(ev) {
       var status = ev.extendedProps.status;
       if (ev.extendedProps && ev.extendedProps.isPic && (status == 0 || status == 1)) {
         var tglRilis = new Date(ev.start);
-        var selisih = tglRilis - today;
-        if (selisih <= threeDays && selisih >= 0) {
-          urgentTasks.push(ev);
+        // Bandingkan hanya tanggal (tahun, bulan, hari) tanpa jam
+        var tglRilisDate = new Date(tglRilis.getFullYear(), tglRilis.getMonth(), tglRilis.getDate());
+        var todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        var selisihHari = (tglRilisDate - todayDate) / (1000 * 60 * 60 * 24);
+        // Hanya tampilkan jika deadline hari ini sampai 2 hari ke depan (jangan jika sudah lewat)
+        if (selisihHari >= 0 && selisihHari <= 2) {
+          deadlineTasks.push(ev);
         }
       }
     });
-    // Badge Tugas Mendesak tampil tanggal
-    var badge = document.getElementById('badgeUrgent');
-    if (urgentTasks.length > 0) {
-      badge.style.display = 'inline-block';
-      // Gabungkan tanggal-tanggal urgent
-      var tgls = urgentTasks.map(function(ev) {
-        var tgl = new Date(ev.start);
-        return tgl.toLocaleDateString('id-ID');
-      });
-      // Unik dan urut
-      tgls = [...new Set(tgls)].sort();
-      badge.innerHTML = 'Tugas Mendesak! (' + tgls.join(', ') + ')';
+    
+    // Update notif count berdasarkan jumlah deadline yang sesuai filter
+    if (deadlineTasks.length > 0) {
+      document.getElementById('navbarNotif').style.display = 'inline-block';
+      document.getElementById('notifCount').textContent = deadlineTasks.length;
     } else {
-      badge.style.display = 'none';
-    }
-
-    // Toastr hanya muncul saat user scroll ke section kalender-jadwal
-    var popUpShown = false;
-    function showUrgentPopups() {
-      if (popUpShown) return;
-      urgentTasks.forEach(function(ev) {
-        var tglRilis = new Date(ev.start);
-        var sisa = Math.ceil((tglRilis - today) / (1000*60*60*24));
-        var msg = 'Deadline <b>' + ev.title + '</b> tinggal ' + (sisa === 0 ? 'hari ini!' : sisa + ' hari lagi!');
-        toastr.warning(msg, 'Deadline Mendesak', {timeOut: 9000, closeButton: true, progressBar: true, escapeHtml: false});
-      });
-      popUpShown = true;
-    }
-    // Deteksi scroll ke section kalender-jadwal
-    var section = document.getElementById('kalender-jadwal');
-    if (section && urgentTasks.length > 0) {
-      function onScrollCheck() {
-        var rect = section.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          showUrgentPopups();
-          window.removeEventListener('scroll', onScrollCheck);
-        }
-      }
-      window.addEventListener('scroll', onScrollCheck);
-      // Jika sudah kelihatan saat load
-      onScrollCheck();
+      document.getElementById('navbarNotif').style.display = 'none';
     }
   });
     document.addEventListener("DOMContentLoaded", function () {
@@ -888,56 +816,8 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
           locale: 'id',
           events: <?= json_encode($jadwalkalender) ?>,
           eventClick: function(info) {
+            // Modal hanya muncul di jadwal_konten.php
             info.jsEvent.preventDefault();
-            // Ambil data event
-            var props = info.event.extendedProps;
-            // Isi modal
-            document.getElementById('modalTopik').textContent = props.topik || '-';
-            document.getElementById('modalJudul').textContent = info.event.title || '-';
-            document.getElementById('modalTanggalPenugasan').textContent = props.tanggal_penugasan || '-';
-            document.getElementById('modalTargetRilis').textContent = info.event.startStr || '-';
-            document.getElementById('modalTim').textContent = props.tim || '-';
-            // Status
-            var statusText = '-';
-            if (props.status == 0) statusText = 'Belum Selesai';
-            else if (props.status == 1) statusText = 'Proses';
-            else if (props.status == 2) statusText = 'Selesai';
-            document.getElementById('modalStatus').textContent = statusText;
-            document.getElementById('modalPIC').innerHTML = props.pic_display || '-';
-            document.getElementById('modalKeterangan').textContent = props.keterangan || '-';
-            // Dokumentasi
-            var docLink = props.dokumentasi;
-            var docA = document.getElementById('modalDokumentasi');
-            var docPlaceholder = document.getElementById('docPlaceholder');
-            if (docLink && docLink.trim() !== '') {
-              docA.style.display = '';
-              docA.href = docLink;
-              docA.title = 'Lihat Dokumentasi';
-              docPlaceholder.style.display = 'none';
-            } else {
-              docA.style.display = 'none';
-              docPlaceholder.style.display = '';
-            }
-            // Tampilkan tombol edit/upload dokumentasi jika user PIC
-            var editBtn = document.getElementById('editDokumentasiBtn');
-            if (props.isPic) {
-              editBtn.style.display = '';
-              editBtn.href = 'upload_dokumentasi.php?id=' + encodeURIComponent(info.event.id);
-              editBtn.textContent = docLink ? 'Edit Dokumentasi' : 'Upload Dokumentasi';
-              // Tampilkan tombol edit link publikasi
-              var editPublikasiBtn = document.getElementById('editPublikasiBtn');
-              if (editPublikasiBtn) {
-                editPublikasiBtn.style.display = '';
-                editPublikasiBtn.href = 'edit_link_publikasi.php?id=' + encodeURIComponent(info.event.id);
-              }
-            } else {
-              editBtn.style.display = 'none';
-              var editPublikasiBtn = document.getElementById('editPublikasiBtn');
-              if (editPublikasiBtn) editPublikasiBtn.style.display = 'none';
-            }
-            // Tampilkan modal
-            var modal = new bootstrap.Modal(document.getElementById('jadwalModal'));
-            modal.show();
           }
         }
       );
@@ -973,7 +853,8 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
   document.addEventListener("DOMContentLoaded", function () {
     var urgentTasks = [];
     var today = new Date();
-    var twoDays = 1000 * 60 * 60 * 24 * 2;
+    var oneDayMs = 1000 * 60 * 60 * 24;
+    var twoDaysMs = oneDayMs * 2;
     var events = <?= json_encode($jadwalkalender) ?>;
     var notifCount = 0;
     var notifItems = [];
@@ -981,16 +862,14 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
       var status = ev.extendedProps.status;
       if (ev.extendedProps && ev.extendedProps.isPic && (status == 0 || status == 1)) {
         var tglRilis = new Date(ev.start);
-        var selisih = tglRilis - today;
-        // Deadline < 2 hari ke depan atau hari ini
-        if (selisih <= twoDays && selisih >= 0) {
-          urgentTasks.push(ev);
-        }
-        // Jadwal baru (rilis hari ini)
-        if (tglRilis.toDateString() === today.toDateString()) {
+        // Bandingkan hanya tanggal (tahun, bulan, hari) tanpa jam
+        var tglRilisDate = new Date(tglRilis.getFullYear(), tglRilis.getMonth(), tglRilis.getDate());
+        var todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        var selisihHari = (tglRilisDate - todayDate) / (1000 * 60 * 60 * 24);
+        // Hanya tampilkan jika deadline hari ini sampai 2 hari ke depan (jangan jika sudah lewat)
+        if (selisihHari >= 0 && selisihHari <= 2) {
           notifCount++;
           notifItems.push(ev);
-          // toastr pop-up hanya muncul di section kalender-jadwal, bukan di navbar
         }
       }
     });
@@ -1001,9 +880,40 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
       notifList.innerHTML = '';
       notifItems.forEach(function(ev) {
         var tglRilis = new Date(ev.start);
+        var tglRilisDate = new Date(tglRilis.getFullYear(), tglRilis.getMonth(), tglRilis.getDate());
+        var todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        var selisihHari = (tglRilisDate - todayDate) / (1000 * 60 * 60 * 24);
+        
+        // Tentukan label deadline
+        var labelDeadline = '';
+        if (selisihHari === 0) {
+          labelDeadline = '🔴 Hari Ini';
+        } else if (selisihHari === 1) {
+          labelDeadline = '🟡 Besok';
+        } else if (selisihHari === 2) {
+          labelDeadline = '🟡 2 Hari Lagi';
+        }
+        
+        // Tentukan status badge
+        var statusText = '';
+        var statusColor = '';
+        switch (String(ev.extendedProps.status)) {
+          case '0':
+            statusText = 'Belum Dikerjakan';
+            statusColor = '#e84118';
+            break;
+          case '1':
+            statusText = 'Sedang Dikerjakan';
+            statusColor = '#fbc531';
+            break;
+          default:
+            statusText = 'Selesai';
+            statusColor = '#44bd32';
+        }
+        
         var item = document.createElement('div');
         item.className = 'dropdown-item';
-        item.innerHTML = '<b>' + ev.title + '</b><br><span style="font-size:12px;color:#888">Rilis: ' + tglRilis.toLocaleDateString('id-ID') + '</span>';
+        item.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;font-family:Poppins,sans-serif;"><div style="flex:1;"><b style="display:block;margin-bottom:4px;font-family:Poppins,sans-serif;">' + ev.title + '</b><span style="font-size:11px;color:#666;display:block;margin-bottom:4px;font-family:Poppins,sans-serif;">' + labelDeadline + ' • ' + tglRilis.toLocaleDateString('id-ID') + '</span><span style="font-size:11px;padding:2px 6px;border-radius:4px;background:' + statusColor + '20;color:' + statusColor + ';display:inline-block;font-family:Poppins,sans-serif;">' + statusText + '</span></div></div>';
         notifList.appendChild(item);
       });
     } else {

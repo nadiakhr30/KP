@@ -80,6 +80,7 @@ a {
   color: var(--accent-color);
   text-decoration: none;
   transition: 0.3s;
+  color: #fff;
 }
 
 a:hover {
@@ -521,7 +522,7 @@ h6 {
 # Global Footer
 --------------------------------------------------------------*/
 .footer {
-  color: var(--default-color);
+  color: #ffffff;
   background-color: var(--heading-color) !important;
   font-size: 14px;
   padding-bottom: 20px;
@@ -3344,7 +3345,7 @@ section.light-background,
   margin: 0 auto;
 }
 
-.error-404 .error-icon {
+.error-404 .error-iFcon {
   font-size: 5rem;
   color: color-mix(in srgb, var(--accent-color), transparent 15%);
 }

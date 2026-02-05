@@ -16,17 +16,18 @@
         }
     #navbarNotif {
       position: relative;
-      font-size: 22px;
-      color: #e84118;
+      font-size: 20px;
+      color: #ffffff;
       cursor: pointer;
       vertical-align: middle;
+    }
     /* removed stray closing brace */
     #navbarNotif .notif-badge {
       position: absolute;
       top: -8px;
       right: -8px;
       background: #e84118;
-      color: #fff;
+      color: #ffc400;
       border-radius: 50%;
       font-size: 12px;
       padding: 2px 6px;
@@ -35,6 +36,22 @@
     }
     #navbarNotif .dropdown-menu {
       z-index: 10001;
+      background-color: #ffc400;
+    }
+    #navbarNotif .dropdown-header {
+      background-color: #ffc400;
+      color: #ffffff;
+      font-weight: bold;
+      font-family: 'Poppins', sans-serif;
+    }
+    #navbarNotif .dropdown-item {
+      color: #ffffff;
+      background-color: #ffc400;
+      font-family: 'Poppins', sans-serif;
+    }
+    #navbarNotif .dropdown-item:hover {
+      background-color: #e6b300;
+      color: #ffffff;
     }
 
     /* Responsive Navbar & Dropdown */
@@ -755,8 +772,9 @@ global $pegawai;
       inset: 0;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       display: flex;
+      flex-direction: column;
       align-items: stretch;
-      justify-content: stretch;
+      justify-content: flex-end;
       opacity: 0;
       transform: scale(0.85) rotateY(15deg);
       transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
@@ -768,12 +786,11 @@ global $pegawai;
       transform: scale(1) rotateY(0deg);
     }
 
-    /* OVERLAY MENU (FULL HEIGHT BUTTON) */
+    /* OVERLAY MENU (STACKED VERTICALLY AT BOTTOM) */
     .overlay-menu {
       display: flex;
       width: 100%;
-      height: 100%;
-      flex-direction: row;
+      flex-direction: column;
       gap: 0;
       overflow: hidden; /* prevent hover translations from causing horizontal overflow */
     }
@@ -788,11 +805,12 @@ global $pegawai;
       color: #fff;
       font-weight: 700;
       font-size: 1rem;
-      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
       transition: all 0.3s ease;
       font-family: 'Poppins', sans-serif;
       position: relative;
       overflow: hidden;
+      min-height: 50px;
     }
 
     .overlay-menu a::after {
@@ -806,7 +824,7 @@ global $pegawai;
     }
 
     .overlay-menu a:last-child {
-      border-right: none;
+      border-bottom: none;
     }
 
     .overlay-menu a:hover {
@@ -1105,6 +1123,12 @@ global $pegawai;
         display: none !important;
       }
 
+      /* Footer Styling */
+      #footer {
+        background-color: #37517e;
+        color: #ffffff;
+      }
+
       /* Responsive */
       @media (max-width: 768px) {
         #footer {
@@ -1121,36 +1145,45 @@ global $pegawai;
 
         #footer .footer-about {
           padding-right: 0;
+          color: #fff;
         }
 
         #footer .sitename {
           font-size: 1.2rem;
+          color: #fff;
         }
 
         #footer .footer-contact p {
           font-size: 0.9rem;
+          color: #fff;
         }
 
         #footer .footer-links h4 {
           font-size: 1rem;
           margin-bottom: 20px;
+          color: #fff;
+
         }
 
         #footer .footer-links ul li {
           margin-bottom: 12px;
+          color: #fff;
         }
 
         #footer > .container .col-lg-4:nth-child(4) p {
           font-size: 0.9rem;
           margin-bottom: 20px;
+          color: #fff;
         }
 
         #footer .social-links {
           justify-content: flex-start;
+          color: #fff;
         }
 
         #footer .copyright p {
           font-size: 0.85rem;
+          color: #fff;
         }
       }
 
@@ -1305,6 +1338,35 @@ global $pegawai;
     }
 
     .navmenu a.active::before {
+      width: 100%;
+    }
+
+    /* ===== FOOTER LINKS STYLING (SIMILAR TO NAVBAR) ===== */
+    #footer .footer-links ul li a {
+      position: relative;
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    #footer .footer-links ul li a::before {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+
+    #footer .footer-links ul li a:hover {
+      color: #ffffff;
+    }
+
+    #footer .footer-links ul li a:hover::before {
       width: 100%;
     }
 
@@ -1658,8 +1720,10 @@ global $pegawai;
       padding: 28px 40px;
       background: white;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      gap: 16px;
       cursor: pointer;
       position: relative;
       z-index: 2;
@@ -1832,12 +1896,12 @@ global $pegawai;
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-        <!-- Bell Notifikasi Jadwal Baru -->
+        <!-- Bell Notifikasi Jadwal Deadline 1-2 Hari -->
         <span id="navbarNotif" style="display:none;position:relative;margin-right:18px;">
           <i class="bi bi-bell-fill"></i>
           <span class="notif-badge" id="notifCount">1</span>
           <div id="notifDropdown" class="dropdown-menu dropdown-menu-end" style="min-width:260px;max-width:320px;display:none;position:absolute;top:32px;right:0;z-index:9999;">
-            <h6 class="dropdown-header">Jadwal Baru untuk Anda</h6>
+            <h6 class="dropdown-header">Jadwal Deadline Mendekat</h6>
             <div id="notifList"></div>
           </div>
         </span>
@@ -1911,7 +1975,7 @@ global $pegawai;
     <div class="container footer-top">
       <div class="row gy-4">
         <div class="col-lg-4 col-md-6 footer-about">
-          <a href="index.html" class="d-flex align-items-center">
+          <a href="#" class="d-flex align-items-center" style="display: flex; text-decoration: none; color: #ffffff;">
             <span class="sitename">Humas BPS Bangkalan</span>
           </a>
           <div class="footer-contact pt-3">
@@ -1925,34 +1989,28 @@ global $pegawai;
         <div class="col-lg-2 col-md-3 footer-links">
           <h4>Quick Links</h4>
           <ul>
-            <li><i class="bi bi-chevron-right"></i> <a href="#beranda">Beranda</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#Humas">Ruang Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi">Dokumentasi</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#sumberdaya">Sumber Daya</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#broadcast">Broadcast</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#beranda" style="color: #ffffff; text-decoration: none;">Beranda</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#Humas" style="color: #ffffff; text-decoration: none;">Ruang Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Dokumentasi</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#sumberdaya" style="color: #ffffff; text-decoration: none;">Sumber Daya</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#broadcast" style="color: #ffffff; text-decoration: none;">Broadcast</a></li>
           </ul>
         </div>
 
         <div class="col-lg-2 col-md-3 footer-links">
           <h4>Layanan Informasi</h4>
           <ul>
-            <li><i class="bi bi-chevron-right"></i> <a href="#kalender-jadwal>Jadwal Konten Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi">Galeri Foto</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi">Galeri Video</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi">Laporan Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#sumberdaya">Pedoman Visual Medsos</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#kalender-jadwal" style="color: #ffffff; text-decoration: none;">Jadwal Konten Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Galeri Foto</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Galeri Video</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Laporan Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#sumberdaya" style="color: #ffffff; text-decoration: none;">Pedoman Visual Medsos</a></li>
           </ul>
         </div>
 
-        <div class="col-lg-4 col-md-12">
-          <h4>Follow Us</h4>
-          <p>Ikuti kami untuk informasi dan publikasi terbaru dari<br><span>BPS Bangkalan.</span></p>
-          <div class="social-links d-flex">
-            <a href=""><i class="bi bi-twitter-x"></i></a>
-            <a href=""><i class="bi bi-facebook"></i></a>
-            <a href=""><i class="bi bi-instagram"></i></a>
-            <a href=""><i class="bi bi-linkedin"></i></a>
-          </div>
+        <div class="col-lg-4 col-md-12" style="text-align: center;">
+          <img src="../images/sikumbang.png" alt="Sikumbang" class="img-fluid" style="max-width: 180px; width: 100%;">
+          <h4 class="mt-3" style="color: #ffffff;">SIKUMBANG</h4>
         </div>
 
       </div>

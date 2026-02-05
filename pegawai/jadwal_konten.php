@@ -502,28 +502,20 @@ body{
 <script>
 // ===== NOTIFIKASI POP-UP UNTUK JADWAL BARU/DEADLINE =====
 document.addEventListener("DOMContentLoaded", function () {
-  // Cek apakah user adalah PIC pada jadwal yang deadline-nya < 3 hari ke depan atau baru saja ditambahkan
+  // Cek apakah user adalah PIC pada jadwal yang deadline-nya hari ini sampai 2 hari ke depan
   var urgentTasks = [];
   var today = new Date();
-  var twoDays = 1000 * 60 * 60 * 24 * 2;
   var events = <?= json_encode($jadwalkalender) ?>;
   events.forEach(function(ev) {
     var status = ev.extendedProps.status;
     if (ev.extendedProps && ev.extendedProps.isPic && (status == 0 || status == 1)) {
       var tglRilis = new Date(ev.start);
-      var selisih = tglRilis - today;
-      // Jadwal baru (rilis hari ini, user PIC)
-      if (tglRilis.toDateString() === today.toDateString()) {
-        console.log('[TOASTR HIJAU]', {
-          title: ev.title,
-          tglRilis: tglRilis,
-          isPic: ev.extendedProps.isPic,
-          status: status
-        });
-        toastr.success('Ada jadwal baru: <b>' + ev.title + '</b> untuk Anda!', 'Jadwal Baru', {timeOut: 7000, closeButton: true, progressBar: true, escapeHtml: false});
-      }
-      // Deadline < 2 hari ke depan atau hari ini (selain hari ini baru)
-      if (selisih <= twoDays && selisih >= 0) {
+      // Bandingkan hanya tanggal (tahun, bulan, hari) tanpa jam
+      var tglRilisDate = new Date(tglRilis.getFullYear(), tglRilis.getMonth(), tglRilis.getDate());
+      var todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      var selisihHari = (tglRilisDate - todayDate) / (1000 * 60 * 60 * 24);
+      // Deadline hari ini sampai 2 hari ke depan
+      if (selisihHari >= 0 && selisihHari <= 2) {
         urgentTasks.push(ev);
       }
     }
@@ -540,8 +532,32 @@ document.addEventListener("DOMContentLoaded", function () {
     badge.innerHTML = 'Tugas Mendesak! (' + tgls.join(', ') + ')';
     urgentTasks.forEach(function(ev) {
       var tglRilis = new Date(ev.start);
-      var sisa = Math.ceil((tglRilis - today) / (1000*60*60*24));
-      var msg = 'Deadline <b>' + ev.title + '</b> tinggal ' + (sisa === 0 ? 'hari ini!' : sisa + ' hari lagi!');
+      var tglRilisDate = new Date(tglRilis.getFullYear(), tglRilis.getMonth(), tglRilis.getDate());
+      var todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      var selisihHari = (tglRilisDate - todayDate) / (1000 * 60 * 60 * 24);
+      
+      // Tentukan label deadline
+      var labelDeadline = '';
+      if (selisihHari === 0) {
+        labelDeadline = 'Hari Ini';
+      } else if (selisihHari === 1) {
+        labelDeadline = 'Besok';
+      } else if (selisihHari === 2) {
+        labelDeadline = '2 Hari Lagi';
+      }
+      
+      // Tentukan status badge
+      var statusText = '';
+      switch (String(ev.extendedProps.status)) {
+        case '0':
+          statusText = 'Belum Dikerjakan';
+          break;
+        case '1':
+          statusText = 'Sedang Dikerjakan';
+          break;
+      }
+      
+      var msg = 'Deadline <b>' + ev.title + '</b> (' + labelDeadline + ') - Status: ' + statusText;
       toastr.warning(msg, 'Deadline Mendesak', {timeOut: 9000, closeButton: true, progressBar: true, escapeHtml: false});
     });
   }
@@ -575,18 +591,18 @@ document.addEventListener("DOMContentLoaded", function () {
       document.addEventListener("DOMContentLoaded", function () {
         var urgentTasks = [];
         var today = new Date();
-        var threeDays = 1000 * 60 * 60 * 24 * 3;
         var events = <?= json_encode($jadwalkalender) ?>;
         events.forEach(function(ev) {
           var status = ev.extendedProps.status;
           if (ev.extendedProps && ev.extendedProps.isPic && (status == 0 || status == 1)) {
             var tglRilis = new Date(ev.start);
-            var selisih = tglRilis - today;
-            if (selisih <= threeDays && selisih >= 0) {
+            // Bandingkan hanya tanggal (tahun, bulan, hari) tanpa jam
+            var tglRilisDate = new Date(tglRilis.getFullYear(), tglRilis.getMonth(), tglRilis.getDate());
+            var todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            var selisihHari = (tglRilisDate - todayDate) / (1000 * 60 * 60 * 24);
+            // Deadline hari ini sampai 2 hari ke depan
+            if (selisihHari >= 0 && selisihHari <= 2) {
               urgentTasks.push(ev);
-            }
-            if (tglRilis.toDateString() === today.toDateString()) {
-              toastr.success('Ada jadwal baru: <b>' + ev.title + '</b> untuk Anda!', 'Jadwal Baru', {timeOut: 7000, closeButton: true, progressBar: true, escapeHtml: false});
             }
           }
         });
@@ -594,8 +610,32 @@ document.addEventListener("DOMContentLoaded", function () {
           document.getElementById('badgeUrgent').style.display = 'inline-block';
           urgentTasks.forEach(function(ev) {
             var tglRilis = new Date(ev.start);
-            var sisa = Math.ceil((tglRilis - today) / (1000*60*60*24));
-            var msg = 'Deadline <b>' + ev.title + '</b> tinggal ' + (sisa === 0 ? 'hari ini!' : sisa + ' hari lagi!');
+            var tglRilisDate = new Date(tglRilis.getFullYear(), tglRilis.getMonth(), tglRilis.getDate());
+            var todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            var selisihHari = (tglRilisDate - todayDate) / (1000 * 60 * 60 * 24);
+            
+            // Tentukan label deadline
+            var labelDeadline = '';
+            if (selisihHari === 0) {
+              labelDeadline = 'Hari Ini';
+            } else if (selisihHari === 1) {
+              labelDeadline = 'Besok';
+            } else if (selisihHari === 2) {
+              labelDeadline = '2 Hari Lagi';
+            }
+            
+            // Tentukan status badge
+            var statusText = '';
+            switch (String(ev.extendedProps.status)) {
+              case '0':
+                statusText = 'Belum Dikerjakan';
+                break;
+              case '1':
+                statusText = 'Sedang Dikerjakan';
+                break;
+            }
+            
+            var msg = 'Deadline <b>' + ev.title + '</b> (' + labelDeadline + ') - Status: ' + statusText;
             toastr.warning(msg, 'Deadline Mendesak', {timeOut: 9000, closeButton: true, progressBar: true, escapeHtml: false});
           });
         } else {
