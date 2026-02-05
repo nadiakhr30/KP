@@ -12,13 +12,21 @@ if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
 $jenisName = isset($_GET['jenis']) ? trim($_GET['jenis']) : '';
 $subId = isset($_GET['sub']) ? (int)$_GET['sub'] : 0;
 
-// Fetch jenis info
+// Fetch jenis info using prepared statement
 $jenis = null;
+$allSub = [];
+$currentSub = null;
+$dataMedia = [];
+
 if (!empty($jenisName)) {
-    $qJenis = mysqli_query($koneksi, "SELECT * FROM jenis WHERE nama_jenis = '" . mysqli_real_escape_string($koneksi, $jenisName) . "'");
-    if (mysqli_num_rows($qJenis) > 0) {
-        $jenis = mysqli_fetch_assoc($qJenis);
+    $stmt = $koneksi->prepare("SELECT id_jenis, nama_jenis FROM jenis WHERE nama_jenis = ?");
+    $stmt->bind_param("s", $jenisName);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $jenis = $result->fetch_assoc();
     }
+    $stmt->close();
 }
 
 // If no jenis found, redirect to dashboard
@@ -28,39 +36,46 @@ if (!$jenis) {
 }
 
 // Fetch all sub_jenis for this jenis
-$qSub = mysqli_query($koneksi, "SELECT s.* FROM sub_jenis s WHERE s.id_jenis = " . (int)$jenis['id_jenis'] . " ORDER BY s.nama_sub_jenis");
-$allSub = [];
-while ($row = mysqli_fetch_assoc($qSub)) {
+$stmt = $koneksi->prepare("SELECT id_sub_jenis, nama_sub_jenis FROM sub_jenis WHERE id_jenis = ? ORDER BY nama_sub_jenis");
+$stmt->bind_param("i", $jenis['id_jenis']);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
     $allSub[] = $row;
 }
+$stmt->close();
 
 // If no sub selected, use first one
 if ($subId === 0 && count($allSub) > 0) {
     $subId = $allSub[0]['id_sub_jenis'];
 }
 
-// Get current sub info
-$currentSub = null;
+// Get current sub info and fetch media in one go
 if ($subId > 0) {
-    $qCurrent = mysqli_query($koneksi, "SELECT * FROM sub_jenis WHERE id_sub_jenis = $subId");
-    if (mysqli_num_rows($qCurrent) > 0) {
-        $currentSub = mysqli_fetch_assoc($qCurrent);
+    $stmt = $koneksi->prepare("SELECT id_sub_jenis, nama_sub_jenis FROM sub_jenis WHERE id_sub_jenis = ? LIMIT 1");
+    $stmt->bind_param("i", $subId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $currentSub = $result->fetch_assoc();
     }
-}
-
-// Fetch media based on sub_jenis
-$dataMedia = [];
-if ($subId > 0) {
-    $qMedia = mysqli_query($koneksi, "
+    $stmt->close();
+    
+    // Fetch media with optimized query
+    $stmt = $koneksi->prepare("
         SELECT m.id_media, m.judul, m.topik, m.deskripsi, m.link, s.nama_sub_jenis
         FROM media m
         INNER JOIN sub_jenis s ON m.id_sub_jenis = s.id_sub_jenis
-        WHERE m.id_sub_jenis = $subId
+        WHERE m.id_sub_jenis = ?
         ORDER BY m.judul
     ");
-    while ($row = mysqli_fetch_assoc($qMedia)) {
+    $stmt->bind_param("i", $subId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
         $dataMedia[] = $row;
     }
+    $stmt->close();
 }
 
 // Helper function to detect link type and return preview info
@@ -327,7 +342,8 @@ foreach ($dataMedia as $m) {
                                                 <th style="width: 5%;">No</th>
                                                 <th>Judul</th>
                                                 <th style="width: 15%;">Topik</th>
-                                                <th style="width: 30%;">Deskripsi</th>
+                                                <th style="width: 25%;">Deskripsi</th>
+                                                <th style="width: 20%;">Link</th>
                                                 <th style="width: 15%; text-align: center;">Aksi</th>
                                             </tr>
                                         </thead>
@@ -338,6 +354,7 @@ foreach ($dataMedia as $m) {
                                                 <td><strong><?= htmlspecialchars($media['judul']) ?></strong></td>
                                                 <td><span class="label theme-bg-primary"><?= htmlspecialchars($media['topik']) ?></span></td>
                                                 <td><small><?= htmlspecialchars(substr($media['deskripsi'], 0, 50)) ?><?= strlen($media['deskripsi']) > 50 ? '...' : ''; ?></small></td>
+                                                <td><small><a href="<?= htmlspecialchars($media['link']) ?>" target="_blank" title="Buka Link"><?= htmlspecialchars(substr($media['link'], 0, 40)) ?><?= strlen($media['link']) > 40 ? '...' : ''; ?></a></small></td>
                                                 <td style="text-align: center;">
                                                     <a href="edit/edit_media.php?id=<?= $media['id_media']; ?>" class="btn btn-icon btn-primary waves-effect waves-light" title="Edit"><i class="ti-pencil"></i></a>
                                                     <button type="button" class="btn btn-icon btn-danger waves-effect waves-light" onclick="deleteMedia(<?= $media['id_media']; ?>, '<?= htmlspecialchars(str_replace("'", "\\'", $media['judul'])); ?>')" title="Hapus"><i class="ti-trash"></i></button>
@@ -367,6 +384,136 @@ ob_start();
 ?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+// Video Lightbox Function - harus di-load sebelum HTML content
+function openVideoLightbox(videoId) {
+    if (!videoId) return;
+    var src = 'https://www.youtube.com/embed/' + videoId + '?rel=0&autoplay=1';
+    var iframe = document.getElementById('videoLightboxIframe');
+    if (iframe) {
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen');
+        iframe.setAttribute('allowfullscreen', 'allowfullscreen');
+        iframe.src = src;
+    }
+
+    var modal = document.getElementById('videoLightbox');
+    if (modal) {
+        try {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                var bsModal = new bootstrap.Modal(modal);
+                bsModal.show();
+                return;
+            } else if (typeof jQuery !== 'undefined') {
+                jQuery(modal).modal('show');
+                return;
+            }
+        } catch (e) {
+            console.warn('Bootstrap modal error:', e);
+        }
+    }
+    createSimpleVideoOverlay(src);
+}
+
+function createSimpleVideoOverlay(src) {
+    var existing = document.getElementById('simpleVideoOverlay');
+    if (existing) existing.remove();
+    
+    var overlay = document.createElement('div');
+    overlay.id = 'simpleVideoOverlay';
+    overlay.style.position = 'fixed';
+    overlay.style.left = '0';
+    overlay.style.top = '0';
+    overlay.style.right = '0';
+    overlay.style.bottom = '0';
+    overlay.style.background = 'rgba(0,0,0,0.95)';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    overlay.style.zIndex = '99999';
+    overlay.style.padding = '20px';
+
+    var container = document.createElement('div');
+    container.style.position = 'relative';
+    container.style.width = '90%';
+    container.style.maxWidth = '900px';
+    container.style.aspectRatio = '16/9';
+
+    var frame = document.createElement('iframe');
+    frame.src = src;
+    frame.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen');
+    frame.setAttribute('allowfullscreen', '');
+    frame.style.width = '100%';
+    frame.style.height = '100%';
+    frame.style.border = 'none';
+    frame.style.borderRadius = '8px';
+    frame.id = 'simpleVideoOverlayIframe';
+    frame.allowFullscreen = true;
+    
+    container.appendChild(frame);
+    overlay.appendChild(container);
+
+    var closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '&times;';
+    closeBtn.style.position = 'absolute';
+    closeBtn.style.top = '20px';
+    closeBtn.style.right = '20px';
+    closeBtn.style.fontSize = '40px';
+    closeBtn.style.color = '#fff';
+    closeBtn.style.background = 'none';
+    closeBtn.style.border = 'none';
+    closeBtn.style.cursor = 'pointer';
+    closeBtn.style.zIndex = '100000';
+    closeBtn.onclick = function() {
+        overlay.remove();
+    };
+    overlay.appendChild(closeBtn);
+
+    overlay.addEventListener('click', function(e){
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+    
+    document.body.appendChild(overlay);
+}
+
+// Clear iframe src when modal is hidden to stop playback
+var videoModalEl = document.getElementById('videoLightbox');
+if (videoModalEl) {
+    // Bootstrap 5+ hide event (fires before closing)
+    videoModalEl.addEventListener('hide.bs.modal', function(){
+        var iframe = document.getElementById('videoLightboxIframe');
+        if (iframe) iframe.src = '';
+    });
+    // jQuery fallback
+    if (typeof jQuery !== 'undefined') {
+        jQuery(videoModalEl).on('hide.bs.modal', function(){
+            var iframe = document.getElementById('videoLightboxIframe');
+            if (iframe) iframe.src = '';
+        });
+    }
+}
+
+// Handle close button click
+document.addEventListener('DOMContentLoaded', function(){
+    var closeBtn = document.getElementById('videoCloseBtn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function(){
+            var iframe = document.getElementById('videoLightboxIframe');
+            if (iframe) iframe.src = '';
+            var modal = document.getElementById('videoLightbox');
+            if (modal) {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    bootstrap.Modal.getInstance(modal).hide();
+                } else if (typeof jQuery !== 'undefined') {
+                    jQuery(modal).modal('hide');
+                }
+            }
+        });
+    }
+});
+</script>
+
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 400px;">
@@ -384,10 +531,10 @@ ob_start();
                 <input type="hidden" id="deleteMediaId" value="">
                 <div style="display: flex; justify-content: center; gap: 15px;">
                     <button type="button" class="btn btn-secondary btn-icon waves-effect waves-light" data-dismiss="modal" title="Batal">
-                        <i class="ti-close"></i> Batal
+                        <i class="ti-close"></i>
                     </button>
                     <button type="button" class="btn btn-danger btn-icon waves-effect waves-light" id="confirmDelete" title="Hapus">
-                        <i class="ti-trash"></i> Hapus
+                        <i class="ti-trash"></i>
                     </button>
                 </div>
             </div>
@@ -447,7 +594,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 "pageLength": 10,
                 "lengthMenu": [[10,25,50,-1],[10,25,50,"All"]],
                 "columnDefs": [
-                    { "orderable": false, "targets": [4] }
+                    { "orderable": false, "targets": [5] }
                 ],
                 "language": {
                     "search": "Cari:",
@@ -538,77 +685,20 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 </style>
 
+
 <?php
 $modalHtml = <<<HTML
 <!-- Video Lightbox Modal -->
-<div class="modal fade" id="videoLightbox" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content bg-transparent border-0">
-            <div class="modal-body p-0" style="position:relative; padding-top:56.25%;">
-                <iframe id="videoLightboxIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute; top:0; left:0; width:100%; height:100%; border-radius:8px;"></iframe>
-            </div>
+<div class="modal fade" id="videoLightbox" tabindex="-1" role="dialog" aria-labelledby="videoLightboxLabel" aria-hidden="true" style="z-index: 1050;">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="max-width: 70vw; display: flex; align-items: center; justify-content: center;">
+        <div class="modal-content bg-dark border-0" style="width: 100%; aspect-ratio: 16 / 9; background: #000; border: none; position: relative;">
+            <button type="button" id="videoCloseBtn" aria-label="Close" style="position: absolute; top: 15px; right: 15px; z-index: 1051; background: rgba(0, 0, 0, 0.7); border: none; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; margin: 0;">
+                <span aria-hidden="true" style="color: #fff; font-size: 32px; line-height: 1;">&times;</span>
+            </button>
+            <iframe id="videoLightboxIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen="allowfullscreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; display: block;"></iframe>
         </div>
     </div>
 </div>
-
-<script>
-function openVideoLightbox(videoId) {
-    if (!videoId) return;
-    var src = 'https://www.youtube.com/embed/' + videoId + '?rel=0&autoplay=1';
-    var iframe = document.getElementById('videoLightboxIframe');
-    if (iframe) iframe.src = src;
-
-    // Prefer Bootstrap modal if available
-    try {
-        if (typeof jQuery !== 'undefined' && jQuery.fn && jQuery.fn.modal) {
-            jQuery('#videoLightbox').modal('show');
-            return;
-        }
-    } catch (e) {
-        // fallthrough to fallback
-    }
-
-    // Fallback: create a simple overlay lightbox
-    var existing = document.getElementById('simpleVideoOverlay');
-    if (existing) existing.remove();
-    var overlay = document.createElement('div');
-    overlay.id = 'simpleVideoOverlay';
-    overlay.style.position = 'fixed';
-    overlay.style.left = 0;
-    overlay.style.top = 0;
-    overlay.style.right = 0;
-    overlay.style.bottom = 0;
-    overlay.style.background = 'rgba(0,0,0,0.85)';
-    overlay.style.display = 'flex';
-    overlay.style.alignItems = 'center';
-    overlay.style.justifyContent = 'center';
-    overlay.style.zIndex = 99999;
-
-    var frame = document.createElement('iframe');
-    frame.src = src;
-    frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-    frame.style.width = '80%';
-    frame.style.height = '60%';
-    frame.style.border = 'none';
-    frame.id = 'simpleVideoOverlayIframe';
-    overlay.appendChild(frame);
-
-    overlay.addEventListener('click', function(e){
-        if (e.target === overlay) {
-            overlay.remove();
-        }
-    });
-    document.body.appendChild(overlay);
-}
-
-// Clear iframe when modal closed (Bootstrap)
-if (typeof jQuery !== 'undefined' && jQuery.fn && jQuery.fn.modal) {
-    jQuery(document).on('hidden.bs.modal', '#videoLightbox', function () {
-        var iframe = document.getElementById('videoLightboxIframe');
-        if (iframe) iframe.src = '';
-    });
-}
-</script>
 HTML;
 $script = ob_get_clean() . $modalHtml;
 include 'layout.php';

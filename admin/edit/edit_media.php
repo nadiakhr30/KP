@@ -17,17 +17,36 @@ if ($id <= 0) {
     exit();
 }
 
-// fetch media (include jenis name)
-$q = mysqli_query($koneksi, "SELECT m.*, s.id_sub_jenis, j.nama_jenis FROM media m JOIN sub_jenis s ON m.id_sub_jenis = s.id_sub_jenis JOIN jenis j ON s.id_jenis = j.id_jenis WHERE m.id_media = $id");
+// fetch media (include jenis name and sub_jenis name)
+$q = mysqli_query($koneksi, "SELECT m.*, s.id_sub_jenis, s.nama_sub_jenis, j.nama_jenis FROM media m JOIN sub_jenis s ON m.id_sub_jenis = s.id_sub_jenis JOIN jenis j ON s.id_jenis = j.id_jenis WHERE m.id_media = $id");
 $media = mysqli_fetch_assoc($q);
 if (!$media) {
-    header('Location: ../template_medsos.php');
+    header('Location: ../index.php');
     exit();
 }
 
-// derive page name from jenis
-$namaJenis = strtolower(str_replace(' ', '_', $media['nama_jenis']));
-$backUrl = "../{$namaJenis}.php?sub=" . (int)$media['id_sub_jenis'];
+// Determine redirect URL based on jenis
+$namaJenis = $media['nama_jenis'];
+$namaSubJenis = $media['nama_sub_jenis'];
+$namaJenisKebab = strtolower(str_replace(' ', '_', $namaJenis));
+$subId = (int)$media['id_sub_jenis'];
+
+// Check if specific file exists for this jenis
+if (in_array($namaJenisKebab, ['brankas_humas', 'ruang_humas'])) {
+    $backUrl = "../{$namaJenisKebab}.php?sub={$subId}";
+} elseif ($namaJenis === $namaSubJenis) {
+    // If jenis name equals sub_jenis name
+    if ($namaJenis === 'Pembinaan Kehumasan') {
+        // Special exception: use konten.php
+        $backUrl = "../konten.php?jenis=" . urlencode($namaJenis) . "&sub={$subId}";
+    } else {
+        // Otherwise use preview_konten.php
+        $backUrl = "../preview_konten.php?sub={$subId}";
+    }
+} else {
+    // Use generic konten.php for other jenis
+    $backUrl = "../konten.php?jenis=" . urlencode($namaJenis) . "&sub={$subId}";
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $judul = trim($_POST['judul'] ?? '');
@@ -50,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $media['topik'] = $topik;
             $media['deskripsi'] = $deskripsi;
             $media['link'] = $link;
-            // redirect back to specific jenis page with sub parameter
+            // redirect back to appropriate page
             header("Refresh: 1; url=$backUrl");
             exit();
         } else {

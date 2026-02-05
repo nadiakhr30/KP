@@ -11,13 +11,32 @@ if ($id_sub_jenis <= 0) {
     $error = "Parameter sub jenis tidak valid!";
 }
 
-// determine nama jenis for redirects
-$namaJenis = 'media';
+// Determine redirect URL based on jenis
+$redirectUrl = "../index.php";
 if ($id_sub_jenis > 0) {
     $qSub = mysqli_query($koneksi, "SELECT s.nama_sub_jenis, j.nama_jenis FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE s.id_sub_jenis = $id_sub_jenis");
     if ($qSub && mysqli_num_rows($qSub) > 0) {
         $rSub = mysqli_fetch_assoc($qSub);
-        $namaJenis = strtolower(str_replace(' ', '_', $rSub['nama_jenis']));
+        $namaJenis = $rSub['nama_jenis'];
+        $namaSubJenis = $rSub['nama_sub_jenis'];
+        $namaJenisKebab = strtolower(str_replace(' ', '_', $namaJenis));
+        
+        // Check if specific file exists for this jenis
+        if (in_array($namaJenisKebab, ['brankas_humas', 'ruang_humas'])) {
+            $redirectUrl = "../{$namaJenisKebab}.php?sub={$id_sub_jenis}";
+        } elseif ($namaJenis === $namaSubJenis) {
+            // If jenis name equals sub_jenis name
+            if ($namaJenis === 'Pembinaan Kehumasan') {
+                // Special exception: use konten.php
+                $redirectUrl = "../konten.php?jenis=" . urlencode($namaJenis) . "&sub={$id_sub_jenis}";
+            } else {
+                // Otherwise use preview_konten.php
+                $redirectUrl = "../preview_konten.php?sub={$id_sub_jenis}";
+            }
+        } else {
+            // Use generic konten.php for other jenis
+            $redirectUrl = "../konten.php?jenis=" . urlencode($namaJenis) . "&sub={$id_sub_jenis}";
+        }
     }
 }
 
@@ -46,8 +65,8 @@ if ($id_sub_jenis > 0) {
 
             if (mysqli_query($koneksi, $query)) {
                 $success = 'Media berhasil ditambahkan';
-                // Redirect after 1 second to current jenis page
-                header("Refresh: 1; url=../" . $namaJenis . ".php?sub=" . $id_sub_jenis);
+                // Redirect to appropriate page
+                header("Refresh: 1; url=$redirectUrl");
                 exit();
             } else {
                 $error = "Gagal menambahkan media: " . mysqli_error($koneksi);
@@ -152,7 +171,7 @@ if ($id_sub_jenis > 0) {
 
                     <!-- Action Buttons -->
                     <div class="form-group mt-4 d-flex justify-content-between">
-                        <a href="../<?php echo htmlspecialchars($namaJenis); ?>.php?sub=<?php echo htmlspecialchars($id_sub_jenis); ?>" class="btn btn-secondary btn-icon-l"><i class="fas fa-arrow-left"></i></a>
+                        <a href="<?php echo htmlspecialchars($redirectUrl); ?>" class="btn btn-secondary btn-icon-l"><i class="fas fa-arrow-left"></i></a>
                         <button type="submit" class="btn btn-primary btn-icon-l"><i class="fas fa-save"></i></button>
                     </div>
                 </form>

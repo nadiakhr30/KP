@@ -149,45 +149,66 @@ global $user;
                               </a>
                           </li>
                           <li class="header-notification">
+                              <?php
+                              // Prepare notifications for bell icon: current user as PIC and jadwal.status != 2
+                              $nipCurrent = $_SESSION['pegawai']['nip'] ?? null;
+                              $notifCount = 0;
+                              $notifRows = [];
+                              if ($nipCurrent && function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                                  $nipEsc = mysqli_real_escape_string($GLOBALS['koneksi'], $nipCurrent);
+                                  $qCount = @mysqli_query($GLOBALS['koneksi'], "SELECT COUNT(*) AS c FROM jadwal j JOIN pic p ON j.id_jadwal = p.id_jadwal WHERE p.nip = '" . $nipEsc . "' AND (j.status IS NULL OR j.status <> 2)");
+                                  if ($qCount) {
+                                      $rCount = mysqli_fetch_assoc($qCount);
+                                      $notifCount = (int)($rCount['c'] ?? 0);
+                                  }
+                                  if ($notifCount > 0) {
+                                      $qNotifs = @mysqli_query($GLOBALS['koneksi'], "SELECT j.id_jadwal, j.judul_kegiatan, j.tanggal_rilis FROM jadwal j JOIN pic p ON j.id_jadwal = p.id_jadwal WHERE p.nip = '" . $nipEsc . "' AND (j.status IS NULL OR j.status <> 2) ORDER BY j.tanggal_rilis ASC LIMIT 5");
+                                      if ($qNotifs) {
+                                          while ($r = mysqli_fetch_assoc($qNotifs)) {
+                                              $notifRows[] = $r;
+                                          }
+                                      }
+                                  }
+                              }
+                              ?>
                               <a href="#!" class="waves-effect waves-light">
                                   <i class="ti-bell"></i>
-                                  <span class="badge bg-c-red"></span>
+                                  <?php if ($notifCount > 0): ?>
+                                      <span class="badge bg-c-red"><?= $notifCount ?></span>
+                                  <?php else: ?>
+                                      <span class="badge bg-c-red" style="display:none;"></span>
+                                  <?php endif; ?>
                               </a>
                               <ul class="show-notification">
                                   <li>
                                       <h6>Notifications</h6>
-                                      <label class="label label-danger">New</label>
+                                      <?php if ($notifCount > 0): ?>
+                                          <label class="label label-danger"><?= $notifCount ?> new</label>
+                                      <?php endif; ?>
                                   </li>
-                                  <li class="waves-effect waves-light">
-                                      <div class="media">
-                                          <img class="d-flex align-self-center img-radius" src="assets/images/avatar-2.jpg" alt="Generic placeholder image">
-                                          <div class="media-body">
-                                              <h5 class="notification-user">John Doe</h5>
-                                              <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
-                                              <span class="notification-time">30 minutes ago</span>
-                                          </div>
-                                      </div>
-                                  </li>
-                                  <li class="waves-effect waves-light">
-                                      <div class="media">
-                                          <img class="d-flex align-self-center img-radius" src="assets/images/avatar-4.jpg" alt="Generic placeholder image">
-                                          <div class="media-body">
-                                              <h5 class="notification-user">Joseph William</h5>
-                                              <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
-                                              <span class="notification-time">30 minutes ago</span>
-                                          </div>
-                                      </div>
-                                  </li>
-                                  <li class="waves-effect waves-light">
-                                      <div class="media">
-                                          <img class="d-flex align-self-center img-radius" src="assets/images/avatar-3.jpg" alt="Generic placeholder image">
-                                          <div class="media-body">
-                                              <h5 class="notification-user">Sara Soudein</h5>
-                                              <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
-                                              <span class="notification-time">30 minutes ago</span>
-                                          </div>
-                                      </div>
-                                  </li>
+                                  <?php if ($notifCount > 0): ?>
+                                      <?php foreach ($notifRows as $rowNotif): ?>
+                                          <li class="waves-effect waves-light">
+                                              <div class="media">
+                                                  <div class="media-body">
+                                                      <a href="jadwal_konten_humas.php?id=<?= (int)$rowNotif['id_jadwal'] ?>" style="text-decoration:none; color:inherit;">
+                                                          <h5 class="notification-user"><?= htmlspecialchars($rowNotif['judul_kegiatan']) ?></h5>
+                                                          <p class="notification-msg">Deadline: <?= htmlspecialchars($rowNotif['tanggal_rilis']) ?> — <strong style="color:#c0392b;">Segera dikerjakan</strong></p>
+                                                      </a>
+                                                  </div>
+                                              </div>
+                                          </li>
+                                      <?php endforeach; ?>
+                                      <?php if ($notifCount > count($notifRows)): ?>
+                                          <li class="waves-effect waves-light">
+                                              <div style="padding:8px 12px; text-align:center;"><a href="jadwal_konten_humas.php">Lihat semua pengingat</a></div>
+                                          </li>
+                                      <?php endif; ?>
+                                  <?php else: ?>
+                                      <li class="waves-effect waves-light">
+                                          <div style="padding:8px 12px; text-align:center; color:#666;">Tidak ada pengingat</div>
+                                      </li>
+                                  <?php endif; ?>
                               </ul>
                           </li>
                           <li class="user-profile header-notification">
@@ -245,23 +266,40 @@ global $user;
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                               </li>
-                              <li>
-                                  <?php
-                                  $brankasHumasLink = 'brankas_humas.php'; // Fallback
-                                  if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
-                                      $qBrankas = @mysqli_query($GLOBALS['koneksi'], "SELECT s.id_sub_jenis FROM sub_jenis s JOIN jenis j ON s.id_jenis = j.id_jenis WHERE j.nama_jenis = 'Brankas Humas' LIMIT 1");
-                                      if ($qBrankas && mysqli_num_rows($qBrankas) > 0) {
-                                          $rowBrankas = mysqli_fetch_assoc($qBrankas);
-                                          $brankasHumasLink = 'preview_konten.php?sub=' . (int)$rowBrankas['id_sub_jenis'];
+                              <?php
+                              // Dynamic menu for Utama kategori
+                              if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                                  $qJenisUtama = @mysqli_query($GLOBALS['koneksi'], "SELECT j.*, k.nama_kategori FROM jenis j JOIN kategori k ON j.id_kategori = k.id_kategori WHERE k.nama_kategori = 'Utama' ORDER BY j.id_jenis");
+                                  
+                                  if ($qJenisUtama && mysqli_num_rows($qJenisUtama) > 0) {
+                                      while ($rowJenisUtama = mysqli_fetch_assoc($qJenisUtama)) {
+                                          $namaJenis = $rowJenisUtama['nama_jenis'];
+                                          
+                                          // Check if there's a sub_jenis with the same name as jenis
+                                          $qSameNameSub = @mysqli_query($GLOBALS['koneksi'], "SELECT id_sub_jenis FROM sub_jenis WHERE id_jenis = " . (int)$rowJenisUtama['id_jenis'] . " AND nama_sub_jenis = '" . mysqli_real_escape_string($GLOBALS['koneksi'], $namaJenis) . "' LIMIT 1");
+                                          $hasSameNameSub = $qSameNameSub && mysqli_num_rows($qSameNameSub) > 0;
+                                          
+                                          // Determine the link based on jenis/sub_jenis relationship
+                                          if ($hasSameNameSub && strtolower(trim($namaJenis)) !== 'pembinaan kehumasan') {
+                                              // If same-named sub exists (and not "Pembinaan Kehumasan"), use preview_konten
+                                              $rowSameNameSub = mysqli_fetch_assoc($qSameNameSub);
+                                              $jenisLink = 'preview_konten.php?sub=' . (int)$rowSameNameSub['id_sub_jenis'];
+                                          } else {
+                                              // Otherwise use konten.php with jenis parameter
+                                              $jenisLink = 'konten.php?jenis=' . urlencode($namaJenis);
+                                          }
+                                          
+                                          echo '<li>';
+                                          echo '<a href="' . htmlspecialchars($jenisLink) . '" class="waves-effect waves-dark">';
+                                          echo '<span class="pcoded-micon"><i class="ti-harddrives"></i><b>FC</b></span>';
+                                          echo '<span class="pcoded-mtext">' . htmlspecialchars($namaJenis) . '</span>';
+                                          echo '<span class="pcoded-mcaret"></span>';
+                                          echo '</a>';
+                                          echo '</li>';
                                       }
                                   }
-                                  ?>
-                                  <a href="<?= $brankasHumasLink; ?>" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-harddrives"></i><b>FC</b></span>
-                                      <span class="pcoded-mtext" data-i18n="menu.brankas-humas">Brankas Humas</span>
-                                      <span class="pcoded-mcaret"></span>
-                                  </a>
-                              </li>
+                              }
+                              ?>
                               <li class="pcoded-hasmenu">
                                   <a href="javascript:void(0)" class="waves-effect waves-dark">
                                       <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i></span>
@@ -295,24 +333,62 @@ global $user;
                           </ul>
                           <div class="pcoded-navigation-label" data-i18n="nav.category.workspace">RUANG HUMAS</div>
                           <ul class="pcoded-item pcoded-left-item">
-                              <li class=" ">
-                                  <a href="ruang_humas.php" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-layers-alt"></i><b>D</b></span>
-                                      <span class="pcoded-mtext" data-i18n="menu.ruang-humas">Struktur Humas</span>
-                                      <span class="pcoded-mcaret"></span>
-                                  </a>
-                              </li>
-                              <li class=" ">
+                              <?php
+                              // Dynamic menu for Ruang Humas kategori
+                              if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
+                                  $qJenisRuang = @mysqli_query($GLOBALS['koneksi'], "SELECT j.*, k.nama_kategori FROM jenis j JOIN kategori k ON j.id_kategori = k.id_kategori WHERE k.nama_kategori = 'Ruang Humas' ORDER BY j.id_jenis");
+                                  
+                                  if ($qJenisRuang && mysqli_num_rows($qJenisRuang) > 0) {
+                                      while ($rowJenisRuang = mysqli_fetch_assoc($qJenisRuang)) {
+                                          $namaJenis = $rowJenisRuang['nama_jenis'];
+                                          
+                                          // Skip special items that are handled separately
+                                          if ($namaJenis === 'Jadwal Konten Humas' || $namaJenis === 'Aset Humas') {
+                                              continue;
+                                          }
+                                          
+                                          // Special handling for Struktur Humas
+                                          if ($namaJenis === 'Struktur Humas') {
+                                              $jenisLink = 'ruang_humas.php';
+                                              $icon = 'ti-layers-alt';
+                                          } else {
+                                              // For other jenis in Ruang Humas, check if same-named sub exists
+                                              $qSameNameSub = @mysqli_query($GLOBALS['koneksi'], "SELECT id_sub_jenis FROM sub_jenis WHERE id_jenis = " . (int)$rowJenisRuang['id_jenis'] . " AND nama_sub_jenis = '" . mysqli_real_escape_string($GLOBALS['koneksi'], $namaJenis) . "' LIMIT 1");
+                                              $hasSameNameSub = $qSameNameSub && mysqli_num_rows($qSameNameSub) > 0;
+                                              
+                                              if ($hasSameNameSub) {
+                                                  // If same-named sub exists, use preview_konten
+                                                  $rowSameNameSub = mysqli_fetch_assoc($qSameNameSub);
+                                                  $jenisLink = 'preview_konten.php?sub=' . (int)$rowSameNameSub['id_sub_jenis'];
+                                              } else {
+                                                  // Otherwise use konten.php
+                                                  $jenisLink = 'konten.php?jenis=' . urlencode($namaJenis);
+                                              }
+                                              $icon = 'ti-bookmark';
+                                          }
+                                          
+                                          echo '<li>';
+                                          echo '<a href="' . htmlspecialchars($jenisLink) . '" class="waves-effect waves-dark">';
+                                          echo '<span class="pcoded-micon"><i class="' . htmlspecialchars($icon) . '"></i><b>D</b></span>';
+                                          echo '<span class="pcoded-mtext">' . htmlspecialchars($namaJenis) . '</span>';
+                                          echo '<span class="pcoded-mcaret"></span>';
+                                          echo '</a>';
+                                          echo '</li>';
+                                      }
+                                  }
+                              }
+                              ?>
+                              <li>
                                   <a href="jadwal_konten_humas.php" class="waves-effect waves-dark">
-                                      <span class="pcoded-micon"><i class="ti-calendar"></i><b>FC</b></span>
-                                      <span class="pcoded-mtext" data-i18n="menu.jadwal-konten">Jadwal Konten Humas</span>
+                                      <span class="pcoded-micon"><i class="ti-calendar"></i></span>
+                                      <span class="pcoded-mtext" data-i18n="menu.jadwal-konten-humas">Jadwal Konten Humas</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                               </li>
                               <li class="pcoded-hasmenu">
                                   <a href="javascript:void(0)" class="waves-effect waves-dark">
                                       <span class="pcoded-micon"><i class="ti-briefcase"></i></span>
-                                      <span class="pcoded-mtext"  data-i18n="menu.aset-humas">Aset Humas</span>
+                                      <span class="pcoded-mtext" data-i18n="menu.aset-humas">Aset Humas</span>
                                       <span class="pcoded-mcaret"></span>
                                   </a>
                                   <ul class="pcoded-submenu">
@@ -341,7 +417,7 @@ global $user;
                           </ul>
         
                           <?php
-                          // Dynamic menu from database (exclude Utama and Ruang Humas as they are hardcoded)
+                          // Dynamic menu from database (exclude Utama and Ruang Humas as they are already generated above)
                           if (function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
                               // Get all kategori except "Utama" and "Ruang Humas" ordered by id
                               $qKategori = @mysqli_query($GLOBALS['koneksi'], "SELECT * FROM kategori WHERE nama_kategori NOT IN ('Utama', 'Ruang Humas') ORDER BY id_kategori");
