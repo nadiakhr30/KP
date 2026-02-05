@@ -142,12 +142,12 @@ global $user;
                       </ul>
                       <ul class="nav-right">
                           <!-- PWA Install Button -->
-                          <li style="display: none;" id="pwa-install-prompt">
-                              <a href="javascript:void(0)" class="waves-effect waves-light" id="pwa-install-btn" style="padding: 8px 12px; border-radius: 4px; color: white; font-size: 12px; display: flex; align-items: center; gap: 6px;">
-                                  <i class="ti-download"></i>
-                                  <span>Install App</span>
-                              </a>
-                          </li>
+                              <li style="display:none;" id="pwa-install-prompt">
+                                  <a href="javascript:void(0)" class="waves-effect waves-light" id="pwa-install-btn" style="padding: 8px 12px; border-radius: 4px; color: white; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                                      <i class="ti-download"></i>
+                                      <span>Install App</span>
+                                  </a>
+                              </li>
                           <li class="header-notification">
                               <?php
                               // Prepare notifications for bell icon: current user as PIC and jadwal.status != 2

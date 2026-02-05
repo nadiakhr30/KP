@@ -332,6 +332,14 @@ function togglePassword() {
 </script>
 
 <!-- PWA Service Worker Registration -->
+<!-- Floating PWA install button (hidden until browser `beforeinstallprompt`) -->
+<div id="pwa-install-prompt" style="display:none; position:fixed; bottom:18px; right:18px; z-index:99999;">
+  <button id="pwa-install-btn" class="btn btn-primary" style="display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px;">
+    <i class="ti-download"></i>
+    <span>Install App</span>
+  </button>
+</div>
+
 <script src="assets/js/pwa-install.js"></script>
 <script>
   if ('serviceWorker' in navigator) {
