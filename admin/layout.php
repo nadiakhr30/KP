@@ -156,13 +156,13 @@ global $user;
                               $notifRows = [];
                               if ($nipCurrent && function_exists('mysqli_query') && isset($GLOBALS['koneksi'])) {
                                   $nipEsc = mysqli_real_escape_string($GLOBALS['koneksi'], $nipCurrent);
-                                  $qCount = @mysqli_query($GLOBALS['koneksi'], "SELECT COUNT(*) AS c FROM jadwal j JOIN pic p ON j.id_jadwal = p.id_jadwal WHERE p.nip = '" . $nipEsc . "' AND (j.status IS NULL OR j.status <> 2)");
+                                  $qCount = @mysqli_query($GLOBALS['koneksi'], "SELECT COUNT(DISTINCT j.id_jadwal) AS c FROM jadwal j JOIN pic p ON j.id_jadwal = p.id_jadwal WHERE p.nip = '" . $nipEsc . "' AND (j.status IS NULL OR j.status <> 2)");
                                   if ($qCount) {
                                       $rCount = mysqli_fetch_assoc($qCount);
                                       $notifCount = (int)($rCount['c'] ?? 0);
                                   }
                                   if ($notifCount > 0) {
-                                      $qNotifs = @mysqli_query($GLOBALS['koneksi'], "SELECT j.id_jadwal, j.judul_kegiatan, j.tanggal_rilis FROM jadwal j JOIN pic p ON j.id_jadwal = p.id_jadwal WHERE p.nip = '" . $nipEsc . "' AND (j.status IS NULL OR j.status <> 2) ORDER BY j.tanggal_rilis ASC LIMIT 5");
+                                      $qNotifs = @mysqli_query($GLOBALS['koneksi'], "SELECT DISTINCT j.id_jadwal, j.judul_kegiatan, j.tanggal_rilis FROM jadwal j JOIN pic p ON j.id_jadwal = p.id_jadwal WHERE p.nip = '" . $nipEsc . "' AND (j.status IS NULL OR j.status <> 2) ORDER BY j.tanggal_rilis ASC LIMIT 5");
                                       if ($qNotifs) {
                                           while ($r = mysqli_fetch_assoc($qNotifs)) {
                                               $notifRows[] = $r;
@@ -174,41 +174,67 @@ global $user;
                               <a href="#!" class="waves-effect waves-light">
                                   <i class="ti-bell"></i>
                                   <?php if ($notifCount > 0): ?>
-                                      <span class="badge bg-c-red"><?= $notifCount ?></span>
+                                      <span class="badge bg-c-red" style="width:8px;height:8px;padding:0;"></span>
                                   <?php else: ?>
                                       <span class="badge bg-c-red" style="display:none;"></span>
                                   <?php endif; ?>
                               </a>
                               <ul class="show-notification">
-                                  <li>
-                                      <h6>Notifications</h6>
-                                      <?php if ($notifCount > 0): ?>
-                                          <label class="label label-danger"><?= $notifCount ?> new</label>
-                                      <?php endif; ?>
-                                  </li>
-                                  <?php if ($notifCount > 0): ?>
-                                      <?php foreach ($notifRows as $rowNotif): ?>
-                                          <li class="waves-effect waves-light">
-                                              <div class="media">
-                                                  <div class="media-body">
-                                                      <a href="jadwal_konten_humas.php?id=<?= (int)$rowNotif['id_jadwal'] ?>" style="text-decoration:none; color:inherit;">
-                                                          <h5 class="notification-user"><?= htmlspecialchars($rowNotif['judul_kegiatan']) ?></h5>
-                                                          <p class="notification-msg">Deadline: <?= htmlspecialchars($rowNotif['tanggal_rilis']) ?> — <strong style="color:#c0392b;">Segera dikerjakan</strong></p>
+                                  <div class="card m-0">
+                                      <div class="card-header">
+                                          <li style="margin:0;">
+                                              <h5 style="margin:0; font-size:14px; font-weight:600; display:flex; justify-content:space-between; align-items:center;">
+                                                  <span>
+                                                      <i class="ti-bell" style="color:#343bb9; margin-right:6px;"></i>Notifikasi Pengingat
+                                                  </span>
+                                                  <?php if ($notifCount > 0): ?>
+                                                      <label class="label label-danger" style="margin:0; font-size:11px; padding:2px 6px;"><?= $notifCount ?> New</label>
+                                                  <?php endif; ?>
+                                              </h5>
+                                          </li>
+                                      </div>
+                                      <div class="card-block" style="max-height:350px; overflow-y:auto; padding:0;">
+                                          <?php if ($notifCount > 0): ?>
+                                              <?php foreach ($notifRows as $rowNotif): ?>
+                                                  <li class="waves-effect waves-light" style="list-style:none; border-bottom:1px solid #f0f0f0; padding:12px 16px; margin:0; cursor:pointer; transition:all 0.3s ease;">
+                                                      <a href="jadwal_konten_humas.php?id=<?= (int)$rowNotif['id_jadwal'] ?>" style="text-decoration:none; color:inherit; display:block;">
+                                                          <div style="display:flex; align-items:flex-start; gap:10px;">
+                                                              <div style="flex-shrink:0; margin-top:2px;">
+                                                                  <i class="ti-calendar" style="color:#c0392b; font-size:16px;"></i>
+                                                              </div>
+                                                              <div style="flex:1; min-width:0;">
+                                                                  <h5 style="margin:0 0 4px 0; font-size:13px; font-weight:600; color:#191f34; word-wrap:break-word;">
+                                                                      <?= htmlspecialchars($rowNotif['judul_kegiatan']) ?>
+                                                                  </h5>
+                                                                  <p style="margin:0; font-size:12px; color:#666; line-height:1.4;">
+                                                                      <strong style="color:#c0392b;">Deadline:</strong> <?= htmlspecialchars($rowNotif['tanggal_rilis']) ?>
+                                                                  </p>
+                                                                  <p style="margin:4px 0 0 0; font-size:11px; color:#999;">
+                                                                      <i class="ti-alert" style="color:#c0392b; margin-right:3px;"></i>Segera dikerjakan
+                                                                  </p>
+                                                              </div>
+                                                          </div>
                                                       </a>
+                                                  </li>
+                                              <?php endforeach; ?>
+                                              <?php if ($notifCount > count($notifRows)): ?>
+                                                  <li style="list-style:none; padding:10px 16px; text-align:center; border-top:1px solid #f0f0f0;">
+                                                      <a href="jadwal_konten_humas.php" style="font-size:12px; color:#343bb9; text-decoration:none; font-weight:600;">
+                                                          Lihat semua pengingat (<?= $notifCount - count($notifRows) ?> lainnya)
+                                                      </a>
+                                                  </li>
+                                              <?php endif; ?>
+                                          <?php else: ?>
+                                              <li style="list-style:none; padding:20px 16px; text-align:center; color:#999;">
+                                                  <div style="font-size:14px; margin-bottom:6px;">
+                                                      <i class="ti-check-box" style="font-size:20px; color:#27ae60;"></i>
                                                   </div>
-                                              </div>
-                                          </li>
-                                      <?php endforeach; ?>
-                                      <?php if ($notifCount > count($notifRows)): ?>
-                                          <li class="waves-effect waves-light">
-                                              <div style="padding:8px 12px; text-align:center;"><a href="jadwal_konten_humas.php">Lihat semua pengingat</a></div>
-                                          </li>
-                                      <?php endif; ?>
-                                  <?php else: ?>
-                                      <li class="waves-effect waves-light">
-                                          <div style="padding:8px 12px; text-align:center; color:#666;">Tidak ada pengingat</div>
-                                      </li>
-                                  <?php endif; ?>
+                                                  <p style="margin:0; font-size:13px;">Tidak ada pengingat</p>
+                                                  <p style="margin:4px 0 0 0; font-size:11px;">Semua jadwal terpenuhi</p>
+                                              </li>
+                                          <?php endif; ?>
+                                      </div>
+                                  </div>
                               </ul>
                           </li>
                           <li class="user-profile header-notification">
