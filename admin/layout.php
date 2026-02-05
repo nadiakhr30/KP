@@ -179,7 +179,7 @@ global $user;
                                       <span class="badge bg-c-red" style="display:none;"></span>
                                   <?php endif; ?>
                               </a>
-                              <ul class="show-notification">
+                              <ul class="show-notification profile-notification">
                                   <div class="card m-0">
                                       <div class="card-header">
                                           <li style="margin:0;">
@@ -707,6 +707,15 @@ global $user;
         color: #000 !important;
       }
 
+      /* Dropdown positioning */
+      .show-notification {
+        position: absolute;
+        right: -10px;
+        left: auto;
+        max-width: 320px;
+        top: 100%;
+      }
+
       /* Remove gap between navbar and menu - Mobile only */
       @media (max-width: 991px) {
         .pcoded-inner-navbar {
@@ -717,6 +726,36 @@ global $user;
         .pcoded-navbar {
           margin-top: 0 !important;
           padding-top: 0 !important;
+        }
+      }
+
+      /* Mobile dropdown positioning */
+      @media (max-width: 768px) {
+        .show-notification {
+          position: fixed;
+          right: 12px;
+          left: auto;
+          max-width: 90vw;
+          width: auto;
+          top: 50px;
+          z-index: 10001;
+        }
+
+        .header-notification .show-notification {
+          max-height: 400px;
+          overflow-y: auto;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .show-notification {
+          position: fixed;
+          right: 8px;
+          left: -150px;
+          max-width: 95vw;
+          width: auto;
+          top: 48px;
+          z-index: 10001;
         }
       }
     </style>

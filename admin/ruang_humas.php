@@ -187,14 +187,14 @@ $canvaMedia = mysqli_num_rows($qCanva) ? mysqli_fetch_assoc($qCanva) : null;
                                             </div>
                                         </div>
 
-                                        <div class="card-body p-0" style="background: #f8fafc; min-height: 700px; padding: 20px;">
+                                        <div class="card-body p-0" style="background: #f8fafc; min-height: 300px; padding: 20px;">
                                             <?php if ($canvaMedia && !empty($canvaMedia['link'])): ?>
                                                 <?php
                                                 $canvaUrl = trim($canvaMedia['link']);
 
                                                 // If stored value contains an iframe, output it directly
                                                 if (strpos($canvaUrl, '<iframe') !== false): ?>
-                                                    <div style="width: 100%; min-height: 700px;">
+                                                    <div style="width: 100%; min-height: 300px;">
                                                         <?php echo $canvaUrl; ?>
                                                     </div>
                                                 <?php else:
@@ -205,7 +205,7 @@ $canvaMedia = mysqli_num_rows($qCanva) ? mysqli_fetch_assoc($qCanva) : null;
                                                 ?>
                                                         <iframe 
                                                             src="<?php echo htmlspecialchars($embedUrl); ?>" 
-                                                            style="width: 100%; min-height: 700px; border: none; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
+                                                            style="width: 100%; min-height: 300px; border: none; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
                                                             allow="fullscreen"
                                                             title="Canva Design Preview">
                                                         </iframe>
@@ -220,7 +220,7 @@ $canvaMedia = mysqli_num_rows($qCanva) ? mysqli_fetch_assoc($qCanva) : null;
                                                 <?php endif; ?>
                                                 <?php endif; ?>
                                             <?php else: ?>
-                                                <div style="display: flex; align-items: center; justify-content: center; height: 660px;">
+                                                <div style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
                                                     <div style="text-align: center;">
                                                         <i class="ti-link" style="font-size: 96px; color: #ddd; margin-bottom: 20px;"></i>
                                                         <p style="color: #999; font-size: 16px;">Belum ada konten</p>

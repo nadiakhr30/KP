@@ -646,6 +646,266 @@ ob_start();
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+// Add responsive styles for calendar and dropdowns
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+    /* Calendar Responsive Styles */
+    #calendar {
+        min-height: 500px;
+    }
+    
+    .fc {
+        font-size: 0.95rem;
+    }
+
+    .fc-button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .fc-col-header-cell {
+        padding: 0.4rem 0rem;
+        font-size: 0.9rem;
+    }
+
+    .fc-daygrid-day-number {
+        padding: 0.3rem 0.3rem;
+        font-size: 0.85rem;
+    }
+
+    .fc-daygrid-day-frame {
+        min-height: 60px;
+    }
+
+    .fc-event {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.4rem;
+    }
+
+    /* Dropdown Positioning */
+    .show-notification {
+        right: 0;
+        left: auto;
+        max-width: 320px;
+    }
+
+    /* Button Group Responsiveness */
+    .btn-group-responsive {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .btn-group-responsive .btn,
+    .btn-group-responsive .dropdown-toggle {
+        white-space: nowrap;
+        font-size: 0.9rem;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        #calendar {
+            min-height: 400px;
+        }
+
+        .fc-button-primary {
+            padding: 0.35rem 0.6rem;
+            font-size: 0.75rem;
+        }
+
+        .fc-button-primary:not(:disabled):active,
+        .fc-button-primary:not(:disabled).fc-button-active {
+            padding: 0.35rem 0.6rem;
+            font-size: 0.75rem;
+        }
+
+        .fc-header-toolbar {
+            gap: 0.4rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .fc-toolbar-title {
+            font-size: 1.1rem;
+        }
+
+        .fc-daygrid-day-frame {
+            min-height: 75px; /* Increased from 50px */
+        }
+
+        .fc-daygrid-day-number {
+            padding: 0.2rem 0.2rem;
+            font-size: 0.75rem;
+        }
+
+        .fc-col-header-cell {
+            padding: 0.3rem 0rem;
+            font-size: 0.8rem;
+        }
+
+        .fc-event-title {
+            font-size: 0.65rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .fc-event {
+            padding: 0.1rem 0.3rem;
+            margin: 0.1rem 0;
+            font-size: 0.65rem;
+        }
+
+        /* Dropdown positioning on tablet */
+        .show-notification {
+            position: absolute;
+            right: -150px;
+            left: auto;
+            max-width: 85vw;
+            width: auto;
+        }
+
+        /* Button responsiveness on tablet */
+        .btn-group-responsive {
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .btn-group-responsive .btn,
+        .btn-group-responsive .dropdown-toggle {
+            padding: 0.375rem 0.6rem;
+            font-size: 0.8rem;
+        }
+
+        .dt-buttons {
+            gap: 6px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+    }
+
+    @media (max-width: 480px) {
+        #calendar {
+            min-height: 450px !important;
+            min-width: 300px !important;
+        }
+
+        .fc-toolbar-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .fc-button-primary {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+        }
+
+        .fc-button-primary:not(:disabled):active,
+        .fc-button-primary:not(:disabled).fc-button-active {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+        }
+
+        .fc-header-toolbar {
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .fc-toolbar {
+            gap: 0.4rem;
+        }
+
+        .fc-daygrid {
+            width: 100% !important;
+        }
+
+        .fc-daygrid-day-frame {
+            min-height: 85px; /* Increased from 70px to prevent flattening */
+        }
+
+        .fc-daygrid-day {
+            width: calc(100% / 7) !important;
+            flex: 0 0 calc(100% / 7) !important;
+            padding: 1px !important;
+            border: 1px solid #ddd !important;
+        }
+
+        .fc-daygrid-day-number {
+            padding: 0.5rem 0.3rem;
+            font-size: 0.75rem;
+            display: block;
+            overflow: visible;
+        }
+
+        .fc-col-header-cell {
+            padding: 0.4rem 0.2rem !important;
+            font-size: 0.75rem;
+            width: calc(100% / 7) !important;
+            flex: 0 0 calc(100% / 7) !important;
+            border: 1px solid #ddd !important;
+            text-align: center;
+        }
+
+        .fc-event-title {
+            font-size: 0.7rem;
+        }
+
+        .fc-event {
+            padding: 0.15rem 0.3rem;
+            margin: 0.1rem 0;
+        }
+
+        /* Dropdown positioning on mobile - shift left to stay in viewport */
+        .show-notification {
+            position: fixed;
+            right: 8px;
+            left: auto;
+            max-width: 90vw;
+            width: auto;
+            top: 50px;
+            z-index: 10001;
+        }
+
+        /* Filter and buttons row - keep horizontal layout on mobile */
+        .row.m-b-10 {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .row.m-b-10 > div {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* Filter button - keep normal size */
+        #statusFilterBtn {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        /* Print/Export buttons - flexible sizing */
+        .dt-buttons {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .dt-buttons .btn {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+    }
+`;
+document.head.appendChild(styleSheet);
+
 // Initialize tooltips
 document.addEventListener('DOMContentLoaded', function() {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -1074,6 +1334,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
                 },
                 height: 'auto',
+                contentHeight: 'auto', // Ensure content dictates height
                 locale: 'id',
                 events: calendarEvents,
                 eventClick: function(info) {

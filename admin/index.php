@@ -433,7 +433,7 @@ $content = ob_get_clean();
 ob_start();
 ?>
 <script>
-  // Add custom styles for modal
+  // Add custom styles for modal + responsive charts/calendar
   const style = document.createElement('style');
   style.textContent = `
       .modal-header {
@@ -476,32 +476,255 @@ ob_start();
       #modalPIC ul li {
           margin-bottom: 0.3rem;
       }
+
+      /* Responsive Chart & Calendar Styles */
+      #calendar {
+          min-height: 500px;
+      }
+      
+      canvas {
+          max-width: 100%;
+          height: auto !important;
+      }
+
+      .card-block {
+          position: relative;
+      }
+
+      .fc {
+          font-size: 0.95rem;
+      }
+
+      .fc-button {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.85rem;
+      }
+
+      .fc-col-header-cell {
+          padding: 0.4rem 0rem;
+          font-size: 0.9rem;
+      }
+
+      .fc-daygrid-day-number {
+          padding: 0.3rem 0.3rem;
+          font-size: 0.85rem;
+      }
+
+      .fc-daygrid-day-frame {
+          min-height: 60px;
+      }
+
+      .fc-event {
+          font-size: 0.8rem;
+          padding: 0.2rem 0.4rem;
+      }
+
+      /* Mobile responsiveness */
+      @media (max-width: 768px) {
+          #calendar {
+              min-height: 400px;
+          }
+
+          .fc-button-primary {
+              padding: 0.35rem 0.6rem;
+              font-size: 0.75rem;
+          }
+
+          .fc-button-primary:not(:disabled):active,
+          .fc-button-primary:not(:disabled).fc-button-active {
+              padding: 0.35rem 0.6rem;
+              font-size: 0.75rem;
+          }
+
+          .fc-header-toolbar {
+              gap: 0.4rem;
+              margin-bottom: 0.8rem;
+          }
+
+          .fc-toolbar-title {
+              font-size: 1.1rem;
+          }
+
+          .fc-daygrid-day-frame {
+              min-height: 50px;
+          }
+
+          .fc-daygrid-day-number {
+              padding: 0.2rem 0.2rem;
+              font-size: 0.75rem;
+          }
+
+          .fc-col-header-cell {
+              padding: 0.3rem 0rem;
+              font-size: 0.8rem;
+          }
+
+          .fc-event-title {
+              font-size: 0.65rem;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+          }
+
+          .fc-event {
+              padding: 0.1rem 0.3rem;
+              margin: 0.1rem 0;
+              font-size: 0.65rem;
+          }
+
+          /* Chart container height */
+          #statusChart,
+          #skillChart {
+              max-height: 300px !important;
+          }
+
+          /* Podium wrapper responsive */
+          .podium-wrapper {
+              margin-top: 1rem;
+              gap: 0.5rem;
+          }
+
+          .podium-step {
+              min-width: 70px;
+              padding: 0.8rem 0.4rem;
+          }
+
+          .podium-step .crown {
+              font-size: 1.2rem;
+              margin-bottom: 0.2rem;
+          }
+
+          .podium-step .name {
+              font-size: 0.75rem;
+              line-height: 1.2;
+          }
+      }
+
+      @media (max-width: 480px) {
+          #calendar {
+              min-height: 450px;
+              min-width: 300px !important;
+          }
+
+          .fc-toolbar-title {
+              font-size: 1rem;
+              font-weight: 600;
+          }
+
+          .fc-button-primary {
+              padding: 0.4rem 0.6rem;
+              font-size: 0.8rem;
+          }
+
+          .fc-header-toolbar {
+              flex-wrap: wrap;
+              gap: 0.4rem;
+              margin-bottom: 0.8rem;
+          }
+
+          .fc-toolbar {
+              gap: 0.4rem;
+          }
+
+          .fc-daygrid {
+              width: 100% !important;
+          }
+
+          .fc-daygrid-day-frame {
+           min-height: 85px; /* Increased from 60px/70px to prevent flattening */
+      }
+
+      .fc-daygrid-day {
+          width: calc(100% / 7) !important;
+          flex: 0 0 calc(100% / 7) !important;
+          padding: 1px !important;
+          border: 1px solid #ddd !important;
+      }
+
+      .fc-daygrid-day-number {
+          padding: 0.5rem 0.3rem;
+          font-size: 0.75rem;
+          display: block;
+          overflow: visible;
+      }
+
+      .fc-col-header-cell {
+          padding: 0.4rem 0.2rem !important;
+          font-size: 0.75rem;
+          width: calc(100% / 7) !important;
+          flex: 0 0 calc(100% / 7) !important;
+          border: 1px solid #ddd !important;
+          text-align: center;
+      }
+
+      .fc-event-title {
+          font-size: 0.7rem;
+      }
+
+      .fc-event {
+          padding: 0.15rem 0.3rem;
+          margin: 0.1rem 0;
+      }
+
+          #statusChart,
+          #skillChart {
+              max-height: 250px !important;
+          }
+
+          .podium-wrapper {
+              margin-top: 1rem;
+              gap: 0.5rem;
+          }
+
+          .podium-step {
+              min-width: 60px;
+              padding: 0.8rem 0.4rem;
+          }
+
+          .podium-step .name {
+              font-size: 0.7rem;
+              line-height: 1.2;
+          }
+
+          .podium-step .crown {
+              font-size: 1rem;
+              margin-bottom: 0.2rem;
+          }
+      }
   `;
   document.head.appendChild(style);
 
   // Chart Skill
-  new Chart(document.getElementById('skillChart'), {
-  type: 'bar',
-  data: {
-    labels: <?= json_encode($skillLabels) ?>,
-    datasets: [{
-      label: 'Total Pengguna',
-      data: <?= json_encode($skillData) ?>,
-      backgroundColor: '#007bff'
-    }]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: {
-        beginAtZero: true
+  const skillCtx = document.getElementById('skillChart');
+  const skillChart = new Chart(skillCtx, {
+    type: 'bar',
+    data: {
+      labels: <?= json_encode($skillLabels) ?>,
+      datasets: [{
+        label: 'Total Pengguna',
+        data: <?= json_encode($skillData) ?>,
+        backgroundColor: '#007bff'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          display: true
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
       }
     }
-  }
-});
+  });
 
 //Chart Status Jadwal
-new Chart(document.getElementById('statusChart'), {
+const statusCtx = document.getElementById('statusChart');
+const statusChart = new Chart(statusCtx, {
   type: 'doughnut',
   data: {
     labels: ['Belum Dikerjakan', 'Sedang Dikerjakan', 'Selesai'],
@@ -513,6 +736,15 @@ new Chart(document.getElementById('statusChart'), {
       ],
       backgroundColor: ['#e81818', '#fbc531', '#44bd32']
     }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom'
+      }
+    }
   }
 });
 
@@ -528,7 +760,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('calendar'),
     {
       initialView: 'dayGridMonth',
-      height: 520,
+      height: window.innerWidth < 768 ? 'auto' : 520, // Responsive height: auto on mobile/tablet, fixed on desktop
       locale: 'id',
       events: <?= json_encode($jadwalkalender) ?>,
       eventClick: function(info) {

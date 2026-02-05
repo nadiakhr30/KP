@@ -59,7 +59,7 @@ background-size: cover;
 ">
 
 <section class="login-wrapper">
-  <div class="login-card">
+  <div class="login-card m-y-5">
 
     <!-- KIRI -->
     <div class="left-panel">
