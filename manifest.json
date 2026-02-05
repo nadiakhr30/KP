@@ -1,7 +1,7 @@
 {
-  "name": "Sikumbang",
+  "name": "Sikumbang - Sistem Manajemen Kehumasan BPS Bangkalan",
   "short_name": "Sikumbang",
-  "description": "Sistem Manajemen Kehumasan Badan Pusat Statistika Bangkalan",
+  "description": "Sistem Manajemen Kehumasan Badan Pusat Statistika Bangkalan - PWA untuk manajemen jadwal, konten, dan aset kehumasan",
   "start_url": "./index.php",
   "scope": "./",
   "display": "standalone",
@@ -20,6 +20,18 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "screenshots": [

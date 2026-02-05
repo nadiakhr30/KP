@@ -27,14 +27,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-      <meta name="author" content="Kamila - Nadia" />
-      <meta name="description" content="Sistem Manajemen Kehumasan dan Konten Media Sosial">
-      <meta name="theme-color" content="#2196F3">
+      <meta name="author" content="Kamila" />
+      <meta name="description" content="Sistem Manajemen Kehumasan BPS Bangkalan">
+      <meta name="theme-color" content="#2c52cc">
       <meta name="mobile-web-app-capable" content="yes">
       <meta name="apple-mobile-web-app-capable" content="yes">
       <meta name="apple-mobile-web-app-status-bar-style" content="default">
       <meta name="apple-mobile-web-app-title" content="Sikumbang">
-      <link rel="icon" href="admin/assets/images/logo_bps.ico" type="image/x-icon">
       <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
       <link rel="manifest" href="manifest.json">
       <!-- Google font-->     
@@ -60,6 +59,32 @@ background-size: cover;
 
 <section class="login-wrapper">
   <div class="login-card m-y-5">
+
+    <!-- PWA Install Notification/Toast -->
+    <div id="pwa-install-notification" style="display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; padding:16px 24px; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.2); z-index:100000; max-width:400px; width:90%; animation:slideDownNotif 0.4s ease-out;">
+      <div style="display:flex; align-items:center; gap:12px; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:12px; flex:1;">
+          <i class="ti-download" style="font-size:24px; flex-shrink:0;"></i>
+          <div>
+            <p style="margin:0; font-weight:600; font-size:14px;">Install Sikumbang</p>
+            <p style="margin:4px 0 0 0; font-size:12px; opacity:0.9;">Akses langsung dari beranda Anda</p>
+          </div>
+        </div>
+        <button id="pwa-install-btn" style="background:white; color:#667eea; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer; font-size:12px; white-space:nowrap; margin-left:12px;">
+          Install
+        </button>
+      </div>
+      <button id="pwa-notif-close-btn" style="position:absolute; top:8px; right:8px; background:none; border:none; color:white; font-size:20px; cursor:pointer; opacity:0.7; transition:opacity 0.2s;">
+        ✕
+      </button>
+    </div>
+
+    <!-- NAVBAR TOP (hidden, kept for compatibility) -->
+    <div style="position:absolute; top:0; left:0; right:0; padding:12px 20px; background:rgba(255,255,255,0.95); border-bottom:1px solid #eee; display:flex; justify-content:flex-end; align-items:center; gap:10px;">
+      <a href="javascript:void(0)" id="pwa-navbar-install-btn" class="pwa-navbar-link" style="display:none; color:#667eea; font-weight:600; text-decoration:none; padding:8px 12px; border-radius:6px; transition:all 0.3s ease; font-size:14px;" title="Install App">
+        <i class="ti-download" style="margin-right:6px;"></i>Install App
+      </a>
+    </div>
 
     <!-- KIRI -->
     <div class="left-panel">
@@ -119,6 +144,7 @@ background-size: cover;
 }
 
 .login-card{
+  position:relative;
   width: 80%;
   max-width: 900px;
   display:flex;
@@ -238,6 +264,7 @@ background-size: cover;
     flex-direction:column;
     width:96%;
     min-width:unset;
+    margin-top:50px;
     box-shadow: 0 4px 16px rgba(0,0,0,.12);
   }
   .left-panel, .right-panel{
@@ -270,6 +297,7 @@ background-size: cover;
 @media(max-width:480px){
   .login-card{
     width:100vw;
+    margin-top:50px;
     border-radius:0;
     box-shadow:none;
   }
@@ -299,6 +327,54 @@ background-size: cover;
     right:8px;
   }
 }
+
+/* PWA Install Notification Animation */
+@keyframes slideDownNotif {
+  from {
+    transform: translateX(-50%) translateY(-100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+#pwa-install-notification:hover {
+  box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+}
+
+#pwa-install-btn:hover {
+  transform: scale(1.05);
+}
+
+#pwa-notif-close-btn:hover {
+  opacity: 1 !important;
+}
+
+/* PWA Navbar Link */
+.pwa-navbar-link:hover {
+  background:rgba(102, 126, 234, 0.1);
+  color:#764ba2 !important;
+}
+
+@media (max-width: 768px) {
+  .pwa-navbar-link {
+    font-size: 12px !important;
+    padding: 6px 8px !important;
+  }
+  
+  .pwa-navbar-link i {
+    margin-right: 4px !important;
+  }
+  
+  #pwa-install-notification {
+    top: 10px !important;
+    max-width: calc(100% - 20px) !important;
+  }
+}
+  }
+}
 </style>
     <script type="text/javascript" src="admin/assets/js/jquery/jquery.min.js"></script>     <script type="text/javascript" src="admin/assets/js/jquery-ui/jquery-ui.min.js "></script>     <script type="text/javascript" src="admin/assets/js/popper.js/popper.min.js"></script>     <script type="text/javascript" src="admin/assets/js/bootstrap/js/bootstrap.min.js "></script>
 <!-- waves js -->
@@ -307,11 +383,7 @@ background-size: cover;
 <script type="text/javascript" src="admin/assets/js/jquery-slimscroll/jquery.slimscroll.js "></script>
 <!-- modernizr js -->
     <script type="text/javascript" src="admin/assets/js/SmoothScroll.js"></script>     <script src="admin/assets/js/jquery.mCustomScrollbar.concat.min.js "></script>
-<!-- i18next.min.js -->
-<script type="text/javascript" src="bower_components/i18next/js/i18next.min.js"></script>
-<script type="text/javascript" src="bower_components/i18next-xhr-backend/js/i18nextXHRBackend.min.js"></script>
-<script type="text/javascript" src="bower_components/i18next-browser-languagedetector/js/i18nextBrowserLanguageDetector.min.js"></script>
-<script type="text/javascript" src="bower_components/jquery-i18next/js/jquery-i18next.min.js"></script>
+<!-- Common pages js -->
 <script type="text/javascript" src="admin/assets/js/common-pages.js"></script>
 
 <script>
@@ -331,29 +403,8 @@ function togglePassword() {
 }
 </script>
 
-<!-- PWA Service Worker Registration -->
-<!-- Floating PWA install button (hidden until browser `beforeinstallprompt`) -->
-<div id="pwa-install-prompt" style="display:none; position:fixed; bottom:18px; right:18px; z-index:99999;">
-  <button id="pwa-install-btn" class="btn btn-primary" style="display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px;">
-    <i class="ti-download"></i>
-    <span>Install App</span>
-  </button>
-</div>
-
+<!-- PWA Install via pwa-install.js -->
 <script src="assets/js/pwa-install.js"></script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(function(registration) {
-          console.log('Service Worker registered successfully:', registration);
-        })
-        .catch(function(error) {
-          console.log('Service Worker registration failed:', error);
-        });
-    });
-  }
-</script>
 
 </body>
 

@@ -1,0 +1,89 @@
+# Sikumbang PWA & Web Server Configuration
+
+# Enable GZIP compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Set correct MIME types
+<IfModule mod_mime.c>
+  AddType application/javascript js
+  AddType application/json json
+  AddType image/png png
+  AddEncoding gzip svg
+  AddType image/svg+xml svg
+</IfModule>
+
+# Cache Control Headers
+<IfModule mod_headers.c>
+  # Service Worker - never cache, always check for updates
+  <FilesMatch "service-worker\.js$">
+    Header set Cache-Control "max-age=0, must-revalidate, public"
+    Header set Content-Type "application/javascript"
+  </FilesMatch>
+  
+  # Manifest - check frequently for updates
+  <FilesMatch "manifest\.json$">
+    Header set Cache-Control "max-age=3600, must-revalidate"
+    Header set Content-Type "application/json"
+  </FilesMatch>
+  
+  # HTML files - network first
+  <FilesMatch "\.html?$">
+    Header set Cache-Control "max-age=0, must-revalidate, public"
+  </FilesMatch>
+  
+  # PHP files - no cache
+  <FilesMatch "\.php$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+  
+  # Static assets - cache aggressively
+  <FilesMatch "\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$">
+    Header set Cache-Control "max-age=31536000, public"
+  </FilesMatch>
+</IfModule>
+
+# Rewrite Rules for PWA
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /KP/
+  
+  # Don't rewrite existing files or directories
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  
+  # Rewrite all requests to index.php (for SPA support)
+  RewriteRule ^(?!service-worker\.js|manifest\.json|offline\.html|assets/|admin/|pegawai/|images/|uploads/|vendor/)(.*)$ index.php [QSA,L]
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+  # Prevent MIME type sniffing
+  Header set X-Content-Type-Options "nosniff"
+  
+  # Enable XSS protection
+  Header set X-XSS-Protection "1; mode=block"
+  
+  # Prevent clickjacking
+  Header set X-Frame-Options "SAMEORIGIN"
+  
+  # Allow mixed content for development (remove in production HTTPS)
+  # Header set Content-Security-Policy "upgrade-insecure-requests"
+</IfModule>
+
+# Enable Gzip for Service Worker
+<IfModule mod_deflate.c>
+  <FilesMatch "service-worker\.js$">
+    SetOutputFilter DEFLATE
+  </FilesMatch>
+</IfModule>
+
+# PHP settings
+<IfModule mod_php.c>
+  php_value upload_max_filesize 100M
+  php_value post_max_size 100M
+  php_value max_execution_time 300
+</IfModule>

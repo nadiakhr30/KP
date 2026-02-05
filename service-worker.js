@@ -1,15 +1,12 @@
 // Service Worker for Sistem Kehumasan PWA
-const CACHE_NAME = 'sistem-kehumasan-v1';
+const CACHE_NAME = 'sistem-kehumasan-v2';
 const urlsToCache = [
-  '/Sistem Kehumasan/KP/offline.html',
-  '/Sistem Kehumasan/KP/index.php',
-  '/Sistem Kehumasan/KP/admin/index.php',
-  '/Sistem Kehumasan/KP/admin/assets/css/style.css',
-  '/Sistem Kehumasan/KP/admin/assets/css/custom.css',
-  '/Sistem Kehumasan/KP/pegawai/index.php',
-  '/Sistem Kehumasan/KP/pegawai/assets/css/style.css',
-  '/Sistem Kehumasan/KP/pegawai/assets/css/custom.css',
-  '/Sistem Kehumasan/KP/images/sikumbang.ico'
+  './offline.html',
+  './index.php',
+  './admin/index.php',
+  './pegawai/index.php',
+  './assets/icons/icon-192x192.png',
+  './assets/icons/icon-512x512.png'
 ];
 
 // Install event - cache essential files
@@ -56,9 +53,7 @@ self.addEventListener('fetch', (event) => {
   const isNavigation = event.request.mode === 'navigate' ||
     requestUrl.pathname.endsWith('/index.php') ||
     requestUrl.pathname.includes('/admin/') ||
-    requestUrl.pathname.includes('/pegawai/') ||
-    requestUrl.pathname === '/Sistem Kehumasan/KP/' ||
-    requestUrl.pathname === '/Sistem Kehumasan/KP';
+    requestUrl.pathname.includes('/pegawai/');
 
   if (isNavigation) {
     event.respondWith(
@@ -77,10 +72,10 @@ self.addEventListener('fetch', (event) => {
           return caches.match(event.request)
             .then((cached) => cached || (
               requestUrl.pathname.includes('/pegawai/') ?
-                caches.match('/Sistem Kehumasan/KP/pegawai/index.php') :
-                caches.match('/Sistem Kehumasan/KP/admin/index.php')
+                caches.match('./pegawai/index.php') :
+                caches.match('./admin/index.php')
             ))
-            .then((resp) => resp || caches.match('/Sistem Kehumasan/KP/offline.html'));
+            .then((resp) => resp || caches.match('./offline.html'));
         })
     );
     return;
@@ -101,7 +96,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
           return networkResponse;
         })
-        .catch(() => caches.match('/Sistem Kehumasan/KP/offline.html'));
+        .catch(() => caches.match('./offline.html'));
     })
   );
 });

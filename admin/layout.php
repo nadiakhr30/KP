@@ -20,6 +20,44 @@ global $user;
     <meta name="apple-mobile-web-app-title" content="Sikumbang">
     <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
     <link rel="manifest" href="../manifest.json">
+    <!-- PWA Install Notification -->
+    <style>
+    @keyframes slideDownNotif {
+      from {
+        transform: translateX(-50%) translateY(-100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    #pwa-install-notification {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      z-index: 100000;
+      max-width: 400px;
+      width: 90%;
+      animation: slideDownNotif 0.4s ease-out;
+    }
+    
+    #pwa-install-notification:hover {
+      box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    }
+    
+    #pwa-install-btn:hover {
+      transform: scale(1.05);
+    }
+    </style>
     <!-- Pegawai Theme Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
@@ -58,6 +96,26 @@ global $user;
     <link rel="stylesheet" type="text/css" href="assets/pages/data-table/extensions/buttons/css/buttons.dataTables.min.css">
   </head>
   <body>
+  
+  <!-- PWA Install Notification/Toast -->
+  <div id="pwa-install-notification" style="display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; padding:16px 24px; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.2); z-index:100000; max-width:400px; width:90%; animation:slideDownNotif 0.4s ease-out;">
+    <div style="display:flex; align-items:center; gap:12px; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:12px; flex:1;">
+        <i class="ti-download" style="font-size:24px; flex-shrink:0;"></i>
+        <div>
+          <p style="margin:0; font-weight:600; font-size:14px;">Install Sikumbang</p>
+          <p style="margin:4px 0 0 0; font-size:12px; opacity:0.9;">Akses langsung dari beranda Anda</p>
+        </div>
+      </div>
+      <button id="pwa-install-btn" style="background:white; color:#667eea; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer; font-size:12px; white-space:nowrap; margin-left:12px;">
+        Install
+      </button>
+    </div>
+    <button id="pwa-notif-close-btn" style="position:absolute; top:8px; right:8px; background:none; border:none; color:white; font-size:20px; cursor:pointer; opacity:0.7; transition:opacity 0.2s;">
+      ✕
+    </button>
+  </div>
+  
   <div class="theme-loader">
       <div class="loader-track">
           <div class="preloader-wrapper">
@@ -141,13 +199,12 @@ global $user;
                           </li>
                       </ul>
                       <ul class="nav-right">
-                          <!-- PWA Install Button -->
-                              <li style="display:none;" id="pwa-install-prompt">
-                                  <a href="javascript:void(0)" class="waves-effect waves-light" id="pwa-install-btn" style="padding: 8px 12px; border-radius: 4px; color: white; font-size: 12px; display: flex; align-items: center; gap: 6px;">
-                                      <i class="ti-download"></i>
-                                      <span>Install App</span>
-                                  </a>
-                              </li>
+                          <!-- PWA Install Button (di navbar untuk quick access) -->
+                          <li class="header-notification">
+                              <a href="javascript:void(0)" id="pwa-navbar-install-btn" class="waves-effect waves-light" style="display:none; padding:8px 12px; border-radius:4px; color:#667eea; font-size:14px; font-weight:600; transition:all 0.3s ease;" title="Install App">
+                                  <i class="ti-download" style="font-size:16px;"></i>
+                              </a>
+                          </li>
                           <li class="header-notification">
                               <?php
                               // Prepare notifications for bell icon: current user as PIC and jadwal.status != 2
@@ -583,13 +640,6 @@ global $user;
     <script src="bower_components/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
     <script src="bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
     <script src="assets/pages/data-table/js/data-table-custom.js"></script>
-    <script src="assets/pages/data-table/js/vfs_fonts.js"></script>
-    <script src="assets/pages/data-table/extensions/buttons/js/dataTables.buttons.min.js"></script>
-    <script src="assets/pages/data-table/extensions/buttons/js/buttons.flash.min.js"></script>
-    <script src="assets/pages/data-table/extensions/buttons/js/jszip.min.js"></script>
-    <script src="assets/pages/data-table/extensions/buttons/js/vfs_fonts.js"></script>
-    <script src="assets/pages/data-table/extensions/buttons/js/buttons.colVis.min.js"></script>
-    <script src="../files/assets/pages/data-table/extensions/buttons/js/extension-btns-custom.js"></script>
     <?= $script; ?>
     <script>
       // Toggle navbar-container on mobile/tablet
@@ -765,7 +815,7 @@ global $user;
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('../service-worker.js')
+          navigator.serviceWorker.register('./service-worker.js', { scope: './' })
             .then(function(registration) {
               console.log('Service Worker registered successfully:', registration);
             })
