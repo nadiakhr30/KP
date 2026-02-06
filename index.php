@@ -82,7 +82,7 @@ background-size: cover;
     <!-- NAVBAR TOP (hidden, kept for compatibility) -->
     <div style="position:absolute; top:0; left:0; right:0; padding:12px 20px; background:rgba(255,255,255,0.95); border-bottom:1px solid #eee; display:flex; justify-content:flex-end; align-items:center; gap:10px;">
       <a href="javascript:void(0)" id="pwa-navbar-install-btn" class="pwa-navbar-link" style="display:none; color:#667eea; font-weight:600; text-decoration:none; padding:8px 12px; border-radius:6px; transition:all 0.3s ease; font-size:14px;" title="Install App">
-        <i class="ti-download" style="margin-right:6px;"></i>Install App
+        <i class="ti-download" style="margin-right:10px;"></i>Install
       </a>
     </div>
 
@@ -116,19 +116,14 @@ background-size: cover;
           <?php foreach($errors as $e) echo $e . "<br>"; ?>
         </div>
         <?php endif; ?>
-
         <button type="submit" class="btn-login">Login</button>
-
         <p class="signup-text">
           Belum Punya akun? Hubungi Admin.</a>
         </p>
-
       </form>
     </div>
-
   </div>
 </section>
-
 <style>
 *{
   box-sizing:border-box;
@@ -138,6 +133,8 @@ background-size: cover;
 .login-wrapper{
   width:100vw;
   height:100vh;
+  padding-left: 15px;
+  padding-right: 15px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -296,9 +293,9 @@ background-size: cover;
 
 @media(max-width:480px){
   .login-card{
-    width:100vw;
+    width: 80vw;
     margin-top:50px;
-    border-radius:0;
+    border-radius: 15px;
     box-shadow:none;
   }
   .left-panel, .right-panel{
