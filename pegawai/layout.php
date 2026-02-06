@@ -2052,7 +2052,7 @@ global $pegawai;
                         // === MANUAL ITEMS: RUANG HUMAS ===
                         if ($catName === 'Ruang Humas') {
                              // Tambahkan item manual jika diperlukan
-                             echo '<li><a href="index.php#aset">Aset Humas (Manual)</a></li>';
+                             echo '<li><a href="index.php#aset">Aset Humas</a></li>';
                         }
 
                         echo '</ul>';
