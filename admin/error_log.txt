@@ -1,0 +1,92 @@
+[06-Feb-2026 14:19:34 Asia/Jakarta] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\laragon\www\KP\admin\aset.php on line 207
+[06-Feb-2026 14:20:29 Asia/Jakarta] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\laragon\www\KP\admin\aset.php on line 207
+[06-Feb-2026 07:28:16 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:18 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:19 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:19 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:20 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:20 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:20 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:20 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:21 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:21 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:21 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:21 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:21 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:22 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\konten.php(4): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7
+[06-Feb-2026 07:28:26 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES) in C:\laragon\www\KP\koneksi.php:7
+Stack trace:
+#0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '123', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\admin\index.php(8): include_once('C:\\laragon\\www\\...')
+#2 {main}
+  thrown in C:\laragon\www\KP\koneksi.php on line 7

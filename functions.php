@@ -1,4 +1,9 @@
 <?php
+// Include Global Error Handler First!
+if (file_exists(__DIR__ . '/config/errorhandler.php')) {
+    include_once(__DIR__ . '/config/errorhandler.php');
+}
+
 include("koneksi.php");
 
 function checkLogin($data, &$errors)

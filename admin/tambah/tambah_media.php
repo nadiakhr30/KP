@@ -68,13 +68,20 @@ if ($id_sub_jenis > 0) {
                         " . $id_sub_jenis . "
                       )";
 
-            if (mysqli_query($koneksi, $query)) {
-                $success = 'Media berhasil ditambahkan';
-                // Redirect to appropriate page
-                header("Refresh: 1; url=$redirectUrl");
-                exit();
-            } else {
-                $error = "Gagal menambahkan media: " . mysqli_error($koneksi);
+            try {
+                if (mysqli_query($koneksi, $query)) {
+                    $success = 'Media berhasil ditambahkan';
+                    // Redirect to appropriate page
+                    header("Refresh: 1; url=$redirectUrl");
+                    exit();
+                } else {
+                    throw new Exception(mysqli_error($koneksi));
+                }
+            } catch (Exception $e) {
+                // Log the error
+                error_log("Error adding media: " . $e->getMessage());
+                // Show generic error to user
+                $error = "Terjadi kesalahan internal. Silakan coba lagi nanti.";
             }
         }
     }
