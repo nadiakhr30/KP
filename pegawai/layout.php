@@ -1,151 +1,3 @@
-  <style>
-        /* Full-width hero/content for mobile */
-        @media (max-width: 768px) {
-          .hero, .container-xl, .container, .row, .footer-top {
-            width: 100vw !important;
-            min-width: 100vw !important;
-            max-width: 100vw !important;
-            margin: 0 !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-            box-sizing: border-box !important;
-          }
-          body, html {
-            overflow-x: hidden !important;
-          }
-        }
-    #navbarNotif {
-      position: relative;
-      font-size: 20px;
-      color: #ffffff;
-      cursor: pointer;
-      vertical-align: middle;
-    }
-    /* removed stray closing brace */
-    #navbarNotif .notif-badge {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: #e84118;
-      color: #ffc400;
-      border-radius: 50%;
-      font-size: 12px;
-      padding: 2px 6px;
-      font-weight: bold;
-      z-index: 10001;
-    }
-    #navbarNotif .dropdown-menu {
-      z-index: 10001;
-      background-color: #ffc400;
-    }
-    #navbarNotif .dropdown-header {
-      background-color: #ffc400;
-      color: #ffffff;
-      font-weight: bold;
-      font-family: 'Poppins', sans-serif;
-    }
-    #navbarNotif .dropdown-item {
-      color: #ffffff;
-      background-color: #ffc400;
-      font-family: 'Poppins', sans-serif;
-    }
-    #navbarNotif .dropdown-item:hover {
-      background-color: #e6b300;
-      color: #ffffff;
-    }
-
-    /* Responsive Navbar & Dropdown */
-    @media (max-width: 768px) {
-      html, body {
-        overflow-x: hidden !important;
-      }
-      .header {
-        padding: 10px 0;
-      }
-      .navmenu {
-        width: 100vw;
-        left: 0;
-        margin: 0;
-        padding: 0;
-      }
-      .navmenu ul {
-        flex-direction: column;
-        background: #fff;
-        position: absolute;
-        top: 60px;
-        left: 0;
-        width: 100vw;
-        min-width: 100vw;
-        max-width: 100vw;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-        z-index: 9999;
-        overflow-x: hidden;
-      }
-      .navmenu ul li {
-        width: 100vw;
-        text-align: left;
-        margin: 0;
-        padding: 0;
-      }
-      .navmenu ul li a {
-        display: block;
-        width: 100vw;
-        box-sizing: border-box;
-        padding: 16px 18px;
-        font-size: 17px;
-        border-bottom: 1px solid #eee;
-        margin: 0;
-      }
-      #navbarNotif {
-        font-size: 26px;
-        margin-right: 8px;
-      }
-      #navbarNotif .notif-badge {
-        font-size: 14px;
-        top: -10px;
-        right: -10px;
-      }
-      #notifDropdown {
-        min-width: 90vw;
-        left: 5vw;
-        right: auto;
-        top: 40px;
-        font-size: 15px;
-      }
-      .dropdown-menu {
-        font-size: 15px;
-      }
-      .avatar-img, .avatar-icon {
-        width: 38px;
-        height: 38px;
-        font-size: 32px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .header {
-        padding: 6px 0;
-      }
-      .navmenu ul li a {
-        padding: 14px 16px;
-        font-size: 16px;
-      }
-      #navbarNotif {
-        font-size: 24px;
-      }
-      #notifDropdown {
-        min-width: 98vw;
-        left: 1vw;
-        top: 38px;
-        font-size: 14px;
-      }
-      .avatar-img, .avatar-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 26px;
-      }
-    }
-  </style>
 <?php
 function renderLayout($content, $script) {
 
@@ -156,18 +8,15 @@ global $pegawai;
 <html lang="en">
 
 <head>
-  <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dashboard Pegawai - Sistem Kehumasan</title>
-  <meta name="description" content="Sistem Manajemen Kehumasan dan Konten Media Sosial">
-  <meta name="theme-color" content="#2196F3">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Kehumasan">
+  <title>Dashboard Pegawai</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
 
-  
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -438,9 +287,8 @@ global $pegawai;
         font-family: 'Poppins', sans-serif;
         background: #fff;
         border-radius: 20px;
-        padding: 48px 30px;
-        min-height: 360px;
-        height: auto;
+        padding: 40px 30px;
+        height: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -448,15 +296,6 @@ global $pegawai;
         border: 1.5px solid rgba(102, 126, 234, 0.1);
         transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      }
-
-      /* Dokumentasi card tweaks */
-      .dokumentasi-card { min-height: 440px; }
-      .dokumentasi-card .overlay-list {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 8px;
-        max-height: 320px;
-        overflow-y: auto;
       }
 
       .humas-card::before {
@@ -772,9 +611,8 @@ global $pegawai;
       inset: 0;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       display: flex;
-      flex-direction: column;
       align-items: stretch;
-      justify-content: flex-end;
+      justify-content: stretch;
       opacity: 0;
       transform: scale(0.85) rotateY(15deg);
       transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
@@ -786,13 +624,13 @@ global $pegawai;
       transform: scale(1) rotateY(0deg);
     }
 
-    /* OVERLAY MENU (STACKED VERTICALLY AT BOTTOM) */
+    /* OVERLAY MENU (FULL HEIGHT BUTTON) */
     .overlay-menu {
       display: flex;
       width: 100%;
-      flex-direction: column;
+      height: 100%;
+      flex-direction: row;
       gap: 0;
-      overflow: hidden; /* prevent hover translations from causing horizontal overflow */
     }
 
     .overlay-menu a {
@@ -805,12 +643,11 @@ global $pegawai;
       color: #fff;
       font-weight: 700;
       font-size: 1rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
       transition: all 0.3s ease;
       font-family: 'Poppins', sans-serif;
       position: relative;
       overflow: hidden;
-      min-height: 50px;
     }
 
     .overlay-menu a::after {
@@ -824,30 +661,305 @@ global $pegawai;
     }
 
     .overlay-menu a:last-child {
-      border-bottom: none;
+      border-right: none;
     }
 
     .overlay-menu a:hover {
       background: rgba(255, 255, 255, 0.2);
-      transform: none; /* disable translation to avoid creating horizontal space */
+      transform: translateX(8px);
     }
 
     .overlay-menu a:hover::after {
       opacity: 1;
     }
 
-    /* ICON DI BUTTON - dinonaktifkan agar bisa menggunakan ikon kustom di dalam link */
+    /* ICON DI BUTTON */
     .overlay-menu a::before {
-      content: none; /* nonaktifkan pseudo-elemen ikon default */
+      content: "\F392"; /* bi-folder-fill */
+      font-family: "Bootstrap-icons";
+      font-size: 1.3rem;
+      transition: all 0.3s ease;
     }
 
     .overlay-menu a:hover::before {
-      transform: none;
+      transform: scale(1.2);
     }
       
     }
 
-     
+      /* ===== MODERN FOOTER STYLE ===== */
+      #footer {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #172554 100%) !important;
+        background-color: #0f172a !important;
+        color: #fff !important;
+        position: relative;
+        overflow: hidden;
+        padding: 60px 0 0;
+      }
+
+      .footer {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #172554 100%) !important;
+        background-color: #0f172a !important;
+      }
+
+      #footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        pointer-events: none;
+      }
+
+      #footer::after {
+        content: '';
+        position: absolute;
+        bottom: -10%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: float-footer 10s ease-in-out infinite;
+        pointer-events: none;
+      }
+
+      @keyframes float-footer {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(40px, 40px); }
+      }
+
+      #footer .container {
+        position: relative;
+        z-index: 2;
+      }
+
+      #footer .footer-top {
+        padding-bottom: 40px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      #footer .row {
+        gap: 30px;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      @media (min-width: 992px) {
+        #footer .row {
+          flex-wrap: nowrap;
+        }
+      }
+
+      /* Footer About */
+      #footer .footer-about {
+        padding-right: 30px;
+      }
+
+      #footer .sitename {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 1.3rem;
+        letter-spacing: -0.5px;
+        color: #fff;
+      }
+
+      #footer .footer-contact {
+        font-family: 'Poppins', sans-serif;
+      }
+
+      #footer .footer-contact p {
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      #footer .footer-contact strong {
+        color: #667eea;
+        font-weight: 700;
+      }
+
+      #footer .footer-contact span {
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
+      }
+
+      /* Footer Links */
+      #footer .footer-links h4 {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 25px;
+        letter-spacing: -0.3px;
+        position: relative;
+        padding-bottom: 12px;
+        color: #fff;
+      }
+
+      #footer .footer-links h4::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+        transition: width 0.3s ease;
+      }
+
+      #footer .footer-links h4:hover::after {
+        width: 60px;
+      }
+
+      #footer .footer-links ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      #footer .footer-links ul li {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.3s ease;
+      }
+
+      #footer .footer-links ul li:hover {
+        transform: translateX(6px);
+      }
+
+      #footer .footer-links ul li i {
+        color: #667eea;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+      }
+
+      #footer .footer-links ul li:hover i {
+        color: #764ba2;
+        transform: scaleX(1.2);
+      }
+
+      #footer .footer-links ul li a {
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      #footer .footer-links ul li a::before {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        transition: width 0.3s ease;
+      }
+
+      #footer .footer-links ul li a:hover {
+        color: #fff;
+      }
+
+      #footer .footer-links ul li a:hover::before {
+        width: 100%;
+      }
+
+      /* Follow Us Section */
+      #footer > .container .col-lg-4:nth-child(4) h4 {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 18px;
+        letter-spacing: -0.3px;
+        color: #fff;
+      }
+
+      #footer > .container .col-lg-4:nth-child(4) p {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 20px;
+      }
+
+      /* Social Links */
+      #footer .social-links {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      #footer .social-links a {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(102, 126, 234, 0.12);
+        color: #667eea;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+        border: 1.5px solid rgba(102, 126, 234, 0.25);
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      #footer .social-links a:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        transform: translateY(-8px) scale(1.1);
+        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
+        border-color: transparent;
+      }
+
+      /* Copyright */
+      #footer .copyright {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #172554 100%) !important;
+        text-align: center;
+        padding-top: 30px !important;
+        padding-bottom: 40px !important;
+        position: relative;
+        z-index: 2;
+      }
+
+      #footer .copyright p {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin: 0;
+        font-weight: 500;
+      }
+
+      #footer .copyright span {
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      #footer .credits {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 10px;
+        font-weight: 500;
+      }
+
+      #footer .credits strong {
+        color: #667eea;
+        transition: all 0.3s ease;
+      }
+
+      #footer .credits:hover strong {
+        color: #764ba2;
+      }
 
       /* ===== PENGEMBANGAN SECTION ===== */
       .pengembangan-highlight {
@@ -857,108 +969,45 @@ global $pegawai;
 
       .pengembangan-card {
         position: relative;
+        height: 340px;
         border-radius: 24px;
-        background: #ffffff; /* solid white background */
-        box-shadow: 0 12px 40px rgba(8,20,60,0.05);
+        background: linear-gradient(135deg, #ffffff 0%, #f5f7ff 100%);
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.15);
         overflow: hidden;
-        transition: all 0.45s cubic-bezier(0.23, 1, 0.320, 1);
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        justify-content: space-between;
-        padding: 0;
-        border: 1px solid rgba(0,0,0,0.03);
-        text-align: center;
-        gap: 0;
-        min-height: 340px; /* keep the original length */
-      }
-
-      /* Header (big gradient block) */
-      .card-header-main {
-        background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
-        color: #fff;
-        padding: 42px 28px 28px;
-        border-top-left-radius: 24px;
-        border-top-right-radius: 24px;
-        position: relative;
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 12px;
+        padding: 48px 36px;
+        border: 1.5px solid rgba(102, 126, 234, 0.12);
+        text-align: center;
+        gap: 16px;
       }
 
-      .icon-wrap{ position: relative; }
-      .icon-circle{
-        width: 92px;
-        height: 92px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.12);
-        display:flex;align-items:center;justify-content:center;
-        box-shadow: 0 18px 40px rgba(79,70,229,0.12);
-        font-size: 36px;
-        transition: transform 0.36s cubic-bezier(0.2,0.9,0.3,1), box-shadow 0.36s ease, opacity 0.36s ease;
-        will-change: transform, box-shadow, opacity;
-      }
-
-      .card-header-main h3{ margin:0; font-size:1.35rem; font-weight:800; color:#fff; }
-      .card-header-main p{ margin:0; font-size:0.98rem; color: rgba(255,255,255,0.92); max-width:760px }
-
-      /* Small slider dots centered */
-      .card-dots{ padding: 18px 0; display:flex; align-items:center; justify-content:center; gap:10px; background: linear-gradient(180deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0) 100%);} 
-      .card-dots span{ width:10px; height:10px; border-radius:50%; background: rgba(255,255,255,0.7); opacity:0.55; box-shadow: 0 4px 10px rgba(10,20,60,0.04); }
-      .card-dots span:nth-child(2){ width:12px; height:12px; background:#4f46e5; box-shadow: 0 6px 16px rgba(79,70,229,0.18); opacity:1 }
-
-      /* Footer CTA */
-      .card-footer-cta{ display:flex; align-items:center; justify-content:space-between; padding:18px 22px; background:#fff; border-bottom-left-radius:24px; border-bottom-right-radius:24px; }
-      .card-footer-cta .btn-explore{ color:#4f46e5; font-weight:700; text-decoration:none; }
-      .cta-circle{ width:44px; height:44px; border-radius:50%; background: linear-gradient(135deg,#4f46e5 0%, #06b6d4 100%); display:flex; align-items:center; justify-content:center; color:#fff; box-shadow: 0 10px 30px rgba(79,70,229,0.12); text-decoration:none; transition: transform 0.32s cubic-bezier(0.2,0.9,0.3,1), box-shadow 0.32s ease; will-change: transform, box-shadow; }
-
-      .pengembangan-card:hover{ transform: translateY(-14px) scale(1.02); box-shadow: 0 40px 140px rgba(79,70,229,0.18), 0 8px 30px rgba(6,182,212,0.06); }
-
-      .pengembangan-card::after {
+      .pengembangan-card::before {
         content: '';
         position: absolute;
-        inset: 0;
-        border-radius: 24px;
-        pointer-events: none;
-        box-shadow: 0 0 0 rgba(79,70,229,0);
-        opacity: 0;
-        transition: box-shadow 0.45s ease, opacity 0.45s ease, transform 0.45s ease;
-        z-index: 2;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f5576c 100%);
+        z-index: 5;
       }
 
-      .pengembangan-card:hover::after {
-        box-shadow: 0 30px 80px rgba(79,70,229,0.08), 0 0 60px rgba(6,182,212,0.04);
-        opacity: 1;
-        transform: translateY(-6px);
+      .pengembangan-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.25);
+        border-color: rgba(102, 126, 234, 0.2);
       }
 
-      /* Icon & CTA hover emphasis */
-      .pengembangan-card:hover .icon-circle {
-        transform: translateY(-6px) scale(1.12);
-        box-shadow: 0 28px 80px rgba(79,70,229,0.2);
-      }
-
-      .pengembangan-card:hover .cta-circle {
-        transform: translateX(6px) scale(1.06);
-        box-shadow: 0 16px 40px rgba(79,70,229,0.16);
-      }
-
-      @media (max-width: 768px){
-        .card-header-main{ padding:28px 18px 22px }
-        .icon-circle{ width:70px; height:70px; font-size:28px }
-        .card-header-main h3{ font-size:1.15rem }
-        .card-dots{ padding:12px 0 }
-        .card-footer-cta{ padding:14px 16px }
-      }
       .pengembangan-item::before {
         content: '';
         position: absolute;
         width: 40px;
         height: 40px;
-        background: radial-gradient(circle at 30% 30%, rgba(79, 70, 229, 0.18), rgba(79, 70, 229, 0.05));
+        background: radial-gradient(circle at 30% 30%, rgba(102, 126, 234, 0.2), rgba(102, 126, 234, 0.05));
         border-radius: 50%;
         top: 10%;
         left: 10%;
@@ -972,7 +1021,7 @@ global $pegawai;
         position: absolute;
         width: 25px;
         height: 25px;
-        background: radial-gradient(circle at 30% 30%, rgba(6, 182, 212, 0.12), rgba(6, 182, 212, 0.03));
+        background: radial-gradient(circle at 30% 30%, rgba(245, 87, 108, 0.15), rgba(245, 87, 108, 0.03));
         border-radius: 50%;
         bottom: 15%;
         right: 12%;
@@ -1001,74 +1050,83 @@ global $pegawai;
       }
 
       .pengembangan-card .card-icon {
-        width: 132px;
-        height: 132px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 56px;
-        background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+        font-size: 48px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f5576c 100%);
         color: #fff;
         margin: 0;
         transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
-        box-shadow: 0 32px 80px rgba(79, 70, 229, 0.12), 0 6px 18px rgba(79,70,229,0.06);
+        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.35);
         position: relative;
         z-index: 3;
-        transform: translateY(-10px);
       }
 
       .pengembangan-card:hover .card-icon {
-        transform: translateY(-12px) scale(1.06) rotate(-6deg);
-        box-shadow: 0 38px 120px rgba(79, 70, 229, 0.14);
+        transform: scale(1.15) rotate(-8deg);
+        box-shadow: 0 16px 48px rgba(102, 126, 234, 0.45);
       }
 
       .pengembangan-card h3 {
         margin: 0;
-        font-size: 1.4rem;
-        font-weight: 800;
-        color: #ffffff; /* white title */
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1a2332;
         letter-spacing: -0.3px;
         transition: all 0.3s ease;
-        line-height: 1.3;
+        line-height: 1.4;
         position: relative;
         z-index: 3;
-        margin-top: 6px;
       }
 
-
+      .pengembangan-card:hover h3 {
+        color: #667eea;
+      }
 
       .pengembangan-card p {
         margin: 0;
-        font-size: 1rem;
-        color: rgba(255, 255, 255, 0.95); /* white description */
+        font-size: 0.95rem;
+        color: rgba(26, 35, 50, 0.65);
         font-family: 'Poppins', sans-serif;
         transition: all 0.3s ease;
         position: relative;
         z-index: 3;
-        line-height: 1.7;
-        max-width: 820px;
+        line-height: 1.6;
       }
 
+      .pengembangan-card:hover p {
+        color: rgba(102, 126, 234, 0.85);
+      }
 
-
-      /* CTA link centered and subtle like sample */
       .pengembangan-card .btn-explore {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
-        color: #4f46e5;
+        gap: 8px;
+        color: #667eea;
         text-decoration: none;
-        font-weight: 700;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        margin-top: 18px;
-        padding: 0;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+        margin-top: auto;
+        padding: 10px 20px;
       }
 
-      .pengembangan-card .btn-explore i { transition: transform 0.3s ease; }
-      .pengembangan-card .btn-explore:hover { transform: translateX(6px); opacity: 0.95; color: inherit; }
+      .pengembangan-card .btn-explore:hover {
+        color: #764ba2;
+        gap: 12px;
+      }
 
+      .pengembangan-card .btn-explore i {
+        transition: transform 0.3s ease;
+      }
+
+      .pengembangan-card .btn-explore:hover i {
+        transform: translateX(4px);
+      }
 
       .pengembangan-grid {
         display: grid;
@@ -1123,12 +1181,6 @@ global $pegawai;
         display: none !important;
       }
 
-      /* Footer Styling */
-      #footer {
-        background-color: #37517e;
-        color: #ffffff;
-      }
-
       /* Responsive */
       @media (max-width: 768px) {
         #footer {
@@ -1145,45 +1197,36 @@ global $pegawai;
 
         #footer .footer-about {
           padding-right: 0;
-          color: #fff;
         }
 
         #footer .sitename {
           font-size: 1.2rem;
-          color: #fff;
         }
 
         #footer .footer-contact p {
           font-size: 0.9rem;
-          color: #fff;
         }
 
         #footer .footer-links h4 {
           font-size: 1rem;
           margin-bottom: 20px;
-          color: #fff;
-
         }
 
         #footer .footer-links ul li {
           margin-bottom: 12px;
-          color: #fff;
         }
 
         #footer > .container .col-lg-4:nth-child(4) p {
           font-size: 0.9rem;
           margin-bottom: 20px;
-          color: #fff;
         }
 
         #footer .social-links {
           justify-content: flex-start;
-          color: #fff;
         }
 
         #footer .copyright p {
           font-size: 0.85rem;
-          color: #fff;
         }
       }
 
@@ -1338,35 +1381,6 @@ global $pegawai;
     }
 
     .navmenu a.active::before {
-      width: 100%;
-    }
-
-    /* ===== FOOTER LINKS STYLING (SIMILAR TO NAVBAR) ===== */
-    #footer .footer-links ul li a {
-      position: relative;
-      text-decoration: none;
-      color: #ffffff;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-
-    #footer .footer-links ul li a::before {
-      content: '';
-      position: absolute;
-      bottom: -3px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-      transition: width 0.3s ease;
-      border-radius: 2px;
-    }
-
-    #footer .footer-links ul li a:hover {
-      color: #ffffff;
-    }
-
-    #footer .footer-links ul li a:hover::before {
       width: 100%;
     }
 
@@ -1720,10 +1734,8 @@ global $pegawai;
       padding: 28px 40px;
       background: white;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 16px;
+      justify-content: space-between;
       cursor: pointer;
       position: relative;
       z-index: 2;
@@ -1889,22 +1901,14 @@ global $pegawai;
           <li><a href="#beranda" class="active">Beranda</a></li>
           <li><a href="#Humas">Humas</a></li>
           <li><a href="#services">Manajemen</a></li>
-          <li><a href="#dokumentasi">Dokumentasi</a></li>
+          <li><a href="#portfolio">Dokumentasi</a></li>
+          <li><a href="#team">Pengembangan</a></li>
           <li><a href="#sumberdaya">Sumber Daya</a></li>
           <li><a href="#broadcast">Broadcast</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-        <!-- Bell Notifikasi Jadwal Deadline 1-2 Hari -->
-        <span id="navbarNotif" style="display:none;position:relative;margin-right:18px;">
-          <i class="bi bi-bell-fill"></i>
-          <span class="notif-badge" id="notifCount">1</span>
-          <div id="notifDropdown" class="dropdown-menu dropdown-menu-end" style="min-width:260px;max-width:320px;display:none;position:absolute;top:32px;right:0;z-index:9999;">
-            <h6 class="dropdown-header">Jadwal Deadline Mendekat</h6>
-            <div id="notifList"></div>
-          </div>
-        </span>
         <div class="ms-3">
         <div class="dropdown">
           <a class="d-flex align-items-center text-decoration-none dropdown-toggle"
@@ -1975,7 +1979,7 @@ global $pegawai;
     <div class="container footer-top">
       <div class="row gy-4">
         <div class="col-lg-4 col-md-6 footer-about">
-          <a href="#" class="d-flex align-items-center" style="display: flex; text-decoration: none; color: #ffffff;">
+          <a href="index.html" class="d-flex align-items-center">
             <span class="sitename">Humas BPS Bangkalan</span>
           </a>
           <div class="footer-contact pt-3">
@@ -1989,28 +1993,34 @@ global $pegawai;
         <div class="col-lg-2 col-md-3 footer-links">
           <h4>Quick Links</h4>
           <ul>
-            <li><i class="bi bi-chevron-right"></i> <a href="#beranda" style="color: #ffffff; text-decoration: none;">Beranda</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#Humas" style="color: #ffffff; text-decoration: none;">Ruang Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Dokumentasi</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#sumberdaya" style="color: #ffffff; text-decoration: none;">Sumber Daya</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#broadcast" style="color: #ffffff; text-decoration: none;">Broadcast</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Beranda</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Ruang Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Dokumentasi</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Sumber Daya</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Broadcast</a></li>
           </ul>
         </div>
 
         <div class="col-lg-2 col-md-3 footer-links">
           <h4>Layanan Informasi</h4>
           <ul>
-            <li><i class="bi bi-chevron-right"></i> <a href="#kalender-jadwal" style="color: #ffffff; text-decoration: none;">Jadwal Konten Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Galeri Foto</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Galeri Video</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Laporan Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#sumberdaya" style="color: #ffffff; text-decoration: none;">Pedoman Visual Medsos</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Jadwal Konten Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Galeri Foto</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Galeri Video</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Laporan Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Pedoman Visual Medsos</a></li>
           </ul>
         </div>
 
-        <div class="col-lg-4 col-md-12" style="text-align: center;">
-          <img src="../images/sikumbang.png" alt="Sikumbang" class="img-fluid" style="max-width: 180px; width: 100%;">
-          <h4 class="mt-3" style="color: #ffffff;">SIKUMBANG</h4>
+        <div class="col-lg-4 col-md-12">
+          <h4>Follow Us</h4>
+          <p>Ikuti kami untuk informasi dan publikasi terbaru dari<br><span>BPS Bangkalan.</span></p>
+          <div class="social-links d-flex">
+            <a href=""><i class="bi bi-twitter-x"></i></a>
+            <a href=""><i class="bi bi-facebook"></i></a>
+            <a href=""><i class="bi bi-instagram"></i></a>
+            <a href=""><i class="bi bi-linkedin"></i></a>
+          </div>
         </div>
 
       </div>
@@ -2045,21 +2055,6 @@ global $pegawai;
 
   <?= $script ?>
   
-  <!-- PWA Service Worker Registration -->
-  <script src="../assets/js/pwa-install.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('../service-worker.js')
-          .then(function(registration) {
-            console.log('Service Worker registered successfully:', registration);
-          })
-          .catch(function(error) {
-            console.log('Service Worker registration failed:', error);
-          });
-      });
-    }
-  </script>
    
 </body>
 
