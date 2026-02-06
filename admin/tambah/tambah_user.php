@@ -44,12 +44,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_FILES["excelFile"]) && !iss
     } else if (!empty($nomor_telepon) && !is_numeric($nomor_telepon)) {
         $error = "Nomor telepon harus berupa angka!";
     } else {
-        // Check if email already exists
-        $check_email_query = "SELECT email FROM pegawai WHERE email = '" . mysqli_real_escape_string($koneksi, $email) . "'";
-        $check_email_result = mysqli_query($koneksi, $check_email_query);
-        
-        if (mysqli_num_rows($check_email_result) > 0) {
-            $error = "Email sudah ada.";
+        // Check if NIP or email already exists
+        $check_query = "SELECT nip, email FROM pegawai WHERE email = '" . mysqli_real_escape_string($koneksi, $email) . "' OR nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'";
+        $check_result = mysqli_query($koneksi, $check_query);
+
+        if ($check_result && mysqli_num_rows($check_result) > 0) {
+            $exists_nip = false;
+            $exists_email = false;
+            while ($row_check = mysqli_fetch_assoc($check_result)) {
+                if (!empty($row_check['nip']) && $row_check['nip'] == $nip) $exists_nip = true;
+                if (!empty($row_check['email']) && $row_check['email'] == $email) $exists_email = true;
+            }
+            if ($exists_nip && $exists_email) {
+                $error = "NIP dan Email sudah terdaftar.";
+            } else if ($exists_nip) {
+                $error = "NIP sudah terdaftar.";
+            } else {
+                $error = "Email sudah terdaftar.";
+            }
         } else {
             // Hash password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -173,9 +185,17 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
                 continue;
             }
             
+            // Check if NIP already exists
+            $checkNip = mysqli_query($koneksi, "SELECT nip FROM pegawai WHERE nip = '" . mysqli_real_escape_string($koneksi, $user['nip']) . "'");
+            if ($checkNip && mysqli_num_rows($checkNip) > 0) {
+                $errorCount++;
+                $errors[] = "Baris " . ($index + 2) . ": NIP sudah terdaftar!";
+                continue;
+            }
+
             // Check if email already exists
             $checkEmail = mysqli_query($koneksi, "SELECT email FROM pegawai WHERE email = '" . mysqli_real_escape_string($koneksi, $user['email']) . "'");
-            if (mysqli_num_rows($checkEmail) > 0) {
+            if ($checkEmail && mysqli_num_rows($checkEmail) > 0) {
                 $errorCount++;
                 $errors[] = "Baris " . ($index + 2) . ": Email sudah terdaftar!";
                 continue;

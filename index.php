@@ -82,7 +82,7 @@ background-size: cover;
     <!-- NAVBAR TOP (hidden, kept for compatibility) -->
     <div style="position:absolute; top:0; left:0; right:0; padding:12px 20px; background:rgba(255,255,255,0.95); border-bottom:1px solid #eee; display:flex; justify-content:flex-end; align-items:center; gap:10px;">
       <a href="javascript:void(0)" id="pwa-navbar-install-btn" class="pwa-navbar-link" style="display:none; color:#667eea; font-weight:600; text-decoration:none; padding:8px 12px; border-radius:6px; transition:all 0.3s ease; font-size:14px;" title="Install App">
-        <i class="ti-download" style="margin-right:6px;"></i>Install App
+        <i class="ti-download" style="margin-right:10px;"></i>Install
       </a>
     </div>
 
