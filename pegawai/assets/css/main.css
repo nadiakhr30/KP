@@ -921,6 +921,7 @@ section.light-background,
   margin-left: 25px;
   color: var(--default-color);
   font-weight: 600;
+  text-decoration: none;
 }
 
 .hero .btn-watch-video i {
@@ -933,6 +934,7 @@ section.light-background,
 
 .hero .btn-watch-video:hover {
   color: var(--accent-color);
+  text-decoration: none;
 }
 
 .hero .btn-watch-video:hover i {

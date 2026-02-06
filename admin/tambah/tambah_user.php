@@ -62,6 +62,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_FILES["excelFile"]) && !iss
                 $hp_ok = true;
                 foreach ($halo_pst as $id_halo_pst) {
                     $id_halo_pst = (int)$id_halo_pst;
+                    
+                    // Validate that id_halo_pst exists in halo_pst table
+                    $check_halo_pst = mysqli_query($koneksi, "SELECT id_halo_pst FROM halo_pst WHERE id_halo_pst = " . $id_halo_pst);
+                    if (mysqli_num_rows($check_halo_pst) == 0) {
+                        $error = "ID Halo PST " . $id_halo_pst . " tidak ditemukan di database!";
+                        $hp_ok = false;
+                        mysqli_query($koneksi, "DELETE FROM pegawai WHERE nip = '" . mysqli_real_escape_string($koneksi, $nip) . "'");
+                        break;
+                    }
+                    
                     $insert_halo_pst_query = "INSERT INTO user_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_halo_pst . ")";
                     if (!mysqli_query($koneksi, $insert_halo_pst_query)) {
                         $error = "Gagal menambahkan data Halo PST: " . mysqli_error($koneksi);
@@ -75,6 +85,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_FILES["excelFile"]) && !iss
                     if (!empty($skills)) {
                         foreach ($skills as $id_skill) {
                             $id_skill = (int)$id_skill;
+                            
+                            // Validate that id_skill exists in skill table
+                            $check_skill = mysqli_query($koneksi, "SELECT id_skill FROM skill WHERE id_skill = " . $id_skill);
+                            if (mysqli_num_rows($check_skill) == 0) {
+                                $error = "ID Skill " . $id_skill . " tidak ditemukan di database!";
+                                $hp_ok = false;
+                                break;
+                            }
+                            
                             $insert_skill_query = "INSERT INTO user_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $nip) . "', " . $id_skill . ")";
                             if (!mysqli_query($koneksi, $insert_skill_query)) {
                                 $error = "Gagal menambahkan data skill: " . mysqli_error($koneksi);
@@ -209,17 +228,68 @@ if (isset($_POST["submit_data"]) && !empty($_POST["preview_data"])) {
 
                 // Insert into user_halo_pst (nip, id_halo_pst)
                 $halopstIds = array_filter(array_map('intval', explode(',', $user['halo_pst'])));
+                $halo_insert_ok = true;
+                
                 foreach ($halopstIds as $halopstId) {
+                    // Validate that id_halo_pst exists in halo_pst table
+                    $check_halo = mysqli_query($koneksi, "SELECT id_halo_pst FROM halo_pst WHERE id_halo_pst = " . $halopstId);
+                    if (mysqli_num_rows($check_halo) == 0) {
+                        $errorCount++;
+                        $errors[] = "Baris " . ($index + 2) . ": ID Halo PST " . $halopstId . " tidak ditemukan di database!";
+                        $halo_insert_ok = false;
+                        // Remove inserted user to keep data consistent
+                        mysqli_query($koneksi, "DELETE FROM pegawai WHERE nip = '" . mysqli_real_escape_string($koneksi, $user['nip']) . "'");
+                        break;
+                    }
+                    
                     $insertHaloPST = "INSERT INTO user_halo_pst (nip, id_halo_pst) VALUES ('" . mysqli_real_escape_string($koneksi, $user['nip']) . "', " . $halopstId . ")";
-                    mysqli_query($koneksi, $insertHaloPST);
+                    if (!mysqli_query($koneksi, $insertHaloPST)) {
+                        $errorCount++;
+                        $errors[] = "Baris " . ($index + 2) . ": Gagal insert Halo PST " . $halopstId . " - " . mysqli_error($koneksi);
+                        $halo_insert_ok = false;
+                        // Remove inserted user to keep data consistent
+                        mysqli_query($koneksi, "DELETE FROM pegawai WHERE nip = '" . mysqli_real_escape_string($koneksi, $user['nip']) . "'");
+                        break;
+                    }
+                }
+                
+                if (!$halo_insert_ok) {
+                    continue;
                 }
 
                 // Insert skills (optional)
                 if (!empty($user['skills'])) {
                     $skillIds = array_filter(array_map('intval', explode(',', $user['skills'])));
+                    $skill_insert_ok = true;
+                    
                     foreach ($skillIds as $skillId) {
+                        // Validate that id_skill exists in skill table
+                        $check_skill = mysqli_query($koneksi, "SELECT id_skill FROM skill WHERE id_skill = " . $skillId);
+                        if (mysqli_num_rows($check_skill) == 0) {
+                            $errorCount++;
+                            $errors[] = "Baris " . ($index + 2) . ": ID Skill " . $skillId . " tidak ditemukan di database!";
+                            $skill_insert_ok = false;
+                            // Remove inserted user to keep data consistent
+                            mysqli_query($koneksi, "DELETE FROM pegawai WHERE nip = '" . mysqli_real_escape_string($koneksi, $user['nip']) . "'");
+                            // Also remove halo_pst entries
+                            mysqli_query($koneksi, "DELETE FROM user_halo_pst WHERE nip = '" . mysqli_real_escape_string($koneksi, $user['nip']) . "'");
+                            break;
+                        }
+                        
                         $insertSkill = "INSERT INTO user_skill (nip, id_skill) VALUES ('" . mysqli_real_escape_string($koneksi, $user['nip']) . "', " . $skillId . ")";
-                        mysqli_query($koneksi, $insertSkill);
+                        if (!mysqli_query($koneksi, $insertSkill)) {
+                            $errorCount++;
+                            $errors[] = "Baris " . ($index + 2) . ": Gagal insert Skill " . $skillId . " - " . mysqli_error($koneksi);
+                            $skill_insert_ok = false;
+                            // Remove inserted user to keep data consistent
+                            mysqli_query($koneksi, "DELETE FROM pegawai WHERE nip = '" . mysqli_real_escape_string($koneksi, $user['nip']) . "'");
+                            mysqli_query($koneksi, "DELETE FROM user_halo_pst WHERE nip = '" . mysqli_real_escape_string($koneksi, $user['nip']) . "'");
+                            break;
+                        }
+                    }
+                    
+                    if (!$skill_insert_ok) {
+                        continue;
                     }
                 }
 

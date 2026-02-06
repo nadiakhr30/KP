@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 function renderLayout($content, $script) {
 
 global $pegawai;
@@ -8,20 +8,21 @@ global $pegawai;
 <html lang="en">
 
 <head>
+  <link rel="icon" href="../../images/sikumbang.ico" type="image/x-icon">
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dashboard Pegawai</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
-
-  <!-- Favicons -->
-  <link href="assets/img/favicon.png" rel="icon">
-  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <title>Dashboard Pegawai - Sistem Kehumasan</title>
+  <meta name="description" content="Sistem Manajemen Kehumasan dan Konten Media Sosial">
+  <meta name="theme-color" content="#2196F3">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Kehumasan">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -83,75 +84,13 @@ global $pegawai;
         font-family: 'Poppins', sans-serif;
       }
       .btn-close-circle {
-        width: 42px;
-        height: 42px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
-        padding: 0;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-      }
-
-      .btn-close-circle i {
-        font-size: 18px;
-        font-weight: bold;
-      }
-      .icon-link {
-        font-size: 1.2rem;
-        color: #0d6efd;
-        transition: 0.2s;
-      }
-
-      .icon-link:hover {
-        color: #084298;
-      }
-      .icon-link {
-        font-size: 1.3rem;
-        color: #0d6efd;
-        cursor: pointer;
-      }
-
-      .icon-link:hover {
-        color: #084298;
-      }
-
-      #modalLinks i {
-        font-size: 1.4rem;
-      }
-
-      /* ===== MANAJEMEN LINK CARDS ===== */
-      .steps-item {
-        position: relative;
-        overflow: hidden;
-        border-radius: 20px;
-        background: #fff;
-        border: 1.5px solid rgba(102, 126, 234, 0.1);
-        transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-      }
-
-      .steps-item::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        z-index: 5;
-      }
-
-      .steps-item::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.04) 0%, transparent 100%);
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.4s ease;
+        background: rgba(0,0,0,0.06);
       }
 
       .steps-link:hover .steps-item {
@@ -287,8 +226,9 @@ global $pegawai;
         font-family: 'Poppins', sans-serif;
         background: #fff;
         border-radius: 20px;
-        padding: 40px 30px;
-        height: 100%;
+        padding: 48px 30px;
+        min-height: 360px;
+        height: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -296,6 +236,15 @@ global $pegawai;
         border: 1.5px solid rgba(102, 126, 234, 0.1);
         transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      /* Dokumentasi card tweaks */
+      .dokumentasi-card { min-height: 440px; }
+      .dokumentasi-card .overlay-list {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 8px;
+        max-height: 320px;
+        overflow-y: auto;
       }
 
       .humas-card::before {
@@ -611,8 +560,9 @@ global $pegawai;
       inset: 0;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       display: flex;
+      flex-direction: column;
       align-items: stretch;
-      justify-content: stretch;
+      justify-content: flex-end;
       opacity: 0;
       transform: scale(0.85) rotateY(15deg);
       transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
@@ -624,13 +574,13 @@ global $pegawai;
       transform: scale(1) rotateY(0deg);
     }
 
-    /* OVERLAY MENU (FULL HEIGHT BUTTON) */
+    /* OVERLAY MENU (STACKED VERTICALLY AT BOTTOM) */
     .overlay-menu {
       display: flex;
       width: 100%;
-      height: 100%;
-      flex-direction: row;
+      flex-direction: column;
       gap: 0;
+      overflow: hidden; /* prevent hover translations from causing horizontal overflow */
     }
 
     .overlay-menu a {
@@ -643,11 +593,12 @@ global $pegawai;
       color: #fff;
       font-weight: 700;
       font-size: 1rem;
-      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
       transition: all 0.3s ease;
       font-family: 'Poppins', sans-serif;
       position: relative;
       overflow: hidden;
+      min-height: 50px;
     }
 
     .overlay-menu a::after {
@@ -661,305 +612,29 @@ global $pegawai;
     }
 
     .overlay-menu a:last-child {
-      border-right: none;
+      border-bottom: none;
     }
 
     .overlay-menu a:hover {
       background: rgba(255, 255, 255, 0.2);
-      transform: translateX(8px);
+      transform: none; /* disable translation to avoid creating horizontal space */
     }
 
     .overlay-menu a:hover::after {
       opacity: 1;
     }
 
-    /* ICON DI BUTTON */
+    /* ICON DI BUTTON - dinonaktifkan agar bisa menggunakan ikon kustom di dalam link */
     .overlay-menu a::before {
-      content: "\F392"; /* bi-folder-fill */
-      font-family: "Bootstrap-icons";
-      font-size: 1.3rem;
-      transition: all 0.3s ease;
+      content: none; /* nonaktifkan pseudo-elemen ikon default */
     }
 
     .overlay-menu a:hover::before {
-      transform: scale(1.2);
+      transform: none;
     }
-      
-    }
+    
 
-      /* ===== MODERN FOOTER STYLE ===== */
-      #footer {
-        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #172554 100%) !important;
-        background-color: #0f172a !important;
-        color: #fff !important;
-        position: relative;
-        overflow: hidden;
-        padding: 60px 0 0;
-      }
-
-      .footer {
-        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #172554 100%) !important;
-        background-color: #0f172a !important;
-      }
-
-      #footer::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        pointer-events: none;
-      }
-
-      #footer::after {
-        content: '';
-        position: absolute;
-        bottom: -10%;
-        left: -5%;
-        width: 400px;
-        height: 400px;
-        background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: float-footer 10s ease-in-out infinite;
-        pointer-events: none;
-      }
-
-      @keyframes float-footer {
-        0%, 100% { transform: translate(0, 0); }
-        50% { transform: translate(40px, 40px); }
-      }
-
-      #footer .container {
-        position: relative;
-        z-index: 2;
-      }
-
-      #footer .footer-top {
-        padding-bottom: 40px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      }
-
-      #footer .row {
-        gap: 30px;
-        display: flex;
-        flex-wrap: wrap;
-      }
-
-      @media (min-width: 992px) {
-        #footer .row {
-          flex-wrap: nowrap;
-        }
-      }
-
-      /* Footer About */
-      #footer .footer-about {
-        padding-right: 30px;
-      }
-
-      #footer .sitename {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 1.3rem;
-        letter-spacing: -0.5px;
-        color: #fff;
-      }
-
-      #footer .footer-contact {
-        font-family: 'Poppins', sans-serif;
-      }
-
-      #footer .footer-contact p {
-        margin-bottom: 12px;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: rgba(255, 255, 255, 0.8);
-      }
-
-      #footer .footer-contact strong {
-        color: #667eea;
-        font-weight: 700;
-      }
-
-      #footer .footer-contact span {
-        color: rgba(255, 255, 255, 0.9);
-        font-weight: 500;
-      }
-
-      /* Footer Links */
-      #footer .footer-links h4 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 1.1rem;
-        margin-bottom: 25px;
-        letter-spacing: -0.3px;
-        position: relative;
-        padding-bottom: 12px;
-        color: #fff;
-      }
-
-      #footer .footer-links h4::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 40px;
-        height: 3px;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        border-radius: 2px;
-        transition: width 0.3s ease;
-      }
-
-      #footer .footer-links h4:hover::after {
-        width: 60px;
-      }
-
-      #footer .footer-links ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      #footer .footer-links ul li {
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transition: all 0.3s ease;
-      }
-
-      #footer .footer-links ul li:hover {
-        transform: translateX(6px);
-      }
-
-      #footer .footer-links ul li i {
-        color: #667eea;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        flex-shrink: 0;
-      }
-
-      #footer .footer-links ul li:hover i {
-        color: #764ba2;
-        transform: scaleX(1.2);
-      }
-
-      #footer .footer-links ul li a {
-        color: rgba(255, 255, 255, 0.85);
-        text-decoration: none;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        position: relative;
-      }
-
-      #footer .footer-links ul li a::before {
-        content: '';
-        position: absolute;
-        bottom: -3px;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        transition: width 0.3s ease;
-      }
-
-      #footer .footer-links ul li a:hover {
-        color: #fff;
-      }
-
-      #footer .footer-links ul li a:hover::before {
-        width: 100%;
-      }
-
-      /* Follow Us Section */
-      #footer > .container .col-lg-4:nth-child(4) h4 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 1rem;
-        margin-bottom: 18px;
-        letter-spacing: -0.3px;
-        color: #fff;
-      }
-
-      #footer > .container .col-lg-4:nth-child(4) p {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        color: rgba(255, 255, 255, 0.8);
-        margin-bottom: 20px;
-      }
-
-      /* Social Links */
-      #footer .social-links {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-      }
-
-      #footer .social-links a {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: rgba(102, 126, 234, 0.12);
-        color: #667eea;
-        font-size: 1.2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
-        border: 1.5px solid rgba(102, 126, 234, 0.25);
-        cursor: pointer;
-        text-decoration: none;
-      }
-
-      #footer .social-links a:hover {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #fff;
-        transform: translateY(-8px) scale(1.1);
-        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
-        border-color: transparent;
-      }
-
-      /* Copyright */
-      #footer .copyright {
-        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #172554 100%) !important;
-        text-align: center;
-        padding-top: 30px !important;
-        padding-bottom: 40px !important;
-        position: relative;
-        z-index: 2;
-      }
-
-      #footer .copyright p {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.7);
-        margin: 0;
-        font-weight: 500;
-      }
-
-      #footer .copyright span {
-        color: rgba(255, 255, 255, 0.85);
-      }
-
-      #footer .credits {
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.6);
-        margin-top: 10px;
-        font-weight: 500;
-      }
-
-      #footer .credits strong {
-        color: #667eea;
-        transition: all 0.3s ease;
-      }
-
-      #footer .credits:hover strong {
-        color: #764ba2;
-      }
+     
 
       /* ===== PENGEMBANGAN SECTION ===== */
       .pengembangan-highlight {
@@ -969,45 +644,108 @@ global $pegawai;
 
       .pengembangan-card {
         position: relative;
-        height: 340px;
         border-radius: 24px;
-        background: linear-gradient(135deg, #ffffff 0%, #f5f7ff 100%);
-        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.15);
+        background: #ffffff; /* solid white background */
+        box-shadow: 0 12px 40px rgba(8,20,60,0.05);
         overflow: hidden;
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+        transition: all 0.45s cubic-bezier(0.23, 1, 0.320, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: space-between;
+        padding: 0;
+        border: 1px solid rgba(0,0,0,0.03);
+        text-align: center;
+        gap: 0;
+        min-height: 340px; /* keep the original length */
+      }
+
+      /* Header (big gradient block) */
+      .card-header-main {
+        background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+        color: #fff;
+        padding: 42px 28px 28px;
+        border-top-left-radius: 24px;
+        border-top-right-radius: 24px;
+        position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 48px 36px;
-        border: 1.5px solid rgba(102, 126, 234, 0.12);
-        text-align: center;
-        gap: 16px;
+        gap: 12px;
       }
 
-      .pengembangan-card::before {
+      .icon-wrap{ position: relative; }
+      .icon-circle{
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.12);
+        display:flex;align-items:center;justify-content:center;
+        box-shadow: 0 18px 40px rgba(79,70,229,0.12);
+        font-size: 36px;
+        transition: transform 0.36s cubic-bezier(0.2,0.9,0.3,1), box-shadow 0.36s ease, opacity 0.36s ease;
+        will-change: transform, box-shadow, opacity;
+      }
+
+      .card-header-main h3{ margin:0; font-size:1.35rem; font-weight:800; color:#fff; }
+      .card-header-main p{ margin:0; font-size:0.98rem; color: rgba(255,255,255,0.92); max-width:760px }
+
+      /* Small slider dots centered */
+      .card-dots{ padding: 18px 0; display:flex; align-items:center; justify-content:center; gap:10px; background: linear-gradient(180deg, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0) 100%);} 
+      .card-dots span{ width:10px; height:10px; border-radius:50%; background: rgba(255,255,255,0.7); opacity:0.55; box-shadow: 0 4px 10px rgba(10,20,60,0.04); }
+      .card-dots span:nth-child(2){ width:12px; height:12px; background:#4f46e5; box-shadow: 0 6px 16px rgba(79,70,229,0.18); opacity:1 }
+
+      /* Footer CTA */
+      .card-footer-cta{ display:flex; align-items:center; justify-content:space-between; padding:18px 22px; background:#fff; border-bottom-left-radius:24px; border-bottom-right-radius:24px; }
+      .card-footer-cta .btn-explore{ color:#4f46e5; font-weight:700; text-decoration:none; }
+      .cta-circle{ width:44px; height:44px; border-radius:50%; background: linear-gradient(135deg,#4f46e5 0%, #06b6d4 100%); display:flex; align-items:center; justify-content:center; color:#fff; box-shadow: 0 10px 30px rgba(79,70,229,0.12); text-decoration:none; transition: transform 0.32s cubic-bezier(0.2,0.9,0.3,1), box-shadow 0.32s ease; will-change: transform, box-shadow; }
+
+      .pengembangan-card:hover{ transform: translateY(-14px) scale(1.02); box-shadow: 0 40px 140px rgba(79,70,229,0.18), 0 8px 30px rgba(6,182,212,0.06); }
+
+      .pengembangan-card::after {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 5px;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f5576c 100%);
-        z-index: 5;
+        inset: 0;
+        border-radius: 24px;
+        pointer-events: none;
+        box-shadow: 0 0 0 rgba(79,70,229,0);
+        opacity: 0;
+        transition: box-shadow 0.45s ease, opacity 0.45s ease, transform 0.45s ease;
+        z-index: 2;
       }
 
-      .pengembangan-card:hover {
-        transform: translateY(-12px);
-        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.25);
-        border-color: rgba(102, 126, 234, 0.2);
+      .pengembangan-card:hover::after {
+        box-shadow: 0 30px 80px rgba(79,70,229,0.08), 0 0 60px rgba(6,182,212,0.04);
+        opacity: 1;
+        transform: translateY(-6px);
       }
 
+      /* Icon & CTA hover emphasis */
+      .pengembangan-card:hover .icon-circle {
+        transform: translateY(-6px) scale(1.12);
+        box-shadow: 0 28px 80px rgba(79,70,229,0.2);
+      }
+
+      .pengembangan-card:hover .cta-circle {
+        transform: translateX(6px) scale(1.06);
+        box-shadow: 0 16px 40px rgba(79,70,229,0.16);
+      }
+
+      @media (max-width: 768px){
+        .card-header-main{ padding:28px 18px 22px }
+        .icon-circle{ width:70px; height:70px; font-size:28px }
+        .card-header-main h3{ font-size:1.15rem }
+        .card-dots{ padding:12px 0 }
+        .card-footer-cta{ padding:14px 16px }
+      }
       .pengembangan-item::before {
         content: '';
         position: absolute;
         width: 40px;
         height: 40px;
-        background: radial-gradient(circle at 30% 30%, rgba(102, 126, 234, 0.2), rgba(102, 126, 234, 0.05));
+        background: radial-gradient(circle at 30% 30%, rgba(79, 70, 229, 0.18), rgba(79, 70, 229, 0.05));
         border-radius: 50%;
         top: 10%;
         left: 10%;
@@ -1021,7 +759,7 @@ global $pegawai;
         position: absolute;
         width: 25px;
         height: 25px;
-        background: radial-gradient(circle at 30% 30%, rgba(245, 87, 108, 0.15), rgba(245, 87, 108, 0.03));
+        background: radial-gradient(circle at 30% 30%, rgba(6, 182, 212, 0.12), rgba(6, 182, 212, 0.03));
         border-radius: 50%;
         bottom: 15%;
         right: 12%;
@@ -1050,83 +788,74 @@ global $pegawai;
       }
 
       .pengembangan-card .card-icon {
-        width: 100px;
-        height: 100px;
+        width: 132px;
+        height: 132px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 48px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f5576c 100%);
+        font-size: 56px;
+        background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
         color: #fff;
         margin: 0;
         transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
-        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.35);
+        box-shadow: 0 32px 80px rgba(79, 70, 229, 0.12), 0 6px 18px rgba(79,70,229,0.06);
         position: relative;
         z-index: 3;
+        transform: translateY(-10px);
       }
 
       .pengembangan-card:hover .card-icon {
-        transform: scale(1.15) rotate(-8deg);
-        box-shadow: 0 16px 48px rgba(102, 126, 234, 0.45);
+        transform: translateY(-12px) scale(1.06) rotate(-6deg);
+        box-shadow: 0 38px 120px rgba(79, 70, 229, 0.14);
       }
 
       .pengembangan-card h3 {
         margin: 0;
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #1a2332;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #ffffff; /* white title */
         letter-spacing: -0.3px;
         transition: all 0.3s ease;
-        line-height: 1.4;
+        line-height: 1.3;
         position: relative;
         z-index: 3;
+        margin-top: 6px;
       }
 
-      .pengembangan-card:hover h3 {
-        color: #667eea;
-      }
+
 
       .pengembangan-card p {
         margin: 0;
-        font-size: 0.95rem;
-        color: rgba(26, 35, 50, 0.65);
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.95); /* white description */
         font-family: 'Poppins', sans-serif;
         transition: all 0.3s ease;
         position: relative;
         z-index: 3;
-        line-height: 1.6;
+        line-height: 1.7;
+        max-width: 820px;
       }
 
-      .pengembangan-card:hover p {
-        color: rgba(102, 126, 234, 0.85);
-      }
 
+
+      /* CTA link centered and subtle like sample */
       .pengembangan-card .btn-explore {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        color: #667eea;
+        gap: 10px;
+        color: #4f46e5;
         text-decoration: none;
-        font-weight: 600;
-        font-size: 13px;
-        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
-        margin-top: auto;
-        padding: 10px 20px;
+        font-weight: 700;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        margin-top: 18px;
+        padding: 0;
       }
 
-      .pengembangan-card .btn-explore:hover {
-        color: #764ba2;
-        gap: 12px;
-      }
+      .pengembangan-card .btn-explore i { transition: transform 0.3s ease; }
+      .pengembangan-card .btn-explore:hover { transform: translateX(6px); opacity: 0.95; color: inherit; }
 
-      .pengembangan-card .btn-explore i {
-        transition: transform 0.3s ease;
-      }
-
-      .pengembangan-card .btn-explore:hover i {
-        transform: translateX(4px);
-      }
 
       .pengembangan-grid {
         display: grid;
@@ -1181,6 +910,12 @@ global $pegawai;
         display: none !important;
       }
 
+      /* Footer Styling */
+      #footer {
+        background-color: #37517e;
+        color: #ffffff;
+      }
+
       /* Responsive */
       @media (max-width: 768px) {
         #footer {
@@ -1197,36 +932,45 @@ global $pegawai;
 
         #footer .footer-about {
           padding-right: 0;
+          color: #fff;
         }
 
         #footer .sitename {
           font-size: 1.2rem;
+          color: #fff;
         }
 
         #footer .footer-contact p {
           font-size: 0.9rem;
+          color: #fff;
         }
 
         #footer .footer-links h4 {
           font-size: 1rem;
           margin-bottom: 20px;
+          color: #fff;
+
         }
 
         #footer .footer-links ul li {
           margin-bottom: 12px;
+          color: #fff;
         }
 
         #footer > .container .col-lg-4:nth-child(4) p {
           font-size: 0.9rem;
           margin-bottom: 20px;
+          color: #fff;
         }
 
         #footer .social-links {
           justify-content: flex-start;
+          color: #fff;
         }
 
         #footer .copyright p {
           font-size: 0.85rem;
+          color: #fff;
         }
       }
 
@@ -1345,13 +1089,31 @@ global $pegawai;
       padding-right: 3rem;
     }
 
+    /* Horizontal main menu */
+    .navmenu > ul {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      flex-wrap: wrap; /* allow wrapping on narrow screens */
+    }
+
+    .navmenu li {
+      position: relative;
+    }
+
     .navmenu a {
       position: relative;
       text-decoration: none;
       color: #ffffff;
       font-weight: 600;
-      transition: all 0.3s ease;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      transition: all 0.18s ease;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+      padding: 6px 4px;
+      display: inline-block;
+      white-space: nowrap;
     }
 
     .navmenu a::before {
@@ -1366,26 +1128,285 @@ global $pegawai;
       border-radius: 2px;
     }
 
-    .navmenu a:hover {
-      color: #ffffff;
-      text-shadow: 0 2px 10px rgba(102, 126, 234, 0.5);
+    /* Submenu (dropdown) */
+    .navmenu ul ul {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      background: rgba(11,27,43,0.98);
+      padding: 10px 8px;
+      border-radius: 10px;
+      min-width: 220px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: all 0.25s cubic-bezier(0.23, 1, 0.320, 1);
+      pointer-events: none;
+      z-index: 9999;
     }
 
-    .navmenu a:hover::before {
+    /* Show dropdown when parent has 'active' class */
+    .navmenu li.active > ul {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Backup: support hover as fallback */
+    .navmenu li:hover > ul {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Submenu (dropdown) - ALL LEVELS appear vertically below */
+    .navmenu ul ul,
+    .navmenu ul ul ul {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      background: rgba(11,27,43,0.98);
+      padding: 10px 8px;
+      border-radius: 10px;
+      min-width: 220px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: all 0.25s cubic-bezier(0.23, 1, 0.320, 1);
+      pointer-events: none;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      list-style: none;
+      margin: 0;
+    }
+
+    /* Level 3 dropdown - ensure vertical stacking */
+    .navmenu ul ul ul {
+      top: calc(100% + 8px);
+      left: 0;
+      min-width: 200px;
+      z-index: 10000;
+    }
+
+    /* Show dropdown when parent has 'active' class */
+    .navmenu li.active > ul {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Backup: support hover as fallback */
+    .navmenu li:hover > ul {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    /* Dropdown items styling */
+    .navmenu ul ul li {
+      display: block;
+      margin: 0;
+      padding: 0;
       width: 100%;
     }
-
-    .navmenu a.active {
+    .navmenu ul ul a {
+      display: block;
+      padding: 10px 14px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      font-weight: 500;
       color: #ffffff;
-      text-shadow: 0 2px 10px rgba(102, 126, 234, 0.5);
+      text-decoration: none;
+      white-space: normal;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .navmenu ul ul a:hover {
+      background: rgba(102, 126, 234, 0.2);
+      padding-left: 20px;
+      color: #667eea;
     }
 
     .navmenu a.active::before {
       width: 100%;
     }
 
+    /* ===== FOOTER LINKS STYLING (SIMILAR TO NAVBAR) ===== */
+    #footer .footer-links ul li a {
+      position: relative;
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    #footer .footer-links ul li a::before {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+
+    #footer .footer-links ul li a:hover {
+      color: #ffffff;
+    }
+
+    #footer .footer-links ul li a:hover::before {
+      width: 100%;
+    }
+
+    /* ===== NOTIFICATION BELL STYLING ===== */
+    #navbarNotif {
+      display: inline-flex !important;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 6px 4px;
+      border-radius: 8px;
+      margin-right: 18px !important;
+    }
+
+    #navbarNotif:hover {
+      background: rgba(102, 126, 234, 0.12);
+      transform: scale(1.08);
+    }
+
+    /* Bell Icon */
+    #navbarNotif > i {
+      color: #ffffff;
+      font-size: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #navbarNotif:hover > i {
+      color: #667eea;
+      filter: brightness(1.2);
+    }
+
+    /* Notification Badge */
+    .notif-badge {
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      background: linear-gradient(135deg, #f5576c 0%, #d63447 100%);
+      color: #ffffff;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(245, 87, 108, 0.4);
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+      z-index: 10001;
+      min-width: 22px;
+      text-align: center;
+    }
+
+    .notif-badge:not(:empty)::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      animation: pulse-badge 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-badge {
+      0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(245, 87, 108, 0.7);
+      }
+      50% { 
+        box-shadow: 0 0 0 6px rgba(245, 87, 108, 0);
+      }
+    }
+
+    #navbarNotif:hover .notif-badge {
+      transform: scale(1.15);
+      box-shadow: 0 4px 12px rgba(245, 87, 108, 0.6);
+    }
+
+    /* Notification Dropdown */
+    #notifDropdown {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      background: rgba(255, 255, 255, 0.98) !important;
+      border: 1px solid rgba(102, 126, 234, 0.2) !important;
+      border-radius: 10px !important;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5) !important;
+      min-width: 260px;
+      max-width: 360px;
+      max-height: 60vh;
+      overflow-y: auto;
+      display: none;
+      opacity: 0;
+      transition: all 180ms cubic-bezier(0.23,1,0.32,1);
+      z-index: 10002;
+    }
+
+    /* visible state */
+    #notifDropdown.show {
+      display: block;
+      opacity: 1;
+      transform: translateX(-50%) translateY(6px);
+    }
+
+    #notifDropdown .dropdown-header {
+      color: #667eea !important;
+      font-weight: 700 !important;
+      border-bottom: 1px solid rgba(102, 126, 234, 0.15) !important;
+      padding: 12px 16px !important;
+      font-size: 13px !important;
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.98);
+      z-index: 10003;
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      #navbarNotif {
+        margin-right: 12px !important;
+      }
+
+      #navbarNotif > i {
+        font-size: 18px;
+      }
+
+      .notif-badge {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        top: -4px;
+        right: -6px;
+      }
+    }
+
     /* Mobile navbar text optimization */
     @media (max-width: 991px) {
+      .navmenu > ul { flex-direction: column; gap: 8px; }
       .navmenu a {
         color: #1a2332;
         font-weight: 700;
@@ -1405,6 +1426,7 @@ global $pegawai;
     }
 
     @media (max-width: 768px) {
+      .navmenu > ul { gap: 10px; }
       .navmenu a {
         color: #1a2332;
         font-weight: 700;
@@ -1424,6 +1446,7 @@ global $pegawai;
     }
 
     @media (max-width: 480px) {
+      .navmenu > ul { gap: 8px; }
       .navmenu a {
         color: #1a2332;
         font-weight: 700;
@@ -1734,8 +1757,10 @@ global $pegawai;
       padding: 28px 40px;
       background: white;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      gap: 16px;
       cursor: pointer;
       position: relative;
       z-index: 2;
@@ -1892,23 +1917,127 @@ global $pegawai;
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
-      <a href="#" class="logo d-flex align-items-center me-auto">
-        <h5 class="sitename">Humas BPS Bangkalan</h5>
+      <a href="#" class="logo d-flex align-items-center me-auto" style="text-decoration: none;">
+         <img src="../images/sikumbang.png" alt="Sikumbang" class="img-fluid" style="max-width: 180px; width: 100%;">
+          <h4 class="mt-3" style="color: #ffffff; text-decoration: none;">SIKUMBANG</h4>
       </a>
 
       <nav id="navmenu" class="navmenu">
+        <?php
+        $db = $GLOBALS['koneksi'] ?? null;
+        ?>
         <ul>
-          <li><a href="#beranda" class="active">Beranda</a></li>
-          <li><a href="#Humas">Humas</a></li>
-          <li><a href="#services">Manajemen</a></li>
-          <li><a href="#portfolio">Dokumentasi</a></li>
-          <li><a href="#team">Pengembangan</a></li>
-          <li><a href="#sumberdaya">Sumber Daya</a></li>
-          <li><a href="#broadcast">Broadcast</a></li>
+        <!-- Manual Beranda -->
+        <li><a href="index.php#beranda" class="nav-link">Beranda</a></li>
+
+        <?php
+        if ($db && function_exists('mysqli_query')) {
+            // MAP SECTIONS (Nama di DB => ID di index.php)
+            $sectionMap = [
+                'Kalender & Jadwal' => 'kalender-jadwal',
+                'Brankas Humas'     => 'brankas',
+                'Ruang Humas'       => 'humas',
+                'Manajemen Link'    => 'link',
+                'Sumber Daya'       => 'sumberdaya',
+                'Kebutuhan Broadcast' => 'broadcast',
+                'Peningkatan Kapasitas' => 'pengembangan',
+                // Variasi Mapping
+                'Struktur Humas'    => 'humas'
+            ];
+
+            // 1. KATEGORI UTAMA
+            $qJenisUtama = @mysqli_query($db, "SELECT j.* FROM jenis j JOIN kategori k ON j.id_kategori = k.id_kategori WHERE k.nama_kategori = 'Utama' ORDER BY j.id_jenis");
+            if ($qJenisUtama) {
+                while ($ju = mysqli_fetch_assoc($qJenisUtama)) {
+                    $nama = $ju['nama_jenis'];
+                    // Link ke Section jika ada di Map
+                    $href = isset($sectionMap[$nama]) ? 'index.php#'.$sectionMap[$nama] : '#';
+                    echo '<li><a href="' . $href . '" class="nav-link">' . htmlspecialchars($nama) . '</a></li>';
+                }
+            }
+
+            // 2. KATEGORI LAIN
+            $qKategori = @mysqli_query($db, "SELECT * FROM kategori WHERE nama_kategori NOT IN ('Utama') ORDER BY id_kategori");
+            if ($qKategori) {
+                while ($cat = mysqli_fetch_assoc($qKategori)) {
+                    $catName = $cat['nama_kategori'];
+                    $catId = $cat['id_kategori'];
+                    
+                    // Link Kategori Induk ke Section jika ada di Map
+                    $catHref = isset($sectionMap[$catName]) ? 'index.php#'.$sectionMap[$catName] : '#';
+                    
+                    echo '<li class="dropdown">';
+                    echo '<a href="' . $catHref . '"><span>' . htmlspecialchars($catName) . '</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>';
+                    
+                    $qJenis = @mysqli_query($db, "SELECT * FROM jenis WHERE id_kategori = " . $catId . " ORDER BY nama_jenis");
+                    if ($qJenis && mysqli_num_rows($qJenis) > 0) {
+                        echo '<ul>';
+                        while ($j = mysqli_fetch_assoc($qJenis)) {
+                            $jName = $j['nama_jenis'];
+                            $jId = $j['id_jenis'];
+
+                            // LOGIC ITEM
+                            // A. Jika ada di Map Section -> Link langsung ke anchor
+                            if (isset($sectionMap[$jName])) {
+                                echo '<li><a href="index.php#' . $sectionMap[$jName] . '">' . htmlspecialchars($jName) . '</a></li>';
+                                continue; 
+                            }
+                            
+                            // B. Spesial: Aset Humas (Nested Dropdown)
+                            if ($jName === 'Aset Humas') {
+                                echo '<li class="dropdown"><a href="#"><span>Aset Humas</span> <i class="bi bi-chevron-right"></i></a>';
+                                echo '<ul>';
+                                $qAset = @mysqli_query($db, "SELECT * FROM jenis_aset ORDER BY nama_jenis_aset");
+                                if($qAset){
+                                    while($a = mysqli_fetch_assoc($qAset)){
+                                        echo '<li><a href="aset.php?jenis='.$a['id_jenis_aset'].'">Aset '.htmlspecialchars($a['nama_jenis_aset']).'</a></li>';
+                                    }
+                                }
+                                echo '</ul></li>';
+                                continue;
+                            }
+
+                            // C. Spesial: Jadwal Konten Humas (Page)
+                            if ($jName === 'Jadwal Konten Humas') {
+                                echo '<li><a href="jadwal_konten.php">' . htmlspecialchars($jName) . '</a></li>';
+                                continue;
+                            }
+
+                            // D. Default: Cek Sub Jenis
+                            $qSub = @mysqli_query($db, "SELECT * FROM sub_jenis WHERE id_jenis = $jId ORDER BY nama_sub_jenis");
+                            if ($qSub && mysqli_num_rows($qSub) > 0) {
+                                echo '<li class="dropdown"><a href="#"><span>' . htmlspecialchars($jName) . '</span> <i class="bi bi-chevron-right"></i></a>';
+                                echo '<ul>';
+                                while ($sub = mysqli_fetch_assoc($qSub)) {
+                                    // Default link ke konten.php (atau sesuaikan jika perlu media.php)
+                                    echo '<li><a href="konten.php?jenis='.urlencode($jName).'&sub='.$sub['id_sub_jenis'].'">' . htmlspecialchars($sub['nama_sub_jenis']) . '</a></li>';
+                                }
+                                echo '</ul></li>';
+                            } else {
+                                // Default Item Link
+                                echo '<li><a href="konten.php?jenis='.urlencode($jName).'">' . htmlspecialchars($jName) . '</a></li>';
+                            }
+                        }
+                        echo '</ul>';
+                    }
+                    echo '</li>';
+                }
+            }
+        }
+        ?>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
+        <!-- Bell Notifikasi Jadwal Deadline 1-2 Hari -->
+        <span id="navbarNotif" style="position:relative;margin-right:18px;display:inline-flex;align-items:center;">
+          <i class="bi bi-bell-fill" role="button" aria-haspopup="true" aria-expanded="false"></i>
+          <span class="notif-badge" id="notifCount">1</span>
+          <div id="notifDropdown" class="dropdown-menu dropdown-menu-end">
+            <h6 class="dropdown-header">Jadwal Deadline Mendekat</h6>
+            <div id="notifList"></div>
+          </div>
+        </span>
         <div class="ms-3">
         <div class="dropdown">
           <a class="d-flex align-items-center text-decoration-none dropdown-toggle"
@@ -1979,7 +2108,7 @@ global $pegawai;
     <div class="container footer-top">
       <div class="row gy-4">
         <div class="col-lg-4 col-md-6 footer-about">
-          <a href="index.html" class="d-flex align-items-center">
+          <a href="#" class="d-flex align-items-center" style="display: flex; text-decoration: none; color: #ffffff;">
             <span class="sitename">Humas BPS Bangkalan</span>
           </a>
           <div class="footer-contact pt-3">
@@ -1993,41 +2122,35 @@ global $pegawai;
         <div class="col-lg-2 col-md-3 footer-links">
           <h4>Quick Links</h4>
           <ul>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Beranda</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Ruang Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Dokumentasi</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Sumber Daya</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Broadcast</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#beranda" style="color: #ffffff; text-decoration: none;">Beranda</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#Humas" style="color: #ffffff; text-decoration: none;">Ruang Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Dokumentasi</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#sumberdaya" style="color: #ffffff; text-decoration: none;">Sumber Daya</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#broadcast" style="color: #ffffff; text-decoration: none;">Broadcast</a></li>
           </ul>
         </div>
 
         <div class="col-lg-2 col-md-3 footer-links">
           <h4>Layanan Informasi</h4>
           <ul>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Jadwal Konten Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Galeri Foto</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Galeri Video</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Laporan Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#">Pedoman Visual Medsos</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#kalender-jadwal" style="color: #ffffff; text-decoration: none;">Jadwal Konten Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Galeri Foto</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Galeri Video</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Laporan Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#sumberdaya" style="color: #ffffff; text-decoration: none;">Pedoman Visual Medsos</a></li>
           </ul>
         </div>
 
-        <div class="col-lg-4 col-md-12">
-          <h4>Follow Us</h4>
-          <p>Ikuti kami untuk informasi dan publikasi terbaru dari<br><span>BPS Bangkalan.</span></p>
-          <div class="social-links d-flex">
-            <a href=""><i class="bi bi-twitter-x"></i></a>
-            <a href=""><i class="bi bi-facebook"></i></a>
-            <a href=""><i class="bi bi-instagram"></i></a>
-            <a href=""><i class="bi bi-linkedin"></i></a>
-          </div>
+        <div class="col-lg-4 col-md-12" style="text-align: center;">
+          <img src="../images/sikumbang.png" alt="Sikumbang" class="img-fluid" style="max-width: 180px; width: 100%;">
+          <h4 class="mt-3" style="color: #ffffff;">SIKUMBANG</h4>
         </div>
 
       </div>
     </div>
 
     <div class="container copyright text-center mt-4">
-      <p>© <span>2026 </span> <span>Badan Pusat Statisik Bangkalan</span></p>
+      <p>Â© <span>2026 </span> <span>Badan Pusat Statisik Bangkalan</span></p>
       <div class="credits">
         Dikelola oleh <strong class="px-1 sitename">Humas BPS bangkalan</strong>
       </div>
@@ -2053,8 +2176,139 @@ global $pegawai;
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
 
+  <!-- Dropdown Menu Handler -->
+  <script>
+  (function() {
+    const navItems = document.querySelectorAll('.navmenu > ul > li');
+    let closeTimeout;
+    const HOVER_DELAY = 150;
+    const HOVER_OPEN_DELAY = 80;
+
+    navItems.forEach(item => {
+      const link = item.querySelector('a');
+      const submenu = item.querySelector('ul');
+
+      if (!submenu) return;
+
+      // Click handler: toggle dropdown
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const isActive = item.classList.contains('active');
+        
+        navItems.forEach(other => {
+          if (other !== item) other.classList.remove('active');
+        });
+        
+        if (!isActive) {
+          item.classList.add('active');
+          clearTimeout(closeTimeout);
+        } else {
+          item.classList.remove('active');
+        }
+      });
+
+      // Mouseenter: show dropdown after delay
+      item.addEventListener('mouseenter', function() {
+        clearTimeout(closeTimeout);
+        closeTimeout = setTimeout(() => {
+          item.classList.add('active');
+        }, HOVER_OPEN_DELAY);
+      });
+
+      // Mouseleave: close dropdown after delay
+      item.addEventListener('mouseleave', function() {
+        clearTimeout(closeTimeout);
+        closeTimeout = setTimeout(() => {
+          item.classList.remove('active');
+        }, HOVER_DELAY);
+      });
+
+      // Click on submenu items: close dropdown
+      if (submenu) {
+        submenu.querySelectorAll('a').forEach(subLink => {
+          subLink.addEventListener('click', function() {
+            setTimeout(() => {
+              item.classList.remove('active');
+            }, 150);
+          });
+        });
+      }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.navmenu')) {
+        navItems.forEach(item => item.classList.remove('active'));
+      }
+    });
+  })();
+
+  // Notification Bell Handler
+  (function() {
+    const notifBell = document.getElementById('navbarNotif');
+    const notifDropdown = document.getElementById('notifDropdown');
+    const bellIcon = notifBell ? notifBell.querySelector('i') : null;
+
+    if (notifBell && notifDropdown) {
+      const closeDropdown = () => {
+        notifDropdown.classList.remove('show');
+        notifBell.classList.remove('active');
+        if (bellIcon) bellIcon.setAttribute('aria-expanded', 'false');
+      };
+
+      const openDropdown = () => {
+        notifDropdown.classList.add('show');
+        notifBell.classList.add('active');
+        if (bellIcon) bellIcon.setAttribute('aria-expanded', 'true');
+        const firstLink = notifDropdown.querySelector('a');
+        if (firstLink) firstLink.focus();
+      };
+
+      notifBell.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = notifDropdown.style.display === 'block' || notifDropdown.classList.contains('show');
+        if (isOpen) closeDropdown(); else openDropdown();
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('#navbarNotif')) {
+          closeDropdown();
+        }
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeDropdown();
+      });
+
+      // Close dropdown when clicking on a notification link
+      notifDropdown.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function() {
+          closeDropdown();
+        });
+      });
+    }
+  })();
+  </script>
+
   <?= $script ?>
   
+  <!-- PWA Service Worker Registration -->
+  <script src="../assets/js/pwa-install.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('../service-worker.js')
+          .then(function(registration) {
+            console.log('Service Worker registered successfully:', registration);
+          })
+          .catch(function(error) {
+            console.log('Service Worker registration failed:', error);
+          });
+      });
+    }
+  </script>
    
 </body>
 

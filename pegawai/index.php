@@ -100,7 +100,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
             <div class="d-flex">
               <a href="https://youtu.be/0DGiy6TEdS0?si=NJWU-PYx0wBA2xEf"
                 class="glightbox btn-watch-video d-flex align-items-center">
-                <i class="bi bi-play-circle"></i><span>Watch Video</span>
+                <i class="bi bi-play-circle"></i><span style="text-decoration: none;">Watch Video</span>
               </a>
             </div>
           </div>
@@ -229,17 +229,18 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     </section><!-- /Kalender & Jadwal -->
 
      <!-- Brankas Humas -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Brankas Humas</h2>
-        <p class="text-muted mb-0">Penyimpanan dokumen dan arsip publikasi</p>
-        <span id="badgeUrgent" style="display:none;background:#e84118;color:#fff;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:600;margin-left:12px;">Tugas Mendesak!</span>
-      </div><!-- End Section Title -->
+
+    <section id="brankas" class="about section">
+    
+    
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
         <div class="row gy-4">
           <div class="col-lg-12">
             <div class="service-item humas-card position-relative text-center">
           <div class="icon"><i class="bi bi-folder2-open icon"></i></div>
+         <h2>Brankas Humas</h2>
+        <p class="text-muted mb-0">Penyimpanan dokumen dan arsip publikasi</p>
           
 
           <div class="humas-overlay">
@@ -263,13 +264,13 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
         </div>
       </div>
 
+    </section><!-- /Brankas Humas -->
 
- <!-- Humas Section -->
-<section id="Humas" class="services section light-background">
+<section id="humas" class="services section light-background">
 
   <!-- Section Title -->
   <div class="container section-title" data-aos="fade-up">
-    <h2>Humas</h2>
+    <h2> Ruang Humas</h2>
     <p>Mengelola komunikasi dan publikasi institusi secara terintegrasi dan efisien</p>
   </div>
 
@@ -335,7 +336,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
       </section><!--End Manajemen Link Section -->
 
     <!-- Work Process Section -->
-    <section id="work-process" class="work-process section">
+    <section id="link" class="work-process section">
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
@@ -452,45 +453,10 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
         <div class="asset-grid">
 
-        <!-- TEMPLATE MEDSOS -->
+        <!-- TEMPLATE MEDSOS & DOKUMENTASI, GALERI FOTO, GALERI VIDEO, LAPORAN -->
           <?php
-          // Ambil jenis dengan id_jenis = 1
-          $jenisQ = mysqli_query($koneksi, "SELECT id_jenis, nama_jenis FROM jenis WHERE id_jenis = 1");
-          if ($jenisQ && mysqli_num_rows($jenisQ) > 0) {
-              while ($j = mysqli_fetch_assoc($jenisQ)) {
-                  // Ambil sub jenis untuk id_jenis = 1
-                  $subQ = mysqli_query($koneksi, "SELECT id_sub_jenis, nama_sub_jenis FROM sub_jenis WHERE id_jenis = " . (int)$j['id_jenis'] . " ORDER BY nama_sub_jenis ASC");
-          ?>
-          <div class="asset-card">
-            <div class="card-content">
-              <div class="icon-circle blue">
-                <i class="bi bi-layout-text-window-reverse"></i>
-              </div>
-              <h4><?= htmlspecialchars($j['nama_jenis']) ?></h4>
-              <p>Konten visual siap pakai</p>
-            </div>
-
-            <div class="card-overlay">
-              <div class="overlay-menu">
-                <?php if ($subQ && mysqli_num_rows($subQ) > 0): ?>
-                  <?php while ($s = mysqli_fetch_assoc($subQ)): ?>
-                    <a href="media.php?sub=<?= urlencode($s['id_sub_jenis']) ?>"><?= htmlspecialchars($s['nama_sub_jenis']) ?></a>
-                  <?php endwhile; ?>
-                <?php else: ?>
-                  <span style="color:#fff;">Tidak ada sub jenis tersedia</span> 
-                <?php endif; ?>
-              </div>
-            </div>
-          </div>
-          <?php
-              }
-          }
-          ?>
-
-        <!-- DOKUMENTASI, GALERI FOTO, GALERI VIDEO, LAPORAN -->
-        <?php
-          // Ambil jenis dengan id_jenis IN (2, 6, 7, 8)
-          $jenisQ = mysqli_query($koneksi, "SELECT id_jenis, nama_jenis FROM jenis WHERE id_jenis IN (2, 6, 7, 8) ORDER BY id_jenis ASC");
+          // Ambil semua jenis (1 untuk Template Medsos, 2,6,7,8 untuk Dokumentasi/Galeri)
+          $jenisQ = mysqli_query($koneksi, "SELECT id_jenis, nama_jenis FROM jenis WHERE id_jenis IN (1, 2, 6, 7, 8) ORDER BY id_jenis ASC");
           if ($jenisQ && mysqli_num_rows($jenisQ) > 0) {
               while ($j = mysqli_fetch_assoc($jenisQ)) {
                   $id_jenis = $j['id_jenis'];
@@ -499,13 +465,14 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
                   
                   // Icon mapping untuk setiap jenis
                   $iconMap = [
+                    1 => 'bi-layout-text-window-reverse', // Template Medsos
                     2 => 'bi-file-earmark-text',      // Dokumentasi
                     6 => 'bi-image',                  // Galeri Foto
                     7 => 'bi-camera-video-fill',      // Galeri Video
                     8 => 'bi-file-earmark-text'       // Laporan
                   ];
                   $icon = isset($iconMap[$id_jenis]) ? $iconMap[$id_jenis] : 'bi-folder2-open';
-        ?>
+          ?>
           <div class="asset-card">
             <div class="card-content">
               <div class="icon-circle blue">
@@ -521,7 +488,9 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
                   <?php while ($s = mysqli_fetch_assoc($subQ)): ?>
                     <?php
                       // Routing logic untuk setiap jenis
-                      if ($id_jenis == 6) {
+                      if ($id_jenis == 1) {
+                        $subHref = "media.php?sub=" . urlencode($s['id_sub_jenis']);
+                      } else if ($id_jenis == 6) {
                         $subHref = "galeri_foto.php?sub=" . urlencode($s['id_sub_jenis']);
                       } else if ($id_jenis == 7) {
                         $subHref = "galeri_video.php?sub=" . urlencode($s['id_sub_jenis']);
@@ -558,7 +527,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <h2>Broadcast</h2>
+        <h2>Kebutuhan Broadcast</h2>
         <p>Akses semua sumber daya broadcast dalam satu tempat yang terpusat</p>
       </div>
 
@@ -635,11 +604,11 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     </section><!-- /Broadcast Section -->
 
 <!-- Pengembangan Highlight Section -->
-    <section id="pengembangan-highlight" class="pengembangan-highlight section light-background">
+    <section id="pengembangan" class="pengembangan-highlight section light-background">
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <h2>Pusat Pengembangan</h2>
+        <h2>Peningkatan Kapasitas</h2>
         <p>Sumber daya inovasi dan pengembangan untuk tim kami</p>
       </div><!-- End Section Title -->
 

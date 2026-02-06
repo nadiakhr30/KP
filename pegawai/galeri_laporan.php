@@ -111,7 +111,7 @@ body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:32px;co
   <div class="breadcrumb-custom">
     <a href="index.php" class="breadcrumb-link"><i class="bi bi-house-fill"></i></a>
     <span class="breadcrumb-separator">›</span>
-    <a href="index.php#about" class="breadcrumb-link">Dokumentasi</a>
+    <a href="index.php#sumberdaya" class="breadcrumb-link">Sumber Daya</a>
     <span class="breadcrumb-separator">›</span>
     <span class="breadcrumb-separator">Laporan</span>
     <span class="breadcrumb-separator">›</span>

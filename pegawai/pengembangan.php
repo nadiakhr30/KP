@@ -248,7 +248,7 @@ body{
         <i class="bi bi-house-fill"></i>
     </a>
     <span class="breadcrumb-separator">›</span>
-    <a href="index.php#pengembangan-highlight" class="breadcrumb-link">Pusat Pengembangan</a>
+    <a href="index.php#pengembangan-highlight" class="breadcrumb-link">Peningkatan Kapasitas</a>
     <span class="breadcrumb-separator">›</span>
     <span class="breadcrumb-active"><?= $breadcrumbTitle ?></span>
   </div>
