@@ -301,7 +301,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
       
 
       <!-- Aset Humas -->
-      <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
+      <div id="aset" class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
         <div class="service-item humas-card position-relative text-center">
           <div class="icon"><i class="bi bi-journal-bookmark icon"></i></div>
           <h4>Aset Humas</h4>

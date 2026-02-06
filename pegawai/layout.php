@@ -1086,18 +1086,20 @@ global $pegawai;
 
     /* ===== NAVBAR LINK HOVER EFFECT (FOOTER STYLE) ===== */
     .navmenu {
-      padding-right: 3rem;
+      padding-right: 1.5rem; /* Reduced padding */
+      margin-left: auto;
     }
 
     /* Horizontal main menu */
     .navmenu > ul {
       display: flex;
-      gap: 28px;
+      gap: 15px; /* Reduced gap from 28px */
       align-items: center;
       margin: 0;
       padding: 0;
       list-style: none;
-      flex-wrap: wrap; /* allow wrapping on narrow screens */
+      flex-wrap: nowrap; /* Prevent wrapping */
+      white-space: nowrap; /* Keep items on one line */
     }
 
     .navmenu li {
@@ -1108,11 +1110,14 @@ global $pegawai;
       position: relative;
       text-decoration: none;
       color: #ffffff;
-      font-weight: 600;
+      font-weight: 500; /* Slightly reduced weight */
+      font-size: 14px; /* Reduced font size from default inheritance */
       transition: all 0.18s ease;
       text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
-      padding: 6px 4px;
-      display: inline-block;
+      padding: 6px 8px; /* Adjusted padding */
+      display: flex;
+      align-items: center;
+      gap: 4px;
       white-space: nowrap;
     }
 
@@ -1927,44 +1932,60 @@ global $pegawai;
         $db = $GLOBALS['koneksi'] ?? null;
         ?>
         <ul>
-        <!-- Manual Beranda -->
-        <li><a href="index.php#beranda" class="nav-link">Beranda</a></li>
+       
 
         <?php
         if ($db && function_exists('mysqli_query')) {
-            // MAP SECTIONS (Nama di DB => ID di index.php)
+            // MAP SECTIONS (Nama Item/Kategori => ID Section di index.php)
+            // Pastikan nama SAMA PERSIS dengan di Database (case-insensitive check added below)
             $sectionMap = [
-                'Kalender & Jadwal' => 'kalender-jadwal',
-                'Brankas Humas'     => 'brankas',
-                'Ruang Humas'       => 'humas',
-                'Manajemen Link'    => 'link',
-                'Sumber Daya'       => 'sumberdaya',
-                'Kebutuhan Broadcast' => 'broadcast',
+                // Kategori Utama
+                'Kalender & Jadwal'     => 'kalender-jadwal',
+                'Brankas Humas'         => 'brankas',
+                'Ruang Humas'           => 'humas',
+                'Manajemen Link'        => 'link',
+                'Sumber Daya'           => 'sumberdaya',
+                'Kebutuhan Broadcast'   => 'broadcast',
                 'Peningkatan Kapasitas' => 'pengembangan',
-                // Variasi Mapping
-                'Struktur Humas'    => 'humas'
+                
+                // Item / Jenis Spesifik (Mapping anak ke section induk)
+                'Video Operator'        => 'broadcast',
+                'Template OBS Rilis'    => 'broadcast',
+                'Template Medsos'       => 'sumberdaya',
+                'Dokumentasi'           => 'sumberdaya', 
+                'Galeri Foto'           => 'sumberdaya',
+                'Galeri Video'          => 'sumberdaya',
+                'Laporan'               => 'sumberdaya',
+                'Struktur Humas'        => 'humas',
+                'Jadwal Konten Humas'   => 'humas',
+                'Aset Humas'            => 'humas',
+                'Pembinaan Kehumasan'   => 'pengembangan'
             ];
-
-            // 1. KATEGORI UTAMA
-            $qJenisUtama = @mysqli_query($db, "SELECT j.* FROM jenis j JOIN kategori k ON j.id_kategori = k.id_kategori WHERE k.nama_kategori = 'Utama' ORDER BY j.id_jenis");
-            if ($qJenisUtama) {
-                while ($ju = mysqli_fetch_assoc($qJenisUtama)) {
-                    $nama = $ju['nama_jenis'];
-                    // Link ke Section jika ada di Map
-                    $href = isset($sectionMap[$nama]) ? 'index.php#'.$sectionMap[$nama] : '#';
-                    echo '<li><a href="' . $href . '" class="nav-link">' . htmlspecialchars($nama) . '</a></li>';
+            
+            // Helper untuk normalize key lookup
+            $getSection = function($name) use ($sectionMap) {
+                $key = trim($name);
+                // Cek exact match
+                if (isset($sectionMap[$key])) return $sectionMap[$key];
+                // Cek case-insensitive
+                foreach ($sectionMap as $k => $v) {
+                    if (strcasecmp($k, $key) === 0) return $v;
                 }
-            }
+                return null;
+            };
 
-            // 2. KATEGORI LAIN
-            $qKategori = @mysqli_query($db, "SELECT * FROM kategori WHERE nama_kategori NOT IN ('Utama') ORDER BY id_kategori");
+            // KATEGORI & JENIS (Termasuk Utama)
+            $qKategori = @mysqli_query($db, "SELECT * FROM kategori ORDER BY CASE WHEN nama_kategori = 'Utama' THEN 1 ELSE 2 END, id_kategori");
             if ($qKategori) {
                 while ($cat = mysqli_fetch_assoc($qKategori)) {
                     $catName = $cat['nama_kategori'];
                     $catId = $cat['id_kategori'];
                     
-                    // Link Kategori Induk ke Section jika ada di Map
-                    $catHref = isset($sectionMap[$catName]) ? 'index.php#'.$sectionMap[$catName] : '#';
+                    // Logic Link Kategori
+                    // Jika 'Utama', mungkin tidak perlu link khusus (atau link ke #), tapi tetap tampilkan dropdown
+                    // Atau gunakan mapping jika ada
+                    $secCat = $getSection($catName);
+                    $catHref = $secCat ? 'index.php#'.$secCat : '#';
                     
                     echo '<li class="dropdown">';
                     echo '<a href="' . $catHref . '"><span>' . htmlspecialchars($catName) . '</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>';
@@ -1978,14 +1999,15 @@ global $pegawai;
 
                             // LOGIC ITEM
                             // A. Jika ada di Map Section -> Link langsung ke anchor
-                            if (isset($sectionMap[$jName])) {
-                                echo '<li><a href="index.php#' . $sectionMap[$jName] . '">' . htmlspecialchars($jName) . '</a></li>';
+                            $secItem = $getSection($jName);
+                            if ($secItem) {
+                                echo '<li><a href="index.php#' . $secItem . '">' . htmlspecialchars($jName) . '</a></li>';
                                 continue; 
                             }
                             
                             // B. Spesial: Aset Humas (Nested Dropdown)
                             if ($jName === 'Aset Humas') {
-                                echo '<li class="dropdown"><a href="#"><span>Aset Humas</span> <i class="bi bi-chevron-right"></i></a>';
+                                echo '<li class="dropdown"><a href="#aset"><span>Aset Humas</span> <i class="bi bi-chevron-right"></i></a>';
                                 echo '<ul>';
                                 $qAset = @mysqli_query($db, "SELECT * FROM jenis_aset ORDER BY nama_jenis_aset");
                                 if($qAset){
@@ -2003,21 +2025,36 @@ global $pegawai;
                                 continue;
                             }
 
-                            // D. Default: Cek Sub Jenis
-                            $qSub = @mysqli_query($db, "SELECT * FROM sub_jenis WHERE id_jenis = $jId ORDER BY nama_sub_jenis");
-                            if ($qSub && mysqli_num_rows($qSub) > 0) {
-                                echo '<li class="dropdown"><a href="#"><span>' . htmlspecialchars($jName) . '</span> <i class="bi bi-chevron-right"></i></a>';
-                                echo '<ul>';
-                                while ($sub = mysqli_fetch_assoc($qSub)) {
-                                    // Default link ke konten.php (atau sesuaikan jika perlu media.php)
-                                    echo '<li><a href="konten.php?jenis='.urlencode($jName).'&sub='.$sub['id_sub_jenis'].'">' . htmlspecialchars($sub['nama_sub_jenis']) . '</a></li>';
+                            // D. Default: Tanpa Nested Dropdown Sub Jenis
+                            
+                            // Link default
+                            $linkHref = 'konten.php?jenis='.urlencode($jName);
+                            
+                            // Preview check logic (optional)
+                            $previewOnlyJenis = ['Kebutuhan Broadcast', 'Brankas Humas'];
+                            if (in_array($jName, $previewOnlyJenis, true)) {
+                                $qPreviewSub = @mysqli_query($db, "SELECT id_sub_jenis FROM sub_jenis WHERE id_jenis = " . $jId . " LIMIT 1");
+                                if ($qPreviewSub && mysqli_num_rows($qPreviewSub) > 0) {
+                                    $rowPreviewSub = mysqli_fetch_assoc($qPreviewSub);
+                                    $linkHref = 'preview_konten.php?sub=' . (int)$rowPreviewSub['id_sub_jenis'];
                                 }
-                                echo '</ul></li>';
-                            } else {
-                                // Default Item Link
-                                echo '<li><a href="konten.php?jenis='.urlencode($jName).'">' . htmlspecialchars($jName) . '</a></li>';
                             }
+                            
+                            echo '<li><a href="' . $linkHref . '">' . htmlspecialchars($jName) . '</a></li>';
                         }
+                        
+                        // === MANUAL ITEMS: UTAMA ===
+                        if ($catName === 'Utama') {
+                             echo '<li><a href="#beranda">Beranda</a></li>';
+                             echo '<li><a href="#link">Manajemen Link</a></li>';
+                        }
+
+                        // === MANUAL ITEMS: RUANG HUMAS ===
+                        if ($catName === 'Ruang Humas') {
+                             // Tambahkan item manual jika diperlukan
+                             echo '<li><a href="index.php#aset">Aset Humas (Manual)</a></li>';
+                        }
+
                         echo '</ul>';
                     }
                     echo '</li>';
