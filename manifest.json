@@ -42,7 +42,10 @@
       "form_factor": "narrow"
     }
   ],
-  "categories": ["business", "productivity"],
+  "categories": [
+    "business",
+    "productivity"
+  ],
   "shortcuts": [
     {
       "name": "Dashboard Admin",

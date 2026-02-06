@@ -1,4 +1,7 @@
 # Sikumbang PWA & Web Server Configuration
+Options -Indexes
+ServerSignature Off
+
 
 # Enable GZIP compression
 <IfModule mod_deflate.c>

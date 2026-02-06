@@ -116,19 +116,14 @@ background-size: cover;
           <?php foreach($errors as $e) echo $e . "<br>"; ?>
         </div>
         <?php endif; ?>
-
         <button type="submit" class="btn-login">Login</button>
-
         <p class="signup-text">
           Belum Punya akun? Hubungi Admin.</a>
         </p>
-
       </form>
     </div>
-
   </div>
 </section>
-
 <style>
 *{
   box-sizing:border-box;
@@ -138,6 +133,8 @@ background-size: cover;
 .login-wrapper{
   width:100vw;
   height:100vh;
+  padding-left: 15px;
+  padding-right: 15px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -296,9 +293,9 @@ background-size: cover;
 
 @media(max-width:480px){
   .login-card{
-    width:100vw;
+    width: 80vw;
     margin-top:50px;
-    border-radius:0;
+    border-radius: 15px;
     box-shadow:none;
   }
   .left-panel, .right-panel{

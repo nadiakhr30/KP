@@ -1,4 +1,8 @@
 <?php
+// Temporary debug: enable error display to diagnose Internal Server Error
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 ob_start();
 session_start();
 include_once("../koneksi.php");
@@ -10,15 +14,15 @@ if (!isset($_SESSION['pegawai']) || $_SESSION['role'] != "Admin") {
 
 // TOTAL HIRED EMPLOYEE
 $qUser = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM pegawai WHERE status = 1");
-$totalUser = mysqli_fetch_assoc($qUser)['total'];
+$totalUser = ($qUser) ? mysqli_fetch_assoc($qUser)['total'] : 0;
 
 // TOTAL TIM
 $qTim = mysqli_query($koneksi, "SELECT COUNT(DISTINCT tim) AS total FROM jadwal WHERE tim IS NOT NULL");
-$totalTim = mysqli_fetch_assoc($qTim)['total'];
+$totalTim = ($qTim) ? mysqli_fetch_assoc($qTim)['total'] : 0;
 
 // TOTAL ASET
 $qAset = mysqli_query($koneksi, "SELECT COUNT(*) AS total FROM aset");
-$totalAset = mysqli_fetch_assoc($qAset)['total'];
+$totalAset = ($qAset) ? mysqli_fetch_assoc($qAset)['total'] : 0;
 
 // Total konten bulan ini
 $qBulan = mysqli_query($koneksi, "
@@ -27,7 +31,7 @@ $qBulan = mysqli_query($koneksi, "
   WHERE MONTH(created_at) = MONTH(CURRENT_DATE())
     AND YEAR(created_at) = YEAR(CURRENT_DATE())
 ");
-$totalBulan = mysqli_fetch_assoc($qBulan)['total'];
+$totalBulan = ($qBulan) ? mysqli_fetch_assoc($qBulan)['total'] : 0;
 
 // Total konten tahun ini
 $qTahun = mysqli_query($koneksi, "
@@ -35,7 +39,7 @@ $qTahun = mysqli_query($koneksi, "
   FROM media 
   WHERE YEAR(created_at) = YEAR(CURRENT_DATE())
 ");
-$totalTahun = mysqli_fetch_assoc($qTahun)['total'];
+$totalTahun = ($qTahun) ? mysqli_fetch_assoc($qTahun)['total'] : 0;
 
 // Kalender - Get PIC data
 $jadwalkalender = [];
@@ -668,7 +672,8 @@ ob_start();
 
           #statusChart,
           #skillChart {
-              max-height: 250px !important;
+              min-height: 300px !important; /* Force minimum height */
+              max-height: 400px !important; /* Allow more vertical space */
           }
 
           .podium-wrapper {
@@ -695,32 +700,39 @@ ob_start();
   document.head.appendChild(style);
 
   // Chart Skill
-  const skillCtx = document.getElementById('skillChart');
-  const skillChart = new Chart(skillCtx, {
-    type: 'bar',
-    data: {
-      labels: <?= json_encode($skillLabels) ?>,
-      datasets: [{
-        label: 'Total Pengguna',
-        data: <?= json_encode($skillData) ?>,
-        backgroundColor: '#007bff'
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: {
-          display: true
-        }
+  (function() {
+    const rawLabels = <?= json_encode($skillLabels) ?>;
+    const dataValues = <?= json_encode($skillData) ?>;
+    const displayLabels = rawLabels.map(l => (window.innerWidth < 480 && String(l).length > 12) ? String(l).substring(0, 12) + '...' : l);
+
+    const skillCtx = document.getElementById('skillChart');
+    const skillChart = new Chart(skillCtx, {
+      type: 'bar',
+      data: {
+        labels: displayLabels,
+        datasets: [{
+          label: 'Total Pengguna',
+          data: dataValues,
+          backgroundColor: '#47b2e4', // Lighter blue
+          borderRadius: 8, // Rounded corners
+          borderSkipped: false, // Round all corners or bottom too if desired (usually default is fine)
+          barPercentage: 0.6, // Slimmer bars
+        }]
       },
-      scales: {
-        y: {
-          beginAtZero: true
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 20, right: 20, left: 10, bottom: 10 } },
+        plugins: {
+          legend: { display: true, labels: { boxWidth: 12, padding: 8, usePointStyle: true } }
+        },
+        scales: {
+          x: { ticks: { autoSkip: true, maxRotation: 45, minRotation: 0 } },
+          y: { beginAtZero: true }
         }
       }
-    }
-  });
+    });
+  })();
 
 //Chart Status Jadwal
 const statusCtx = document.getElementById('statusChart');
@@ -734,15 +746,24 @@ const statusChart = new Chart(statusCtx, {
         <?= $statusData[1]['total'] ?? 0 ?>,
         <?= $statusData[2]['total'] ?? 0 ?>
       ],
-      backgroundColor: ['#e81818', '#fbc531', '#44bd32']
+      backgroundColor: ['#ff6b6b', '#feca57', '#1dd1a1'], // More pastel/modern colors
+      borderWidth: 0,
+      hoverOffset: 4
     }]
   },
   options: {
     responsive: true,
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
+    cutout: '65%', // Thinner ring
     plugins: {
-      legend: {
-        position: 'bottom'
+      legend: { 
+          position: window.innerWidth < 480 ? 'bottom' : 'bottom', // Always bottom looks cleaner
+          labels: { 
+              boxWidth: 12, 
+              padding: 15,
+              usePointStyle: true,
+              font: { family: "'Poppins', sans-serif", size: 12 }
+          } 
       }
     }
   }
