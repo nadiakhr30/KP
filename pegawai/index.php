@@ -137,6 +137,29 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
 
 
  <!-- Kalender & Jadwal -->
+
+    <style>
+      #kalender-jadwal .section-title h2:before,
+      #kalender-jadwal .section-title h2::before,
+      #kalender-jadwal .section-title h2:after,
+      #kalender-jadwal .section-title h2::after {
+        display: none !important;
+        content: none !important;
+        border: none !important;
+        width: 0 !important;
+        height: 0 !important;
+      }
+      
+      /* Hapus underline pada link di dalam kalender */
+      .fc-col-header-cell-cushion, 
+      .fc-daygrid-day-number {
+        text-decoration: none !important;
+      }
+      a.fc-col-header-cell-cushion:hover,
+      a.fc-daygrid-day-number:hover {
+        text-decoration: none !important;
+      }
+    </style>
     <section id="kalender-jadwal" class="about section">
 
       <!-- Section Title -->
@@ -705,37 +728,7 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
   </style>
 
   <script>
-  // ===== NOTIFIKASI BELL BERDASARKAN DEADLINE JADWAL =====
-  document.addEventListener("DOMContentLoaded", function () {
-    var today = new Date();
-    var events = <?= json_encode($jadwalkalender) ?>;
-    var deadlineTasks = [];
-    var oneDayMs = 1000 * 60 * 60 * 24;
-    var twoDaysMs = oneDayMs * 2;
-    
-    events.forEach(function(ev) {
-      var status = ev.extendedProps.status;
-      if (ev.extendedProps && ev.extendedProps.isPic && (status == 0 || status == 1)) {
-        var tglRilis = new Date(ev.start);
-        // Bandingkan hanya tanggal (tahun, bulan, hari) tanpa jam
-        var tglRilisDate = new Date(tglRilis.getFullYear(), tglRilis.getMonth(), tglRilis.getDate());
-        var todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        var selisihHari = (tglRilisDate - todayDate) / (1000 * 60 * 60 * 24);
-        // Hanya tampilkan jika deadline hari ini sampai 2 hari ke depan (jangan jika sudah lewat)
-        if (selisihHari >= 0 && selisihHari <= 2) {
-          deadlineTasks.push(ev);
-        }
-      }
-    });
-    
-    // Update notif count berdasarkan jumlah deadline yang sesuai filter
-    if (deadlineTasks.length > 0) {
-      document.getElementById('navbarNotif').style.display = 'inline-block';
-      document.getElementById('notifCount').textContent = deadlineTasks.length;
-    } else {
-      document.getElementById('navbarNotif').style.display = 'none';
-    }
-  });
+
     document.addEventListener("DOMContentLoaded", function () {
       const track = document.getElementById("stepsTrack");
       const slides = document.querySelectorAll(".steps-slide");
@@ -824,21 +817,24 @@ while ($row = mysqli_fetch_assoc($qKalender)) {
     var today = new Date();
     var oneDayMs = 1000 * 60 * 60 * 24;
     var twoDaysMs = oneDayMs * 2;
-    var events = <?= json_encode($jadwalkalender) ?>;
+    var events = <?= json_encode($jadwalkalender) ?> || [];
+    if (!Array.isArray(events)) events = []; // Safety check
     var notifCount = 0;
     var notifItems = [];
+    
     events.forEach(function(ev) {
-      var status = ev.extendedProps.status;
-      if (ev.extendedProps && ev.extendedProps.isPic && (status == 0 || status == 1)) {
-        var tglRilis = new Date(ev.start);
-        // Bandingkan hanya tanggal (tahun, bulan, hari) tanpa jam
-        var tglRilisDate = new Date(tglRilis.getFullYear(), tglRilis.getMonth(), tglRilis.getDate());
-        var todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        var selisihHari = (tglRilisDate - todayDate) / (1000 * 60 * 60 * 24);
-        // Hanya tampilkan jika deadline hari ini sampai 2 hari ke depan (jangan jika sudah lewat)
-        if (selisihHari >= 0 && selisihHari <= 2) {
-          notifCount++;
-          notifItems.push(ev);
+      if (ev.extendedProps && ev.extendedProps.isPic) {
+        var status = ev.extendedProps.status;
+        if (status == 0 || status == 1) {
+          var tglRilis = new Date(ev.start);
+          var tglRilisDate = new Date(tglRilis.getFullYear(), tglRilis.getMonth(), tglRilis.getDate());
+          var todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+          var selisihHari = (tglRilisDate - todayDate) / (1000 * 60 * 60 * 24);
+          
+          if (selisihHari >= 0 && selisihHari <= 2) {
+            notifCount++;
+            notifItems.push(ev);
+          }
         }
       }
     });

@@ -450,7 +450,15 @@ global $pegawai;
     .fc .fc-daygrid-day-number {
       padding: 6px 4px;
     }
-    
+    .fc-col-header-cell-cushion, 
+    .fc-daygrid-day-number {
+      text-decoration: none !important;
+    }
+    a.fc-col-header-cell-cushion:hover,
+    a.fc-daygrid-day-number:hover {
+      text-decoration: none !important;
+    }
+
     /* GRID CARD */
     .asset-grid {
       display: grid;
@@ -1407,13 +1415,59 @@ global $pegawai;
         top: -4px;
         right: -6px;
       }
+
+      /* Fix Dropdown Center Position on Mobile */
+      #notifDropdown {
+        position: fixed !important;
+        top: 70px !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: 90% !important;
+        max-width: 350px !important;
+        min-width: auto !important;
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+      }
+      
+      #notifDropdown.show {
+        transform: translateX(-50%) !important;
+      }
     }
 
-    /* Mobile navbar text optimization */
+    /* Mobile navbar layout optimization */
     @media (max-width: 991px) {
+      /* Flex container spacing */
+      .header .container-fluid {
+        gap: 12px;
+        padding-right: 15px; /* Ensure right padding */
+      }
+
+      /* Logo Alignment */
+      .logo img {
+        max-height: 36px;
+        max-width: 120px;
+        width: auto;
+      }
+      .logo h4 {
+        font-size: 16px;
+        margin-top: 0 !important; /* Fix vertical offset */
+        margin-left: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 120px; /* Prevent text from taking too much space */
+      }
+
+      /* Navbar items spacing */
+      .navmenu {
+        margin: 0 !important; /* Reset margin */
+      }
+      
       .navmenu > ul { flex-direction: column; gap: 8px; }
+      
       .navmenu a {
-        color: #1a2332;
+        color: #1a2332 !important;
         font-weight: 700;
         text-shadow: none;
         font-size: 14px;
@@ -1427,6 +1481,20 @@ global $pegawai;
       .navmenu a.active {
         color: #667eea;
         text-shadow: none;
+      }
+
+      /* Icons adjustments */
+      #navbarNotif {
+        margin-right: 4px !important; /* Reduce margin, rely on gap */
+      }
+      
+      .ms-3 {
+        margin-left: 4px !important;
+      }
+
+      .mobile-nav-toggle {
+        margin-left: 4px;
+        font-size: 26px;
       }
     }
 
@@ -2066,13 +2134,42 @@ global $pegawai;
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
+
         <!-- Bell Notifikasi Jadwal Deadline 1-2 Hari -->
+        <?php
+          // Hitung Notifikasi (Deadline H-2 s/d H+0, Status Belum/Sedang, User adalah PIC)
+          $notifCount = 0;
+          if (isset($_SESSION['pegawai']['nip']) && $db) {
+              $myNip = $_SESSION['pegawai']['nip'];
+              
+              // Query menghitung jadwal urgent
+              $qHitung = mysqli_query($db, "
+                  SELECT count(*) AS jum 
+                  FROM jadwal j
+                  JOIN pic p ON j.id_jadwal = p.id_jadwal
+                  WHERE p.nip = '$myNip'
+                  AND (j.status = 0 OR j.status = 1)
+                  AND (j.tanggal_rilis BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 2 DAY))
+              ");
+              
+              if ($qHitung) {
+                  $dHitung = mysqli_fetch_assoc($qHitung);
+                  $notifCount = $dHitung['jum'];
+              }
+          }
+        ?>
         <span id="navbarNotif" style="position:relative;margin-right:18px;display:inline-flex;align-items:center;">
           <i class="bi bi-bell-fill" role="button" aria-haspopup="true" aria-expanded="false"></i>
-          <span class="notif-badge" id="notifCount">1</span>
+          <?php if ($notifCount > 0): ?>
+            <span class="notif-badge" id="notifCount"><?= $notifCount ?></span>
+          <?php endif; ?>
           <div id="notifDropdown" class="dropdown-menu dropdown-menu-end">
             <h6 class="dropdown-header">Jadwal Deadline Mendekat</h6>
-            <div id="notifList"></div>
+            <div id="notifList">
+              <?php if ($notifCount == 0): ?>
+                <div class="dropdown-item text-center w-100 d-block py-2 fw-bold" style="pointer-events:none; color: red;">Jadwal kosong</div>
+              <?php endif; ?>
+            </div>
           </div>
         </span>
         <div class="ms-3">
@@ -2171,9 +2268,9 @@ global $pegawai;
           <h4>Layanan Informasi</h4>
           <ul>
             <li><i class="bi bi-chevron-right"></i> <a href="#kalender-jadwal" style="color: #ffffff; text-decoration: none;">Jadwal Konten Humas</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Galeri Foto</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Galeri Video</a></li>
-            <li><i class="bi bi-chevron-right"></i> <a href="#dokumentasi" style="color: #ffffff; text-decoration: none;">Laporan Humas</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#humas" style="color: #ffffff; text-decoration: none;">Galeri Foto</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#humas" style="color: #ffffff; text-decoration: none;">Galeri Video</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#sumberdaya" style="color: #ffffff; text-decoration: none;">Laporan Humas</a></li>
             <li><i class="bi bi-chevron-right"></i> <a href="#sumberdaya" style="color: #ffffff; text-decoration: none;">Pedoman Visual Medsos</a></li>
           </ul>
         </div>
@@ -2187,7 +2284,7 @@ global $pegawai;
     </div>
 
     <div class="container copyright text-center mt-4">
-      <p>Â© <span>2026 </span> <span>Badan Pusat Statisik Bangkalan</span></p>
+      <p>© <span>2026 </span> <span>Badan Pusat Statisik Bangkalan</span></p>
       <div class="credits">
         Dikelola oleh <strong class="px-1 sitename">Humas BPS bangkalan</strong>
       </div>

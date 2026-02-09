@@ -1,0 +1,138 @@
+[08-Feb-2026 13:53:29 UTC] [2026-02-08 13:53:29] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 13:53:45 UTC] [2026-02-08 13:53:45] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 13:54:06 UTC] [2026-02-08 13:54:06] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 13:54:18 UTC] [2026-02-08 13:54:18] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 13:58:08 UTC] [2026-02-08 13:58:08] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 13:58:09 UTC] [2026-02-08 13:58:09] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 13:58:10 UTC] [2026-02-08 13:58:10] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 13:58:10 UTC] [2026-02-08 13:58:10] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 13:58:10 UTC] [2026-02-08 13:58:10] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 13:58:10 UTC] [2026-02-08 13:58:10] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:06:37 UTC] [2026-02-08 14:06:37] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:06:38 UTC] [2026-02-08 14:06:38] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:06:38 UTC] [2026-02-08 14:06:38] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:06:38 UTC] [2026-02-08 14:06:38] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:11:30 UTC] [2026-02-08 14:11:30] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:11:31 UTC] [2026-02-08 14:11:31] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:11:32 UTC] [2026-02-08 14:11:32] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:11:58 UTC] [2026-02-08 14:11:58] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:11:58 UTC] [2026-02-08 14:11:58] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:11:58 UTC] [2026-02-08 14:11:58] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:11:59 UTC] [2026-02-08 14:11:59] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:11:59 UTC] [2026-02-08 14:11:59] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
+[08-Feb-2026 14:11:59 UTC] [2026-02-08 14:11:59] Uncaught Exception: Access denied for user 'root'@'localhost' (using password: NO) in C:\laragon\www\KP\koneksi.php on line 7
+Stack trace: #0 C:\laragon\www\KP\koneksi.php(7): mysqli_connect('localhost', 'root', '', 'sistem_kehumasa...')
+#1 C:\laragon\www\KP\functions.php(7): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\KP\index.php(12): include_once('C:\\laragon\\www\\...')
+#3 {main}
+
